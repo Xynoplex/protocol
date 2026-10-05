@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "Result of browsing annotations that reference a resource",
+  "description": "The annotations elsewhere that refer to a resource",
   "properties": {
     "response": {
       "$ref": "./GetReferencedByResponse.json"
