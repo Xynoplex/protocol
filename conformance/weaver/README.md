@@ -4,11 +4,11 @@ A black-box suite for the Weaver: the process a weaver image runs. It starts
 the Weaver from a command and meets it only where the rest of Semiont does: in
 the graph it writes, on the bus, and at its health port. It checks what the
 Weaver does against
-[docs/protocol/WEAVER.md](../../../docs/protocol/WEAVER.md).
+[protocol/contract/WEAVER.md](../../contract/WEAVER.md).
 
-The suite imports nothing from a Weaver. The lines that name one are
-`WEAVER_SERVICES` in [harness/paths.ts](../harness/paths.ts): today Semiont's
-own, the Python service of [`images/weaver`](../../../images/weaver/README.md),
+The suite imports nothing from a Weaver. What names one is its entry in
+`weaverServices` in the run's [implementations file](../README.md#the-implementations-file).
+Semiont's names its own, the Python service of [`images/weaver`](../../../images/weaver/README.md),
 started by the interpreter of its locked environment. Every case runs against
 every entry.
 
@@ -17,7 +17,7 @@ connection of its own ([harness/weaver-world.ts](../harness/weaver-world.ts)),
 and its own reading of each row
 ([harness/graph-codec.ts](../harness/graph-codec.ts)). What a store holds is
 stated by
-[`specs/src/graph/codec-cases.json`](../../../specs/src/graph/codec-cases.json),
+[`protocol/specs/src/graph/codec-cases.json`](../../specs/src/graph/codec-cases.json),
 the case table the Weaver's codec is held to, and the harness's reader is held
 to the same table (`harness/graph-codec.test.ts`, which the gateway project
 runs with the harness's other tests of itself). So the suite judges a Weaver
@@ -107,7 +107,7 @@ It needs a built gateway and Archivist, the Weaver's Python environment,
 cargo build --release -p semiont-gateway -p semiont-archivist
 uv sync --locked --no-dev --all-extras --project images/weaver
 npm run build --workspace=@semiont/core
-cd packages/conformance
+cd protocol/conformance
 npm ci
 NEO4J_HOST=<address> NEO4J_PASSWORD=<password> npm run test:weaver
 ```

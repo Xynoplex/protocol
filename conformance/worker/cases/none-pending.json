@@ -1,6 +1,6 @@
 {
   "about": "nothing pending is not a fault: the worker reports it to nobody and claims no more until its next idle moment",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Claiming",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},

@@ -1,6 +1,6 @@
 {
   "about": "a worker's stream names its claim's replies and the two broadcasts it reads; once the stream is open it claims, with what it accepts, and holds the job it is handed as the record states it",
-  "source": "docs/protocol/WORKER-CONTRACT.md § The stream, § Claiming, § The claimed record",
+  "source": "protocol/contract/WORKER-CONTRACT.md § The stream, § Claiming, § The claimed record",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}, {"jobType": "yield"}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 1, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting", "density": 3}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

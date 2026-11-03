@@ -1,6 +1,6 @@
 /**
  * The two bounds on a connection (`x-semiont-limits` on /bus/subscribe;
- * docs/protocol/TRANSPORT-HTTP.md § Limits): a client that stops taking
+ * protocol/contract/TRANSPORT-HTTP.md § Limits): a client that stops taking
  * frames is disconnected once `pendingWriteBytes` are waiting for it, and a
  * replay that live frames outrun past `replayBufferEvents` is abandoned. A
  * disconnected client is visible on `session:left`.

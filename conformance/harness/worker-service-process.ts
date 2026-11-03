@@ -1,11 +1,11 @@
 /**
  * Starting and stopping Worker service processes.
  *
- * A Worker service is one of `WORKER_SERVICES`, `--config <document>` and an
+ * A Worker service is one of the implementations file's `workerServices`, `--config <document>` and an
  * environment. The document is the spec's `WorkerConfig`, written as the
  * settings say; a case that needs a broken document writes `verbatim`, never a
  * hand-edited rendering. The environment holds what
- * docs/protocol/WORKER-SERVICE.md § Environment says a Worker service reads,
+ * protocol/contract/WORKER-SERVICE.md § Environment says a Worker service reads,
  * and PATH, which finds its command; nothing else from the developer's shell.
  */
 import { spawn, type ChildProcess } from 'node:child_process';
@@ -46,7 +46,7 @@ export const READ_FROM_THE_ENVIRONMENT = [
 ] as const;
 
 export interface WorkerLaunch {
-  /** How this implementation is started: one of `WORKER_SERVICES`. */
+  /** How this implementation is started: one of the implementations file's `workerServices`. */
   command: readonly string[];
   settings: WorkerSettings;
   env: WorkerEnvironment;
@@ -91,7 +91,7 @@ function checkEnvironment(env: WorkerEnvironment, settings: WorkerSettings, unli
   const named = settings.knowledgeBases.flatMap((kb) => kb.engines.flatMap((engine) => (engine.apiKeyEnv === undefined ? [] : [engine.apiKeyEnv])));
   const read = new Set<string>([...READ_FROM_THE_ENVIRONMENT, ...named, 'PATH']);
   const strays = Object.keys(env).filter((name) => env[name] !== undefined && !read.has(name));
-  if (strays.length > 0) throw new Error(`the suite set ${strays.join(', ')}, which docs/protocol/WORKER-SERVICE.md § Environment does not say a worker reads and its document does not name`);
+  if (strays.length > 0) throw new Error(`the suite set ${strays.join(', ')}, which protocol/contract/WORKER-SERVICE.md § Environment does not say a worker reads and its document does not name`);
   const listed = Object.keys(unlisted).filter((name) => read.has(name));
   if (listed.length > 0) throw new Error(`the suite passed ${listed.join(', ')} as unlisted, and a worker reads it`);
 }

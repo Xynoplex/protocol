@@ -57,7 +57,7 @@ async function withEnv(
 
 eachWorkerService("the worker's environment", (world) => {
   it('WORKER-SERVICE.md § Environment names every variable the suite starts a worker with, and no other', () => {
-    const document = readFileSync(join(REPO_ROOT, 'docs/protocol/WORKER-SERVICE.md'), 'utf8');
+    const document = readFileSync(join(REPO_ROOT, 'protocol/contract/WORKER-SERVICE.md'), 'utf8');
     const section = /\n## Environment\n([\s\S]*?)\n## /.exec(document)?.[1] ?? '';
     const named = new Set([...section.matchAll(/`([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)`/g)].map((m) => m[1]!));
     // LOG_LEVEL and LOG_FORMAT are named there as the two it does not read.

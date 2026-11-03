@@ -1,6 +1,6 @@
 {
   "about": "each job a worker runs has a trace of its own: no two of its claims are in one trace, none is in the trace of a job it did not hand over, and a job is run in the trace of the claim that handed it over",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Traces",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Traces",
   "telemetry": true,
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},

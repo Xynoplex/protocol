@@ -7,14 +7,14 @@ same file for every language. What differs per language is a **driver**, a
 small program that turns the suite's operations into calls on that SDK's
 public API and writes back what happened.
 
-The suite imports nothing from an SDK. The lines that name one are
-`SDK_DRIVERS` in [harness/paths.ts](../harness/paths.ts): how each of an SDK's
-drivers is started.
+The suite imports nothing from an SDK. What names one is its entry in `sdks`
+in the run's [implementations file](../README.md#the-implementations-file):
+how each of the SDK's drivers is started.
 
 | Layer | Holds an SDK to | Cases | Entry |
 |---|---|---|---|
 | wire | the transport: the stream, emits, requests, content, the gateway's own operations | [wire/](wire/) | [wire.test.ts](wire.test.ts) |
-| live | the client's live queries and their cache: what an observer is given, and what each observation costs on the wire ([CACHE-SEMANTICS](../../../docs/protocol/CACHE-SEMANTICS.md)) | [live/](live/) | [live.test.ts](live.test.ts) |
+| live | the client's live queries and their cache: what an observer is given, and what each observation costs on the wire ([CACHE-SEMANTICS](../../contract/CACHE-SEMANTICS.md)) | [live/](live/) | [live.test.ts](live.test.ts) |
 
 An SDK has a driver per layer it implements. The live layer has two tiers,
 and an SDK's line says which it is held to: `fleet`, the cases every SDK with
@@ -37,7 +37,7 @@ fails a client that:
   every stream as the gateway wrote it, so what a driver says it delivered is
   held to what it was sent, not believed;
 - reports a failure with no code, or with one
-  [`specs/src/errors/codes.json`](../../../specs/src/errors/codes.json) does
+  [`protocol/specs/src/errors/codes.json`](../../specs/src/errors/codes.json) does
   not list;
 - reports anything on its error stream that the case does not expect;
 - settles an operation twice.
@@ -90,10 +90,10 @@ concurrently; each is answered once, whenever it settles, by one of:
 | `{"id": 7, "unsupported": true}` | this driver has no such operation. It says so at once, before it reads its next operation |
 | `{"id": 7, "misuse": "..."}` | the suite's arguments made no sense: the suite's mistake, never the SDK's |
 
-A failure's `code` is the SDK's own, from `specs/src/errors/codes.json`.
+A failure's `code` is the SDK's own, from `protocol/specs/src/errors/codes.json`.
 `status` is the HTTP status when a server stated one, and absent otherwise.
 `failureClass` is a job failure's class
-([`FailureClass`](../../../specs/src/components/schemas/FailureClass.json))
+([`FailureClass`](../../specs/src/components/schemas/FailureClass.json))
 when it has one, and absent otherwise.
 `detail` is the SDK's words, for a person; nothing compares it.
 
@@ -159,7 +159,7 @@ A `query` names what is observed: `{"query": "resource", "resource": id}`,
 and likewise `annotations`, `events`, `referencedBy`; `annotation` with
 `resource` and `annotation`; `resources` with optional `filters`;
 `matchedResources` with `search` and optional `filters`; `entityTypes`;
-`tagSchemas`; `engines`. Each is a query of specs/src/client/refresh.json, by
+`tagSchemas`; `engines`. Each is a query of protocol/specs/src/client/refresh.json, by
 its name there.
 
 A job's follower is reported as an observer is: each event it is given is a
@@ -189,7 +189,7 @@ Its `timing` overrides `busRequestTimeoutMs`, `invalidationWindowMs`,
 `lazyRemoveMs` and `lingerMs`.
 
 `open`'s `timing` overrides entries of
-[`specs/src/client/timing.json`](../../../specs/src/client/timing.json) by
+[`protocol/specs/src/client/timing.json`](../../specs/src/client/timing.json) by
 name, so a case does not wait out a production delay. The wire cases override
 `reconnectMs`, `lazyRemoveMs`, `lingerMs` and `emitRetry`; a driver must honour
 all four, and answers `misuse` to a name it cannot override.
@@ -216,7 +216,7 @@ format and runs them with this runner, adding four steps of its own.
 `planes` is given only when the case holds on one signal plane; absent, it
 runs on both. `telemetry` runs the client exporting to a receiver, and once
 the driver has exited holds what it exported to
-[`specs/src/sdk-telemetry/telemetry.json`](../../../specs/src/sdk-telemetry/telemetry.json):
+[`protocol/specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json):
 every row arrived, of its kind, with every attribute not marked `only`, and
 whatever arrived under a row's name carries only that row's attributes. What
 no row names is the driver's process, not the SDK, and is not judged. [case.schema.json](case.schema.json) is the format, and every
@@ -317,7 +317,7 @@ no other.
 
 ## Cases built from a table
 
-[`specs/src/client/refresh.json`](../../../specs/src/client/refresh.json)
+[`protocol/specs/src/client/refresh.json`](../../specs/src/client/refresh.json)
 says what each event on the bus, and the reopening of a dropped stream, does
 to a client's cache. [refresh-cases.ts](refresh-cases.ts) builds a live case
 from each row, named `refresh-<trigger>`, and `live.test.ts` runs them beside
@@ -342,7 +342,7 @@ A clause of CACHE-SEMANTICS that no case holds, and why:
 ## What an SDK cannot be put through
 
 An SDK's line may name wire cases its driver cannot run, each with why
-(`exempt` in `SDK_DRIVERS`). An exemption is held as a case is:
+(`exempt` in its entry in `sdks`). An exemption is held as a case is:
 `wire.test.ts` runs the case and requires the driver to answer `unsupported`
 to what it asks, so an exemption that has stopped being true fails, and a
 driver that answers `unsupported` to a case it is not exempt from fails that
@@ -363,31 +363,31 @@ remembers.
 
 ## Adding an SDK
 
-Write a driver for each layer over the SDK's public API, add them to its line
-of `SDK_DRIVERS`, and run the suite. TypeScript's are
-[packages/typescript/http-transport/conformance/driver.ts](../../typescript/http-transport/conformance/driver.ts)
+Write a driver for each layer over the SDK's public API, name them in its
+entry in `sdks`, and run the suite. TypeScript's are
+[packages/typescript/http-transport/conformance/driver.ts](../../../packages/typescript/http-transport/conformance/driver.ts)
 for the wire and
-[packages/typescript/sdk/conformance/driver.ts](../../typescript/sdk/conformance/driver.ts)
+[packages/typescript/sdk/conformance/driver.ts](../../../packages/typescript/sdk/conformance/driver.ts)
 for the live layer. Rust's are the two binaries of the crate
-[packages/rust/http-transport/conformance](../../rust/http-transport/conformance):
-[semiont-wire-driver](../../rust/http-transport/conformance/src/bin/semiont-wire-driver.rs)
+[packages/rust/http-transport/conformance](../../../packages/rust/http-transport/conformance):
+[semiont-wire-driver](../../../packages/rust/http-transport/conformance/src/bin/semiont-wire-driver.rs)
 and
-[semiont-live-driver](../../rust/http-transport/conformance/src/bin/semiont-live-driver.rs).
+[semiont-live-driver](../../../packages/rust/http-transport/conformance/src/bin/semiont-live-driver.rs).
 Python's are
-[packages/python/sdk/conformance/wire.py](../../python/sdk/conformance/wire.py)
+[packages/python/sdk/conformance/wire.py](../../../packages/python/sdk/conformance/wire.py)
 and
-[packages/python/sdk/conformance/live.py](../../python/sdk/conformance/live.py),
+[packages/python/sdk/conformance/live.py](../../../packages/python/sdk/conformance/live.py),
 run by the interpreter of the SDK's locked environment
 (`packages/python/sdk/.venv`), which the suite's setup makes with
 `uv sync --locked --no-dev` before any case runs. Go's are two commands of
-the module [packages/go/sdk/conformance](../../go/sdk/conformance):
-[semiont-go-wire-driver](../../go/sdk/conformance/cmd/semiont-go-wire-driver/main.go)
+the module [packages/go/sdk/conformance](../../../packages/go/sdk/conformance):
+[semiont-go-wire-driver](../../../packages/go/sdk/conformance/cmd/semiont-go-wire-driver/main.go)
 and
-[semiont-go-live-driver](../../go/sdk/conformance/cmd/semiont-go-live-driver/main.go),
+[semiont-go-live-driver](../../../packages/go/sdk/conformance/cmd/semiont-go-live-driver/main.go),
 built into its `bin/`. Kotlin's are
-[`WireDriver.kt`](../../kotlin/sdk/src/conformance/kotlin/semiont/conformance/WireDriver.kt)
+[`WireDriver.kt`](../../../packages/kotlin/sdk/src/conformance/kotlin/semiont/conformance/WireDriver.kt)
 and
-[`LiveDriver.kt`](../../kotlin/sdk/src/conformance/kotlin/semiont/conformance/LiveDriver.kt),
+[`LiveDriver.kt`](../../../packages/kotlin/sdk/src/conformance/kotlin/semiont/conformance/LiveDriver.kt),
 laid out with their start scripts in `packages/kotlin/sdk/build/conformance` by
 `./gradlew installConformance`.
 
@@ -403,7 +403,7 @@ cargo build --release -p semiont-gateway -p semiont-conformance-drivers
 (cd packages/go/sdk/conformance && CGO_ENABLED=0 go build -o bin/ ./cmd/...)
 (cd packages/kotlin/sdk && ./gradlew installConformance)
 npm run build --workspace=@semiont/sdk
-cd packages/conformance
+cd protocol/conformance
 npm ci
 npm run test:sdk
 ```

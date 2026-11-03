@@ -1,6 +1,6 @@
 {
   "about": "a reply to a claim that names no job is refused where it arrives, never held, and the worker goes on claiming",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Claiming",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},

@@ -1,6 +1,6 @@
 {
   "about": "a held job that shows no activity for the stall threshold is reported as stalled, and one that keeps reporting is not; an idle worker is never stalled",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Liveness",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Liveness",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 0, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting"}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

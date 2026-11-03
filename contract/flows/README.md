@@ -57,13 +57,13 @@ graph LR
 
 ## Who the participants are
 
-People and AI agents are the same kind of participant. They use the same verbs, emit the same frames, and produce the same annotations, and the record attributes each act to whoever did it. The roles in the tables above are the actor model's: see [the actor model](../../architecture/ACTOR-MODEL.md).
+People and AI agents are the same kind of participant. They use the same verbs, emit the same frames, and produce the same annotations, and the record attributes each act to whoever did it. The roles in the tables above are the actor model's: see [the actor model](../../../docs/architecture/ACTOR-MODEL.md).
 
-Behind the bus, the knowledge base's own services answer: the archivist records writes and answers reads of the record, the librarian answers Gather and Match, and the dispatcher hands delegated work to workers. See [the knowledge system](../../architecture/KNOWLEDGE-SYSTEM.md).
+Behind the bus, the knowledge base's own services answer: the archivist records writes and answers reads of the record, the librarian answers Gather and Match, and the dispatcher hands delegated work to workers. See [the knowledge system](../../../docs/architecture/KNOWLEDGE-SYSTEM.md).
 
 ## What every verb shares
 
-- The channels each verb uses, and what each carries, are declared in [`specs/src/bus/registry.json`](../../../specs/src/bus/registry.json). The registry marks every channel a client can emit as a write or a read, and the grouping above is that mark.
-- The methods an SDK gives each verb, and what each returns, are declared in [`specs/src/client/surface.json`](../../../specs/src/client/surface.json). Every SDK is held to it.
+- The channels each verb uses, and what each carries, are declared in [`protocol/specs/src/bus/registry.json`](../../specs/src/bus/registry.json). The registry marks every channel a client can emit as a write or a read, and the grouping above is that mark.
+- The methods an SDK gives each verb, and what each returns, are declared in [`protocol/specs/src/client/surface.json`](../../specs/src/client/surface.json). Every SDK is held to it.
 - How frames are named, stamped with identity, correlated and delivered is in [the event-bus protocol](../EVENT-BUS.md).
 - Work an agent is delegated runs as a job: [Jobs](../JOBS.md).

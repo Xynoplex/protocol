@@ -5,7 +5,7 @@ This directory contains the source-of-truth OpenAPI specification for the Semion
 ## Directory Structure
 
 ```
-specs/
+protocol/specs/
 ├── README.md                   # This file
 ├── src/                        # Source OpenAPI files (tracked in git)
 │   ├── openapi.json           # The gateway's API: root spec with $ref to all paths and schemas
@@ -23,23 +23,23 @@ specs/
 └── archivist.openapi.json      # The Archivist's, bundled (NOT tracked in git)
 ```
 
-The OpenAPI specification source lives in this directory; the human-readable API and W3C compliance documentation lives in [docs/protocol/](../docs/protocol/).
+The OpenAPI specification source lives in this directory; the human-readable API and W3C compliance documentation lives in [protocol/contract/](../contract/).
 
 ## Spec-First Architecture
 
 The OpenAPI specification is the **source of truth** for the entire API:
 
-1. **Source**: `specs/src/openapi.json` and referenced files (tracked in git)
-2. **Build**: Bundled to `specs/openapi.json` by Redocly (generated, gitignored)
+1. **Source**: `protocol/specs/src/openapi.json` and referenced files (tracked in git)
+2. **Build**: Bundled to `protocol/specs/openapi.json` by Redocly (generated, gitignored)
 3. **Types**: TypeScript types generated from bundled spec → `@semiont/core`
 4. **Consumption**: `@semiont/http-transport` and gateway import types from `@semiont/core`
 
 ```
-specs/src/openapi.json          (source - in git)
+protocol/specs/src/openapi.json          (source - in git)
         ↓
    npm run openapi:bundle
         ↓
-specs/openapi.json              (generated - gitignored)
+protocol/specs/openapi.json              (generated - gitignored)
         ↓
    openapi-typescript
         ↓
@@ -49,6 +49,27 @@ specs/openapi.json              (generated - gitignored)
         ↓
 gateway and Browser import from core
 ```
+
+## Case tables
+
+A case table is a file under [src/](src/) whose name ends in `cases.json`: a
+rule stated case by case, each case an input and the answer every
+implementation must give. Each language's unit tests load the table and call
+their own function on each case; nothing needs to be running. Beside its
+`$comment`, a table states who runs it (`runBy`), which SDK does not and why
+(`absent`), and which is still to (`notYetReached`).
+`npm run lint:spec-case-tables` holds each table to that
+([check-case-tables.mjs](../../.github/scripts/checks/specs/check-case-tables.mjs)).
+
+**Where a case lives.** A case a language checks by calling one of its own
+functions is a case table here. A case that needs a running process (a
+gateway, a service, or an SDK put through a driver) belongs in the conformance
+kit, [protocol/conformance](../conformance/README.md). The kit's JSON
+cases are language-neutral data too, held to the kit's own case schemas; they
+are there because checking them needs something running. A table here may also
+be run by the kit (`conformance` among its runners), which holds a running
+service, or its own reader of a store, to the table's answers. That does not
+move the table: what puts a case here is that a function call can check it.
 
 ## Working with the Spec
 
@@ -60,28 +81,28 @@ gateway and Browser import from core
 - Schemas: [src/components/schemas/](src/components/schemas/)
 
 **Bundled spec** (generated, for consumption):
-- Generated: `specs/openapi.json` (create by running `npm run openapi:bundle`)
+- Generated: `protocol/specs/openapi.json` (create by running `npm run openapi:bundle`)
 - Live endpoint: `http://localhost:4000/api/openapi.json` (when gateway is running)
 
 ### Edit the Specification
 
-1. **Modify source files** in `specs/src/`:
+1. **Modify source files** in `protocol/specs/src/`:
    ```bash
    # Edit a schema
-   vi specs/src/components/schemas/Annotation.json
+   vi protocol/specs/src/components/schemas/Annotation.json
 
    # Edit an endpoint
-   vi specs/src/paths/resources_{id}.json
+   vi protocol/specs/src/paths/resources_{id}.json
    ```
 
 2. **Bundle and validate**:
    ```bash
-   npm run openapi:bundle    # Bundle source → specs/openapi.json and specs/archivist.openapi.json
+   npm run openapi:bundle    # Bundle source → protocol/specs/openapi.json and protocol/specs/archivist.openapi.json
    npm run openapi:lint      # Lint source files
    npm run lint:spec-protocol  # The spec states the whole gateway protocol
    ```
 
-   `lint:spec-protocol` ([.github/scripts/checks/specs/check-protocol.mjs](../.github/scripts/checks/specs/check-protocol.mjs))
+   `lint:spec-protocol` ([.github/scripts/checks/specs/check-protocol.mjs](../../.github/scripts/checks/specs/check-protocol.mjs))
    fails when the spec leaves something to be learned from the gateway's code
    instead: an operation that does not say whether it is public, a 401 with no
    challenge header, a response with no body schema, an error whose body is not
@@ -167,15 +188,15 @@ See [src/paths/](src/paths/) for complete list.
 
 ## API Documentation
 
-High-level guides in [docs/protocol/](../docs/protocol/):
+High-level guides in [protocol/contract/](../contract/):
 
-- **[README.md](../docs/protocol/README.md)** - The protocol: the eight verbs, the bus, and what holds across them
-- **[W3C-WEB-ANNOTATION.md](../docs/protocol/W3C-WEB-ANNOTATION.md)** - W3C Annotation Model details
-- **[W3C-SELECTORS.md](../docs/protocol/W3C-SELECTORS.md)** - Selector specifications
+- **[README.md](../contract/README.md)** - The protocol: the eight verbs, the bus, and what holds across them
+- **[W3C-WEB-ANNOTATION.md](../contract/W3C-WEB-ANNOTATION.md)** - W3C Annotation Model details
+- **[W3C-SELECTORS.md](../contract/W3C-SELECTORS.md)** - Selector specifications
 
 For implementation details:
-- [Gateway Documentation](../images/gateway/README.md) - Gateway architecture
-- [API Client Documentation](../packages/typescript/http-transport/README.md) - TypeScript SDK
+- [Gateway Documentation](../../images/gateway/README.md) - Gateway architecture
+- [API Client Documentation](../../packages/typescript/http-transport/README.md) - TypeScript SDK
 
 ## Decomposition Notes
 
@@ -205,15 +226,15 @@ Bundling takes no configuration: a schema is kept in the bundle because `compone
 
 ## Related Documentation
 
-- [Root README](../README.md) - Project overview
-- [Architecture](../docs/architecture/README.md) - System architecture index
-- [Gateway README](../images/gateway/README.md) - Gateway implementation
-- [@semiont/http-transport](../packages/typescript/http-transport/README.md) - HTTP + SSE wire adapters
-- [@semiont/sdk](../packages/typescript/sdk/README.md) - The TypeScript client built over them
+- [Root README](../../README.md) - Project overview
+- [Architecture](../../docs/architecture/README.md) - System architecture index
+- [Gateway README](../../images/gateway/README.md) - Gateway implementation
+- [@semiont/http-transport](../../packages/typescript/http-transport/README.md) - HTTP + SSE wire adapters
+- [@semiont/sdk](../../packages/typescript/sdk/README.md) - The TypeScript client built over them
 
 ---
 
-**For API usage**: Start with [docs/protocol/README.md](../docs/protocol/README.md), then [@semiont/http-transport](../packages/typescript/http-transport/docs/API-Reference.md) for the wire adapters
+**For API usage**: Start with [protocol/contract/README.md](../contract/README.md), then [@semiont/http-transport](../../packages/typescript/http-transport/docs/API-Reference.md) for the wire adapters
 
 **For spec editing**: Edit files in [src/](src/), then run `npm run openapi:bundle`
 

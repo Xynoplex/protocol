@@ -1,6 +1,6 @@
 {
   "about": "an unacknowledged commit whose question nobody answers is not established either, and that is said as its own observation: not answered is not the same as answered no",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Committing annotations",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Committing annotations",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 0, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting"}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

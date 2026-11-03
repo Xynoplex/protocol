@@ -146,7 +146,7 @@
     ]
   },
   "spanRefusal": {
-    "docs": "Why no annotation was built of a span: the span is not the text's, or, for a PDF, is nowhere on its pages, or the PDF's anchored text does not hold together. specs/src/annotations/builder-cases.json holds when each is given.",
+    "docs": "Why no annotation was built of a span: the span is not the text's, or, for a PDF, is nowhere on its pages, or the PDF's anchored text does not hold together. protocol/specs/src/annotations/builder-cases.json holds when each is given.",
     "codes": [
       { "code": "span-out-of-range", "docs": "The span's offsets are not two whole numbers from 0, the second no less than the first, within the text." },
       { "code": "exact-mismatch", "docs": "The words the span states are not the text between its offsets." },

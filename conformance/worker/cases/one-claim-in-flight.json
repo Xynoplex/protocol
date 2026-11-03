@@ -1,6 +1,6 @@
 {
   "about": "one claim is in flight at a time: announcements that arrive before it is answered earn one more claim between them, made when it is answered with no job",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Claiming",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},

@@ -5,16 +5,16 @@ What a worker promises the dispatcher and everyone who follows a job. A
 Worker service, or one written on an SDK by somebody else, in any language.
 What the dispatcher does with a worker's messages is [JOBS.md](./JOBS.md).
 How to write a worker is the
-[`semiont-worker` skill](../builder/skills/semiont-worker/SKILL.md).
+[`semiont-worker` skill](../../docs/builder/skills/semiont-worker/SKILL.md).
 
 If the code deviates from what is written here, the code is wrong, or this
 document is wrong and is corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
 when a worker breaks it: a case of the worker conformance suite
-([`packages/conformance/worker`](../../packages/conformance/worker/README.md),
+([`protocol/conformance/worker`](../conformance/worker/README.md),
 which every SDK with a worker's surface runs), a file of the dispatcher suite
-([`packages/conformance/dispatcher`](../../packages/conformance/dispatcher/README.md)),
+([`protocol/conformance/dispatcher`](../conformance/dispatcher/README.md)),
 or another test in the repository. A rule marked "Held by no case" is one
 nothing checks. `npm run lint:transport-contract` fails when something named
 here does not exist, and when a case of the worker suite is named by no rule.
@@ -66,7 +66,7 @@ matches one of them, or with `none-pending`.
 - **C5.** A `job:queued` that matches none of the worker's filters causes
   no claim. The worker compares an announcement with its filters as the
   dispatcher compares a job with a claim, and
-  [`filter-cases.json`](../../specs/src/jobs/filter-cases.json) is the table
+  [`filter-cases.json`](../specs/src/jobs/filter-cases.json) is the table
   both answer alike.
   *Held by `worker/claim-on-announcement`, `packages/typescript/core/src/__tests__/job-filter.test.ts`.*
 - **C6.** `none-pending` is not a fault. The worker waits for its next idle
@@ -84,7 +84,7 @@ matches one of them, or with `none-pending`.
   run. The worker goes on claiming.
   *Held by `worker/malformed-reply`.*
 - **C10.** A claim waits `jobClaimTimeoutMs`
-  ([`timing.json`](../../specs/src/client/timing.json)) for its answer. One
+  ([`timing.json`](../specs/src/client/timing.json)) for its answer. One
   not answered by then is reported as a refusal.
   *Held by `worker/claim-timeout`.*
 
@@ -131,7 +131,7 @@ matches one of them, or with `none-pending`.
   [JOBS.md § Retries](./JOBS.md#retries)); the checkpoint, when there is
   one, as a `job:checkpoint` states one ([L2](#the-lifecycle)); and
   `willRetry`, which is what
-  [`retry-cases.json`](../../specs/src/jobs/retry-cases.json) answers for
+  [`retry-cases.json`](../specs/src/jobs/retry-cases.json) answers for
   the claimed record's retry budget and that class. The dispatcher applies
   the same table, so a follower told `willRetry` is told what the queue
   will do.
@@ -144,7 +144,7 @@ matches one of them, or with `none-pending`.
   verb's: a `mark` job's counts or a decline, a `yield` job's resource or a
   decline. The gateway refuses any other, and the record passes over a
   completion of another verb than the job's.
-  *Held by `worker/lifecycle`, `dispatcher/conclude.test.ts`, `packages/conformance/archivist/jobs.test.ts`, `.github/scripts/checks/specs/check-jobs.mjs`.*
+  *Held by `worker/lifecycle`, `dispatcher/conclude.test.ts`, `protocol/conformance/archivist/jobs.test.ts`, `.github/scripts/checks/specs/check-jobs.mjs`.*
 - **L8.** A worker that stops while it holds a job fails the job first:
   `job:fail`, with an error saying that the worker stopped, no failure class,
   and `willRetry` as [L4](#the-lifecycle) states it. The queue then retries
@@ -161,7 +161,7 @@ has the call, and what follows is what that call does.
 
 - **A1.** A commit by a worker cites the job it fulfils, in `jobId`. One
   that cites none is refused.
-  *Held by `worker/commit-acknowledged`, `packages/conformance/archivist/jobs.test.ts`.*
+  *Held by `worker/commit-acknowledged`, `protocol/conformance/archivist/jobs.test.ts`.*
 - **A2.** A worker supplies the `id` of every annotation it commits. An
   annotation is recorded once, by its `id`: one whose `id` the resource
   already holds is not recorded again. So a worker derives each `id` from
@@ -169,7 +169,7 @@ has the call, and what follows is what that call does.
   anchored, its body) and from nothing about the attempt, and a job that is
   retried or resumed commits the same annotations under the same ids. An
   `id` made afresh on each attempt records every annotation again.
-  *Held by `packages/conformance/archivist/annotations.test.ts`, `packages/typescript/core/src/__tests__/annotation-of-span.test.ts`.*
+  *Held by `protocol/conformance/archivist/annotations.test.ts`, `packages/typescript/core/src/__tests__/annotation-of-span.test.ts`.*
 - **A3.** An annotation committed with no `id` is not recorded.
   *Held by no case.*
 - **A4.** A commit is established when the record acknowledges it
@@ -220,7 +220,7 @@ worker stops.
   *Held by `worker/vitals`.*
 - **V2.** A held job that shows no activity for `heldJobStallMs` is stalled.
   A worker looks every `heldJobStallCheckMs`
-  ([`timing.json`](../../specs/src/client/timing.json)) and reports a stall
+  ([`timing.json`](../specs/src/client/timing.json)) and reports a stall
   when it finds one; what its host does then is the host's. An idle worker
   is never stalled, and neither is a job that keeps reporting, however long
   it runs. A worker too wedged to look is caught by the dispatcher's own
@@ -231,9 +231,9 @@ worker stops.
 
 A worker that exports telemetry sends each message in the trace of the work
 that sent it, and receives each frame in the trace it was sent under
-([`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)).
+([`protocol/specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)).
 A dispatcher that exports answers a claim in the trace of the claim
-([`dispatcher/environment.test.ts`](../../packages/conformance/dispatcher/environment.test.ts)).
+([`dispatcher/environment.test.ts`](../conformance/dispatcher/environment.test.ts)).
 
 - **T1.** A claim begins a trace of its own: it is in the trace of no job
   the worker held before it. Whatever a worker's code was doing when it

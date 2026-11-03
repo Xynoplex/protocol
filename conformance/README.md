@@ -2,13 +2,13 @@
 
 Black-box suites for Semiont's services, its SDKs and the workers written on them. Each one starts
 processes, meets them only where the protocol says a client meets them, and
-checks what they do against `specs/` and `docs/protocol/`. None imports
+checks what they do against `protocol/specs/` and `protocol/contract/`. None imports
 anything from the implementation it checks (the weaver suite reads the graph
 by its own Cypher and its own reading of a row, and says why; the smelter
 suite reads the vector index by its own calls to Qdrant, and the librarian
 suite fills the graph and the index through a real Weaver and a real
-Smelter): [harness/paths.ts](harness/paths.ts)
-holds the one line per service, and per SDK, that names it, so the same cases
+Smelter). A run names what it tests in a file of its own
+([The implementations file](#the-implementations-file)), so the same cases
 judge any implementation of the same spec.
 
 | Suite | Checks | Run |
@@ -30,10 +30,37 @@ and a stand-in Anthropic, a stand-in embedding provider, a reader of the graph, 
 [vitest.config.ts](vitest.config.ts) runs each suite as a project of its own;
 `npm test` runs all nine.
 
+A case is here because checking it needs something running. A case a language
+checks by calling one of its own functions is a case table in `protocol/specs/`
+([the rule](../specs/README.md#case-tables)).
+
+## The implementations file
+
+A run names the implementations it tests in a JSON file, given after vitest's
+own arguments:
+
+```bash
+npx vitest run --project gateway -- --implementations mine.implementations.json
+```
+
+The npm scripts name [semiont.implementations.json](semiont.implementations.json),
+Semiont's own builds. There is no default: a run that names no file, or names
+one twice, refuses to start, and so does a file that is not of the shape
+[harness/implementations.ts](harness/implementations.ts) gives. The file names
+how a gateway, a dispatcher and an Archivist are started, each SDK's drivers,
+and each Worker service, Weaver, Smelter and Librarian. Each is the argument
+list the suite starts the process with; an argument that starts with `./` or
+`../` is a path, resolved against the file's own directory. An implementation
+built elsewhere writes a file beside its build and names that.
+`harness/implementations.test.ts`, which the gateway project runs, holds the
+reader to this, and Semiont's own file to the shape.
+
 ## Running them
 
-All need a built gateway, `@semiont/core` built (the harness is typed by it)
-and `nats-server` (2.10 or later) on `PATH`. The dispatcher suite also needs a
+All need a built gateway, `@semiont/core` built, and `nats-server` (2.10 or
+later) on `PATH`. The harness runs `@semiont/core`'s code, not only its types:
+its generated OpenAPI validators, `kbDid`, the annotation helpers the graph
+reader uses, the jobs stream's subjects, and its fixture issuer. The dispatcher suite also needs a
 built dispatcher, the Archivist suite a built Archivist and `git`, the SDK
 suite and the worker suite the Rust drivers and the packages built, the
 worker-service suite the Worker service's environment, which `uv` makes, the
@@ -54,12 +81,12 @@ uv sync --locked --no-dev --all-extras --project images/worker
 uv sync --locked --no-dev --all-extras --project images/weaver
 uv sync --locked --no-dev --project images/smelter
 uv sync --locked --no-dev --all-extras --project images/librarian
-cd packages/conformance
+cd protocol/conformance
 npm ci
 npm test
 ```
 
-The spec is bundled from `specs/src` at the start of every run, so a suite
+The spec is bundled from `protocol/specs/src` at the start of every run, so a suite
 never checks against a stale bundle.
 
 Every process a suite starts is given the run's environment

@@ -3,14 +3,14 @@
 A black-box suite for workers. A worker written on an SDK is put through one
 corpus of cases against a real gateway, with the suite playing the
 dispatcher, and must do on the wire, and report to its author, what
-[the worker contract](../../../docs/protocol/WORKER-CONTRACT.md) says. The
+[the worker contract](../../contract/WORKER-CONTRACT.md) says. The
 corpus is data: a case is a JSON file, the same file for every language.
 What differs per language is a **worker driver**, a small program that turns
 the suite's operations into calls on that SDK's worker surface and writes
 back what happened.
 
-The suite imports nothing from an SDK. The lines that name one are the
-`worker` entries of `SDK_DRIVERS` in [harness/paths.ts](../harness/paths.ts).
+The suite imports nothing from an SDK. What names one is the `worker` of its
+entry in `sdks`, in the run's [implementations file](../README.md#the-implementations-file).
 An SDK with no worker surface has no entry, and the suite does not run it.
 
 Its one entry is `worker.test.ts`: every case in [cases/](cases/), for every
@@ -39,13 +39,13 @@ that:
 - says it claimed a job, was refused, saw a cancellation or stalled when the
   case does not expect it to;
 - reports a failure with a code
-  [`specs/src/errors/codes.json`](../../../specs/src/errors/codes.json) does
+  [`protocol/specs/src/errors/codes.json`](../../specs/src/errors/codes.json) does
   not list.
 
 A case that states `telemetry` runs the worker exporting, as an SDK case does
 ([sdk/README.md § A case](../sdk/README.md#a-case)), and once the driver has
 exited holds what it exported to the rows of
-[`specs/src/sdk-telemetry/telemetry.json`](../../../specs/src/sdk-telemetry/telemetry.json)
+[`protocol/specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
 for the bus, which is all a worker reaches. It also holds the worker to a
 trace of its own for each job, read from the trace each of its claims was
 sent under and from the spans its driver opened around the jobs it was
@@ -120,7 +120,7 @@ with no `job:fail`, and a driver that failed one there would fail the case.
 
 `open`'s `timing` overrides `jobClaimTimeoutMs`, `heldJobStallMs`,
 `heldJobStallCheckMs` and `markCommitTimeoutMs` of
-[`specs/src/client/timing.json`](../../../specs/src/client/timing.json)
+[`protocol/specs/src/client/timing.json`](../../specs/src/client/timing.json)
 beside the transport's `reconnectMs`, `lazyRemoveMs` and `lingerMs`, so a
 case does not wait out ten seconds or fifteen minutes.
 
@@ -183,17 +183,17 @@ report a handover.
 
 ## Adding an SDK
 
-Write a worker driver over the SDK's worker surface, add it as `worker` to
-the SDK's line of `SDK_DRIVERS`, and run the suite. TypeScript's is
-[packages/typescript/sdk/conformance/worker-driver.ts](../../typescript/sdk/conformance/worker-driver.ts),
+Write a worker driver over the SDK's worker surface, name it as `worker` in
+the SDK's entry in `sdks`, and run the suite. TypeScript's is
+[packages/typescript/sdk/conformance/worker-driver.ts](../../../packages/typescript/sdk/conformance/worker-driver.ts),
 Rust's is
-[semiont-worker-driver.rs](../../rust/http-transport/conformance/src/bin/semiont-worker-driver.rs),
+[semiont-worker-driver.rs](../../../packages/rust/http-transport/conformance/src/bin/semiont-worker-driver.rs),
 Python's is
-[conformance/worker.py](../../python/sdk/conformance/worker.py),
+[conformance/worker.py](../../../packages/python/sdk/conformance/worker.py),
 Go's is
-[semiont-go-worker-driver](../../go/sdk/conformance/cmd/semiont-go-worker-driver/main.go),
+[semiont-go-worker-driver](../../../packages/go/sdk/conformance/cmd/semiont-go-worker-driver/main.go),
 and Kotlin's, written in Java over the SDK's Java surface, is
-[WorkerDriver.java](../../kotlin/sdk/src/conformance/java/semiont/conformance/WorkerDriver.java).
+[WorkerDriver.java](../../../packages/kotlin/sdk/src/conformance/java/semiont/conformance/WorkerDriver.java).
 
 ## Running it
 
@@ -207,7 +207,7 @@ cargo build --release -p semiont-gateway -p semiont-conformance-drivers
 (cd packages/go/sdk/conformance && CGO_ENABLED=0 go build -o bin/ ./cmd/...)
 (cd packages/kotlin/sdk && ./gradlew installConformance)
 npm run build:packages
-cd packages/conformance
+cd protocol/conformance
 npm ci
 npm run test:worker
 ```

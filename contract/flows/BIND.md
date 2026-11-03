@@ -75,10 +75,10 @@ From the launcher: `semiont bind <resourceId> <annotationId> <targetResourceId>`
 
 ## Local signals
 
-`bind.initiate` and `bind.reportBodyError` publish on the client's own bus and nowhere else. `bind:initiate` is how one viewer's interface says a binding should begin; it is not the write. See [react-ui's events](../../builder/react-ui/EVENTS.md).
+`bind.initiate` and `bind.reportBodyError` publish on the client's own bus and nowhere else. `bind:initiate` is how one viewer's interface says a binding should begin; it is not the write. See [react-ui's events](../../../docs/builder/react-ui/EVENTS.md).
 
 ## Where it is implemented
 
 - The SDK namespace: [packages/typescript/sdk/src/namespaces/bind.ts](../../../packages/typescript/sdk/src/namespaces/bind.ts)
 - How body operations are applied: [the Archivist's specification](../ARCHIVIST.md), and [images/archivist/record/src/view.rs](../../../images/archivist/record/src/view.rs)
-- The channels and their payloads: [specs/src/bus/registry.json](../../../specs/src/bus/registry.json)
+- The channels and their payloads: [protocol/specs/src/bus/registry.json](../../specs/src/bus/registry.json)

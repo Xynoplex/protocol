@@ -1,5 +1,5 @@
 /**
- * What every response carries (docs/protocol/TRANSPORT-HTTP.md § Every
+ * What every response carries (protocol/contract/TRANSPORT-HTTP.md § Every
  * response), and the routes that describe the gateway and the knowledge base.
  */
 import { randomUUID } from 'node:crypto';

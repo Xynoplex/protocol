@@ -1,6 +1,6 @@
 {
   "about": "a worker whose stream drops claims when it is open again",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Claiming",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},

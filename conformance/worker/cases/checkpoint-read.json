@@ -1,6 +1,6 @@
 {
   "about": "a claimed record's finished units and cursors are the checkpoint earlier attempts left, a finished unit's cursor among them, and a worker holds them as the record states them",
-  "source": "docs/protocol/WORKER-CONTRACT.md § The claimed record",
+  "source": "protocol/contract/WORKER-CONTRACT.md § The claimed record",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"cursors": {"Person": {"next": 5000, "size": 900, "found": 9, "emitted": 7, "errors": 2}, "Place": {"next": 1200, "size": 800, "found": 4, "emitted": 3, "errors": 1}}}},

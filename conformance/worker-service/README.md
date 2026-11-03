@@ -5,16 +5,16 @@ starts the service from a command, with a configuration document and an
 environment, and meets it only where the rest of Semiont does: on the bus and
 at the gateway's HTTP surface, at its provider, at its health port, and in
 what it writes and how it exits. It checks what the service does against
-[docs/protocol/WORKER-SERVICE.md](../../../docs/protocol/WORKER-SERVICE.md).
+[protocol/contract/WORKER-SERVICE.md](../../contract/WORKER-SERVICE.md).
 
 The [worker suite](../worker/README.md) beside it holds an SDK's claiming to
-[the worker contract](../../../docs/protocol/WORKER-CONTRACT.md), through a
+[the worker contract](../../contract/WORKER-CONTRACT.md), through a
 driver. This one holds the service: how it boots, what it claims, what it asks
 a model, what it commits, how it ends a job, how it stops.
 
-The suite imports nothing from a Worker service. The lines that name one are
-`WORKER_SERVICES` in [harness/paths.ts](../harness/paths.ts): today Semiont's
-own, the Python service of `images/worker`, `python -P -m semiont_worker` by the
+The suite imports nothing from a Worker service. What names one is its entry
+in `workerServices` in the run's [implementations file](../README.md#the-implementations-file).
+Semiont's names its own, the Python service of `images/worker`, `python -P -m semiont_worker` by the
 interpreter of its project's environment (`images/worker/.venv`). Every case
 runs against every entry.
 
@@ -23,7 +23,7 @@ runs against every entry.
 Each file runs its cases in a world of its own
 ([harness/worker-service-world.ts](../harness/worker-service-world.ts)). Its
 knowledge base, which every case's service serves, is the suite's own
-identity in [`kb-identity/cases.json`](../../../specs/src/kb-identity/cases.json),
+identity in [`kb-identity/cases.json`](../../specs/src/kb-identity/cases.json),
 and a case of a service of two knowledge bases has it serve the world's
 second beside it, another case of that table. Each knowledge base has:
 
@@ -116,7 +116,7 @@ the Archivist's spec.
   otherwise the service's own. The annotations a `yield` job commits are on,
   or point at, a resource the case learns of only as it runs, so a case works
   their ids out from what they are, by the rule of
-  [`id-cases.json`](../../../specs/src/annotations/id-cases.json).
+  [`id-cases.json`](../../specs/src/annotations/id-cases.json).
 - **Messages a service waits on** (the claim, `job:start`, the read of the
   description and of the bytes or the anchored text, each commit and each
   checkpoint, the settle, the next claim) are compared in the order the
@@ -181,26 +181,27 @@ rule names exists, and every case is named by a rule.
 | Which of a generation's two token counts is what the model read (T3) | The receiver keeps a metric's values apart from its attributes. `anthropic.test.ts` holds that the two counts are the two the provider reported, and that both directions are counted |
 | A stream that ends partway | Not written: the stand-in Anthropic ends a connection only before it answers |
 | A wait of two minutes that is waited, and a wait stated as a date (F11) | A case cannot wait two minutes. `anthropic.test.ts` holds a wait of two seconds as waited, and one of two minutes and a second as not waited, by `retry-after` and by `retry-after-ms`. The edge and the date are held by each driver's own tests, which move a clock |
-| A request of Anthropic refused with 408 or 409 (F10) | Not written. `anthropic.test.ts` holds 429, 500, 529 and a connection that ends as asked for three times, and 400 as asked for once. A 409 is asked for three times and then fails its job as deterministic ([F3](../../../docs/protocol/WORKER-SERVICE.md#failures)): whether both are meant is not settled |
+| A request of Anthropic refused with 408 or 409 (F10) | Not written. `anthropic.test.ts` holds 429, 500, 529 and a connection that ends as asked for three times, and 400 as asked for once. A 409 is asked for three times and then fails its job as deterministic ([F3](../../contract/WORKER-SERVICE.md#failures)): whether both are meant is not settled |
 | A `yield` job to PDF, and the citations of a generated PDF | It needs the `typst` binary in the suite's environment |
 | A real dispatcher, Archivist or Smelter | The suite stands in for them, so that it can hand a service answers a correct one never gives and see every message |
 | How long a knowledge base in trouble waits after its first start again, and its ceiling (R3) | The first wait is stated in the log and held as waited; the doubling and `maxReconnectMs` take seconds to a minute that a case cannot shorten. `images/worker/tests/test_service.py` holds them, on a clock it moves |
 | A knowledge base whose confirmation is not answered in time (R1, R3) | The request's deadline is the SDK's `busRequestTimeoutMs`, thirty seconds, which a case cannot shorten. `knowledge-bases.test.ts` holds a confirmation held unanswered for less, and, as the trouble that is started again, a grant its issuer answers 503 or ends unanswered |
 | A sign-in, or the gateway's naming of the agent, accepted and never answered (R3) | Its deadline is the SDK's `httpRequestTimeoutMs`, thirty seconds, which a case cannot shorten. `knowledge-bases.test.ts` holds a grant whose connection ends unanswered |
-| A knowledge base whose stream is closed, so that nothing more can be claimed there (R3) | Nothing outside a service closes its stream: a transport's stream is `closed` only once its client is disposed ([TRANSPORT-CONTRACT § State](../../../docs/protocol/TRANSPORT-CONTRACT.md#state)). One a case ends through the proxy drops and is opened again, which `knowledge-bases.test.ts` holds as no trouble |
+| A knowledge base whose stream is closed, so that nothing more can be claimed there (R3) | Nothing outside a service closes its stream: a transport's stream is `closed` only once its client is disposed ([TRANSPORT-CONTRACT § State](../../contract/TRANSPORT-CONTRACT.md#state)). One a case ends through the proxy drops and is opened again, which `knowledge-bases.test.ts` holds as no trouble |
 | A knowledge base whose gateway refuses to name the agent (R2), or answers its naming with a status the `refresh` rule tries again (R3) | Not written: `knowledge-bases.test.ts` holds an issuer that refuses the sign-in, and one that answers it 503 or not at all, and `stop.test.ts` a claim refused as unauthorized |
 | M4, F9, P4 and R3's stalled job: the clocks | 1.5 seconds for a provider's limits, ten minutes for a generation and every asking of it, fifteen minutes for a stalled job. A service takes them from no document a case could shorten |
 | D7, the size of a piece following the provider's usage | Not written. On a model whose window is shared, as the stand-in Ollama's is, the ceiling of a piece is where it opens unless the window is far over what any fixture fills. A model of the stand-in Anthropic has two ceilings, and a case on it could hold the rule |
 | K6 for a piece taken to have missed mentions that can be cut smaller, and F7 for an answer not had in time or unreadable for a reason the provider does not state | Not written: `linking.test.ts` holds a count that answers no count, `halved.test.ts` holds the halving of a piece whose answer is cut off, and `failures.test.ts` that of one whose model finished and could not be read. A generation not had in time takes the ten minutes of F9 |
-| The commit whose acknowledgement is lost | [WORKER-CONTRACT A5](../../../docs/protocol/WORKER-CONTRACT.md#committing-annotations), held by the worker suite: a service waits a minute for an acknowledgement |
+| The commit whose acknowledgement is lost | [WORKER-CONTRACT A5](../../contract/WORKER-CONTRACT.md#committing-annotations), held by the worker suite: a service waits a minute for an acknowledgement |
 
 ## Adding an implementation
 
-Add its command to `WORKER_SERVICES` in
-[harness/paths.ts](../harness/paths.ts), and what builds it to
+Name its command in `workerServices` in an implementations file. One of
+Semiont's own goes in [semiont.implementations.json](../semiont.implementations.json),
+and what builds it in
 [harness/worker-service-setup.ts](../harness/worker-service-setup.ts). It is
 started as the one there is: `<command> --config <document>`, with the
-variables [WORKER-SERVICE.md § Environment](../../../docs/protocol/WORKER-SERVICE.md#environment)
+variables [WORKER-SERVICE.md § Environment](../../contract/WORKER-SERVICE.md#environment)
 names, any variable its document's `apiKeyEnv` names, and `PATH`. It passes
 every case unchanged.
 
@@ -215,7 +216,7 @@ or later on `PATH`:
 cargo build --release -p semiont-gateway
 npm run build --workspace=@semiont/core
 uv sync --locked --no-dev --all-extras --project images/worker
-cd packages/conformance
+cd protocol/conformance
 npm ci
 npm run test:worker-service
 ```

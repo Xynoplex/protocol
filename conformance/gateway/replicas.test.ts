@@ -3,7 +3,7 @@
  * reaches its requester whichever replica each is connected to, a claim made
  * on one is known to the others, and a reply retained by one is recovered
  * through another — or through the same one after it restarts.
- * docs/protocol/TRANSPORT-HTTP.md § POST /bus/emit (Claims) and § Correlated-
+ * protocol/contract/TRANSPORT-HTTP.md § POST /bus/emit (Claims) and § Correlated-
  * reply retention. NATS only: the in-process plane is one process.
  */
 import { randomUUID } from 'node:crypto';

@@ -1,6 +1,6 @@
 {
   "about": "when no acknowledgement arrives, the worker asks whether the batch's last annotation is on the resource; answered with it, the commit is established, and the job's completion says it was established by asking",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Committing annotations",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Committing annotations",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 0, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting"}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

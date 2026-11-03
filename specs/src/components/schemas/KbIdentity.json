@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "A knowledge base's committed identity (`project.name` and `site.domain` in its .semiont/config.yaml), as a service's document names the knowledge base it serves. Its telemetry names it by its DID (`semiont.kb`, specs/src/service-telemetry/telemetry.json).",
+  "description": "A knowledge base's committed identity (`project.name` and `site.domain` in its .semiont/config.yaml), as a service's document names the knowledge base it serves. Its telemetry names it by its DID (`semiont.kb`, protocol/specs/src/service-telemetry/telemetry.json).",
   "properties": {
     "name": {
       "type": "string",

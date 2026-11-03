@@ -1,6 +1,6 @@
 {
   "about": "a stream that hands over to a new connection without closing has not opened again, and causes no claim",
-  "source": "docs/protocol/WORKER-CONTRACT.md § Claiming",
+  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},
