@@ -1,5 +1,7 @@
 .PHONY: install conformance-install bundle lint check conformance-typecheck conformance-fixtures validate
 
+.DEFAULT_GOAL := validate
+
 install:
 	npm ci
 
