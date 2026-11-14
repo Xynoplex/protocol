@@ -1,10 +1,15 @@
 path,classification,owner,notes
+.gitattributes,Repository governance and documentation,Xynoplex/protocol,Repository text and diff policy.
+.github/CODEOWNERS,Repository governance and documentation,Xynoplex/protocol,Repository ownership review policy.
 .github/dependabot.yml,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 .github/workflows/ci.yml,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 .gitignore,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
+CONTRIBUTING.md,Repository governance and documentation,Xynoplex/protocol,Contribution workflow and compatibility policy.
+HISTORY-MAP.md,Repository governance and documentation,Xynoplex/protocol,History extraction map and cutoff provenance.
 LICENSE,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 Makefile,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 NOTICE,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
+OWNERSHIP-INVENTORY.csv,Repository governance and documentation,Xynoplex/protocol,Complete file-level ownership inventory.
 OWNERSHIP.md,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 README.md,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 VERSION,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
@@ -137,6 +142,7 @@ conformance/sdk/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned 
 conformance/sdk/case.schema.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/case.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/driver.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/sdk/live.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/closed-read.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/closed-while-fetching.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/coalescing.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -169,9 +175,9 @@ conformance/sdk/live/retry-once.json,Portable conformance,Xynoplex/protocol,Prot
 conformance/sdk/live/scope-by-observation.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/second-observation.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/write-while-fetching.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/sdk/live.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/match.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/refresh-cases.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/sdk/wire.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/attach-gate.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/chunked-stream.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/content-read.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -220,7 +226,6 @@ conformance/sdk/wire/upload-credential-renewed.json,Portable conformance,Xynople
 conformance/sdk/wire/upload-keyed.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/upload-progress.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/upload-unanswered.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/sdk/wire.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/smelter/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/smelter/boot.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/smelter/index.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -234,40 +239,13 @@ conformance/tsconfig.json,Portable conformance,Xynoplex/protocol,Protocol-owned 
 conformance/tsconfig.librarian.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/tsconfig.smelter.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/vitest.config.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/vitest.fixtures.config.ts,Portable conformance,Xynoplex/protocol,Fixture-only harness test project.
 conformance/weaver/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/weaver/boot.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/weaver/record.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/weaver/repair.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/weaver/support.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/weaver/telemetry.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/announcement-while-held.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/cancel.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/checkpoint-read.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/claim-on-announcement.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/claim-on-refused-announcement.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/claim-on-reopen.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/claim-on-start.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/claim-timeout.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/commit-ack-lost.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/commit-acknowledged.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/commit-empty.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/commit-probe-refused.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/commit-probe-unreachable.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/commit-refused.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/fail-final.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/fail-will-retry.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/handover.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/job-trace.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/lifecycle.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/malformed-reply.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/none-pending.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/one-claim-in-flight.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/refusal.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/stall.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/stop-while-held.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/cases/vitals.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker/worker.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/anchoring.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/anthropic.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -287,6 +265,7 @@ conformance/worker-service/limits.test.ts,Portable conformance,Xynoplex/protocol
 conformance/worker-service/linking.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/output.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/pdf.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker-service/prompts.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/prompts/assessing-instructed.txt,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/prompts/assessing-plain.txt,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/prompts/assessing.txt,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -336,7 +315,6 @@ conformance/worker-service/prompts/yield-21333.txt,Portable conformance,Xynoplex
 conformance/worker-service/prompts/yield-21334.txt,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/prompts/yield-annotation.txt,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/prompts/yield-markdown.txt,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/worker-service/prompts.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/resume.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/started.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/stop.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -344,6 +322,34 @@ conformance/worker-service/support.ts,Portable conformance,Xynoplex/protocol,Pro
 conformance/worker-service/tagging.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/telemetry.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker-service/yield.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/announcement-while-held.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/cancel.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/checkpoint-read.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/claim-on-announcement.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/claim-on-refused-announcement.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/claim-on-reopen.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/claim-on-start.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/claim-timeout.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/commit-ack-lost.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/commit-acknowledged.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/commit-empty.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/commit-probe-refused.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/commit-probe-unreachable.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/commit-refused.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/fail-final.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/fail-will-retry.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/handover.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/job-trace.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/lifecycle.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/malformed-reply.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/none-pending.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/one-claim-in-flight.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/refusal.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/stall.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/stop-while-held.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/cases/vitals.json,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/worker/worker.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 contract/ARCHIVIST.md,Normative protocol prose,Xynoplex/protocol,Compatibility definition; protocol review and versioning apply.
 contract/CACHE-SEMANTICS.md,Normative protocol prose,Xynoplex/protocol,Compatibility definition; protocol review and versioning apply.
 contract/CHANNELS.md,Normative protocol prose,Xynoplex/protocol,Compatibility definition; protocol review and versioning apply.
@@ -377,6 +383,7 @@ scripts/checks/specs/check-case-tables.mjs,Protocol validation tooling,Xynoplex/
 scripts/checks/specs/check-identifiers.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-jobs.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-offset-units.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
+scripts/checks/specs/check-ownership-inventory.mjs,Protocol validation tooling,Xynoplex/protocol,Ensures each tracked file remains classified in this inventory.
 scripts/checks/specs/check-protocol.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reference-forms.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reply-bounds.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
@@ -916,4 +923,3 @@ specs/src/worker/chunk-plan-cases.json,Normative protocol source,Xynoplex/protoc
 specs/src/worker/citation-cases.json,Normative protocol source,Xynoplex/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/failure-class-cases.json,Normative protocol source,Xynoplex/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/parser-cases.json,Normative protocol source,Xynoplex/protocol,Compatibility definition; protocol review and versioning apply.
-OWNERSHIP-INVENTORY.csv,Repository governance and documentation,Xynoplex/protocol,Complete file-level ownership inventory.
