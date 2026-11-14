@@ -387,6 +387,8 @@ scripts/checks/specs/check-ownership-inventory.mjs,Protocol validation tooling,X
 scripts/checks/specs/check-protocol.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reference-forms.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reply-bounds.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
+scripts/container-runtime.sh,Repository build tooling,Xynoplex/protocol,"Detects and validates the configured container runtime for local validation."
+scripts/make-target.sh,Repository build tooling,Xynoplex/protocol,"Runs protocol Node and npm tasks inside the detected container runtime."
 specs/.gitignore,Protocol authoring tooling,Xynoplex/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/.redocly.lint-ignore.yaml,Protocol authoring tooling,Xynoplex/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/README.md,Protocol authoring tooling,Xynoplex/protocol,"Build, lint, and bundling configuration for normative sources."
