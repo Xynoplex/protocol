@@ -569,7 +569,7 @@ export function kbIdentity(why: string): KbIdentity {
   return { name: chosen.name, domain: chosen.domain, did: chosen.did, resource: chosen.resource };
 }
 
-/** A duration of the timing every Semiont client keeps (client/timing.json), by its name: milliseconds. */
+/** A duration of the timing every Xynoplex client keeps (client/timing.json), by its name: milliseconds. */
 export function clientTiming(name: string): number {
   const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'client/timing.json'), 'utf8')) as { timing: Array<{ name: string; value: unknown }> };
   const value = table.timing.find((t) => t.name === name)?.value;

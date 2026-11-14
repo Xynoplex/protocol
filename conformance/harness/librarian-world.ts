@@ -11,7 +11,7 @@
  * embedding provider, one the Librarian asks and one the Smelter asks, which
  * give the same text the same vector.
  *
- * Cases meet the Librarian where the rest of Semiont does: on the bus, as a
+ * Cases meet the Librarian where the rest of Xynoplex does: on the bus, as a
  * person who is signed in asks it and reads its reply; at its providers; at
  * its health port; and in what it writes to its output. Nothing is put in the
  * graph or the index but by the Weaver and the Smelter, from what a case
@@ -29,7 +29,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import neo4j, { type Driver } from 'neo4j-driver';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import { kbDid, type Annotation, type components, type EventMap, type ResourceDescriptor } from '@semiont/core';
+import { kbDid, type Annotation, type components, type EventMap, type ResourceDescriptor } from './protocol-core';
 import { ArchivistWorld, sha256, unstamped, type BusClient } from './archivist-world';
 import {
   refusedLibrarianBoot,

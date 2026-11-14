@@ -1,6 +1,6 @@
 {
   "about": "an invalidation while a request for the key is unanswered makes a new request rather than waiting on the old; only the new request's answer is written, and the old one's, coming later, is not (B9)",
-  "source": "protocol/contract/CACHE-SEMANTICS.md B9",
+  "source": "contract/CACHE-SEMANTICS.md B9",
   "tier": "parity",
   "steps": [
     {"let": {"one": {"@context": "https://schema.org/", "@id": "one", "name": "one", "representations": []}, "two": {"@context": "https://schema.org/", "@id": "two", "name": "two", "representations": []}}},

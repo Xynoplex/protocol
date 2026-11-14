@@ -10,7 +10,7 @@
  * its own (§ What it answers).
  *
  * The scores, the prompt's text and the arithmetic of a page are the case
- * tables' (protocol/specs/src/librarian): these cases hold what crosses the bus, the
+ * tables' (specs/src/librarian): these cases hold what crosses the bus, the
  * stores and the providers.
  *
  * The stand-in embedding provider gives a text a vector worked out from the
@@ -23,7 +23,7 @@
  * from what the index holds.
  */
 import { describe, expect, inject, it } from 'vitest';
-import type { components } from '@semiont/core';
+import type { components } from '../harness/protocol-core';
 import { GATHERER_MODEL, MATCHER_MODEL, SEMANTIC_FLOOR, eachLibrarian } from '../harness/librarian-world';
 import { eventually } from '../harness/net';
 import { embeddingOf } from '../harness/ollama-embed';

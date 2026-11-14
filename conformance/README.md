@@ -1,98 +1,34 @@
 # Conformance suites
 
-Black-box suites for Semiont's services, its SDKs and the workers written on them. Each one starts
-processes, meets them only where the protocol says a client meets them, and
-checks what they do against `protocol/specs/` and `protocol/contract/`. None imports
-anything from the implementation it checks (the weaver suite reads the graph
-by its own Cypher and its own reading of a row, and says why; the smelter
-suite reads the vector index by its own calls to Qdrant, and the librarian
-suite fills the graph and the index through a real Weaver and a real
-Smelter). A run names what it tests in a file of its own
-([The implementations file](#the-implementations-file)), so the same cases
-judge any implementation of the same spec.
+Black-box suites exercise implementations through the protocol surfaces they expose. The suites do not build or import implementations; each consumer repository supplies launch commands and SDK drivers in its own manifest.
 
-| Suite | Checks | Run |
-|---|---|---|
-| [gateway](gateway/README.md) | a gateway, over HTTP and its bus stream | `npm run test:gateway` |
-| [dispatcher](dispatcher/README.md) | a dispatcher, on the bus through a real gateway, and at its health port | `npm run test:dispatcher` |
-| [archivist](archivist/README.md) | an Archivist, on the bus through a real gateway, at its HTTP surface, and in the files it keeps | `npm run test:archivist` |
-| [sdk](sdk/README.md) | every SDK, through a driver, as a client of a real gateway | `npm run test:sdk` |
-| [worker](worker/README.md) | a worker written on an SDK, through a driver, with the suite playing the dispatcher | `npm run test:worker` |
-| [worker-service](worker-service/README.md) | a Worker service, as a process: on the bus through a real gateway, at a stand-in for each of its providers, and at its health port, with the suite playing the dispatcher and the record | `npm run test:worker-service` |
-| [weaver](weaver/README.md) | a Weaver, as a process: behind a real gateway and a real Archivist, in the neo4j it writes, on the bus, at its health port and in the telemetry it exports | `npm run test:weaver` |
-| [smelter](smelter/README.md) | a Smelter, as a process: behind a real gateway and a real Archivist, in the Qdrant and the anchored-text store it writes, on the bus, at a stand-in for its embedding provider, at its health port and in the telemetry it exports | `npm run test:smelter` |
-| [librarian](librarian/README.md) | a Librarian, as a process: behind a real gateway and a real Archivist, reading a neo4j a real Weaver writes and a Qdrant a real Smelter writes, on the bus, at a stand-in for its embedding provider and for each of its two models, at its health port and in the telemetry it exports | `npm run test:librarian` |
+| Suite | Checks | Command |
+| --- | --- | --- |
+| `gateway` | HTTP API, bus streams, authorization, and limits | `test:gateway` |
+| `dispatcher` | Job claims, durable queue behavior, and health | `test:dispatcher` |
+| `archivist` | HTTP and bus behavior, persisted events, and stored resources | `test:archivist` |
+| `sdk` | SDK drivers as clients of a running gateway | `test:sdk` |
+| `worker` | SDK worker drivers as clients of a dispatcher and gateway | `test:worker` |
+| `worker-service` | Worker services, provider interactions, and health | `test:worker-service` |
+| `weaver` | Graph indexing, bus behavior, health, and telemetry | `test:weaver` |
+| `smelter` | Vector indexing, anchored text, provider interactions, and telemetry | `test:smelter` |
+| `librarian` | Search and gathering across a running record and index | `test:librarian` |
 
-They share one harness ([harness/](harness/)): the trusted issuer, a real
-`nats-server`, gateway, dispatcher, Archivist, Worker service, Weaver, Smelter and Librarian processes, bus streams checked message by
-message against the spec, a stand-in Archivist held to the Archivist's spec, a stand-in Ollama
-and a stand-in Anthropic, a stand-in embedding provider, a reader of the graph, a reader of the vector index, an OTLP receiver, and a proxy that stands between a client and the gateway.
-[vitest.config.ts](vitest.config.ts) runs each suite as a project of its own;
-`npm test` runs all nine.
+## Implementation manifest
 
-A case is here because checking it needs something running. A case a language
-checks by calling one of its own functions is a case table in `protocol/specs/`
-([the rule](../specs/README.md#case-tables)).
+Every run names one JSON manifest with `--implementations`; there is no default product manifest. Start from [`example.implementations.json`](example.implementations.json). Its validated shape is [`harness/implementations.ts`](harness/implementations.ts). Commands are argument arrays, not shell strings. Relative command arguments and an optional `modelCatalogue` path resolve from the manifest's directory. Build programs, drivers, wrappers, and their runtime environments in the owning consumer repositories.
 
-## The implementations file
+Example from this repository's root:
 
-A run names the implementations it tests in a JSON file, given after vitest's
-own arguments:
-
-```bash
-npx vitest run --project gateway -- --implementations mine.implementations.json
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:gateway -- -- --implementations /path/to/gateway.implementations.json
 ```
 
-The npm scripts name [semiont.implementations.json](semiont.implementations.json),
-Semiont's own builds. There is no default: a run that names no file, or names
-one twice, refuses to start, and so does a file that is not of the shape
-[harness/implementations.ts](harness/implementations.ts) gives. The file names
-how a gateway, a dispatcher and an Archivist are started, each SDK's drivers,
-and each Worker service, Weaver, Smelter and Librarian. Each is the argument
-list the suite starts the process with; an argument that starts with `./` or
-`../` is a path, resolved against the file's own directory. An implementation
-built elsewhere writes a file beside its build and names that.
-`harness/implementations.test.ts`, which the gateway project runs, holds the
-reader to this, and Semiont's own file to the shape.
+The manifest can name several implementations in one run. A suite refuses to start if the manifest is missing or malformed. It does not infer a current/default configuration.
 
-## Running them
+## Runtime requirements
 
-All need a built gateway, `@semiont/core` built, and `nats-server` (2.10 or
-later) on `PATH`. The harness runs `@semiont/core`'s code, not only its types:
-its generated OpenAPI validators, `kbDid`, the annotation helpers the graph
-reader uses, the jobs stream's subjects, and its fixture issuer. The dispatcher suite also needs a
-built dispatcher, the Archivist suite a built Archivist and `git`, the SDK
-suite and the worker suite the Rust drivers and the packages built, the
-worker-service suite the Worker service's environment, which `uv` makes, the
-weaver suite a built Archivist, the Weaver's environment, which `uv` makes
-too, and a neo4j of its own, whose address and password it is told in
-`NEO4J_HOST` and `NEO4J_PASSWORD` ([weaver/README.md](weaver/README.md)), and
-the smelter suite a built Archivist, the Smelter's environment, which `uv`
-makes as well, the `tesseract` program, and a Qdrant of its own, run with an
-API key and its JWT access control on, whose address and key it is told in
-`QDRANT_HOST` and `QDRANT_API_KEY` ([smelter/README.md](smelter/README.md)), and the
-librarian suite all that the weaver and smelter suites need, since it starts
-both, and the Librarian's environment, which `uv` makes
-([librarian/README.md](librarian/README.md)):
+The gateway, dispatcher, and Archivist suites need their corresponding commands and NATS Server 2.10 or newer. SDK and worker suites need the drivers named in `sdks`. Worker, Weaver, Smelter, and Librarian suites need their service commands and the external stores and tools documented by each suite. Weaver and Librarian use Neo4j; Smelter and Librarian use Qdrant. Some suites clear the database instance they receive. Use dedicated test instances.
 
-```bash
-(cd packages/rust && cargo build --release -p semiont-gateway -p semiont-dispatcher -p semiont-archivist -p semiont-conformance-drivers)
-npm run build:packages
-uv sync --locked --no-dev --all-extras --project images/worker
-uv sync --locked --no-dev --all-extras --project images/weaver
-uv sync --locked --no-dev --project images/smelter
-uv sync --locked --no-dev --all-extras --project images/librarian
-cd protocol/conformance
-npm ci
-npm test
-```
-
-The spec is bundled from `protocol/specs/src` at the start of every run, so a suite
-never checks against a stale bundle.
-
-Every process a suite starts is given the run's environment
-(`runEnvironment` in [harness/paths.ts](harness/paths.ts)) beside what its
-service's table lists: the `PATH` it is found on, and `LLVM_PROFILE_FILE`
-when the run sets it. CI does, in every job that starts the Rust binaries,
-which it builds instrumented: each writes there what it ran as it exits, and
-CI's Rust Coverage job reports it.
+The suite bundles OpenAPI from `../specs/src` for each run and derives its local types from those schemas. Run `npm run specs:bundle` at the repository root when updating generated bundles. Language-neutral case tables also live in `../specs/src`; implementation repositories should include applicable tables in their own tests.

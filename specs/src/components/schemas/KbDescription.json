@@ -8,7 +8,7 @@
     },
     "domain": {
       "type": "string",
-      "description": "The committed site.domain: the knowledge base's permanent identity. Its did is 'did:web:' + this domain (kbDid in @semiont/core). It names WHICH knowledge base this is, not which running copy: a local clone and a codespace of one repo report the same domain, so use it to verify what you connected to, never to select among copies. A knowledge base that commits no .semiont/config.yaml declares none, and is refused with browse:kb-failed."
+      "description": "The committed site.domain: the knowledge base's permanent identity. Its did is 'did:web:' + this domain (kbDid in @xynoplex/core). It names WHICH knowledge base this is, not which running copy: a local clone and a codespace of one repo report the same domain, so use it to verify what you connected to, never to select among copies. A knowledge base that commits no .semiont/config.yaml declares none, and is refused with browse:kb-failed."
     },
     "gitBranch": {
       "type": "string",

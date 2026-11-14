@@ -1,6 +1,6 @@
 {
   "about": "a frame of a job's lifecycle that the follower's reading refuses is reported, once the job has its id, as a refusal naming the channel, the member and the reason, and the follower goes on following: a later completion ends it",
-  "source": "protocol/contract/JOBS.md § Following a job; protocol/specs/src/bus/frame-cases.json",
+  "source": "contract/JOBS.md § Following a job; specs/src/bus/frame-cases.json",
   "tier": "parity",
   "needs": "bus/frame-cases.json",
   "steps": [

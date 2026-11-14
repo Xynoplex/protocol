@@ -1,7 +1,7 @@
 /**
  * The telemetry a Weaver exports (WEAVER.md § Telemetry): everything
- * protocol/specs/src/service-telemetry/telemetry.json lists for it, and the rows of
- * protocol/specs/src/sdk-telemetry/telemetry.json it names there, exported over OTLP
+ * specs/src/service-telemetry/telemetry.json lists for it, and the rows of
+ * specs/src/sdk-telemetry/telemetry.json it names there, exported over OTLP
  * to the endpoint the standard OpenTelemetry environment names; and nothing
  * else.
  */

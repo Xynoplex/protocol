@@ -8,7 +8,7 @@
  * accepts; it sent nothing the case did not account for; the frames it
  * delivered on a channel are exactly the events the gateway sent it there,
  * once each and in order; and every failure it reported carries a code from
- * protocol/specs/src/errors/codes.json.
+ * specs/src/errors/codes.json.
  *
  * The two layers account for the wire differently. A wire case reads it as a
  * transcript: every request, in order. A live case reads what the live
@@ -101,7 +101,7 @@ interface CaseDocument {
   planes?: Plane[];
   /** A live case's tier: what every live layer does, or what one at full parity does. */
   tier?: 'fleet' | 'parity';
-  /** The case table of protocol/specs/src whose behaviour the case needs, by its path there. */
+  /** The case table of specs/src whose behaviour the case needs, by its path there. */
   needs?: string;
   /**
    * Run the client exporting, and hold what it exported to the SDK telemetry
@@ -537,7 +537,7 @@ class Run {
 
   private inVocabulary(failure: ReportedFailure, detail: string): void {
     if (failure.code === undefined) throw new Error(`the client failed with no code at all: ${detail}`);
-    if (!this.codes.has(failure.code)) throw new Error(`the client reported the code ${failure.code}, which protocol/specs/src/errors/codes.json does not list (${detail})`);
+    if (!this.codes.has(failure.code)) throw new Error(`the client reported the code ${failure.code}, which specs/src/errors/codes.json does not list (${detail})`);
   }
 
   private judge(op: string, outcome: Outcome, expected: { returns?: unknown; fails?: unknown; abandoned?: true }): void {

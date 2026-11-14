@@ -1,6 +1,6 @@
 {
   "about": "a held job's lifecycle is one start, then progress and checkpoints, then one completion that states the job's type and its verb's result; every message is global and carries the job's identity; after it the worker claims again",
-  "source": "protocol/contract/WORKER-CONTRACT.md § The lifecycle",
+  "source": "contract/WORKER-CONTRACT.md § The lifecycle",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 0, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting"}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

@@ -4,7 +4,7 @@
  * judges, so nothing here is a Smelter's code, or the code a Smelter shares
  * with the index's readers.
  *
- * What the index is, protocol/specs/src/vectors/payload-cases.json states: for
+ * What the index is, specs/src/vectors/payload-cases.json states: for
  * each knowledge base, two collections that are searched, one of resources'
  * chunks and one of annotations, and the declined beside them, with what a
  * point's payload holds. The collections' words are read from that table, and
@@ -21,7 +21,7 @@
  * The Qdrant is run with an API key and its JWT access control on, as the
  * launcher runs one. Every request the suite makes presents the key, and
  * each service the suite starts is handed a token, minted here from the key,
- * whose claims are what protocol/specs/src/vectors/token-cases.json states:
+ * whose claims are what specs/src/vectors/token-cases.json states:
  * the Smelter's may do anything, and the Librarian's reads its knowledge
  * base's collections alone. kb-index.test.ts holds the tokens minted here to
  * the table's cases.
@@ -88,21 +88,21 @@ const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, TABLE), 'utf8')
 /** What the table states of a collection, under its word. */
 function stated(collection: Collection): Record<string, unknown> {
   const one = isObject(table) && isObject(table['collections']) ? table['collections'][collection] : undefined;
-  if (!isObject(one)) throw new Error(`protocol/specs/src/${TABLE} states no collection of ${collection}`);
+  if (!isObject(one)) throw new Error(`specs/src/${TABLE} states no collection of ${collection}`);
   return one;
 }
 
 /** What a collection's vectors are compared by, in Qdrant's word for it, as the table states. */
 function distanceOf(collection: Collection): string {
   const distance = stated(collection)['distance'];
-  if (typeof distance !== 'string') throw new Error(`protocol/specs/src/${TABLE} states no distance of the ${collection}`);
+  if (typeof distance !== 'string') throw new Error(`specs/src/${TABLE} states no distance of the ${collection}`);
   return distance;
 }
 
 /** The words of every collection the table states a knowledge base's index has. */
 function words(): string[] {
   const all = isObject(table) && isObject(table['collections']) ? Object.keys(table['collections']) : [];
-  if (all.length === 0) throw new Error(`protocol/specs/src/${TABLE} states no collections of an index`);
+  if (all.length === 0) throw new Error(`specs/src/${TABLE} states no collections of an index`);
   return all;
 }
 
@@ -168,7 +168,7 @@ function statedPayloads(collection: Collection): Record<string, unknown>[] {
 function member(collection: Collection, name: string): string {
   const payloads = statedPayloads(collection);
   if (payloads.length === 0 || !payloads.every((payload) => name in payload)) {
-    throw new Error(`protocol/specs/src/${TABLE} does not state ${name} in the payload of every point of the ${collection}`);
+    throw new Error(`specs/src/${TABLE} does not state ${name} in the payload of every point of the ${collection}`);
   }
   return name;
 }
@@ -253,7 +253,7 @@ export function vectorIndex(database: VectorDatabase, kb: string): VectorIndex {
   /** The name of the knowledge base's collection of a word. */
   function named(collection: Collection): string {
     const name = names[collection];
-    if (name === undefined) throw new Error(`protocol/specs/src/${TABLE} states no collection of ${collection}`);
+    if (name === undefined) throw new Error(`specs/src/${TABLE} states no collection of ${collection}`);
     return name;
   }
 

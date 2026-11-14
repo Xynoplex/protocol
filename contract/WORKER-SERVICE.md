@@ -16,7 +16,7 @@ corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and the case of
 the worker-service conformance suite
-([`protocol/conformance/worker-service`](../conformance/worker-service/README.md))
+([`conformance/worker-service`](../conformance/worker-service/README.md))
 that fails when a Worker service breaks it: `worker-service/<case>` is the
 file `<case>.test.ts` there. The suite starts the service as a process and
 meets it only at its boundary, so the same cases judge every implementation. A
@@ -35,7 +35,7 @@ from the start of the text, exactly as it was decoded
 states: the size of a piece, a cursor, the context around a span, the tokens
 of a prompt. A character outside the Basic Multilingual Plane is one code
 point, where a string of UTF-16 code units has two for it.
-[`protocol/specs/src/text/offset-cases.json`](../specs/src/text/offset-cases.json)
+[`specs/src/text/offset-cases.json`](../specs/src/text/offset-cases.json)
 holds the count.
 
 ## Configuration
@@ -65,7 +65,7 @@ holds the count.
   its issuer holds the key's public half on (`knowledgeBases[<k>].identity`'s
   `clientId`): the service's account there. Each sign-in carries an assertion
   signed with the key (RFC 7523, `private_key_jwt`;
-  `protocol/specs/src/session/client-assertion-cases.json`), and no secret. With the key
+  `specs/src/session/client-assertion-cases.json`), and no secret. With the key
   unset or empty it writes `[fatal] SEMIONT_OIDC_CLIENT_KEY is not set in the
   worker's environment: a worker signs in as a service account` and exits with
   status 1. With a key it cannot read it writes `[fatal]
@@ -88,7 +88,7 @@ holds the count.
   catalogue file's path, which every document states, and the service
   refuses to start, by that member, where the file cannot be read and where
   it states nothing of the engine's model. No other engine has the file read.
-  *Held by `worker-service/boot`, for a variable that is not set and for a document that states no catalogue, and by `images/worker/tests/test_service.py` and `packages/python/inference/tests/test_factory.py`, for the rest.*
+  *Held by `worker-service/boot`, for a variable that is not set and for a document that states no catalogue, and by `worker/tests/test_service.py` and `images/shared/python/inference/tests/test_factory.py`, for the rest.*
 - **B5.** All of the above is settled before anything is dialled. A service
   that refuses to start has asked nothing of the issuer, the gateway or a
   provider.
@@ -184,13 +184,13 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   the request's deadline, or none for as long as it is asked again, is
   trouble ([R3](#knowledge-bases)). Told to stop while it asks, the service
   asks no more.
-  *Held by `worker-service/knowledge-bases`, and by `images/worker/tests/test_agent.py` and `images/worker/tests/test_service.py` for its asking again, the stream it asks on being closed before its own opens, and its being told to stop while it asks.*
+  *Held by `worker-service/knowledge-bases`, and by `worker/tests/test_agent.py` and `worker/tests/test_service.py` for its asking again, the stream it asks on being closed before its own opens, and its being told to stop while it asks.*
 - **R2.** A refused knowledge base stays refused until the service is started
   again: its stream is closed, its engines claim nothing there, and the
   service does not sign in there again. A knowledge base is refused when its
   issuer refuses the sign-in, and when its gateway refuses to name the agent,
   in the answers the SDK's sign-in does not try again
-  ([`protocol/specs/src/retry/cases.json`](../specs/src/retry/cases.json), the
+  ([`specs/src/retry/cases.json`](../specs/src/retry/cases.json), the
   `refresh` rule: the same account gets the same answer); when a claim there
   is refused as `unauthorized` ([P3](#stopping)); and as R1 says. The service
   says each refusal once in its log, at `error`, as `Knowledge base refused
@@ -210,7 +210,7 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   ([WORKER-CONTRACT L8](./WORKER-CONTRACT.md#the-lifecycle)), and closes its
   stream; starting it again signs in afresh. The first start again waits the
   SDK's `reconnectMs`, and each further one twice the one before, up to
-  `maxReconnectMs` ([`protocol/specs/src/client/timing.json`](../specs/src/client/timing.json));
+  `maxReconnectMs` ([`specs/src/client/timing.json`](../specs/src/client/timing.json));
   a knowledge base confirmed again starts its next trouble from `reconnectMs`.
   The service says each in its log, at `warn`, as `Knowledge base in trouble —
   starting it again`, with `domain`, `error`, why in words, and `waitMs`, how
@@ -428,7 +428,7 @@ job is one unit for each of its `categories`.
   ([D15](#committing-and-where-a-job-stands)). A proposal that is not an
   object with a string `exact`, and the other members its kind requires, is
   no proposal: it is neither committed nor counted.
-  *Held by `worker-service/highlighting`, `worker-service/linking`, `worker-service/commenting`, `worker-service/anchoring`, `protocol/specs/src/annotations/reconcile-cases.json`.*
+  *Held by `worker-service/highlighting`, `worker-service/linking`, `worker-service/commenting`, `worker-service/anchoring`, `specs/src/annotations/reconcile-cases.json`.*
 - **D9.** A span on text is anchored by two selectors: a
   `TextPositionSelector`, the offsets of its first code point and of the one
   after its last; and a `TextQuoteSelector`, its `exact`, with `prefix` and
@@ -463,7 +463,7 @@ job is one unit for each of its `categories`.
   of a span that
   [`builder-cases.json`](../specs/src/annotations/builder-cases.json)
   states, as every SDK's `annotationOfSpan` builds one.
-  *Held by `worker-service/highlighting`, `protocol/specs/src/annotations/builder-cases.json`.*
+  *Held by `worker-service/highlighting`, `specs/src/annotations/builder-cases.json`.*
 - **D12.** Its `id` is what the annotation is, hashed
   ([WORKER-CONTRACT A2](./WORKER-CONTRACT.md#committing-annotations)): the
   first 21 characters of the base64url SHA-256 of the canonical JSON of
@@ -566,7 +566,7 @@ job is one unit for each of its `categories`.
 ## The five kinds of mark job
 
 The prompt each kind sends is kept, as the text sent, beside the suite in
-[`protocol/conformance/worker-service/prompts`](../conformance/worker-service/prompts).
+[`conformance/worker-service/prompts`](../conformance/worker-service/prompts).
 A job's `sourceLanguage` is said in the prompt by its English name; so is the
 `language` its text is to be written in, unless that is English.
 
@@ -977,9 +977,9 @@ focused on a resource or on an annotation.
   `resource` rows list for the worker: its name and its version. It serves
   several knowledge bases, so its resource names none
   ([T4](#telemetry)). It exports exactly what
-  [`protocol/specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
+  [`specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
   lists for the worker, and the rows of
-  [`protocol/specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
+  [`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
   the first names for it under `sdk`, the read of a resource's anchored text
   (`content.get_anchored_text`) among them. Every span and metric it exports
   is one of those rows, of the row's kind, carrying only the row's

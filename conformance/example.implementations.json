@@ -1,0 +1,16 @@
+{
+  "gateway": [
+    "./build/gateway"
+  ],
+  "dispatcher": [
+    "./build/dispatcher"
+  ],
+  "archivist": [
+    "./build/archivist"
+  ],
+  "sdks": {},
+  "workerServices": {},
+  "weaverServices": {},
+  "smelterServices": {},
+  "librarianServices": {}
+}

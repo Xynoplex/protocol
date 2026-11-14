@@ -1,5 +1,5 @@
 /**
- * The bounds on a connection (protocol/contract/TRANSPORT-HTTP.md § Limits).
+ * The bounds on a connection (contract/TRANSPORT-HTTP.md § Limits).
  * On /bus/subscribe (its `x-semiont-limits`): a client that stops taking
  * frames is disconnected once `pendingWriteBytes` are waiting for it, and a
  * replay that live frames outrun past `replayBufferEvents` is abandoned. A
@@ -10,7 +10,7 @@
  * whole within `requestHeadSeconds` of its first byte. The close
  * `idleConnectionSeconds` after an answer is too slow to wait out here; the
  * accept loop's own tests hold it on a paused clock
- * (packages/rust/http-service/tests/serve.rs).
+ * (consumer-owned Gateway implementation).
  */
 import { randomUUID } from 'node:crypto';
 import { connect } from 'node:net';

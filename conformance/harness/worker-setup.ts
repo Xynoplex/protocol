@@ -1,39 +1,14 @@
-/**
- * Once per worker run: refuse to start when a driver cannot run, so a missing
- * build reads as that, never as every case failing — make the Python SDK's
- * environment, and type-check the TypeScript driver, because Node runs it
- * with its types stripped and would run a mistyped one.
- */
-import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+/** The Worker suite runs only drivers supplied by the implementation manifest. */
 import type { TestProject } from 'vitest/node';
-import { REPO_ROOT } from './paths';
-import { makePythonSdkEnvironment } from './python-sdk';
+import type { Implementations } from './implementations';
+
+declare module 'vitest' {
+  export interface ProvidedContext {
+    sdkDrivers: Implementations['sdks'];
+  }
+}
 
 export default function setup(project: TestProject): void {
-  const drivers = project.getProvidedContext().sdkDrivers;
-  const rust = drivers['rust']?.worker?.[0];
-  if (rust !== undefined && !existsSync(rust)) {
-    throw new Error(`The Rust worker driver is not built: ${rust} does not exist. Run \`cargo build --release -p semiont-conformance-drivers\` at the repository root.`);
-  }
-  const swift = drivers['swift']?.worker?.[0];
-  if (swift !== undefined && !existsSync(swift)) {
-    throw new Error(`The Swift worker driver is not built: ${swift} does not exist. Run \`Scripts/install-driver.sh\` in packages/swift/sdk.`);
-  }
-  if (drivers['python']?.worker) makePythonSdkEnvironment();
-  if (!drivers['typescript']?.worker) return;
-  // The worker driver runs the built SDK over the built transport.
-  for (const pkg of ['http-transport', 'sdk']) {
-    const built = join(REPO_ROOT, 'packages', 'typescript', pkg, 'dist/index.js');
-    if (!existsSync(built)) {
-      throw new Error(`The TypeScript SDK is not built: ${built} does not exist. Run \`npm run build:packages\` at the repository root.`);
-    }
-  }
-  try {
-    execFileSync(join(REPO_ROOT, 'node_modules/.bin/tsc'), ['-p', join('packages', 'typescript', 'sdk', 'conformance')], { cwd: REPO_ROOT, stdio: 'pipe' });
-  } catch (error) {
-    const output = (error as { stdout?: Buffer }).stdout?.toString('utf8') ?? String(error);
-    throw new Error(`The TypeScript drivers in packages/typescript/sdk/conformance do not type-check:\n${output}`);
-  }
+  const workers = Object.values(project.getProvidedContext().sdkDrivers).filter((drivers) => drivers.worker !== undefined);
+  if (workers.length === 0) throw new Error('The implementations file names no SDK Worker drivers. Provide at least one `worker` driver in `sdks`.');
 }

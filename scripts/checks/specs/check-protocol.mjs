@@ -1,10 +1,10 @@
 // The protocol-completeness gate.
 //
 // Each service's protocol lives in the spec: a client, a conformance suite or a
-// second implementation reads `protocol/specs/src/` and learns everything the service
+// second implementation reads `specs/src/` and learns everything the service
 // answers. Two documents are held to it — the gateway's API
-// (`protocol/specs/src/openapi.json`) and the Archivist's HTTP surface
-// (`protocol/specs/src/archivist/openapi.json`) — and the check fails when either leaves
+// (`specs/src/openapi.json`) and the Archivist's HTTP surface
+// (`specs/src/archivist/openapi.json`) — and the check fails when either leaves
 // something to be learned from the code instead:
 //
 //   - a security scheme an operation names but the spec never defines;
@@ -28,7 +28,7 @@
 //   - a limit that is not a positive integer, or a principal's limit that is
 //     not a baseline with coefficients by role (below);
 //   - an emit's key forgotten before a client's attempts at that emit can
-//     have ended (`idempotencySeconds` against protocol/specs/src/client/timing.json).
+//     have ended (`idempotencySeconds` against specs/src/client/timing.json).
 //
 // It reads the SOURCE files and resolves `$ref`s itself, so it needs no bundle
 // and cannot pass on a stale one.
@@ -38,8 +38,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const REPO = resolve(HERE, '../../../..');
-const ROOT_FILES = ['protocol/specs/src/openapi.json', 'protocol/specs/src/archivist/openapi.json'].map((f) => resolve(REPO, f));
+const REPO = resolve(HERE, '../../..');
+const ROOT_FILES = ['specs/src/openapi.json', 'specs/src/archivist/openapi.json'].map((f) => resolve(REPO, f));
 
 const cache = new Map();
 function load(file) {
@@ -86,7 +86,7 @@ function refTarget(node, file) {
   return target ? resolve(dirname(file), target) : undefined;
 }
 
-const ERROR_RESPONSE = resolve(REPO, 'protocol/specs/src/components/schemas/ErrorResponse.json');
+const ERROR_RESPONSE = resolve(REPO, 'specs/src/components/schemas/ErrorResponse.json');
 const METHODS = ['get', 'put', 'post', 'delete', 'patch', 'head', 'options'];
 const failures = [];
 /** The document being checked, so each failure names it. */
@@ -168,11 +168,11 @@ function checkStream(where, schema, file) {
 // than the `readSeconds` its caller gives an answer to begin; and a call the
 // gateway makes of the Archivist for a client, `connectSeconds` and then
 // `readSeconds`, is shorter than that client's deadline on its request
-// (`httpRequestTimeoutMs`, protocol/specs/src/client/timing.json). Each
+// (`httpRequestTimeoutMs`, specs/src/client/timing.json). Each
 // number is read from where it is stated.
 {
-  const ARCHIVIST = resolve(REPO, 'protocol/specs/src/archivist/openapi.json');
-  const TIMING = resolve(REPO, 'protocol/specs/src/client/timing.json');
+  const ARCHIVIST = resolve(REPO, 'specs/src/archivist/openapi.json');
+  const TIMING = resolve(REPO, 'specs/src/client/timing.json');
   const timingFile = TIMING.slice(REPO.length + 1);
   current = ARCHIVIST.slice(REPO.length + 1);
   const archivist = load(ARCHIVIST);
@@ -287,7 +287,7 @@ for (const ROOT_FILE of ROOT_FILES) {
 // before a renewed credential and the one after, with its own renewal between;
 // a key forgotten sooner lets a late attempt be carried out twice.
 {
-  const timing = Object.fromEntries(load(resolve(REPO, 'protocol/specs/src/client/timing.json')).timing.map((t) => [t.name, t.value]));
+  const timing = Object.fromEntries(load(resolve(REPO, 'specs/src/client/timing.json')).timing.map((t) => [t.name, t.value]));
   const budgetMs = ({ attempts, initialDelayMs, maxDelayMs }, attemptMs) => {
     let delays = 0;
     for (let attempt = 1; attempt < attempts; attempt++) delays += Math.min(initialDelayMs * 2 ** (attempt - 1), maxDelayMs);
@@ -300,7 +300,7 @@ for (const ROOT_FILE of ROOT_FILES) {
   current = gateway.slice(REPO.length + 1);
   if (!positive(held)) fail('POST /bus/emit', 'states no x-semiont-limits.idempotencySeconds');
   else if (held * 1000 <= longestMs) {
-    fail('POST /bus/emit', `holds a key for ${held} s, and a client's attempts at one emit may span ${longestMs / 1000} s (two emitRetry budgets and a refreshRetry, protocol/specs/src/client/timing.json)`);
+    fail('POST /bus/emit', `holds a key for ${held} s, and a client's attempts at one emit may span ${longestMs / 1000} s (two emitRetry budgets and a refreshRetry, specs/src/client/timing.json)`);
   }
 }
 
@@ -309,4 +309,4 @@ if (failures.length > 0) {
   for (const f of failures) console.error(`  ✗ ${f}`);
   process.exit(1);
 }
-console.log('protocol/specs/src states the whole protocol of the gateway and the Archivist: every operation, response, header, stream and limit');
+console.log('specs/src states the whole protocol of the gateway and the Archivist: every operation, response, header, stream and limit');

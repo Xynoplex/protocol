@@ -5,7 +5,7 @@
  * knowledge base than the one at its gateway, and that a reconcile it cannot
  * finish does not end it.
  */
-import { kbDid } from '@semiont/core';
+import { kbDid } from '../harness/protocol-core';
 import { expect, it } from 'vitest';
 import { kbIdentity } from '../harness/spec';
 import { eachWeaver } from '../harness/weaver-world';

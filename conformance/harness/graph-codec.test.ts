@@ -1,6 +1,6 @@
 /**
  * The harness's reading of the graph, held to
- * protocol/specs/src/graph/codec-cases.json: the table every implementation of the
+ * specs/src/graph/codec-cases.json: the table every implementation of the
  * graph's codecs runs, the Weaver's among them. It is what makes
  * harness/graph-codec.ts a reader a Weaver can be judged by.
  *
@@ -14,8 +14,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { Annotation, ResourceDescriptor } from '@semiont/core';
-import { formatErrors, validators } from '@semiont/core/openapi';
+import type { Annotation, ResourceDescriptor } from './protocol-core';
+import { formatErrors, validators } from './protocol-core';
 import { intendedGraphAnnotation, isRow, isStrings, readAnnotation, readResource, type Row } from './graph-codec';
 import { SPEC_SOURCE } from './paths';
 

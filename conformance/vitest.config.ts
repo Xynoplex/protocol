@@ -4,6 +4,7 @@ import { readImplementations } from './harness/implementations';
 // What the suites test: the implementations file the run names after vitest's
 // own arguments, `-- --implementations <file>` (harness/implementations.ts).
 const implementations = readImplementations(process.argv);
+if (implementations.modelCatalogue) process.env['XYNOPLEX_CONFORMANCE_MODEL_CATALOGUE'] = implementations.modelCatalogue;
 
 // Every file boots its own processes, issuer, Archivist and broker on ports of
 // its own, so files run in parallel; the cases inside a file share them and
@@ -30,7 +31,7 @@ export default defineConfig({
           name: 'dispatcher',
           include: ['dispatcher/**/*.test.ts'],
           provide: { gatewayCommand: implementations.gateway, dispatcherCommand: implementations.dispatcher },
-          globalSetup: ['harness/global-setup.ts', 'harness/dispatcher-setup.ts'],
+          globalSetup: ['harness/global-setup.ts'],
         },
       },
       {
@@ -48,7 +49,7 @@ export default defineConfig({
           name: 'sdk',
           include: ['sdk/**/*.test.ts'],
           provide: { gatewayCommand: implementations.gateway, sdkDrivers: implementations.sdks },
-          globalSetup: ['harness/global-setup.ts', 'harness/sdk-setup.ts'],
+          globalSetup: ['harness/global-setup.ts'],
         },
       },
       {
@@ -57,7 +58,7 @@ export default defineConfig({
           name: 'worker',
           include: ['worker/**/*.test.ts'],
           provide: { gatewayCommand: implementations.gateway, sdkDrivers: implementations.sdks },
-          globalSetup: ['harness/global-setup.ts', 'harness/worker-setup.ts'],
+          globalSetup: ['harness/global-setup.ts'],
         },
       },
       {

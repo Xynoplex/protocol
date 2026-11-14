@@ -1,11 +1,11 @@
 # W3C Web Annotation Data Model
 
-Semiont implements the [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/), a standard specification for creating, sharing, and managing annotations across the web.
+Xynoplex implements the [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/), a standard specification for creating, sharing, and managing annotations across the web.
 
 **Related Documentation:**
 - [W3C Selectors](./W3C-SELECTORS.md) - Which selectors apply to text, PDFs and images
 - [Knowledge System](../../docs/architecture/KNOWLEDGE-SYSTEM.md) - How annotations flow through the event store, materialized views, and graph
-- [Semiont Protocol](./README.md) - The eight verbs and the bus these annotations travel on
+- [Xynoplex Protocol](./README.md) - The eight verbs and the bus these annotations travel on
 - [OpenAPI Specification](../specs/src/openapi.json) - Machine-readable API contract
 
 ## Table of Contents
@@ -79,7 +79,7 @@ Every W3C annotation has these required fields:
 
 ## Annotation Types
 
-Semiont uses five W3C motivations. Each decides what the annotation's body holds:
+Xynoplex uses five W3C motivations. Each decides what the annotation's body holds:
 
 | Motivation | Records | Body |
 |---|---|---|
@@ -374,7 +374,7 @@ See [W3C-SELECTORS.md](./W3C-SELECTORS.md) for complete selector documentation.
 
 ## JSON-LD Export
 
-Semiont annotations are fully W3C-compliant and can be exported as standard JSON-LD:
+Xynoplex annotations are fully W3C-compliant and can be exported as standard JSON-LD:
 
 ```json
 {

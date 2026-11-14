@@ -1,6 +1,6 @@
 {
   "about": "a cancellation that names the held job is signalled to the work, and the worker settles with a cancel carrying the units it finished; one that names another job is ignored",
-  "source": "protocol/contract/WORKER-CONTRACT.md § Cancellation",
+  "source": "contract/WORKER-CONTRACT.md § Cancellation",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 0, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting"}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

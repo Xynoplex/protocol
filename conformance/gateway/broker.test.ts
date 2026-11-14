@@ -1,14 +1,14 @@
 /**
  * What the gateway leaves on the broker it shares with the dispatcher. The
  * signal plane is never a record: no frame it carries is captured by a
- * stream (protocol/contract/EVENT-BUS.md § Where the bus lives) — the only
+ * stream (contract/EVENT-BUS.md § Where the bus lives) — the only
  * streams it creates are the key-value tables its ledger keeps claims and
  * retained replies in — and nothing it publishes lands in the dispatcher's
  * job stream, which shares the broker. NATS only.
  */
 import { randomUUID } from 'node:crypto';
 import { connect, type NatsConnection } from 'nats';
-import { JOBS_STREAM_SUBJECTS } from '@semiont/core';
+import { JOBS_STREAM_SUBJECTS } from '../harness/protocol-core';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { operationFor } from '../harness/spec';
 import { eachPlane } from '../harness/world';

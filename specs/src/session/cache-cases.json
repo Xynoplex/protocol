@@ -1,30 +1,30 @@
 {
-  "$comment": "AUTHORITY for what a client keeps of its queries and of its stream in a SessionStorage, and what it keeps of what another client wrote there: the queries protocol/specs/src/client/refresh.json marks `persisted`, and protocol/specs/src/session/stored.json's `wholeKey`, `cacheDocument` and `lastEventIds`, case by case. Every SDK runs every case through its own persister for the case's query, under the key stored.json gives it for a knowledge base and a person of the runner's choosing (`cacheKeyPrefix`, the knowledge base's id, `.`, the person's key, `.`, the query's name; `lastEventIdKeyPrefix`, the knowledge base's id, `.` and the person's key), and fails on a difference. `cases` are loads: `stored` is kept under the query's key as its JSON text, or `storedText` as it is; `kept` is every entry the load keeps, a key as the document writes it and a value, compared as a map, as the entries' order is no part of the rule. `writes`: `held` is what the query's cache holds once its answers came; `written` is the document the save writes, its entries compared as a map, and each entry's third item, its stamp, an integer of at least 0 (which one is the clock's, no part of the rule). `refusedWrites` are writes as `writes` are, over a storage that refuses the first write of the query's document: the cache still owes its save after it, and disposal's flush, which the storage takes, writes `written`. `places` are loads of `lastEventIds`: `stored` or `storedText` as for `cases`, and `kept` the places the load keeps. Every value is a wire value its query's `value` in refresh.json holds, except where a case's name says it is not the query's.",
+  "$comment": "AUTHORITY for what a client keeps of its queries and of its stream in a SessionStorage, and what it keeps of what another client wrote there: the queries specs/src/client/refresh.json marks `persisted`, and specs/src/session/stored.json's `wholeKey`, `cacheDocument` and `lastEventIds`, case by case. Every SDK runs every case through its own persister for the case's query, under the key stored.json gives it for a knowledge base and a person of the runner's choosing (`cacheKeyPrefix`, the knowledge base's id, `.`, the person's key, `.`, the query's name; `lastEventIdKeyPrefix`, the knowledge base's id, `.` and the person's key), and fails on a difference. `cases` are loads: `stored` is kept under the query's key as its JSON text, or `storedText` as it is; `kept` is every entry the load keeps, a key as the document writes it and a value, compared as a map, as the entries' order is no part of the rule. `writes`: `held` is what the query's cache holds once its answers came; `written` is the document the save writes, its entries compared as a map, and each entry's third item, its stamp, an integer of at least 0 (which one is the clock's, no part of the rule). `refusedWrites` are writes as `writes` are, over a storage that refuses the first write of the query's document: the cache still owes its save after it, and disposal's flush, which the storage takes, writes `written`. `places` are loads of `lastEventIds`: `stored` or `storedText` as for `cases`, and `kept` the places the load keeps. Every value is a wire value its query's `value` in refresh.json holds, except where a case's name says it is not the query's.",
   "runBy": {
     "typescript": [
-      "packages/typescript/core/src/__tests__/cache-cases.test.ts",
-      "packages/typescript/sdk/src/__tests__/cache-cases.test.ts"
+      "sdk/typescript/core/src/__tests__/cache-cases.test.ts",
+      "sdk/typescript/sdk/src/__tests__/cache-cases.test.ts"
     ],
     "rust": [
-      "packages/rust/sdk/tests/cache_cases.rs"
+      "sdk/rust/sdk/tests/cache_cases.rs"
     ],
     "python": [
-      "packages/python/sdk/tests/test_cache_cases.py"
+      "sdk/python/sdk/tests/test_cache_cases.py"
     ],
     "go": [
-      "packages/go/sdk/cache_cases_test.go"
+      "sdk/go/sdk/cache_cases_test.go"
     ],
     "kotlin": [
-      "packages/kotlin/sdk/src/test/kotlin/semiont/storage/CacheCasesTest.kt"
+      "sdk/kotlin/sdk/src/test/kotlin/semiont/storage/CacheCasesTest.kt"
     ],
     "swift": [
-      "packages/swift/sdk/Tests/SemiontTests/CacheCasesTests.swift"
+      "sdk/swift/sdk/Tests/SemiontTests/CacheCasesTests.swift"
     ],
     "csharp": [
-      "packages/csharp/sdk/tests/Semiont.Tests/CacheCasesTests.cs"
+      "sdk/csharp/sdk/tests/Semiont.Tests/CacheCasesTests.cs"
     ],
     "haskell": [
-      "packages/haskell/sdk/test/CacheDocumentCases.hs"
+      "sdk/haskell/sdk/test/CacheDocumentCases.hs"
     ]
   },
   "notYetReached": {

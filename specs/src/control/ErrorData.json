@@ -1,11 +1,11 @@
 {
   "title": "ErrorData",
   "type": "object",
-  "description": "The data of a control error: the launcher's code for the failure, one of protocol/specs/src/errors/codes.json's control group, and what a client can act on. A request's failure is never only a message.",
+  "description": "The data of a control error: the launcher's code for the failure, one of specs/src/errors/codes.json's control group, and what a client can act on. A request's failure is never only a message.",
   "properties": {
     "code": {
       "type": "string",
-      "description": "Why the request failed: a code of the control group of protocol/specs/src/errors/codes.json.",
+      "description": "Why the request failed: a code of the control group of specs/src/errors/codes.json.",
       "pattern": "^control\\.[a-z]+(-[a-z]+)*$"
     },
     "retryable": {

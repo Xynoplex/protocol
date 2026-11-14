@@ -1,7 +1,7 @@
 /**
  * The broker going away under a running gateway: a stream open across the
  * outage carries on without reconnecting — the gateway reconnects on its own
- * — and an emit made while it is down is refused, never accepted and lost (protocol/contract/
+ * — and an emit made while it is down is refused, never accepted and lost (contract/
  * TRANSPORT-HTTP.md § POST /bus/emit; docs/operator/administration/
  * TROUBLESHOOTING.md § Commands fail, or real-time updates stop). A broker
  * that comes back refusing the gateway's credentials is not

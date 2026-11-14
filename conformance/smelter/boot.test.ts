@@ -6,7 +6,7 @@
  * reconcile reports (§ Reconcile), and what a Smelter does when its provider
  * has not fetched its model yet (§ The embedding provider).
  */
-import { kbDid } from '@semiont/core';
+import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eventually } from '../harness/net';
 import { NOT_FETCHED } from '../harness/ollama-embed';

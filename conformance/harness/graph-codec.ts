@@ -4,7 +4,7 @@
  * annotation the record holds.
  *
  * This suite reads the graph with a reader of its own, held to the same case
- * table the Weaver's codec is held to (protocol/specs/src/graph/codec-cases.json, run
+ * table the Weaver's codec is held to (specs/src/graph/codec-cases.json, run
  * by graph-codec.test.ts), so that it judges a Weaver by something other than
  * the Weaver's own code. The other way would be for `semiont_graph` to offer
  * a small command that prints a resource's rows, decoded, as JSON, which the
@@ -15,9 +15,9 @@
  * refused by the field's name, and a field a row does not hold is left out of
  * what is read.
  */
-import { annotationId, getBodySource, getEntityTypes, getTargetSelector, getTargetSource, resourceId } from '@semiont/core';
-import type { Annotation, components, ResourceDescriptor } from '@semiont/core';
-import { formatErrors, validators } from '@semiont/core/openapi';
+import { annotationId, getBodySource, getEntityTypes, getTargetSelector, getTargetSource, resourceId } from './protocol-core';
+import type { Annotation, components, ResourceDescriptor } from './protocol-core';
+import { formatErrors, validators } from './protocol-core';
 
 /** A node's properties, as a store answers them. Nothing in one is trusted until it is read. */
 export type Row = Readonly<Record<string, unknown>>;

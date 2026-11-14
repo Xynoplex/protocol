@@ -4,8 +4,8 @@
  * on one is known to the others, an emit's key held by one is recognised by
  * the others, and a reply retained by one is recovered through another — or
  * through the same one after it restarts.
- * protocol/contract/TRANSPORT-HTTP.md § POST /bus/emit (Claims) and § Correlated-
- * reply retention; protocol/specs/src/paths/bus_emit.json (A key: held on every
+ * contract/TRANSPORT-HTTP.md § POST /bus/emit (Claims) and § Correlated-
+ * reply retention; specs/src/paths/bus_emit.json (A key: held on every
  * replica). NATS only: the in-process plane is one process.
  */
 import { randomUUID } from 'node:crypto';

@@ -1,6 +1,6 @@
 {
   "about": "an event that carries an annotation, heard while its resource's annotation list is first asked for, is patched into what that request answers: neither the answer nor the event is lost, and nothing more is asked (B13b)",
-  "source": "protocol/contract/CACHE-SEMANTICS.md B13b; protocol/specs/src/client/refresh.json mark:body-updated",
+  "source": "contract/CACHE-SEMANTICS.md B13b; specs/src/client/refresh.json mark:body-updated",
   "tier": "parity",
   "steps": [
     {"let": {

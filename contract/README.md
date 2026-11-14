@@ -1,6 +1,6 @@
-# Semiont Protocol
+# Xynoplex Protocol
 
-**Semiont accumulates mappings and builds the structures to navigate them.**
+**Xynoplex accumulates mappings and builds the structures to navigate them.**
 
 A mapping is a claim that some passage relates to some thing — a highlight, a comment, an entity reference, a resolved link between a mention and its target. Every one is anchored to a specific passage, attributed to the participant who asserted it, timestamped, and appended to a log that is never rewritten. Mappings only accumulate. The knowledge graph, the vector index, and the materialized views are projections built over them, so that what has accumulated can be navigated at corpus scale.
 
@@ -17,7 +17,7 @@ Every operation belongs to one of eight verbs. They fall into three groups, by w
 - **[Yield](flows/YIELD.md)** brings a resource in: by upload, by generation, by cloning.
 - **[Mark](flows/MARK.md)** annotates a passage or a region: a highlight, a comment, an assessment, a tag, a reference.
 - **[Bind](flows/BIND.md)** says what a reference refers to: the act of making a mention of "Paris" point at the right Paris.
-- **[Frame](flows/FRAME.md)** defines the vocabulary the other three are expressed in: entity types and tag schemas. Neither is fixed by Semiont; the participants in a knowledge base grow them.
+- **[Frame](flows/FRAME.md)** defines the vocabulary the other three are expressed in: entity types and tag schemas. Neither is fixed by Xynoplex; the participants in a knowledge base grow them.
 
 Yield and Mark are where delegation enters. Each has a form done by hand and a delegated form, and the two produce the same events: `yield.resource` uploads a document while `yield.delegate` generates one, and `mark.annotation` records a highlight you made while `mark.delegate` has an agent find them across a resource. Same verb, same result, different author.
 
@@ -57,28 +57,28 @@ Each verb's contract is in **[flows/](flows/README.md)**.
 
 ## One authority, generated clients
 
-The bus is not defined in prose. **[`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json)** is the machine-readable authority: every channel, the schema of what it carries, the request and reply channels of every operation, which channels are events of the record, who receives each, and the payload field a relayed frame's trace rides in. [CHANNELS.md](CHANNELS.md) is the readable inventory.
+The bus is not defined in prose. **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)** is the machine-readable authority: every channel, the schema of what it carries, the request and reply channels of every operation, which channels are events of the record, who receives each, and the payload field a relayed frame's trace rides in. [CHANNELS.md](CHANNELS.md) is the readable inventory.
 
 The TypeScript, Rust, Go, Python and Kotlin clients each *generate* their channel tables from that file. Five implementations in five languages derive from one artifact, which is the practical answer to "is this a protocol or just a TypeScript library."
 
-The same holds one level up. **[`protocol/specs/src/client/surface.json`](../specs/src/client/surface.json)** declares every method an SDK gives each verb and the shape of what it returns, and the members of what a worker is handed: its claims, and a job it holds. Every SDK is held to it: a lint checks each SDK's methods and those members against the table, and each SDK's own tests run the table's cases.
+The same holds one level up. **[`specs/src/client/surface.json`](../specs/src/client/surface.json)** declares every method an SDK gives each verb and the shape of what it returns, and the members of what a worker is handed: its claims, and a job it holds. Every SDK is held to it: a lint checks each SDK's methods and those members against the table, and each SDK's own tests run the table's cases.
 
 ## Speaking the protocol
 
 The eight verbs are also the eight namespaces of a client in every SDK: `yield`, `mark`, `bind`, `frame`, `browse`, `match`, `gather` and `beckon`. The protocol's vocabulary and the typed surface are one to one, so there is no translation step between reading a verb's contract and writing code. In TypeScript:
 
 ```typescript
-import { MemorySignIn, SemiontSession, httpKb } from '@semiont/sdk';
+import { MemorySignIn, XynoplexSession, httpKb } from '@xynoplex/sdk';
 
 const kb = httpKb({ id: 'demo', label: 'Demo', host: 'localhost', port: 4000, protocol: 'http' });
 const kept = new MemorySignIn();
-await SemiontSession.signInDevice({
+await XynoplexSession.signInDevice({
   kb,
   kept,
   onCode: ({ verificationUriComplete, verificationUri }) =>
     console.error(`Approve at ${verificationUriComplete ?? verificationUri}`),
 });
-const opened = await SemiontSession.fromKept({ kb, kept });
+const opened = await XynoplexSession.fromKept({ kb, kept });
 const semiont = opened.session.client;
 
 await semiont.mark.delegate(resourceId, { motivation: 'linking', entityTypes: ['Person'] });  // write
@@ -91,9 +91,9 @@ await semiont.bind.body(resourceId, annotationId, [                             
 
 Three surfaces speak these verbs:
 
-- **The SDKs**, in [TypeScript](../../packages/typescript/sdk/README.md), [Rust](../../packages/rust/sdk/README.md), [Python](../../packages/python/sdk/README.md), [Go](../../packages/go/sdk/README.md) and [Kotlin](../../packages/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](../../docs/builder/README.md)**.
+- **The SDKs**, in [TypeScript](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/Xynoplex/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/Xynoplex/sdk/tree/main/go/sdk/README.md) and [Kotlin](https://github.com/Xynoplex/sdk/tree/main/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](../../docs/builder/README.md)**.
 - **[Agent skills](../../docs/builder/skills/)** are ready-made skill definitions that agentic coding assistants use to work in a knowledge base without writing integration code.
-- **[The launcher](../../apps/launcher/README.md)**, the `semiont` binary, exposes the verbs as terminal commands against a running stack; `semiont <verb> --help` for each.
+- **[The launcher](https://github.com/Xynoplex/cli/tree/main/README.md)**, the `semiont` binary, exposes the verbs as terminal commands against a running stack; `semiont <verb> --help` for each.
 
 For product framing and getting a knowledge base running, see the **[project README](../../README.md)**.
 
@@ -118,4 +118,4 @@ For product framing and getting a knowledge base running, see the **[project REA
 | [RBAC.md](RBAC.md) | Roles: the one authorization decision, and the two roles that mark services |
 | [W3C-WEB-ANNOTATION.md](W3C-WEB-ANNOTATION.md), [W3C-SELECTORS.md](W3C-SELECTORS.md) | The annotation model, and which selectors apply to which media |
 
-The machine-readable half is [`protocol/specs/`](../specs/README.md): the OpenAPI document, the bus registry, the SDK surface, and the shared case tables every implementation runs.
+The machine-readable half is [`specs/`](../specs/README.md): the OpenAPI document, the bus registry, the SDK surface, and the shared case tables every implementation runs.

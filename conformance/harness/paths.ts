@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 // What the kit reads of this repository. What it tests is not named here: a
 // run names its implementations file (implementations.ts).
 
-export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
+export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 /**
  * What a process a suite starts is given of the suite's own environment,
@@ -25,15 +25,12 @@ export function runEnvironment(): Record<string, string> {
   return { PATH: process.env['PATH'] ?? '', ...measured };
 }
 
-/** The Python SDK, whose locked environment the SDK and worker suites' setups make for its drivers. */
-export const PYTHON_SDK = join(REPO_ROOT, 'packages/python/sdk');
-
 /**
  * The model catalogue file a worker's document and a Librarian's each name:
  * the repository's one generated copy, which their images carry. A service
  * reads it only for a provider whose own API does not state a model's facts,
  * and no suite here runs one.
  */
-export const MODEL_CATALOGUE = join(REPO_ROOT, 'packages/python/inference/tests/catalogue/model-catalogue.json');
+export const MODEL_CATALOGUE = process.env['XYNOPLEX_CONFORMANCE_MODEL_CATALOGUE'] ?? '';
 
-export const SPEC_SOURCE = join(REPO_ROOT, 'protocol/specs/src');
+export const SPEC_SOURCE = join(REPO_ROOT, 'specs/src');

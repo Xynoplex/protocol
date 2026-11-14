@@ -13,7 +13,7 @@
  */
 import { randomBytes, randomUUID } from 'node:crypto';
 import { afterAll, afterEach, beforeAll, describe } from 'vitest';
-import type { components } from '@semiont/core';
+import type { components } from './protocol-core';
 import { QUIET_TIMING, startDispatcher, type DispatcherEnvironment, type DispatcherProcess, type DispatcherSettings, type DispatcherTiming } from './dispatcher';
 import { startBroker, type Broker, type BrokerOptions } from './nats';
 import { eventually, freePort } from './net';

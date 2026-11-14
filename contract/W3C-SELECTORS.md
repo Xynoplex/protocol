@@ -1,6 +1,6 @@
 # W3C Web Annotation Selectors
 
-Which selectors a Semiont annotation carries, and why the answer depends on the
+Which selectors a Xynoplex annotation carries, and why the answer depends on the
 resource it points at.
 
 A resource's media type constrains the selectors that can apply to it. Text
@@ -13,14 +13,14 @@ how a scanned page gets one at all, is
 **Related Documentation:**
 - [Anchoring](../../docs/architecture/ANCHORING.md) - How a coordinate map is derived, stored and turned into a selector
 - [W3C Web Annotation Implementation](./W3C-WEB-ANNOTATION.md) - Complete annotation architecture
-- [Semiont Protocol](./README.md) - The eight verbs and the bus these annotations travel on
+- [Xynoplex Protocol](./README.md) - The eight verbs and the bus these annotations travel on
 - [OpenAPI Specification](../specs/src/openapi.json) - Machine-readable API spec
 - [Media Types](../../docs/architecture/MEDIA-TYPES.md) - What each media type declares, and what that changes
-- [@semiont/core Utilities](../../packages/typescript/core/docs/Utilities.md) - Implementation aids: fuzzy anchoring, SVG selector parsing, position validation
+- [@xynoplex/core Utilities](https://github.com/Xynoplex/sdk/tree/main/typescript/core/docs/Utilities.md) - Implementation aids: fuzzy anchoring, SVG selector parsing, position validation
 
 ## Text selectors
 
-Semiont implements **W3C-compliant text selectors** using a combination of TextPositionSelector and TextQuoteSelector for robustness.
+Xynoplex implements **W3C-compliant text selectors** using a combination of TextPositionSelector and TextQuoteSelector for robustness.
 
 ### What a text annotation carries
 
@@ -52,7 +52,7 @@ Every text annotation includes both selector types:
 Specifies a span by two offsets from the start of the resource's text:
 
 ```typescript
-import type { TextPositionSelector } from '@semiont/core';
+import type { TextPositionSelector } from '@xynoplex/core';
 
 const position: TextPositionSelector = {
   type: 'TextPositionSelector',
@@ -68,9 +68,9 @@ the count the Web Annotation Data Model requires, and it is the same number in
 every language. A character outside the Basic Multilingual Plane (an emoji, a
 mathematical letter, some CJK) is one code point, where a JavaScript string
 has two UTF-16 code units for it, so an offset is a string's own position only
-up to the first such character. `textOffsets` in `@semiont/core` converts
+up to the first such character. `textOffsets` in `@xynoplex/core` converts
 between the two, and
-[`protocol/specs/src/text/offset-cases.json`](../specs/src/text/offset-cases.json)
+[`specs/src/text/offset-cases.json`](../specs/src/text/offset-cases.json)
 holds the count for every implementation.
 
 **W3C Specification:** [§4.2.1 TextPositionSelector](https://www.w3.org/TR/annotation-model/#text-position-selector)
@@ -80,7 +80,7 @@ holds the count for every implementation.
 Specifies the exact text with optional context:
 
 ```typescript
-import type { TextQuoteSelector } from '@semiont/core';
+import type { TextQuoteSelector } from '@xynoplex/core';
 
 const quote: TextQuoteSelector = {
   type: 'TextQuoteSelector',
@@ -110,11 +110,11 @@ the text that starts at end, as long as suffix is       is suffix   // when suff
 
 Every position and every length there is counted in code points.
 
-This write-time reconciliation (`reconcile` in `@semiont/core`, and in every SDK) is where fuzzy matching lives — verbatim, then deterministic normalization (smart quotes, whitespace), then Levenshtein within a 5% tolerance — because the source content is in hand and the output is the authoritative record. All five annotation-detection workers converge on it. When `exact` appears more than once, prefix/suffix disambiguate; an undisambiguated multi-occurrence match is flagged `first-of-many` for audit rather than silently anchored. See [@semiont/core Utilities](../../packages/typescript/core/docs/Utilities.md#reconcile-what-a-model-quoted).
+This write-time reconciliation (`reconcile` in `@xynoplex/core`, and in every SDK) is where fuzzy matching lives — verbatim, then deterministic normalization (smart quotes, whitespace), then Levenshtein within a 5% tolerance — because the source content is in hand and the output is the authoritative record. All five annotation-detection workers converge on it. When `exact` appears more than once, prefix/suffix disambiguate; an undisambiguated multi-occurrence match is flagged `first-of-many` for audit rather than silently anchored. See [@xynoplex/core Utilities](https://github.com/Xynoplex/sdk/tree/main/typescript/core/docs/Utilities.md#reconcile-what-a-model-quoted).
 
 ### Render-Time Anchoring (Verbatim Only)
 
-Because the stored selectors already agree, the renderer trusts them and re-anchors only on a **verbatim** quote match. The one legitimate render-time discrepancy is *positional drift*: content shifted above the span after the annotation was written, so the `TextPositionSelector` is stale but `exact` still exists byte-identical. `anchorAnnotation` (`@semiont/core`) recovers it — uniquely, disambiguated by prefix/suffix, or (for repeated text) by closest-to-offset position — and flags anything it cannot resolve verbatim as low-confidence rather than fuzzy-matching at render time. This is the W3C-intended use of `TextQuoteSelector` for recovery; the fuzzy fallback chain stays on the write side.
+Because the stored selectors already agree, the renderer trusts them and re-anchors only on a **verbatim** quote match. The one legitimate render-time discrepancy is *positional drift*: content shifted above the span after the annotation was written, so the `TextPositionSelector` is stale but `exact` still exists byte-identical. `anchorAnnotation` (`@xynoplex/core`) recovers it — uniquely, disambiguated by prefix/suffix, or (for repeated text) by closest-to-offset position — and flags anything it cannot resolve verbatim as low-confidence rather than fuzzy-matching at render time. This is the W3C-intended use of `TextQuoteSelector` for recovery; the fuzzy fallback chain stays on the write side.
 
 ### The text of a resource
 
@@ -139,7 +139,7 @@ hold it, which every reader runs.
   not allow there. A content type the standard does not parse, such as one
   with no subtype, has no parameters. Where no charset is stated, or the one
   stated is empty, the charset is UTF-8.
-  *Held by `protocol/specs/src/text/decode-cases.json`.*
+  *Held by `specs/src/text/decode-cases.json`.*
 - **T2. The charset is a label of the Encoding Standard**, matched as the
   standard gets an encoding: ASCII white space around it is dropped, and its
   ASCII case is not read. The label names the encoding the standard gives it:
@@ -148,7 +148,7 @@ hold it, which every reader runs.
   a label of the standard's `replacement` encoding or of one of its seven
   legacy multi-byte encodings (T7). The refusal names the charset, and is
   made whatever the bytes are: no mark decides for a charset that is refused.
-  *Held by `protocol/specs/src/text/decode-cases.json`, and for every label of the standard by `protocol/specs/src/text/encoding-cases.json`.*
+  *Held by `specs/src/text/decode-cases.json`, and for every label of the standard by `specs/src/text/encoding-cases.json`.*
 - **T3. A byte-order mark decides, and is not part of the text**, as in the
   standard's `decode`. Bytes that begin `EF BB BF` are UTF-8, bytes that begin
   `FE FF` are UTF-16BE, and bytes that begin `FF FE` are UTF-16LE, whatever
@@ -156,7 +156,7 @@ hold it, which every reader runs.
   encoding is the one stated, or UTF-8. A mark anywhere else is U+FEFF, a
   character of the text like any other, and so is a second mark after the
   first.
-  *Held by `protocol/specs/src/text/decode-cases.json`.*
+  *Held by `specs/src/text/decode-cases.json`.*
 - **T4. The bytes are decoded by the standard's decoder for the encoding, in
   replacement mode.** What the encoding does not have becomes U+FFFD: as many
   as the standard's decoder emits, and no more. In UTF-8 a sequence cut short
@@ -166,12 +166,12 @@ hold it, which every reader runs.
   the one the standard's index gives it, and U+FFFD only where the index
   gives it none: the bytes windows-1252 leaves unassigned are the controls of
   the same number.
-  *Held by `protocol/specs/src/text/decode-cases.json` for UTF-8 and UTF-16, and by `protocol/specs/src/text/encoding-cases.json` for every byte of every single-byte encoding, x-user-defined among them.*
+  *Held by `specs/src/text/decode-cases.json` for UTF-8 and UTF-16, and by `specs/src/text/encoding-cases.json` for every byte of every single-byte encoding, x-user-defined among them.*
 - **T5. A refusal is the reader's own failure, of the kind its other failures
   are**: in an SDK, a transport's failure whose code is `error`. No reader
   fails from inside a decoder, and none reads a charset it refuses as another
   one. The bytes are still there to read, as the resource's representation.
-  *Held by `protocol/specs/src/text/decode-cases.json`.*
+  *Held by `specs/src/text/decode-cases.json`.*
 - **T6. A reader may decode fewer encodings than the standard has.** It
   refuses, as T5 says and by name, a resource whose stated charset is a label
   of an encoding it does not decode, and bytes whose mark is of one. What it
@@ -180,7 +180,7 @@ hold it, which every reader runs.
   platform's `TextDecoder` does, but for the encodings T7 refuses: in a
   browser, and in a Node built with full ICU, as Node's own distributions
   are, that is every other encoding of the standard.
-  *Held by `packages/rust/sdk/src/resources.rs` for the Rust SDK's reader of UTF-8 alone.*
+  *Held by `sdk/rust/sdk/src/resources.rs` for the Rust SDK's reader of UTF-8 alone.*
 - **T7. The seven legacy multi-byte encodings are refused.** Big5, EUC-JP,
   EUC-KR, gb18030, GBK, ISO-2022-JP and Shift_JIS are encodings of the
   standard, and their labels are labels, but no reader decodes them. Each
@@ -198,7 +198,7 @@ hold it, which every reader runs.
   (T1) and whatever its bytes are: a PDF, whose text is derived from its
   bytes ([PDF selectors](#pdf-selectors)), and an image, which has none. No
   reader makes a text of bytes that were never one.
-  *Held by `protocol/specs/src/text/decode-cases.json`.*
+  *Held by `specs/src/text/decode-cases.json`.*
 
 ## PDF selectors
 

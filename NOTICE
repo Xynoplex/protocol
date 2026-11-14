@@ -1,0 +1,18 @@
+Xynoplex Protocol
+Copyright 2026 Xynoplex
+
+Historical source through 2026-08-26
+
+The protocol, specification, and conformance material in the baseline snapshot
+was carried forward from The AI Alliance's Semiont monorepo as it stood through
+2026-08-26. That material remains available under the Apache License, Version
+2.0. Its historical source and project name are retained here to identify
+provenance; they do not describe current ownership or product branding.
+
+Xynoplex work
+
+Protocol work on and after 2026-08-27 is owned by Xynoplex. The repository
+history consolidates earlier source into one dated baseline commit, followed
+by the applicable post-boundary changes.
+
+Third-party notices remain with the files or dependencies to which they apply.

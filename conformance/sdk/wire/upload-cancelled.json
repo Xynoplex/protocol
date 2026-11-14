@@ -1,6 +1,6 @@
 {
   "about": "an upload its caller cancels before the gateway has answered reports nothing more: its connection is closed, nothing is put on the error stream, and it is not sent again",
-  "source": "protocol/contract/TRANSPORT-CONTRACT.md § Content and the gateway's own operations",
+  "source": "contract/TRANSPORT-CONTRACT.md § Content and the gateway's own operations",
   "steps": [
     {"backend": "hold", "with": {"wire": "POST /resources"}},
     {"driver": "open", "with": {"channels": ["beckon:focus"], "timing": {"reconnectMs": 50, "lazyRemoveMs": 50}}},

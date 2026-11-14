@@ -6,7 +6,7 @@
  * carried a message the spec does not allow.
  */
 import { randomBytes, randomUUID } from 'node:crypto';
-import type { components } from '@semiont/core';
+import type { components } from './protocol-core';
 import { SignJWT } from 'jose';
 import { afterAll, afterEach, beforeAll, describe, expect, type TestContext } from 'vitest';
 import { startArchivist, type FakeArchivist } from './archivist';

@@ -1,13 +1,13 @@
 /**
  * The telemetry a worker exports (WORKER-SERVICE.md § Telemetry): everything
- * protocol/specs/src/service-telemetry/telemetry.json lists for it, and the rows of
- * protocol/specs/src/sdk-telemetry/telemetry.json it names there, exported over OTLP
+ * specs/src/service-telemetry/telemetry.json lists for it, and the rows of
+ * specs/src/sdk-telemetry/telemetry.json it names there, exported over OTLP
  * to the endpoint the standard OpenTelemetry environment names; and nothing
  * else. What it records of a job names the knowledge base that handed the
  * job over.
  */
 import { randomUUID } from 'node:crypto';
-import { kbDid } from '@semiont/core';
+import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { marks } from '../harness/dispatcher-world';
 import { eventually } from '../harness/net';

@@ -2,7 +2,7 @@
  * `POST /bus/subscribe`: what reaches which connection, replay and its gaps,
  * the recovery of replies, presence and the heartbeat. Every message every
  * stream here carries is also checked against BusStreamMessage and the id
- * rules (harness/stream.ts). Semantics from protocol/contract/TRANSPORT-HTTP.md
+ * rules (harness/stream.ts). Semantics from contract/TRANSPORT-HTTP.md
  * § POST /bus/subscribe and § Event id and resumption.
  */
 import { randomUUID } from 'node:crypto';

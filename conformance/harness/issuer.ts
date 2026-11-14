@@ -2,18 +2,18 @@
  * The knowledge base's trusted issuer, served over HTTP: OIDC discovery, the
  * key set at the path discovery names, and a token endpoint answering the
  * client-credentials grant for the service accounts it is given. Signing is
- * `@semiont/core/testing/issuer`'s; this file only puts it on a port.
+ * the protocol's local fixture issuer; this file only puts it on a port.
  *
  * An account proves itself by its client secret, or by an assertion signed
  * with the key whose public half the account registers (RFC 7523,
- * `private_key_jwt`; protocol/specs/src/session/client-assertion-cases.json), checked
+ * `private_key_jwt`; specs/src/session/client-assertion-cases.json), checked
  * here as an issuer checks one: its signature, its issuer and subject, its
  * audience (this token endpoint), its expiry, and a `jti` it has not seen.
  */
 import { verify, type KeyObject } from 'node:crypto';
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { fixtureIssuer, type FixtureIssuer, type TokenOptions } from '@semiont/core/testing/issuer';
+import { fixtureIssuer, type FixtureIssuer, type TokenOptions } from './protocol-core';
 import { AGENT_KIND, KIND_CLAIM, SERVICE_ROLE, WORKER_ROLE } from './roles';
 
 /** A service account the issuer grants: by its client secret, or by the key whose public half is registered. */

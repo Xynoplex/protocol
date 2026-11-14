@@ -49,7 +49,7 @@ Each of these is appended to the event log and delivered to clients:
 
 ## Media types
 
-What can be uploaded, authored and generated is declared per media type in [`protocol/specs/src/media-types/registry.json`](../../specs/src/media-types/registry.json). Any listed type can be uploaded. Generation targets the types the registry marks `generatable`. See [Media Types](../../../docs/architecture/MEDIA-TYPES.md).
+What can be uploaded, authored and generated is declared per media type in [`specs/src/media-types/registry.json`](../../specs/src/media-types/registry.json). Any listed type can be uploaded. Generation targets the types the registry marks `generatable`. See [Media Types](../../../docs/architecture/MEDIA-TYPES.md).
 
 ## Example
 
@@ -77,8 +77,8 @@ From the launcher: `semiont yield --upload <file>`, and `semiont yield --help` f
 
 ## Where it is implemented
 
-- The SDK namespace: [packages/typescript/sdk/src/namespaces/yield.ts](../../../packages/typescript/sdk/src/namespaces/yield.ts)
-- What records the events: [the Archivist](../ARCHIVIST.md), in [images/archivist/src/commands.rs](../../../images/archivist/src/commands.rs)
-- The Worker service, which runs the generation: [images/worker](../../../images/worker/README.md), held to [WORKER-SERVICE.md](../WORKER-SERVICE.md#generation)
-- The launcher verb: [packages/go/launcher/verbs/yield.go](../../../packages/go/launcher/verbs/yield.go)
-- The channels and their payloads: [protocol/specs/src/bus/registry.json](../../specs/src/bus/registry.json)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/yield.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/yield.ts)
+- What records the events: [the Archivist](../ARCHIVIST.md), in [archivist/src/commands.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/commands.rs)
+- The Worker service, which runs the generation: [worker](https://github.com/Xynoplex/images/tree/main/worker/README.md), held to [WORKER-SERVICE.md](../WORKER-SERVICE.md#generation)
+- The launcher verb: [cli/internal/launcher/verbs/yield.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/yield.go)
+- The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

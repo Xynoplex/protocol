@@ -10,10 +10,8 @@
  * The Qdrant is run with its JWT access control on, as the launcher runs one,
  * and the suite mints the Smelter's token from the key. The suite CLEARS
  * every collection of the database it is given, so it is given one of its own
- * (`packages/go/launcher/scripts/qdrant-image.sh` prints the image to start).
+ * (the images repository documents a compatible Qdrant image).
  */
-import { existsSync } from 'node:fs';
-import { isAbsolute } from 'node:path';
 import type { TestProject } from 'vitest/node';
 import type { Implementations } from './implementations';
 import { guarded, QDRANT_PORT, type VectorDatabase } from './qdrant';
@@ -27,22 +25,10 @@ declare module 'vitest' {
   }
 }
 
-/** What builds each implementation, said when a file its command names is missing. */
-const BUILDS: Readonly<Record<string, string>> = {
-  python: '`uv sync --locked --no-dev --project images/smelter` at the repository root',
-};
-
 export default async function setup(project: TestProject): Promise<void> {
   const services = project.getProvidedContext().smelterServices;
-  if (Object.keys(services).length === 0) throw new Error('The implementations file names no Smelter: its `smelterServices` is empty.');
-  for (const [implementation, command] of Object.entries(services)) {
-    // Every file a command names by its path is what a build makes: the interpreter of an environment, for one.
-    for (const built of command.filter((part) => isAbsolute(part))) {
-      if (!existsSync(built)) {
-        throw new Error(`The ${implementation} Smelter is not built: ${built} does not exist. Run ${BUILDS[implementation] ?? 'its build'}.`);
-      }
-    }
-  }
+  if (Object.keys(services).length === 0) throw new Error('The implementations file names no Smelter.');
+
 
   const host = process.env['QDRANT_HOST'];
   const key = process.env['QDRANT_API_KEY'];
@@ -50,7 +36,7 @@ export default async function setup(project: TestProject): Promise<void> {
     const missing = [...(host ? [] : ['QDRANT_HOST']), ...(key ? [] : ['QDRANT_API_KEY'])];
     throw new Error(
       `The smelter suite runs against a real Qdrant, whose index it clears, and ${missing.join(' and ')} ${missing.length > 1 ? 'are' : 'is'} not set. ` +
-        `Start one for it alone (\`packages/go/launcher/scripts/qdrant-image.sh\` prints the image; its REST port is ${QDRANT_PORT}), ` +
+        `Start one for it alone (\`cli/internal/launcher/scripts/qdrant-image.sh\` prints the image; its REST port is ${QDRANT_PORT}), ` +
         'with QDRANT__SERVICE__API_KEY=<key> and QDRANT__SERVICE__JWT_RBAC=true, and set QDRANT_HOST to its address and QDRANT_API_KEY to its key.',
     );
   }

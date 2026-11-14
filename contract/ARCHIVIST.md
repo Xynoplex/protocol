@@ -91,7 +91,7 @@ Files are spread over two levels of directories, `<ab>/<cd>`, by the **shard** o
 number written as four lowercase hex digits and split in two. It is computed over the key's UTF-16
 code units: start at 0; for each unit, multiply by 31 and add the unit, keeping the low 32 bits as a
 signed integer; take the absolute value; take it modulo 65536.
-`shard-cases.json` ([protocol/specs/src/archivist](../specs/src/archivist/shard-cases.json)) is the table
+`shard-cases.json` ([specs/src/archivist](../specs/src/archivist/shard-cases.json)) is the table
 every implementation runs.
 
 | File | Key |
@@ -557,16 +557,16 @@ that follows the signal does not wait.
 **`POST /resources`** takes `multipart/form-data` with a `file` part and the fields of a
 [`ResourceUpload`](../specs/src/components/schemas/ResourceUpload.json).
 
-1. The `Semiont-Principal` header names who the resource is attributed to; without it: `400`
-   `{"error":"Semiont-Principal is required: the record attributes every resource to someone"}`.
-   `Semiont-Roles` lists that principal's roles, separated by commas.
+1. The `Xynoplex-Principal` header names who the resource is attributed to; without it: `400`
+   `{"error":"Xynoplex-Principal is required: the record attributes every resource to someone"}`.
+   `Xynoplex-Roles` lists that principal's roles, separated by commas.
 2. The `Idempotency-Key` header names the upload, the same on every attempt at it. Without it,
    or with one that is not visible ASCII, or of a length outside the header's `minLength` and
    `maxLength` in the [API](../specs/src/archivist/openapi.json): `400`, whose `error` names
    `Idempotency-Key`.
 3. A body that is not multipart: `400` `{"error":"The body is not multipart/form-data"}`. Fields
    the schema refuses: `400` with the schema's reasons. A `format` whose media type is not one
-   Semiont knows: `400` `{"error":"Unsupported media type: <type>"}`. `entityTypes` must be a JSON
+   Xynoplex knows: `400` `{"error":"Unsupported media type: <type>"}`. `entityTypes` must be a JSON
    list of names, and `generator` a JSON agent.
 4. **The key names the resource.** Its id is the first 32 hex digits of the SHA-256 of the JSON
    array `[principal, key]`, so the same key from two principals names two resources. An upload
@@ -625,9 +625,9 @@ status 0.
 The Archivist exports as `semiont-archivist`, under the resource the table's
 `resource` rows list for it: its name, its version, and `semiont.kb`, the DID
 of the knowledge base its committed project file's `site.domain` names. Its spans and metrics are the rows
-[`protocol/specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
+[`specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
 lists for it, and those
-[`protocol/specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json) lists for
+[`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json) lists for
 the transport it reaches the bus through. Its own:
 
 | Signal | Name | Meaning |

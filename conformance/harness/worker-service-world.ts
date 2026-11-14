@@ -19,7 +19,7 @@
  */
 import { generateKeyPairSync, randomBytes, type KeyObject } from 'node:crypto';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import type { components } from '@semiont/core';
+import type { components } from './protocol-core';
 import { startAnthropic, type ModelFacts, type StandInAnthropic } from './anthropic';
 import { startClientProxy, type ClientProxy, type ProxiedRequest } from './client-proxy';
 import { everyJob } from './dispatcher-world';

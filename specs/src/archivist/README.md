@@ -15,7 +15,7 @@ resource metadata, because the Archivist publishes none.
 
 The shapes do not differ, so they are not repeated. Bodies `$ref` the shared
 `../components/schemas/`, where they are also registered in the gateway's
-document so that `@semiont/core` generates their types and validators. The
+document so that `@xynoplex/core` generates their types and validators. The
 upload body (`ResourceUpload`) is one schema that both documents' `POST
 /resources` name, because the gateway forwards it untouched.
 
@@ -28,9 +28,9 @@ upload body (`ResourceUpload`) is one schema that both documents' `POST
   waits in order: the hold on a read of anchored text (`settleWaitSeconds`)
   shorter than `readSeconds`, and `connectSeconds` and `readSeconds` together
   shorter than a client's `httpRequestTimeoutMs`.
-- The Archivist conformance suite (`protocol/conformance/archivist`): every reply
+- The Archivist conformance suite (`conformance/archivist`): every reply
   it reads from the Archivist's HTTP surface must match its declaration here.
 - The gateway conformance suite's stand-in Archivist
-  (`protocol/conformance/harness/archivist.ts`): every request the gateway
+  (`conformance/harness/archivist.ts`): every request the gateway
   sends it must be an operation declared here, and every reply the stand-in
   gives must match its declaration.

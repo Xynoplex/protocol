@@ -1,6 +1,6 @@
 {
   "about": "a request's emit the gateway accepted, whose answer never reached the client, is sent again inside emitRetry with the key and the envelope it was first sent with; the gateway answers the repeat as it answered the first, and the request resolves with the response of its reply",
-  "source": "protocol/contract/TRANSPORT-HTTP.md § Emitting; protocol/specs/src/paths/bus_emit.json; protocol/specs/src/client/timing.json emitRetry",
+  "source": "contract/TRANSPORT-HTTP.md § Emitting; specs/src/paths/bus_emit.json; specs/src/client/timing.json emitRetry",
   "steps": [
     {"let": {"response": {"resource": {"@context": "https://schema.org/", "@id": "r", "name": "r", "representations": []}, "lastSequence": 1}}},
     {"backend": "listen", "with": {"channels": ["browse:resource-requested"]}},

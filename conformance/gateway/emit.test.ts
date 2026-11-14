@@ -1,7 +1,7 @@
 /**
  * `POST /bus/emit`: validation, the identity the gateway stamps, the profile
  * it publishes for a writer, claims and their refusals, and the answer to a
- * request nobody can answer. Semantics from protocol/contract/TRANSPORT-HTTP.md
+ * request nobody can answer. Semantics from contract/TRANSPORT-HTTP.md
  * § POST /bus/emit; statuses and bodies from the spec.
  */
 import { randomUUID } from 'node:crypto';

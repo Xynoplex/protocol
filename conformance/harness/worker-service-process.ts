@@ -5,14 +5,14 @@
  * environment. The document is the spec's `WorkerConfig`, written as the
  * settings say; a case that needs a broken document writes `verbatim`, never a
  * hand-edited rendering. The environment holds what
- * protocol/contract/WORKER-SERVICE.md § Environment says a Worker service reads,
+ * contract/WORKER-SERVICE.md § Environment says a Worker service reads,
  * and PATH, which finds its command; nothing else from the developer's shell.
  */
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { components } from '@semiont/core';
+import type { components } from './protocol-core';
 import { collectLines } from './gateway';
 import { call, type Reply } from './http';
 import { runEnvironment } from './paths';
@@ -91,7 +91,7 @@ function checkEnvironment(env: WorkerEnvironment, settings: WorkerSettings, unli
   const named = settings.knowledgeBases.flatMap((kb) => kb.engines.flatMap((engine) => (engine.apiKeyEnv === undefined ? [] : [engine.apiKeyEnv])));
   const read = new Set<string>([...READ_FROM_THE_ENVIRONMENT, ...named, 'PATH']);
   const strays = Object.keys(env).filter((name) => env[name] !== undefined && !read.has(name));
-  if (strays.length > 0) throw new Error(`the suite set ${strays.join(', ')}, which protocol/contract/WORKER-SERVICE.md § Environment does not say a worker reads and its document does not name`);
+  if (strays.length > 0) throw new Error(`the suite set ${strays.join(', ')}, which contract/WORKER-SERVICE.md § Environment does not say a worker reads and its document does not name`);
   const listed = Object.keys(unlisted).filter((name) => read.has(name));
   if (listed.length > 0) throw new Error(`the suite passed ${listed.join(', ')} as unlisted, and a worker reads it`);
 }

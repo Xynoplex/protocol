@@ -27,7 +27,7 @@
         },
         "graph": {
           "type": "object",
-          "description": "The graph store the Weaver writes and the Librarian reads. The knowledge base's graph is in the database its DID names (protocol/specs/src/graph/database-cases.json): a Neo4j the launcher runs makes it when it first starts, and one somebody else runs must already hold it.",
+          "description": "The graph store the Weaver writes and the Librarian reads. The knowledge base's graph is in the database its DID names (specs/src/graph/database-cases.json): a Neo4j the launcher runs makes it when it first starts, and one somebody else runs must already hold it.",
           "properties": {
             "type": {
               "type": "string",

@@ -1,6 +1,6 @@
 {
   "about": "a follower names its job before anything else of it: the queue's answer to job:create is its first event, ahead of a frame of the job that reached the client before the reply did",
-  "source": "protocol/contract/JOBS.md § Following a job",
+  "source": "contract/JOBS.md § Following a job",
   "tier": "parity",
   "steps": [
     {

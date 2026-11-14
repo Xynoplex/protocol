@@ -1,6 +1,6 @@
 {
   "about": "an announcement that matches what a worker accepts makes an idle worker claim, and one that matches none of it does not",
-  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
+  "source": "contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},

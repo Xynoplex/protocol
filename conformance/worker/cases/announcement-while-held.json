@@ -1,6 +1,6 @@
 {
   "about": "an announcement that arrives while a job is held causes no claim; the worker claims when it settles",
-  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
+  "source": "contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"let": {"job": {"status": "running", "metadata": {"id": "job-1", "type": "mark", "userId": {"$var": "client"}, "created": "2026-01-01T00:00:00.000Z", "retryCount": 0, "maxRetries": 3}, "params": {"resourceId": {"$var": "r1"}, "motivation": "highlighting"}, "startedAt": "2026-01-01T00:00:01.000Z", "progress": {}}}},

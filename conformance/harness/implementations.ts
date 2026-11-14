@@ -1,8 +1,8 @@
 /**
  * The implementations a run is held to, read from the JSON file it names after
  * vitest's own arguments: `vitest run --project <suite> -- --implementations
- * <file>`. The kit's npm scripts name semiont.implementations.json, Semiont's
- * own builds; another implementation writes a file of its own and names that.
+ * <file>`. Every implementation supplies its own file; this repository has
+ * no default implementation and no product-specific launch commands.
  * There is no default: a run that names no file, or names one twice, refuses
  * to start, and so does a file that is not of the shape below.
  *
@@ -58,6 +58,10 @@ const SCHEMA = {
     /** How each Librarian is started: run with `--config <document>` (librarian/README.md). */
     librarianServices: { values: COMMAND },
   },
+  optionalProperties: {
+    /** Optional model catalogue fixture supplied by an implementation repository. */
+    modelCatalogue: { type: 'string' },
+  },
 } as const;
 
 export type Implementations = JTDDataType<typeof SCHEMA>;
@@ -74,7 +78,7 @@ export function readImplementations(argv: readonly string[]): Implementations {
   if (named.length !== 1 || at === undefined) {
     throw new Error(
       `Name the implementations to test once, after vitest's own arguments: \`-- --implementations <file>\` ` +
-        `(Semiont's own builds are semiont.implementations.json). This run names ${named.length === 0 ? 'none' : `${named.length}`}.`,
+        `(there is no default implementation file). This run names ${named.length === 0 ? 'none' : `${named.length}`}.`,
     );
   }
   const given = argv[at + 1];
@@ -85,8 +89,9 @@ export function readImplementations(argv: readonly string[]): Implementations {
   const base = dirname(file);
   let data: unknown;
   try {
-    data = JSON.parse(readFileSync(file, 'utf8'), function (this: unknown, _key: string, value: unknown) {
-      return Array.isArray(this) && typeof value === 'string' && (value.startsWith('./') || value.startsWith('../'))
+    data = JSON.parse(readFileSync(file, 'utf8'), function (this: unknown, key: string, value: unknown) {
+      const relativePath = typeof value === 'string' && (value.startsWith('./') || value.startsWith('../'));
+      return relativePath && (Array.isArray(this) || key === 'modelCatalogue')
         ? resolve(base, value)
         : value;
     });

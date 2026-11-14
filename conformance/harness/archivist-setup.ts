@@ -1,10 +1,7 @@
 /**
- * Once per Archivist run: refuse to start when the Archivist is not built or
- * git is missing, so either reads as that, never as every case failing.
+ * Once per Archivist run, check the Git runtime dependency used by staging cases.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import type { TestProject } from 'vitest/node';
 import type { Implementations } from './implementations';
 
 declare module 'vitest' {
@@ -14,12 +11,7 @@ declare module 'vitest' {
   }
 }
 
-export default function setup(project: TestProject): void {
-  const command = project.getProvidedContext().archivistCommand;
-  const entry = command[command.length - 1]!;
-  if (!existsSync(entry)) {
-    throw new Error(`The Archivist is not built: ${entry} does not exist. Run \`cargo build --release -p semiont-archivist\` at the repository root.`);
-  }
+export default function setup(): void {
   try {
     execFileSync('git', ['--version'], { stdio: 'ignore' });
   } catch {

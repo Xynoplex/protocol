@@ -1,6 +1,6 @@
 {
   "about": "an emit sent again with a renewed credential has an emitRetry budget of its own: the attempts made before the renewal are not counted against it, so an emit refused 503 on every attempt but the one refused 401 is sent as many times as two budgets allow, and fails as unavailable once the second is spent",
-  "source": "protocol/contract/TRANSPORT-HTTP.md § Emitting; protocol/contract/TRANSPORT-CONTRACT.md § Emits; protocol/specs/src/client/timing.json emitRetry",
+  "source": "contract/TRANSPORT-HTTP.md § Emitting; contract/TRANSPORT-CONTRACT.md § Emits; specs/src/client/timing.json emitRetry",
   "steps": [
     {"driver": "open", "with": {"channels": ["beckon:focus"], "timing": {"reconnectMs": 50, "lazyRemoveMs": 50, "emitRetry": {"attempts": 4, "initialDelayMs": 10, "maxDelayMs": 10}}, "renewals": [{"$var": "token2"}, "never-asked"]}},
     {"wire": "POST /bus/subscribe", "status": 200, "token": {"$var": "token"}, "body": {"clientId": {"$var": "clientId"}, "global": ["beckon:focus"], "scoped": [], "pendingReplies": []}},

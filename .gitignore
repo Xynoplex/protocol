@@ -1,0 +1,5 @@
+node_modules/
+conformance/node_modules/
+coverage/
+.DS_Store
+conformance/harness/generated/

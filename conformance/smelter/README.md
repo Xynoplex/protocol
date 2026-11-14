@@ -1,15 +1,15 @@
 # Smelter conformance suite
 
 A black-box suite for the Smelter: the process a smelter image runs. It starts
-the Smelter from a command and meets it only where the rest of Semiont does: in
+the Smelter from a command and meets it only where the rest of Xynoplex does: in
 the vector index and the anchored-text store it writes, on the bus, at its
 embedding provider and at its health port. It checks what the Smelter does
-against [protocol/contract/SMELTER.md](../../contract/SMELTER.md).
+against [contract/SMELTER.md](../../contract/SMELTER.md).
 
 The suite imports nothing from a Smelter, and nothing a Smelter is built on.
 What names one is its entry in `smelterServices` in the run's
-[implementations file](../README.md#the-implementations-file). Semiont's names
-the Smelter in Python ([`images/smelter`](../../../images/smelter/README.md)),
+[implementations file](../README.md#implementation-manifest). Xynoplex's names
+the Smelter in Python (the consumer repository),
 run by the interpreter of its project's locked environment. Another
 implementation joins by adding its entry, and every case runs against every
 entry.
@@ -23,17 +23,17 @@ is missing, and the cases that hold a refusal state it.
 
 The Smelter in Python reads a scanned page with the `tesseract` program,
 which must be on `PATH`, with its English data, and its environment is made
-before a run: `uv sync --locked --no-dev --project images/smelter`.
+in its owning repository before a run.
 
 The index is read and changed by the suite's own calls to Qdrant's REST
 interface ([harness/qdrant.ts](../harness/qdrant.ts)), and never through the
 store a Smelter writes with. What a point holds is stated by
-[`protocol/specs/src/vectors/payload-cases.json`](../../specs/src/vectors/payload-cases.json);
+[`specs/src/vectors/payload-cases.json`](../../specs/src/vectors/payload-cases.json);
 the collections' words, and the payload members a point is found by, are read
 from that table, and a knowledge base's collections are named from its DID as
 the table states. Every request the suite makes presents the Qdrant's key, and
 the Smelter is handed a token minted from it, whose claims are what
-[`protocol/specs/src/vectors/token-cases.json`](../../specs/src/vectors/token-cases.json)
+[`specs/src/vectors/token-cases.json`](../../specs/src/vectors/token-cases.json)
 states. The other suites' type check leaves this suite's cases and
 its world out (`tsconfig.json`), so an error in one of them is this suite's
 alone; `npm run test:smelter` checks them with `tsconfig.smelter.json`. Its
@@ -78,11 +78,11 @@ launcher runs one. Without either variable the run fails, and names the one
 that is missing, and so does a Qdrant that refuses the key or asks for none;
 it is not skipped. **It clears every collection of the database it is
 given,** so it is given one of its own.
-`packages/go/launcher/scripts/qdrant-image.sh` prints the image the launcher
+the owning consumer repository prints the image the launcher
 starts for an operator, which is the one to run:
 
 ```bash
-docker run -d --name smelter-suite-qdrant -p 6333:6333 -e QDRANT__SERVICE__API_KEY=a-key -e QDRANT__SERVICE__JWT_RBAC=true "$(packages/go/launcher/scripts/qdrant-image.sh)"
+docker run -d --name smelter-suite-qdrant -p 6333:6333 -e QDRANT__SERVICE__API_KEY=a-key -e QDRANT__SERVICE__JWT_RBAC=true "$(consumer-owned source)"
 QDRANT_HOST=localhost QDRANT_API_KEY=a-key npm run test:smelter
 ```
 
@@ -157,7 +157,7 @@ A case about what happens while the reconcile runs starts the Smelter to
   resource, until the Smelter next starts.
 - **What it exports** (`telemetry.test.ts`): told where to export, a Smelter
   exports under its own name every row
-  [`protocol/specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
+  [`specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
   lists for it that its traffic can make, and nothing the table does not
   list, all of it under the resource the table lists for it, with
   `semiont.kb` the DID of the knowledge base its document names; and its
@@ -165,15 +165,13 @@ A case about what happens while the reconcile runs starts the Smelter to
 
 ## Running it
 
-It needs a built gateway and Archivist, the Smelter's environment,
-`@semiont/core` built (the harness is typed by it), `nats-server`, `git` and
-`tesseract` on `PATH`, and a Qdrant:
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
 
-```bash
-cargo build --release -p semiont-gateway -p semiont-archivist
-uv sync --locked --no-dev --project images/smelter
-npm run build --workspace=@semiont/core
-cd protocol/conformance
-npm ci
-QDRANT_HOST=<address> QDRANT_API_KEY=<key> npm run test:smelter
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:smelter -- -- --implementations /absolute/path/to/implementations.json
 ```
+
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

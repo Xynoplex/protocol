@@ -5,7 +5,7 @@
  * trusted issuer, which admits the Archivist's service account; and a gateway
  * on the in-process plane, the Archivist's only route to the bus.
  *
- * Cases meet the Archivist in the three places the rest of Semiont does: on
+ * Cases meet the Archivist in the three places the rest of Xynoplex does: on
  * the bus, as people, workers and sidecars emitting through the gateway and
  * reading replies and facts off their streams; at its HTTP surface, as a
  * service; and in the files it keeps, which other processes read. Every frame
@@ -19,7 +19,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, 
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe } from 'vitest';
-import type { components } from '@semiont/core';
+import type { components } from './protocol-core';
 import { startArchivistProcess, type ArchivistEnvironment, type ArchivistProcess, type ArchivistSettings } from './archivist-process';
 import { archivistNonConformance, type CallOptions, type Reply } from './http';
 import type { ServiceAccount } from './issuer';
@@ -93,7 +93,7 @@ export function unstamped<T extends Record<string, unknown>>(payload: T): T {
 /** The persisted channels: the facts. */
 export const FACTS: readonly string[] = registry().channels.filter((c) => c.shape === 'storedEvent').map((c) => c.channel);
 
-/** The two-level shard of a key, as protocol/specs/src/archivist/shard-cases.json states the arithmetic. */
+/** The two-level shard of a key, as specs/src/archivist/shard-cases.json states the arithmetic. */
 export function shardOf(key: string): string {
   let hash = 0;
   for (let i = 0; i < key.length; i++) hash = (Math.imul(hash, 31) + key.charCodeAt(i)) | 0;

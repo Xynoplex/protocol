@@ -4,7 +4,7 @@
  * answers, a gateway, the trusted issuer), the Weaver's own service account at
  * that issuer, and a real neo4j, cleared when the world is made.
  *
- * Cases meet the Weaver in the three places the rest of Semiont does: in the
+ * Cases meet the Weaver in the three places the rest of Xynoplex does: in the
  * graph it writes; on the bus, where it signals what it has applied and
  * answers a rebuild; and at its health port. Nothing is recorded but through
  * the Archivist, as people, workers and services record: the Weaver is given
@@ -22,7 +22,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import neo4j, { type Driver } from 'neo4j-driver';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import type { Annotation, ResourceDescriptor } from '@semiont/core';
+import type { Annotation, ResourceDescriptor } from './protocol-core';
 import { ArchivistWorld, type Answer, type StoredEvent } from './archivist-world';
 import { isRow, isStrings, readAnnotation, readResource, type Row } from './graph-codec';
 import { eventually } from './net';

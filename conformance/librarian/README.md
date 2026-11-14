@@ -2,14 +2,14 @@
 
 A black-box suite for the Librarian: the process a librarian image runs. It
 starts the Librarian from a command and meets it only where the rest of
-Semiont does: on the bus, at its providers, and at its health port. It checks
+Xynoplex does: on the bus, at its providers, and at its health port. It checks
 what the Librarian does against
-[protocol/contract/LIBRARIAN.md](../../contract/LIBRARIAN.md).
+[contract/LIBRARIAN.md](../../contract/LIBRARIAN.md).
 
 The suite imports nothing from a Librarian. What names one is its entry in
 `librarianServices` in the run's
-[implementations file](../README.md#the-implementations-file). Semiont's names
-the Librarian in Python ([`images/librarian`](../../../images/librarian/README.md)),
+[implementations file](../README.md#implementation-manifest). Xynoplex's names
+the Librarian in Python (the consumer repository),
 run by the interpreter of its project's locked environment. Another
 implementation joins by adding its entry, and every case runs against every
 entry. The Weaver and the Smelter it starts are the file's `python` entries in
@@ -18,8 +18,8 @@ entry. The Weaver and the Smelter it starts are the file's `python` entries in
 A Librarian writes nothing, so the suite reads no store to judge it. What a
 Librarian reads, the graph and the vector index, is written here by the two
 services that write it for an operator: a Weaver and a Smelter, the Python
-services of [`images/weaver`](../../../images/weaver/README.md) and
-[`images/smelter`](../../../images/smelter/README.md), which the suite starts
+services of the consumer repository and
+the consumer repository, which the suite starts
 beside it. The suite does two things in the databases itself
 ([harness/librarian-world.ts](../harness/librarian-world.ts)): it empties the
 graph database, in Cypher, and it clears the index, by its own calls to
@@ -44,7 +44,7 @@ Each file runs its cases in a world of its own
 - a real neo4j and a real Qdrant, both cleared when the world is made and
   when it is closed. The Smelter and the Librarian each present the Qdrant a
   token of its own, minted from the Qdrant's key as
-  [`protocol/specs/src/vectors/token-cases.json`](../../specs/src/vectors/token-cases.json)
+  [`specs/src/vectors/token-cases.json`](../../specs/src/vectors/token-cases.json)
   states, and the suite's own calls present the key;
 - a Weaver, which writes the graph, and a Smelter, which writes the index,
   each started as its own suite starts it;
@@ -82,12 +82,12 @@ control on, as the launcher runs one. Without the four it fails, and names
 the ones that are missing, and so does a Qdrant that refuses the key or asks
 for none; it is not skipped. **It clears the graph database and the index it
 is given,** so it is given ones of its own.
-`packages/go/launcher/scripts/neo4j-image.sh` and `packages/go/launcher/scripts/qdrant-image.sh` print the images
+the owning consumer repository and the owning consumer repository print the images
 the launcher starts for an operator, which are the ones to run:
 
 ```bash
-docker run -d --name librarian-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password "$(packages/go/launcher/scripts/neo4j-image.sh)"
-docker run -d --name librarian-suite-qdrant -p 6333:6333 -e QDRANT__SERVICE__API_KEY=a-key -e QDRANT__SERVICE__JWT_RBAC=true "$(packages/go/launcher/scripts/qdrant-image.sh)"
+docker run -d --name librarian-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password "$(consumer-owned source)"
+docker run -d --name librarian-suite-qdrant -p 6333:6333 -e QDRANT__SERVICE__API_KEY=a-key -e QDRANT__SERVICE__JWT_RBAC=true "$(consumer-owned source)"
 NEO4J_HOST=localhost NEO4J_PASSWORD=a-password QDRANT_HOST=localhost QDRANT_API_KEY=a-key npm run test:librarian
 ```
 
@@ -175,18 +175,13 @@ the stand-in answers what the real Archivist answers when it is asked.
 
 ## Running it
 
-It needs a built gateway and Archivist, `@semiont/core` built (the harness is
-typed by it), the Python environments of the Librarian, the Weaver and the
-Smelter, `nats-server`, `git` and the `tesseract` program on `PATH`, a neo4j
-and a Qdrant:
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
 
-```bash
-cargo build --release -p semiont-gateway -p semiont-archivist
-npm run build --workspace=@semiont/core
-uv sync --locked --no-dev --all-extras --project images/weaver
-uv sync --locked --no-dev --project images/smelter
-uv sync --locked --no-dev --all-extras --project images/librarian
-cd protocol/conformance
-npm ci
-NEO4J_HOST=<address> NEO4J_PASSWORD=<password> QDRANT_HOST=<address> QDRANT_API_KEY=<key> npm run test:librarian
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:librarian -- -- --implementations /absolute/path/to/implementations.json
 ```
+
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

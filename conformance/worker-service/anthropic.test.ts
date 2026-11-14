@@ -7,7 +7,7 @@
  * then, the answer it takes as a stream, the tokens it counts, and what a
  * cancellation and a stop do to a request that is under way.
  */
-import { kbDid } from '@semiont/core';
+import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import type { ScriptedMessage } from '../harness/anthropic';
 import { everyJob } from '../harness/dispatcher-world';

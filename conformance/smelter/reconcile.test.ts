@@ -7,7 +7,7 @@
  * that an index another cut made is made again (§ Boot).
  *
  * The work a start plans is stated, difference by difference, in
- * protocol/specs/src/smelter/reconcile-cases.json, which each implementation runs
+ * specs/src/smelter/reconcile-cases.json, which each implementation runs
  * through its own planner. These cases hold that the work is then done.
  */
 import { expect, it } from 'vitest';

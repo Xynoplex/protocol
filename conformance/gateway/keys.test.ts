@@ -1,6 +1,6 @@
 /**
  * An emit or an upload sent again under its `Idempotency-Key`
- * (protocol/specs/src/paths/bus_emit.json and paths/resources.json, A key): a
+ * (specs/src/paths/bus_emit.json and paths/resources.json, A key): a
  * repeat with the body its key was first sent with is answered as the first
  * was, and carried out once; one with another body is refused 422; one that
  * arrives while the first is in hand waits for it; a key is its principal's;

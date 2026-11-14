@@ -8,7 +8,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { kbDid } from '@semiont/core';
+import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { LibrarianSettings } from '../harness/librarian-process';
 import { eachLibrarian } from '../harness/librarian-world';
@@ -20,7 +20,7 @@ import { kbIdentity } from '../harness/spec';
 function heldJobStallMs(): number {
   const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'client/timing.json'), 'utf8')) as { timing: Array<{ name: string; value: number }> };
   const row = table.timing.find((entry) => entry.name === 'heldJobStallMs');
-  if (row === undefined) throw new Error('protocol/specs/src/client/timing.json has no heldJobStallMs');
+  if (row === undefined) throw new Error('specs/src/client/timing.json has no heldJobStallMs');
   return row.value;
 }
 

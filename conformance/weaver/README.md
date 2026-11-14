@@ -1,14 +1,14 @@
 # Weaver conformance suite
 
 A black-box suite for the Weaver: the process a weaver image runs. It starts
-the Weaver from a command and meets it only where the rest of Semiont does: in
+the Weaver from a command and meets it only where the rest of Xynoplex does: in
 the graph it writes, on the bus, and at its health port. It checks what the
 Weaver does against
-[protocol/contract/WEAVER.md](../../contract/WEAVER.md).
+[contract/WEAVER.md](../../contract/WEAVER.md).
 
 The suite imports nothing from a Weaver. What names one is its entry in
-`weaverServices` in the run's [implementations file](../README.md#the-implementations-file).
-Semiont's names its own, the Python service of [`images/weaver`](../../../images/weaver/README.md),
+`weaverServices` in the run's [implementations file](../README.md#implementation-manifest).
+Xynoplex's names its own, the Python service of the consumer repository,
 started by the interpreter of its locked environment. Every case runs against
 every entry.
 
@@ -17,7 +17,7 @@ connection of its own ([harness/weaver-world.ts](../harness/weaver-world.ts)),
 and its own reading of each row
 ([harness/graph-codec.ts](../harness/graph-codec.ts)). What a store holds is
 stated by
-[`protocol/specs/src/graph/codec-cases.json`](../../specs/src/graph/codec-cases.json),
+[`specs/src/graph/codec-cases.json`](../../specs/src/graph/codec-cases.json),
 the case table the Weaver's codec is held to, and the harness's reader is held
 to the same table (`harness/graph-codec.test.ts`, which the gateway project
 runs with the harness's other tests of itself). So the suite judges a Weaver
@@ -53,11 +53,11 @@ from the record.
 **The run is told where its neo4j is,** in `NEO4J_HOST` and `NEO4J_PASSWORD`,
 and starts none. Without them it fails, and says so; it is not skipped.
 **It clears the database it is given,** so it is given one of its own.
-`packages/go/launcher/scripts/neo4j-image.sh` prints the image the launcher starts for an
+the owning consumer repository prints the image the launcher starts for an
 operator, which is the one to run:
 
 ```bash
-docker run -d --name weaver-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password "$(packages/go/launcher/scripts/neo4j-image.sh)"
+docker run -d --name weaver-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password "$(consumer-owned source)"
 NEO4J_HOST=localhost NEO4J_PASSWORD=a-password npm run test:weaver
 ```
 
@@ -100,15 +100,13 @@ again finds what it kept; one that is replaced starts with nothing.
 
 ## Running it
 
-It needs a built gateway and Archivist, the Weaver's Python environment,
-`@semiont/core` built (the harness is typed by it), `nats-server` and `git` on
-`PATH`, and a neo4j:
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
 
-```bash
-cargo build --release -p semiont-gateway -p semiont-archivist
-uv sync --locked --no-dev --all-extras --project images/weaver
-npm run build --workspace=@semiont/core
-cd protocol/conformance
-npm ci
-NEO4J_HOST=<address> NEO4J_PASSWORD=<password> npm run test:weaver
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:weaver -- -- --implementations /absolute/path/to/implementations.json
 ```
+
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

@@ -1,6 +1,6 @@
 {
   "about": "a stream reopened after a drop resumes each scope from the last persisted event the client delivered on it, a scope with none carrying no watermark, and what was recorded meanwhile is delivered once, in order",
-  "source": "protocol/contract/TRANSPORT-CONTRACT.md § The three classes; protocol/contract/TRANSPORT-HTTP.md § Event id and resumption",
+  "source": "contract/TRANSPORT-CONTRACT.md § The three classes; contract/TRANSPORT-HTTP.md § Event id and resumption",
   "steps": [
     {"let": {"recordedAnnotation": {"@context": "http://www.w3.org/ns/anno.jsonld", "type": "Annotation", "id": {"$var": "a1"}, "motivation": "highlighting", "target": {"source": {"$var": "r1"}}, "created": "2026-01-01T00:00:00.000Z"}}},
     {"driver": "open", "with": {"channels": ["beckon:sparkle"], "timing": {"reconnectMs": 50, "lazyRemoveMs": 50}}},

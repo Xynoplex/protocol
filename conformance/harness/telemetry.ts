@@ -1,10 +1,10 @@
 /**
  * A service, or an SDK, held to the telemetry the spec lists for it
- * (protocol/specs/src/service-telemetry/telemetry.json, protocol/specs/src/sdk-telemetry/telemetry.json),
+ * (specs/src/service-telemetry/telemetry.json, specs/src/sdk-telemetry/telemetry.json),
  * from what its OTLP receiver got, in both directions.
  */
 import { isDeepStrictEqual } from 'node:util';
-import { kbDid } from '@semiont/core';
+import { kbDid } from './protocol-core';
 import { eventually } from './net';
 import type { OtlpReceiver } from './otlp';
 import { resourceKeys, sdkTelemetry, spanPattern, telemetry, type Telemetry, type TelemetryRow, type TelemetryService } from './spec';
@@ -90,7 +90,7 @@ export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryServ
 
 /**
  * The same for an SDK, from what its driver exported, against
- * protocol/specs/src/sdk-telemetry/telemetry.json — with one difference. A service is
+ * specs/src/sdk-telemetry/telemetry.json — with one difference. A service is
  * its whole process, so anything it exports that no row names is a finding. A
  * driver's process is the SDK and whatever else the driver runs, so what no
  * row names is not the SDK's to answer for; what arrives under a row's name is.

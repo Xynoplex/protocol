@@ -1,13 +1,13 @@
 # Gateway conformance suite
 
 A black-box suite for the gateway. It starts gateway processes, talks to them
-over HTTP, and checks what they answer against the protocol as `protocol/specs/`
+over HTTP, and checks what they answer against the protocol as `specs/`
 states it — the OpenAPI document, the bus registry — and as
-[protocol/contract/TRANSPORT-HTTP.md](../../contract/TRANSPORT-HTTP.md)
+[contract/TRANSPORT-HTTP.md](../../contract/TRANSPORT-HTTP.md)
 states the semantics a schema cannot hold. It imports nothing from the
 gateway: what names an implementation is `gateway` in the run's
-[implementations file](../README.md#the-implementations-file), which [vitest.config.ts](../vitest.config.ts)
-provides to the cases: in Semiont's, the Rust gateway's binary, built in `images/gateway`.
+[implementations file](../README.md#implementation-manifest), which [vitest.config.ts](../vitest.config.ts)
+provides to the cases: in Xynoplex's, the Rust gateway's binary, built in the owning consumer repository.
 
 Every case runs against a gateway on each signal plane — in-process, and NATS
 with a real `nats-server` — except the ones that need a broker (replicas, a
@@ -32,7 +32,7 @@ and knowledge bases configured another way).
   as `text/event-stream`, and every message on it must be a `BusStreamMessage`
   with the id format its frame calls for ([harness/stream.ts](../harness/stream.ts)).
   Behind the gateway, every request it sends the Archivist must be an operation
-  the Archivist's spec (`protocol/specs/src/archivist/`) declares, with the parameters
+  the Archivist's spec (`specs/src/archivist/`) declares, with the parameters
   that operation requires, each within its schema, and every reply the
   stand-in Archivist gives must match its declaration; the stand-in answers a
   repeated upload by its principal and key, as the Archivist does
@@ -76,37 +76,35 @@ and knowledge bases configured another way).
   receiver — which reads OTLP/HTTP as JSON or protobuf, as a collector does,
   held to OpenTelemetry's own serializers by `harness/otlp.test.ts` — and its
   last case holds everything received to
-  the rows of [`protocol/specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
+  the rows of [`specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
   that list the gateway, in both directions — every span and metric a listed row of the listed kind,
   carrying listed attributes, and every row the cases' traffic can produce arrived; and every one
   exported under exactly the keys the table's `resource` lists for the gateway, with `semiont.kb`
   the DID of the knowledge base its document names.
 - **Principals** (`tokens.test.ts`): every person and agent case in
-  [`protocol/specs/src/principals/cases.json`](../../specs/src/principals/cases.json), named
+  [`specs/src/principals/cases.json`](../../specs/src/principals/cases.json), named
   exactly by a running gateway; every DID the suite expects comes from that table.
 - **The environment** (`environment.test.ts`): what each variable
-  [`protocol/specs/src/service-environment/variables.json`](../../specs/src/service-environment/variables.json)
+  [`specs/src/service-environment/variables.json`](../../specs/src/service-environment/variables.json)
   lists changes, and the document's `logFormat`. The harness refuses to start a
   gateway with a variable that table does not list or the document does not
   name, so no case can lean on one the spec does not state.
 
 The world around a gateway is played by the harness: the trusted issuer
 (discovery, keys and the client-credentials grant, signing with
-`@semiont/core/testing/issuer`), a stand-in Archivist held to the Archivist's
+the protocol-local fixture issuer), a stand-in Archivist held to the Archivist's
 spec, a broker that can
 require credentials and be taken down and brought back, and an OTLP receiver.
 
 ## Running it
 
-It needs a built gateway and `nats-server` (2.10 or later) on `PATH`:
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
 
-```bash
-cargo build --release -p semiont-gateway
-npm run build:packages
-cd protocol/conformance
-npm ci
-npm run test:gateway
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:gateway -- -- --implementations /absolute/path/to/implementations.json
 ```
 
-The spec is bundled from `protocol/specs/src` at the start of every run, so the suite
-never checks against a stale bundle.
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

@@ -1,6 +1,6 @@
 {
   "about": "a claim refused for any other reason is reported with its code, and the worker claims no more until its next idle moment",
-  "source": "protocol/contract/WORKER-CONTRACT.md § Claiming",
+  "source": "contract/WORKER-CONTRACT.md § Claiming",
   "steps": [
     {"let": {"accepts": [{"jobType": "mark", "params": {"motivation": "highlighting"}}]}},
     {"backend": "listen", "with": {"channels": ["job:claim"]}},

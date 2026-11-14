@@ -1,6 +1,6 @@
 {
   "about": "a stream that drops and reopens costs no request for what a scope's own events feed: they are replayed from where the client left off, and what it observes keeps its value (B13)",
-  "source": "protocol/contract/CACHE-SEMANTICS.md B13",
+  "source": "contract/CACHE-SEMANTICS.md B13",
   "tier": "parity",
   "steps": [
     {"backend": "listen", "with": {"channels": ["browse:resource-requested", "browse:annotation-requested", "browse:events-requested", "gather:referenced-by-requested", "browse:resources-requested", "browse:entity-types-requested", "browse:tag-schemas-requested"]}},

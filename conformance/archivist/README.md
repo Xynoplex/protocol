@@ -1,14 +1,14 @@
 # Archivist conformance suite
 
 A black-box suite for the Archivist. It starts Archivist processes and meets
-them only where the rest of Semiont does: on the bus, through a real gateway;
+them only where the rest of Xynoplex does: on the bus, through a real gateway;
 at their HTTP surface, as a service; and in the files they keep, which other
 processes read. It checks what they do against
-[protocol/contract/ARCHIVIST.md](../../contract/ARCHIVIST.md), the schemas
-`protocol/specs/` gives every channel and every file, and the Archivist's
+[contract/ARCHIVIST.md](../../contract/ARCHIVIST.md), the schemas
+`specs/` gives every channel and every file, and the Archivist's
 [API](../../specs/src/archivist/openapi.json). It imports nothing from the
 Archivist: what names an implementation is `archivist` in the run's
-[implementations file](../README.md#the-implementations-file): in Semiont's, the Rust binary
+[implementations file](../README.md#implementation-manifest): in Xynoplex's, the Rust binary
 `target/release/semiont-archivist`.
 
 ## The world around an Archivist
@@ -97,16 +97,16 @@ what its schema says; and a case fails otherwise, whatever it was about.
   and kept as it was left, is rebuilt from its log into the very views it was
   left with, byte for byte, served as recorded, and gone on from.
 - **Environment** (`environment.test.ts`): what each variable
-  [`protocol/specs/src/service-environment/variables.json`](../../specs/src/service-environment/variables.json)
+  [`specs/src/service-environment/variables.json`](../../specs/src/service-environment/variables.json)
   lists for the Archivist changes, and that a reply continues its request's
   trace.
 - **Telemetry** (`observability.test.ts`): the `bus.recv` and `bus.emit` spans
   its frames make, the depth of what is waiting to be published, each git
   command measured and a staging degradation counted, and, last, everything
   exported held, in both directions, to the rows of
-  [`protocol/specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
+  [`specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
   that list the Archivist and the rows of
-  [`protocol/specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
+  [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
   for the SDK transport it reaches the bus through, and to the table's
   `resource`: exported under exactly the keys it lists for the Archivist,
   with `semiont.kb` the DID of the `site.domain` its tree commits.
@@ -121,12 +121,13 @@ answers appends one, and no case writes one into a log.
 
 ## Running it
 
-```bash
-(cd packages/rust && cargo build --release -p semiont-gateway -p semiont-archivist)
-npm run build --workspace=@semiont/core
-cd protocol/conformance
-npm ci
-npm run test:archivist
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
+
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:archivist -- -- --implementations /absolute/path/to/implementations.json
 ```
 
-It needs `git` and `nats-server` on `PATH`.
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

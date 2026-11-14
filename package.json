@@ -1,0 +1,19 @@
+{
+  "name": "@xynoplex/protocol",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Cross-implementation contracts, specifications, and conformance suites for Xynoplex",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Xynoplex/protocol.git"
+  },
+  "scripts": {
+    "specs:bundle": "redocly bundle --config specs/redocly.yaml specs/src/openapi.json -o specs/openapi.json && redocly bundle --config specs/redocly.yaml specs/src/archivist/openapi.json -o specs/archivist.openapi.json",
+    "specs:lint": "redocly lint --config specs/redocly.yaml specs/src/openapi.json specs/src/archivist/openapi.json",
+    "specs:check": "node scripts/checks/specs/check-protocol.mjs && node scripts/checks/specs/check-archivist.mjs && node scripts/checks/specs/check-identifiers.mjs && node scripts/checks/specs/check-jobs.mjs && node scripts/checks/specs/check-offset-units.mjs && node scripts/checks/specs/check-reference-forms.mjs && node scripts/checks/specs/check-reply-bounds.mjs && node scripts/checks/specs/check-case-tables.mjs"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.34.0"
+  }
+}

@@ -1,19 +1,19 @@
 # Event-Bus Protocol
 
-This document describes the wire-level event protocol that every actor in Semiont speaks: channel naming, payload conventions, the gateway's identity injection, the trace-context carrier, and resource scoping. It is the contract that a transport (HTTP with server-sent events) implements and that an SDK hides behind typed methods.
+This document describes the wire-level event protocol that every actor in Xynoplex speaks: channel naming, payload conventions, the gateway's identity injection, the trace-context carrier, and resource scoping. It is the contract that a transport (HTTP with server-sent events) implements and that an SDK hides behind typed methods.
 
 If you only want to *use* the protocol from a script, you don't need this doc — read **[../../docs/builder/Usage.md](../../docs/builder/Usage.md)**, the SDK already wraps every channel pattern. Read this if you're:
 
 - Building a transport
 - Adding a new actor or worker that subscribes to channels directly via `eventBus.on(channel)`
-- Debugging a bus-mediated round-trip with the [bus log](../../images/e2e/docs/bus-logging.md)
+- Debugging a bus-mediated round-trip with the [bus log](https://github.com/Xynoplex/images/tree/main/e2e/docs/bus-logging.md)
 - Adding a new channel to the EventMap
 
-The authority is **[`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json)**; [`packages/typescript/core/src/bus-protocol.ts`](../../packages/typescript/core/src/bus-protocol.ts) (the `EventMap` type and `CHANNEL_SCHEMAS` map) and the Go and Rust equivalents are GENERATED from it — see "The registry is the authority" below. This doc is the prose explanation; the registry is the truth.
+The authority is **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)**; [`sdk/typescript/core/src/bus-protocol.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus-protocol.ts) (the `EventMap` type and `CHANNEL_SCHEMAS` map) and the Go and Rust equivalents are GENERATED from it — see "The registry is the authority" below. This doc is the prose explanation; the registry is the truth.
 
 ## What rides the bus, and the six things that deliberately do not
 
-**The bus mediates subsystem messaging.** A request between two Semiont processes is a channel, a
+**The bus mediates subsystem messaging.** A request between two Xynoplex processes is a channel, a
 payload and an envelope — not an HTTP call. That is what makes a subsystem relocatable: the
 gateway's own handlers receive their frames from the broker through a queue group, so a handler
 moving to another process costs no extra hop. A frame carries what `BusFrame` names (its
@@ -129,7 +129,7 @@ verb's own result or a decline, and the decline is the one with `declined`.
 Commands that mutate state need to know who is making them. The convention: clients **never** set `_userId` or `_roles` themselves. The `/bus/emit` gateway verifies the bearer token, builds the principal from its claims, and stamps both onto the payload before forwarding it onto the bus — clearing whatever a caller wrote there first:
 
 ```rust
-// images/gateway/src/routes/bus.rs
+// gateway/src/routes/bus.rs
 payload.remove("_roles");
 payload.insert("_userId".to_owned(), json!(principal.did));
 if let Some(roles) = principal.roles.as_ref().filter(|r| !r.is_empty()) {
@@ -155,7 +155,7 @@ The bus is fan-out: every subscriber to a channel sees every event on it. Reques
 2. The handler does its work and emits the response (`match:search-results` or `match:search-failed`) carrying the **same** `correlationId` on its envelope.
 3. The gateway delivers the response only to the connections of the client that made the request (the request's emit *claimed* the id), and the caller matches it by `correlationId`.
 
-`Bus.request` ([packages/typescript/core/src/bus.ts](../../packages/typescript/core/src/bus.ts)) implements this pattern uniformly. `Bus` is the typed bus over a transport, and a client hands its own out as `client.wire`. It lives in `@semiont/core`, next to the bus protocol, so the SDK *and* the services share one implementation. You call `request` with the **operation** — the request channel — and a payload; it mints the `correlationId`, looks the reply channels up from the registry, emits, and resolves the awaited reply:
+`Bus.request` ([sdk/typescript/core/src/bus.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus.ts)) implements this pattern uniformly. `Bus` is the typed bus over a transport, and a client hands its own out as `client.wire`. It lives in `@xynoplex/core`, next to the bus protocol, so the SDK *and* the services share one implementation. You call `request` with the **operation** — the request channel — and a payload; it mints the `correlationId`, looks the reply channels up from the registry, emits, and resolves the awaited reply:
 
 ```ts
 // The operation is named by its request channel. The result and failure
@@ -165,7 +165,7 @@ const resource = await semiont.wire.request('browse:resource-requested', { resou
 
 Two declarations make this work, and together they rule out a whole bug class (a reply channel that's forgotten from the bridged set, which fails as a silent 30 s timeout):
 
-- **The operations registry.** [`BUS_OPERATIONS`](../../packages/typescript/core/src/bus-operations.ts) declares every request/reply operation **once** as a triple — `request → { result, failure, progress? }`. `request` reads the request channel's entry to find its reply channels (so a caller can't pass a mismatched or unbridged pair), and the bridged-reply set is *derived* from it (see [Fan-in](#fan-in-sse-bridging)). The return type is inferred from the result channel — callers never write `<TResult>`.
+- **The operations registry.** [`BUS_OPERATIONS`](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus-operations.ts) declares every request/reply operation **once** as a triple — `request → { result, failure, progress? }`. `request` reads the request channel's entry to find its reply channels (so a caller can't pass a mismatched or unbridged pair), and the bridged-reply set is *derived* from it (see [Fan-in](#fan-in-sse-bridging)). The return type is inferred from the result channel — callers never write `<TResult>`.
 
 - **The reply-shape standard.** Every reply carries the request's `correlationId` on its envelope, and its payload is one of three shapes:
   - `{ response: T }` — success with data → resolves to `T`.
@@ -174,11 +174,11 @@ Two declarations make this work, and together they rule out a whole bug class (a
 
   `request` reads `e.response`, so **every reply handler must carry the request's `correlationId` onto its reply's envelope and put its data under `response`** — a reply without the id hangs the caller until `bus.timeout`. The uniformity is exactly what lets the return type be derived from the registry instead of hand-annotated.
 
-  A reply may also state what it answers for beside `response`, by stating a property of its request again: `gather:complete` carries the `annotationId` its request did. [`REPLY_NAMES`](../../packages/typescript/core/src/bus-operations.ts), generated beside `BUS_OPERATIONS`, lists those properties for every operation. Each list is what the reply's schema requires, without `response`; the generator refuses one the request's schema does not state.
+  A reply may also state what it answers for beside `response`, by stating a property of its request again: `gather:complete` carries the `annotationId` its request did. [`REPLY_NAMES`](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus-operations.ts), generated beside `BUS_OPERATIONS`, lists those properties for every operation. Each list is what the reply's schema requires, without `response`; the generator refuses one the request's schema does not state.
 
 ## Trace context on a relayed frame
 
-Distributed traces ride on a relayed frame's payload, in the field the bus registry names: `trace` in [`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json) states the field and what it carries, and the gateway and every SDK are generated from it. It carries the W3C `traceparent` (and optional `tracestate`) so spans started by handlers become children of the originating span:
+Distributed traces ride on a relayed frame's payload, in the field the bus registry names: `trace` in [`specs/src/bus/registry.json`](../specs/src/bus/registry.json) states the field and what it carries, and the gateway and every SDK are generated from it. It carries the W3C `traceparent` (and optional `tracestate`) so spans started by handlers become children of the originating span:
 
 ```ts
 interface TraceCarrier {
@@ -189,7 +189,7 @@ interface TraceCarrier {
 
 The two directions carry it differently:
 
-- **Emit.** A client's `POST /bus/emit` carries the active span in the `traceparent` request header (`getActiveTraceparent()` in `@semiont/observability` reads it); the payload is left alone.
+- **Emit.** A client's `POST /bus/emit` carries the active span in the `traceparent` request header (`getActiveTraceparent()` in `@xynoplex/observability` reads it); the payload is left alone.
 - **Receive.** An SSE event has no headers of its own, so the gateway's stream route writes the trace context onto the payload's trace field. On receipt, `extractTraceparent(payload)` pulls and removes the field, returning the carrier so the handler runs under `withTraceparent(carrier, ...)`.
 
 The field is **internal plumbing**: subscribers see it stripped before delivery, and most consumer code never needs to touch it. A new wire transport mirrors the pattern — propagate on emit, extract before subscriber dispatch.
@@ -203,7 +203,7 @@ A channel reaches clients in one of two **disjoint** delivery disciplines:
 - **Global fan-out** — forwarded to every connected client, which filters by `correlationId` (correlation replies like `match:search-results`) or just reacts (KB-global events like `frame:entity-type-added`). This is the *bridged* set (see [Fan-in](#fan-in-sse-bridging)).
 - **Resource-scoped** — delivered only to clients that have *joined* a resource's scope via `subscribeToResource(id)`. Publishers emit on a scoped bus (`eventBus.scope(resourceId)`); the HTTP transport carries each subscription as a `{scope, channels, lastEventId?}` entry in the `POST /bus/subscribe` matrix, and scoped SSE frames are tagged with their originating scope. One connection holds many resource scopes at once — distinct resources compose. On the client, subscribing to a resource's `browse.*` live queries attaches a ref-counted scope that auto-detaches on the last unsubscribe — *freshness follows observation*.
 
-Which discipline a channel has is declared, not computed: the registry gives each such channel an `audience` of `everyone` or `scoped`, and the two generated lists (`BRIDGED_BROADCASTS` and `RESOURCE_SCOPED_CHANNELS`, in [bridged-channels.ts](../../packages/typescript/core/src/bridged-channels.ts)) are those declarations. The scoped channels are the events of the record that concern one resource: annotations, a resource's own facts, its renditions, and its jobs. A scoped channel is always a stored event: `validate-registry.mjs` refuses one that is not. The events of the record that concern the whole knowledge base (`frame:entity-type-added`, `yield:created` and their siblings) go to everyone.
+Which discipline a channel has is declared, not computed: the registry gives each such channel an `audience` of `everyone` or `scoped`, and the two generated lists (`BRIDGED_BROADCASTS` and `RESOURCE_SCOPED_CHANNELS`, in [bridged-channels.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bridged-channels.ts)) are those declarations. The scoped channels are the events of the record that concern one resource: annotations, a resource's own facts, its renditions, and its jobs. A scoped channel is always a stored event: `validate-registry.mjs` refuses one that is not. The events of the record that concern the whole knowledge base (`frame:entity-type-added`, `yield:created` and their siblings) go to everyone.
 
 **A channel has one audience.** A channel delivered on both the global subscription and a scoped one would arrive twice, with different ids, and be duplicated on the client's bus. One declaration per channel makes that unrepresentable, and an invariant test (`BRIDGED_CHANNELS ∩ RESOURCE_SCOPED_CHANNELS === ∅`) backstops it.
 
@@ -228,13 +228,13 @@ Which payload an event carries is the registry's to say (`payload`, on its chann
 
 The channels the registry marks `"enriched": true` are typed `EnrichedEvent<EventOfType<...>>`: the stored event plus, at the top level, the annotation as it stands in the view, which the EventStore attaches after materializing and before publishing. Subscribers read it to update a cached annotation in place rather than refetch — `mark:body-updated`, for instance, carries only the body operations, not the annotation they produce. It is optional: enrichment declines when the view no longer holds the annotation. **The flag is the list** — the generator derives every stored event's type from its `event` and `enriched`, and the generated `ENRICHED_EVENT_TYPES` is what the enricher dispatches on, so a flag without a case fails to compile rather than silently never arriving.
 
-`PERSISTED_EVENT_TYPES` in [persisted-events.ts](../../packages/typescript/core/src/persisted-events.ts) is the list of channels the event-sourcing layer treats as durable. It is generated from the registry's `storedEvent` channels, so adding a domain event means adding its channel there, with the schema of its `payload`. The Python SDK generates the same list under the same name (`semiont.channels.PERSISTED_EVENT_TYPES`): a follower of the record names every one of them on its stream ([TRANSPORT-CONTRACT.md § What repairs a passing frame](./TRANSPORT-CONTRACT.md#what-repairs-a-passing-frame)).
+`PERSISTED_EVENT_TYPES` in [persisted-events.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/persisted-events.ts) is the list of channels the event-sourcing layer treats as durable. It is generated from the registry's `storedEvent` channels, so adding a domain event means adding its channel there, with the schema of its `payload`. The Python SDK generates the same list under the same name (`semiont.channels.PERSISTED_EVENT_TYPES`): a follower of the record names every one of them on its stream ([TRANSPORT-CONTRACT.md § What repairs a passing frame](./TRANSPORT-CONTRACT.md#what-repairs-a-passing-frame)).
 
 Commands, results, and UI signals are transient. They flow across the bus, drive handlers, and disappear. Only their downstream `-ed` events get recorded.
 
 ## Fan-in: SSE bridging
 
-The SDK's `SemiontClient` owns a local `EventBus`; the HTTP transport bridges wire events into it. `BRIDGED_CHANNELS` in [bridged-channels.ts](../../packages/typescript/core/src/bridged-channels.ts) is the set the transport forwards. It is **derived**, not listed by hand: every operation's reply channels (result + failure + optional progress) come from the `BUS_OPERATIONS` registry, plus the registry's `audience: everyone` set — the non-request/reply minority (KB-global domain events like `frame:entity-type-added`, UI signals like `beckon:*`, and infra like `bus:resume-gap`). Deriving the reply set from the registry is what makes "a reply channel forgotten from the bridged set" — a silent timeout — unrepresentable.
+The SDK's `XynoplexClient` owns a local `EventBus`; the HTTP transport bridges wire events into it. `BRIDGED_CHANNELS` in [bridged-channels.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bridged-channels.ts) is the set the transport forwards. It is **derived**, not listed by hand: every operation's reply channels (result + failure + optional progress) come from the `BUS_OPERATIONS` registry, plus the registry's `audience: everyone` set — the non-request/reply minority (KB-global domain events like `frame:entity-type-added`, UI signals like `beckon:*`, and infra like `bus:resume-gap`). Deriving the reply set from the registry is what makes "a reply channel forgotten from the bridged set" — a silent timeout — unrepresentable.
 
 ### Where the invariants are enforced
 
@@ -242,13 +242,13 @@ Three layers, deliberately, because each catches what the others structurally ca
 
 | Layer | Where | Catches |
 |---|---|---|
-| **Source** | [validate-registry.mjs](../../packages/codegen/bus/validate-registry.mjs), run by both generators before they emit | undeclared operation channels, a reply owned by two operations, a non-emittable request, and a reply channel also given an `audience` (the double-delivery shape) — reported against the registry line you typed |
+| **Source** | [bus generator ownership](https://github.com/Xynoplex/protocol/blob/main/OWNERSHIP.md#generator-ownership), used before generated SDK outputs are emitted | undeclared operation channels, a reply owned by two operations, a non-emittable request, and a reply channel also given an `audience` (the double-delivery shape) — reported against the registry line you typed |
 | **Compile time** | `satisfies` clauses in the generated TypeScript | an unknown channel, a missing payload binding, a schema name that isn't in the OpenAPI types |
-| **Test time** | [bus-invariants.test.ts](../../packages/typescript/core/src/__tests__/bus-invariants.test.ts) and [bridged_test.go](../../packages/go/sdk/bus/bridged_test.go) | duplicates in the bridged set, the frozen-snapshot equality, bridged ∩ persisted, and — in Go, which has no `satisfies` — the reply-is-bridged and request-is-emittable properties |
+| **Test time** | [bus-invariants.test.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/__tests__/bus-invariants.test.ts) and [bridged_test.go](https://github.com/Xynoplex/sdk/tree/main/go/sdk/bus/bridged_test.go) | duplicates in the bridged set, the frozen-snapshot equality, bridged ∩ persisted, and — in Go, which has no `satisfies` — the reply-is-bridged and request-is-emittable properties |
 
 The Go tests overlap the TypeScript ones on purpose. Both languages generate from one registry, so they are a second opinion rather than the only guard; that redundancy is the point, because an artifact checked only against the thing that generated it can agree with a mistake indefinitely.
 
-The HTTP transport wires this once, for the life of its stream: each frame it receives on a bridged or a resource-scoped channel crosses to the client's bus with its envelope, the correlation id carried. See [`http-transport.ts`](../../packages/typescript/http-transport/src/transport/http-transport.ts).
+The HTTP transport wires this once, for the life of its stream: each frame it receives on a bridged or a resource-scoped channel crosses to the client's bus with its envelope, the correlation id carried. See [`http-transport.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/http-transport/src/transport/http-transport.ts).
 
 This is the *fan-in* set — what the transport pushes onto the client's bus. The set the client emits is open-ended and uses `client.wire.emit(channel, payload)` directly.
 
@@ -266,18 +266,18 @@ With the bus log switched on, every cross-transport event prints one grep-friend
 
 A line is the operation, the channel (`content` for an upload or a read of content), and then `scope=` (the resource a frame is about), `cid=` (the first eight characters of the correlation id) and `trace=` (the first eight of the active trace's id), each written only where there is one. The payload is the last thing on it.
 
-**No line holds a credential.** Every bus log writes the value of a member whose whole name is one a credential goes by as `[withheld]`, wherever in a payload the member is and whatever its value is. The names are a short list, the `names` of [`protocol/specs/src/bus/log-cases.json`](../specs/src/bus/log-cases.json). One is `token`, which is what the bus's own payloads name the one credential they declare: the token a resource is cloned by (`yield:clone-resource-requested`, `yield:clone-create`, and the `response` of `yield:clone-token-generated`). The rest are the names a credential has elsewhere (`password`, `apiKey`, `refreshToken` and `authorization` among them): some payloads take any member, and a credential put in one is withheld under such a name too. A name is matched whole and in the same case, so a member whose name only contains one (`maxTokens`, `apiKeyEnv`) is written as it is, and so is everything else. That table is the rule, and each implementation's tests run it.
+**No line holds a credential.** Every bus log writes the value of a member whose whole name is one a credential goes by as `[withheld]`, wherever in a payload the member is and whatever its value is. The names are a short list, the `names` of [`specs/src/bus/log-cases.json`](../specs/src/bus/log-cases.json). One is `token`, which is what the bus's own payloads name the one credential they declare: the token a resource is cloned by (`yield:clone-resource-requested`, `yield:clone-create`, and the `response` of `yield:clone-token-generated`). The rest are the names a credential has elsewhere (`password`, `apiKey`, `refreshToken` and `authorization` among them): some payloads take any member, and a credential put in one is withheld under such a name too. A name is matched whole and in the same case, so a member whose name only contains one (`maxTokens`, `apiKeyEnv`) is written as it is, and so is everything else. That table is the rule, and each implementation's tests run it.
 
 Five implementations write the log. Each is switched on for a whole process, and each writes to its own place:
 
 | Implementation | Switched on by | Written to |
 |---|---|---|
-| TypeScript, in Node ([`bus-log.ts`](../../packages/typescript/core/src/bus-log.ts)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stdout, with `console.debug` |
+| TypeScript, in Node ([`bus-log.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus-log.ts)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stdout, with `console.debug` |
 | TypeScript, in a browser | `window.__SEMIONT_BUS_LOG__ = true` | the console, with `console.debug` |
-| Rust: the gateway, and a client of the Rust SDK ([`bus_log.rs`](../../packages/rust/sdk/src/bus_log.rs)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stderr |
-| Python: a client of the Python SDK, the Worker among them ([`_bus_log.py`](../../packages/python/sdk/src/semiont/_bus_log.py)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stdout |
-| Go: a client of the Go SDK, the launcher's verbs among them ([`buslog.go`](../../packages/go/sdk/buslog.go)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stderr |
-| Kotlin: a client of the Kotlin SDK, in Kotlin or Java ([`BusLog.kt`](../../packages/kotlin/sdk/src/main/kotlin/semiont/bus/BusLog.kt)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stdout |
+| Rust: the gateway, and a client of the Rust SDK ([`bus_log.rs`](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/src/bus_log.rs)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stderr |
+| Python: a client of the Python SDK, the Worker among them ([`_bus_log.py`](https://github.com/Xynoplex/sdk/tree/main/python/sdk/src/semiont/_bus_log.py)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stdout |
+| Go: a client of the Go SDK, the launcher's verbs among them ([`buslog.go`](https://github.com/Xynoplex/sdk/tree/main/go/sdk/buslog.go)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stderr |
+| Kotlin: a client of the Kotlin SDK, in Kotlin or Java ([`BusLog.kt`](https://github.com/Xynoplex/sdk/tree/main/kotlin/sdk/src/main/kotlin/semiont/bus/BusLog.kt)) | `SEMIONT_BUS_LOG` set to any value that is not empty | stdout |
 
 Five operations, all logged at transport-contract choke points (not in the SDK's namespace methods or the `ActorStateUnit` SSE machinery — those ride on the transport). The Rust, Python, Go and Kotlin transports log at the same points as the TypeScript one this table names:
 
@@ -285,11 +285,11 @@ Five operations, all logged at transport-contract choke points (not in the SDK's
 |---|---|
 | `EMIT` | `HttpTransport.emit()`, gateway `/bus/emit` route |
 | `RECV` | HttpTransport SSE-side fan-in |
-| `SSE` | Gateway `Connection::deliver` in `images/gateway/src/routes/stream.rs` |
+| `SSE` | Gateway `Connection::deliver` in `gateway/src/routes/stream.rs` |
 | `PUT` | `HttpContentTransport.putBinary()`. The gateway writes none for an upload |
 | `GET` | `HttpContentTransport.getBinary()`, `getBinaryStream()`, `getResourceGraph()` and `getAnchoredText()`; and, for a read of bytes, the matching gateway route |
 
-The full capture API and per-test fixture are in **[../../images/e2e/docs/bus-logging.md](../../images/e2e/docs/bus-logging.md)**.
+The full capture API and per-test fixture are in **[../../images/e2e/docs/bus-logging.md](https://github.com/Xynoplex/images/tree/main/e2e/docs/bus-logging.md)**.
 
 A clean round-trip across the wire shows a contiguous EMIT → EMIT → SSE → RECV pattern. Missing lines diagnose with surgical precision: no gateway `EMIT` means the request never reached the server (auth, CORS, network); no gateway `SSE` means the handler never produced a result; no Browser `RECV` means the SSE bytes never parsed.
 
@@ -297,9 +297,9 @@ A clean round-trip across the wire shows a contiguous EMIT → EMIT → SSE → 
 
 The SDK doesn't *replace* the bus — it wraps the channel-call patterns so consumers don't write `correlationId` glue and `bus.stream(...).pipe(filter(...))` for every operation. Three layers of abstraction sit on top:
 
-**1. `ITransport`** ([packages/typescript/core/src/transport.ts](../../packages/typescript/core/src/transport.ts)) — the contract every transport implements: `emit(channel, payload, envelope?)`, `frames(channel)` and `stream(channel)`, `subscribeToResource(id)`, `bridgeInto(bus)`, and the rest [TRANSPORT-CONTRACT.md](./TRANSPORT-CONTRACT.md#the-surface) lists. Transport-neutral; `HttpTransport` (HTTP+SSE) implements it.
+**1. `ITransport`** ([sdk/typescript/core/src/transport.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/transport.ts)) — the contract every transport implements: `emit(channel, payload, envelope?)`, `frames(channel)` and `stream(channel)`, `subscribeToResource(id)`, `bridgeInto(bus)`, and the rest [TRANSPORT-CONTRACT.md](./TRANSPORT-CONTRACT.md#the-surface) lists. Transport-neutral; `HttpTransport` (HTTP+SSE) implements it.
 
-**2. `Bus.request`** ([packages/typescript/core/src/bus.ts](../../packages/typescript/core/src/bus.ts)) — the request/response abstraction. Called with the **operation** (request channel) and a payload; it mints the `correlationId`, looks the result/failure channels up from `BUS_OPERATIONS`, applies a timeout, infers its return type from the result channel, and resolves to the response or rejects with a typed `BusRequestError`. Every namespace method that needs a round-trip is a thin call into it. (It lives in `@semiont/core`, so the services use the same path.)
+**2. `Bus.request`** ([sdk/typescript/core/src/bus.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus.ts)) — the request/response abstraction. Called with the **operation** (request channel) and a payload; it mints the `correlationId`, looks the result/failure channels up from `BUS_OPERATIONS`, applies a timeout, infers its return type from the result channel, and resolves to the response or rejects with a typed `BusRequestError`. Every namespace method that needs a round-trip is a thin call into it. (It lives in `@xynoplex/core`, so the services use the same path.)
 
 **3. Verb namespaces** (`semiont.mark.*`, `semiont.match.*`, `semiont.browse.*`, etc.) — the typed entry points. Each method picks the right channels for its operation, brands ID inputs, and returns the right shape (`Promise`, `StreamObservable`, `CacheObservable`). The channel choice is hidden behind the method name — `semiont.match.search(...)` knows it emits `match:search-requested` and resolves on `match:search-results` / `match:search-failed`.
 
@@ -313,27 +313,27 @@ The paths are documented end-to-end (with code shapes and call-site examples) in
 ## The registry is the authority; every language is generated
 
 `bus-protocol.ts` and `bus-operations.ts` are **generated files** — do not edit
-them. The authority is **[`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json)**:
+them. The authority is **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)**:
 every channel, the payload it carries, and the request/reply operation triples.
 Two generators read it:
 
 | Output | Generator |
 |---|---|
-| `packages/typescript/core/src/bus-protocol.ts`, `bus-operations.ts`, `bus-classification.ts` | `node packages/codegen/bus/generate-ts.mjs` |
-| `packages/go/sdk/bus/{channels,operations,bridged}_gen.go` | `node packages/codegen/bus/generate-go.mjs` |
-| The Rust SDK's channel and operation tables | its build script, [`packages/rust/sdk/build.rs`](../../packages/rust/sdk/build.rs), on every build |
-| `packages/python/sdk/src/semiont/channels.py`, `operations.py` | `node packages/codegen/bus/generate-python.mjs` |
+| `sdk/typescript/core/src/bus-protocol.ts`, `bus-operations.ts`, `bus-classification.ts` | `node the consumer-owned generator` |
+| `sdk/go/sdk/bus/{channels,operations,bridged}_gen.go` | `node the consumer-owned generator` |
+| The Rust SDK's channel and operation tables | its build script, [`sdk/rust/sdk/build.rs`](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/build.rs), on every build |
+| `sdk/python/sdk/src/semiont/channels.py`, `operations.py` | `node the consumer-owned generator` |
 
 ```sh
 npm run generate:bus          # regenerate TypeScript and Go
 npm run generate:bus:check    # verify without writing (what CI runs)
-npm run generate:python       # regenerate every module the Python SDK takes from protocol/specs/, these two among them
+npm run generate:python       # regenerate every module the Python SDK takes from specs/, these two among them
 npm run generate:python:check # verify without writing (what CI runs)
 ```
 
 Hand-written TypeScript that the registry cannot express — runtime-only UI
 types like `AnchorRect` (DOM geometry, callbacks) — lives in the companion
-module `packages/typescript/core/src/bus-ui-types.ts`, which the generated file imports
+module `sdk/typescript/core/src/bus-ui-types.ts`, which the generated file imports
 and re-exports.
 
 Payload *schemas* live in the OpenAPI components — the registry only
@@ -432,15 +432,15 @@ with the registry, naming the command to run.
 
 The compile-time discipline is strict by design. A new channel requires changes in two places (the registry and the OpenAPI schema), plus an SDK method to call it:
 
-1. **The registry** ([`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json)) — add the channel with its payload: a `shape` (`schema`, `envelope`, `storedEvent`, `void` or `empty`) and the OpenAPI schema it names (`schema`, or `payload` for a stored event — one that mutates an annotation also takes `"enriched": true`, and one that belongs to no resource `"system": true`), and its `validate` entry: the schema the `/bus/emit` route enforces, or `null` for non-validated. Then run `npm run generate:bus`, which writes the `EventMap` and `CHANNEL_SCHEMAS` entries in both languages. The generated `satisfies Record<EventName, ...>` clause still fails the typecheck if the two maps disagree, and `validate-registry.mjs` refuses a payload stated any other way.
+1. **The registry** ([`specs/src/bus/registry.json`](../specs/src/bus/registry.json)) — add the channel with its payload: a `shape` (`schema`, `envelope`, `storedEvent`, `void` or `empty`) and the OpenAPI schema it names (`schema`, or `payload` for a stored event — one that mutates an annotation also takes `"enriched": true`, and one that belongs to no resource `"system": true`), and its `validate` entry: the schema the `/bus/emit` route enforces, or `null` for non-validated. Then run `npm run generate:bus`, which writes the `EventMap` and `CHANNEL_SCHEMAS` entries in both languages. The generated `satisfies Record<EventName, ...>` clause still fails the typecheck if the two maps disagree, and `validate-registry.mjs` refuses a payload stated any other way.
 2. **The routing**, for SSE delivery: a request/reply operation is declared as an `operations` entry in the **registry** (generated into `BUS_OPERATIONS`) (which *derives* its reply channels into `BRIDGED_CHANNELS`); a non-request/reply broadcast that should reach every client is declared **`audience: everyone`** in the registry (and one that should reach only viewers of a resource, `audience: scoped`). You never hand-edit `BRIDGED_CHANNELS` — replies are derived, and broadcasts are registry data. Each list has its own completeness check, an equality test pins the derived bridged set, and `validate-registry.mjs` refuses a broadcast entry that is really an operation's reply.
 
 Then for the OpenAPI schema:
 
-3. Add the schema file to `protocol/specs/src/components/schemas/`.
-4. Reference it from the right path file under `protocol/specs/src/paths/` (if the channel has an HTTP entry point too).
-5. Run `npm run generate:openapi --workspace=@semiont/core` to bundle and regenerate types.
-6. Rebuild `@semiont/core`.
+3. Add the schema file to `specs/src/components/schemas/`.
+4. Reference it from the right path file under `specs/src/paths/` (if the channel has an HTTP entry point too).
+5. Run `npm run generate:openapi --workspace=@xynoplex/core` to bundle and regenerate types.
+6. Rebuild `@xynoplex/core`.
 
 And for the SDK:
 
@@ -455,11 +455,11 @@ Skipping any step is caught at build time — `CHANNEL_SCHEMAS`'s `satisfies` cl
 - **[JOBS.md](./JOBS.md)** — the job protocol: the job record and its states, the `job:*` channels the dispatcher answers, claims, retries, cancellation.
 - **[TRANSPORT-CONTRACT.md](./TRANSPORT-CONTRACT.md)** — abstract `ITransport` behavioral guarantees every transport must honor.
 - **[TRANSPORT-HTTP.md](./TRANSPORT-HTTP.md)** — HTTP+SSE wire format; the `/bus/emit` and `/bus/subscribe` contract.
-- **[`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json)** — the authority: channels, payloads, operations.
-- **[`packages/typescript/core/src/bus-protocol.ts`](../../packages/typescript/core/src/bus-protocol.ts)** — GENERATED `EventMap` and `CHANNEL_SCHEMAS`.
-- **`packages/go/sdk/bus/`** — GENERATED Go channels, each a value typed by its payload, the operations with their replies, and the bridged and scoped lists; `typed.go` holds the types they are values of.
-- **[`packages/typescript/core/src/event-bus.ts`](../../packages/typescript/core/src/event-bus.ts)** — the in-process `EventBus` and `ScopedEventBus` implementation.
-- **[../../images/e2e/docs/bus-logging.md](../../images/e2e/docs/bus-logging.md)** — the bus log format and capture API.
+- **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)** — the authority: channels, payloads, operations.
+- **[`sdk/typescript/core/src/bus-protocol.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/bus-protocol.ts)** — GENERATED `EventMap` and `CHANNEL_SCHEMAS`.
+- **`sdk/go/sdk/bus/`** — GENERATED Go channels, each a value typed by its payload, the operations with their replies, and the bridged and scoped lists; `typed.go` holds the types they are values of.
+- **[`sdk/typescript/core/src/event-bus.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/core/src/event-bus.ts)** — the in-process `EventBus` and `ScopedEventBus` implementation.
+- **[../../images/e2e/docs/bus-logging.md](https://github.com/Xynoplex/images/tree/main/e2e/docs/bus-logging.md)** — the bus log format and capture API.
 - **[../../docs/builder/Usage.md](../../docs/builder/Usage.md)** — the namespace tour with worked examples per verb.
 - **[../../docs/operator/administration/OBSERVABILITY.md](../../docs/operator/administration/OBSERVABILITY.md)** — how a frame's trace correlates with OpenTelemetry spans and the `busLog` grep timeline.
 - **[flows/README.md](flows/README.md)** — the eight verbs that organize the channel namespace.

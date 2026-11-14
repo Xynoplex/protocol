@@ -12,9 +12,9 @@ document is wrong and is corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
 when a worker breaks it: a case of the worker conformance suite
-([`protocol/conformance/worker`](../conformance/worker/README.md),
+([`conformance/worker`](../conformance/worker/README.md),
 which every SDK with a worker's surface runs), a file of the dispatcher suite
-([`protocol/conformance/dispatcher`](../conformance/dispatcher/README.md)),
+([`conformance/dispatcher`](../conformance/dispatcher/README.md)),
 or another test in the repository. A rule marked "Held by no case" is one
 nothing checks. `npm run lint:transport-contract` fails when something named
 here does not exist, and when a case of the worker suite is named by no rule.
@@ -68,7 +68,7 @@ matches one of them, or with `none-pending`.
   dispatcher compares a job with a claim, and
   [`filter-cases.json`](../specs/src/jobs/filter-cases.json) is the table
   both answer alike.
-  *Held by `worker/claim-on-announcement`, `packages/typescript/core/src/__tests__/job-filter.test.ts`.*
+  *Held by `worker/claim-on-announcement`, `sdk/typescript/core/src/__tests__/job-filter.test.ts`.*
 - **C6.** `none-pending` is not a fault. The worker waits for its next idle
   moment and reports the answer to nobody.
   *Held by `worker/none-pending`.*
@@ -151,7 +151,7 @@ matches one of them, or with `none-pending`.
   verb's: a `mark` job's counts or a decline, a `yield` job's resource or a
   decline. The gateway refuses any other, and the record passes over a
   completion of another verb than the job's.
-  *Held by `worker/lifecycle`, `dispatcher/conclude.test.ts`, `protocol/conformance/archivist/jobs.test.ts`, `.github/scripts/checks/specs/check-jobs.mjs`.*
+  *Held by `worker/lifecycle`, `dispatcher/conclude.test.ts`, `conformance/archivist/jobs.test.ts`, `.github/scripts/checks/specs/check-jobs.mjs`.*
 - **L8.** A worker that stops while it holds a job fails the job first:
   `job:fail`, with an error saying that the worker stopped, no failure class,
   and `willRetry` as [L4](#the-lifecycle) states it. The queue then retries
@@ -168,7 +168,7 @@ has the call, and what follows is what that call does.
 
 - **A1.** A commit by a worker cites the job it fulfils, in `jobId`. One
   that cites none is refused.
-  *Held by `worker/commit-acknowledged`, `protocol/conformance/archivist/jobs.test.ts`.*
+  *Held by `worker/commit-acknowledged`, `conformance/archivist/jobs.test.ts`.*
 - **A2.** A worker supplies the `id` of every annotation it commits. An
   annotation is recorded once, by its `id`: one whose `id` the resource
   already holds is not recorded again. So a worker derives each `id` from
@@ -176,7 +176,7 @@ has the call, and what follows is what that call does.
   anchored, its body) and from nothing about the attempt, and a job that is
   retried or resumed commits the same annotations under the same ids. An
   `id` made afresh on each attempt records every annotation again.
-  *Held by `protocol/conformance/archivist/annotations.test.ts`, `packages/typescript/core/src/__tests__/annotation-of-span.test.ts`.*
+  *Held by `conformance/archivist/annotations.test.ts`, `sdk/typescript/core/src/__tests__/annotation-of-span.test.ts`.*
 - **A3.** An annotation committed with no `id` is not recorded.
   *Held by no case.*
 - **A4.** A commit is established when the record acknowledges it
@@ -238,7 +238,7 @@ worker stops.
 
 A worker that exports telemetry sends each message in the trace of the work
 that sent it, and receives each frame in the trace it was sent under
-([`protocol/specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)).
+([`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)).
 A dispatcher that exports answers a claim in the trace of the claim
 ([`dispatcher/environment.test.ts`](../conformance/dispatcher/environment.test.ts)).
 

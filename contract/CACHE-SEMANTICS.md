@@ -24,7 +24,7 @@ Three rules carry most of the contract:
 3. **Accessors are lazy**: calling a live-query method is pure — safe
    from render — and the fetch decision runs on first subscribe.
 
-Ergonomics: `isReady` / `readyValue` from `@semiont/sdk` unwrap states in
+Ergonomics: `isReady` / `readyValue` from `@xynoplex/sdk` unwrap states in
 pipes and handlers.
 
 This is the **three-outcome contract** — the name source comments and
@@ -43,15 +43,15 @@ implementation must satisfy and that tests must verify, in every language.
 Every SDK. The behaviors are numbered so that each can be tested by name:
 
 - The SDK conformance suite's live cases put each SDK through them against a
-  real gateway ([protocol/conformance/sdk](../conformance/sdk/README.md)).
+  real gateway ([conformance/sdk](../conformance/sdk/README.md)).
 - What a bus event refreshes is not prose at all: it is
-  [`protocol/specs/src/client/refresh.json`](../specs/src/client/refresh.json), from
+  [`specs/src/client/refresh.json`](../specs/src/client/refresh.json), from
   which each SDK's handlers are generated.
 - The TypeScript SDK's own suites pin the behaviors one by one
   ([Test-parity](#test-parity)).
 
 The examples are TypeScript, where the cache is `createCache` in
-`@semiont/sdk`. The behaviors are the same in every SDK. In every SDK a host
+`@xynoplex/sdk`. The behaviors are the same in every SDK. In every SDK a host
 can also make a cache of its own, over a fetch it gives. The client's event
 table refreshes only the client's caches, so a host invalidates its own.
 
@@ -251,7 +251,7 @@ minimal compared to the correctness benefit of stable observable
 identities. Stored values are kept the same way: there is no expiry
 and no collection of keys nobody observes.
 
-The full cache lifetime matches a `SemiontClient` instance, which
+The full cache lifetime matches a `XynoplexClient` instance, which
 matches a browser tab or a CLI process — so the leak is strictly
 bounded.
 
@@ -291,10 +291,10 @@ Boundaries:
    reader finds the key at rest between the two asks (B17).
 
 Liveness: B14's one-retry budget is pinned by liveness axioms **L1/L2**
-(`assertLivenessAxioms` from `@semiont/core/testing/axioms`) — L2's settlement bound on the swallowed
+(`assertLivenessAxioms` from `@xynoplex/core/testing/axioms`) — L2's settlement bound on the swallowed
 paths is `timeoutMs × (1 + this retry)`, enforced against the real
 `BrowseNamespace` + cache + `Bus.request` composition by the property
-suite ([browse-liveness.property.test.ts](../../packages/typescript/sdk/src/__tests__/browse-liveness.property.test.ts)).
+suite ([browse-liveness.property.test.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/__tests__/browse-liveness.property.test.ts)).
 Changing the retry count is a policy change that must edit L2's budget
 visibly, not drift past it.
 
@@ -326,7 +326,7 @@ holds it.** No observer sees `failed` while another sees `pending`.
    governs them.
 
 Rationale: liveness axiom L1, which the property suite
-([browse-liveness.property.test.ts](../../packages/typescript/sdk/src/__tests__/browse-liveness.property.test.ts))
+([browse-liveness.property.test.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/__tests__/browse-liveness.property.test.ts))
 holds the real composition to.
 B14 converts "reply lost" into one slow load when the retry succeeds;
 B15 covers the remaining corner — the retry ALSO fails — where an idle
@@ -355,7 +355,7 @@ a key's state is computed from), and stuns all later acts:
    regardless (structural no-op, belt and braces).
 3. `dispose()` is idempotent.
 4. At the namespace level, `BrowseNamespace.dispose()` (called by
-   `SemiontClient.dispose()`) disposes all owned caches (A7-owned: it
+   `XynoplexClient.dispose()`) disposes all owned caches (A7-owned: it
    constructed them) and detaches its bus-event subscriptions, so late
    invalidation events cannot refetch into disposed caches.
 
@@ -374,14 +374,14 @@ to starve.
 
 A client given a `SessionStorage` keeps, for one person on one knowledge
 base, the queries
-[`protocol/specs/src/client/refresh.json`](../specs/src/client/refresh.json)
+[`specs/src/client/refresh.json`](../specs/src/client/refresh.json)
 marks `persisted` across a restart, each in one `cacheDocument` under
-[`protocol/specs/src/session/stored.json`](../specs/src/session/stored.json)'s
+[`specs/src/session/stored.json`](../specs/src/session/stored.json)'s
 `cacheKeyPrefix`, its values what the query's `value` says its cache holds,
 and where its stream was as `lastEventIds` under `lastEventIdKeyPrefix`.
 Every SDK writes and reads them alike, so a client in any SDK finds what
 one in another kept over the same storage;
-[`protocol/specs/src/session/cache-cases.json`](../specs/src/session/cache-cases.json)
+[`specs/src/session/cache-cases.json`](../specs/src/session/cache-cases.json)
 holds every SDK to it, case by case.
 
 1. **Load-on-construct, or on attach.** When the client is made knowing
@@ -433,7 +433,7 @@ holds every SDK to it, case by case.
    value it last had, and a previously-failed key that had none rehydrates
    as absent and refetches on first observation.
 4. **Saves are debounced**, one wait per kept cache (`saveDebounceMs` in
-   [`protocol/specs/src/client/timing.json`](../specs/src/client/timing.json),
+   [`specs/src/client/timing.json`](../specs/src/client/timing.json),
    restarted by each change), and **disposal flushes a pending save before
    going inert** — the flush is part of the disposal act, so a KB switch
    cannot lose the last write. A client given a cache persistence directly
@@ -550,7 +550,7 @@ constraint is:
 
 Adding a new bus event → invalidation mapping MUST NOT change the
 effect of any existing mapping. This is a structural rule: a mapping
-is a row of `protocol/specs/src/client/refresh.json`, and
+is a row of `specs/src/client/refresh.json`, and
 `BrowseNamespace.subscribeToEvents()` gives each channel one handler,
 which applies the row for its event and nothing else. Debugging becomes
 tractable only if we can read one row at a time and understand its
@@ -729,13 +729,13 @@ what is shown.
 
 ## What refreshes what
 
-[`protocol/specs/src/client/refresh.json`](../specs/src/client/refresh.json)
+[`specs/src/client/refresh.json`](../specs/src/client/refresh.json)
 is the authority: a row per trigger, saying which live queries it acts on,
 and where in the trigger's event the keys and the value it acts with are.
 A trigger is a channel of the bus; `reopened`, the stream open again after
 a drop (B13); or `unreadable`, an event on one of the table's channels that
 cannot be read. Every SDK applies its own generation of the table
-(TypeScript's `BrowseNamespace` applies `CACHE_REFRESH` in `@semiont/core`).
+(TypeScript's `BrowseNamespace` applies `CACHE_REFRESH` in `@xynoplex/core`).
 
 What an event names is the table's too. A row's `names` are the ways to the
 resource and the annotation the event names, and its `carries` the way to
@@ -761,7 +761,7 @@ key the cache holds. Every act is on a key the cache holds (B20); each
 refetch goes through its key's window (B19); writes and removes do neither.
 
 The SDK conformance suite builds a live case from every row
-([`protocol/conformance/sdk`](../conformance/sdk/README.md)), so a
+([`conformance/sdk`](../conformance/sdk/README.md)), so a
 row is a statement every SDK is held to.
 
 Two things the table's shape follows from:
@@ -847,17 +847,17 @@ state (B13). They live for the namespace's lifetime, which matches the
 client's (see B11): `dispose()` is the only place that detaches them
 (B16). A second run of `subscribeToEvents()` would double every
 effect. The constructor is the only call site; audit that the
-constructor runs once per `SemiontClient`.
+constructor runs once per `XynoplexClient`.
 
 ## Test-parity
 
 The TypeScript SDK asserts each behavior by its number, in suites under
-`packages/typescript/sdk/src/`: `namespaces/__tests__/cache-semantics.test.ts`
+`sdk/typescript/sdk/src/`: `namespaces/__tests__/cache-semantics.test.ts`
 against `BrowseNamespace`, `__tests__/cache.test.ts` against
 `createCache` alone, and, for persistence (B17, B18),
 `__tests__/cache-persistence.test.ts`, `cache-persister.test.ts` and
 `cache-rehydration.test.ts`. Every SDK runs
-[`protocol/specs/src/session/cache-cases.json`](../specs/src/session/cache-cases.json)
+[`specs/src/session/cache-cases.json`](../specs/src/session/cache-cases.json)
 against its own persister. Adding a new behavior here must be
 accompanied by a new test case referencing its number
 (`describe('B7 — invalidate is stale-while-revalidate', …)`). Removing

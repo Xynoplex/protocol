@@ -10,7 +10,7 @@ the suite's operations into calls on that SDK's worker surface and writes
 back what happened.
 
 The suite imports nothing from an SDK. What names one is the `worker` of its
-entry in `sdks`, in the run's [implementations file](../README.md#the-implementations-file).
+entry in `sdks`, in the run's [implementations file](../README.md#implementation-manifest).
 An SDK with no worker surface has no entry, and the suite does not run it.
 
 Its one entry is `worker.test.ts`: every case in [cases/](cases/), for every
@@ -39,13 +39,13 @@ that:
 - says it claimed a job, was refused, saw a cancellation or stalled when the
   case does not expect it to;
 - reports a failure with a code
-  [`protocol/specs/src/errors/codes.json`](../../specs/src/errors/codes.json) does
+  [`specs/src/errors/codes.json`](../../specs/src/errors/codes.json) does
   not list.
 
 A case that states `telemetry` runs the worker exporting, as an SDK case does
 ([sdk/README.md § A case](../sdk/README.md#a-case)), and once the driver has
 exited holds what it exported to the rows of
-[`protocol/specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
+[`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
 for the bus, which is all a worker reaches. It also holds the worker to a
 trace of its own for each job, read from the trace each of its claims was
 sent under and from the spans its driver opened around the jobs it was
@@ -120,7 +120,7 @@ with no `job:fail`, and a driver that failed one there would fail the case.
 
 `open`'s `timing` overrides `jobClaimTimeoutMs`, `heldJobStallMs`,
 `heldJobStallCheckMs` and `markCommitTimeoutMs` of
-[`protocol/specs/src/client/timing.json`](../../specs/src/client/timing.json)
+[`specs/src/client/timing.json`](../../specs/src/client/timing.json)
 beside the transport's `reconnectMs`, `lazyRemoveMs` and `lingerMs`, so a
 case does not wait out ten seconds or fifteen minutes.
 
@@ -183,35 +183,17 @@ report a handover.
 
 ## Adding an SDK
 
-Write a worker driver over the SDK's worker surface, name it as `worker` in
-the SDK's entry in `sdks`, and run the suite. TypeScript's is
-[packages/typescript/sdk/conformance/worker-driver.ts](../../../packages/typescript/sdk/conformance/worker-driver.ts),
-Rust's is
-[semiont-worker-driver.rs](../../../packages/rust/http-transport/conformance/src/bin/semiont-worker-driver.rs),
-Python's is
-[conformance/worker.py](../../../packages/python/sdk/conformance/worker.py),
-Go's is
-[semiont-go-worker-driver](../../../packages/go/sdk/conformance/cmd/semiont-go-worker-driver/main.go),
-and Kotlin's, written in Java over the SDK's Java surface, is
-[WorkerDriver.java](../../../packages/kotlin/sdk/src/conformance/java/semiont/conformance/WorkerDriver.java).
+Implement the wire, live, and (where supported) worker driver in the SDK's own repository. Add its command arrays to the consumer-owned implementations manifest and run the corresponding suite. This repository deliberately does not prescribe SDK source paths or build commands.
 
 ## Running it
 
-It needs a built gateway and the Rust drivers, the Go drivers, the Kotlin
-drivers with a JDK of the version `packages/kotlin/sdk/.java-version` names,
-`nats-server` (2.10 or later), `uv` and Python 3.12 or later on `PATH`, and
-the packages built:
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
 
-```bash
-cargo build --release -p semiont-gateway -p semiont-conformance-drivers
-(cd packages/go/sdk/conformance && CGO_ENABLED=0 go build -o bin/ ./cmd/...)
-(cd packages/kotlin/sdk && ./gradlew installConformance)
-npm run build:packages
-cd protocol/conformance
-npm ci
-npm run test:worker
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:worker -- -- --implementations /absolute/path/to/implementations.json
 ```
 
-The suite type-checks the TypeScript driver before it starts: Node runs it
-with its types stripped, and would run a mistyped one. It makes the Python
-SDK's environment too (`uv sync --locked`).
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

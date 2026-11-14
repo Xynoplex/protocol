@@ -8,7 +8,7 @@
  * store is the Archivist's: the Smelter mounts none of it, and keeps it on
  * the Archivist's surface.
  *
- * Cases meet the Smelter where the rest of Semiont does: in the index it
+ * Cases meet the Smelter where the rest of Xynoplex does: in the index it
  * writes and in the anchored-text store, each read here by the suite's own
  * hand; on the bus, where it signals what it has decided and answers a
  * rebuild; at its health port; at its provider; and in what it writes to its
@@ -21,7 +21,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import { kbDid, type components } from '@semiont/core';
+import { kbDid, type components } from './protocol-core';
 import { ArchivistWorld, sha256, shardOf, unstamped, type Answer, type BusClient } from './archivist-world';
 import { eventually } from './net';
 import { startOllamaEmbed, type StandInEmbedder } from './ollama-embed';

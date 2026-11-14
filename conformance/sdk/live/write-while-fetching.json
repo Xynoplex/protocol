@@ -1,6 +1,6 @@
 {
   "about": "an event that carries an annotation writes it while the annotation's first request is unanswered, and that request is let go of: its answer, coming later, is not written, and nothing more is asked (B13b, B9)",
-  "source": "protocol/contract/CACHE-SEMANTICS.md B13b; protocol/specs/src/client/refresh.json mark:body-updated",
+  "source": "contract/CACHE-SEMANTICS.md B13b; specs/src/client/refresh.json mark:body-updated",
   "tier": "parity",
   "steps": [
     {"backend": "listen", "with": {"channels": ["browse:resource-requested", "browse:annotation-requested", "browse:events-requested", "gather:referenced-by-requested", "browse:resources-requested", "browse:entity-types-requested", "browse:tag-schemas-requested"]}},

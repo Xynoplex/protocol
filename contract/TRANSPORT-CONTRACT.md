@@ -1,6 +1,6 @@
 # Transport Contract
 
-What a Semiont client and the bus promise each other, whatever carries the
+What a Xynoplex client and the bus promise each other, whatever carries the
 bus. Every SDK implements this contract, and every consumer of an SDK may
 rely on it. What the HTTP wire adds — the routes, the ids on the stream,
 the order of a replay, the limits — is
@@ -11,9 +11,9 @@ document is wrong and is corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and the cases
 that fail when a client or a gateway breaks it: a case of the SDK
-conformance suite ([`protocol/conformance/sdk`](../conformance/sdk/README.md),
+conformance suite ([`conformance/sdk`](../conformance/sdk/README.md),
 which every SDK runs), a file of the gateway suite
-([`protocol/conformance/gateway`](../conformance/gateway/README.md)), or
+([`conformance/gateway`](../conformance/gateway/README.md)), or
 a test of the reference implementation. A rule marked "Held by no case" is
 one nothing checks. `npm run lint:transport-contract` fails when a
 case named here does not exist, and when a wire case of the SDK suite is
@@ -63,9 +63,9 @@ carries a `scope` that is not a resource's id. It is told to the error
 stream: as `error`, with no status, saying "the stream carried what is not
 a frame: " and then its first fault, in the words a request's refusal says
 it in.
-*Held by `protocol/specs/src/bus/frame-cases.json`, `packages/python/sdk/tests/test_http_transport.py`, `packages/rust/http-transport/tests/stream.rs`, `packages/go/sdk/stream_test.go`, `packages/kotlin/sdk/src/test/kotlin/semiont/http/StreamTest.kt`, `packages/swift/sdk/Tests/SemiontTests/FrameCasesTests.swift`, `packages/csharp/sdk/tests/Semiont.Tests/FrameCasesTests.cs`, `packages/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
+*Held by `specs/src/bus/frame-cases.json`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/go/sdk/stream_test.go`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/StreamTest.kt`, `sdk/swift/sdk/Tests/XynoplexTests/FrameCasesTests.swift`, `sdk/csharp/sdk/tests/Xynoplex.Tests/FrameCasesTests.cs`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
 
-The **registry** ([`protocol/specs/src/bus/registry.json`](../specs/src/bus/registry.json))
+The **registry** ([`specs/src/bus/registry.json`](../specs/src/bus/registry.json))
 is the authority for channels. It classifies each on independent axes:
 whether it is half of an operation (a request, its result, its failure);
 otherwise its kind (a command or an event); its audience (every client, the
@@ -76,7 +76,7 @@ whether it is an event of the record; and whether emitting it writes.
 
 ## The surface
 
-The TypeScript rendering, in `@semiont/core`, is the reference. Another
+The TypeScript rendering, in `@xynoplex/core`, is the reference. Another
 language's SDK offers the same operations in its own idiom.
 
 **`ITransport`: the bus**
@@ -101,7 +101,7 @@ language's SDK offers the same operations in its own idiom.
 | `bridgeInto(bus)` | Delivers what the transport receives onto a client's bus |
 | `dispose()` | Ends the transport |
 
-`Bus` (`@semiont/core`) is the typed bus over any transport, and a client hands its own out as `client.wire`. Its `request(operation, payload, timeoutMs?, signal?)` is a request and its reply.
+`Bus` (`@xynoplex/core`) is the typed bus over any transport, and a client hands its own out as `client.wire`. Its `request(operation, payload, timeoutMs?, signal?)` is a request and its reply.
 
 **`IContentTransport`**: `putBinary`, `getBinary`, `getBinaryStream`, `getResourceGraph`, `getAnnotations`, `getAnchoredText` and `dispose`.
 
@@ -110,7 +110,7 @@ language's SDK offers the same operations in its own idiom.
 The lists above are held to the interfaces. This compiles only while each list names exactly its interface's members:
 
 ```ts
-import type { ITransport, IContentTransport, IGatewayOperations } from '@semiont/core';
+import type { ITransport, IContentTransport, IGatewayOperations } from '@xynoplex/core';
 
 type Exactly<T, K extends keyof T> = Exclude<keyof T, K> extends never ? true : never;
 
@@ -166,7 +166,7 @@ that identity lets the gateway and the client do.
 | So a consumer may | apply each once, in order | await it inside its deadline | act only in ways that are safe when missed |
 
 A channel's class follows from the registry's axes and is generated beside
-them, as `delivery` in `CHANNEL_ATTRS` (`@semiont/core`): an operation's
+them, as `delivery` in `CHANNEL_ATTRS` (`@xynoplex/core`): an operation's
 result and failure are correlated; an event of the record whose audience is
 a resource's scope is positioned; every other channel that crosses the wire
 is passing.
@@ -195,7 +195,7 @@ same: `yield:created`, `yield:updated`, `yield:cloned`, `yield:moved`,
 `frame:entity-type-added` and `frame:tag-schema-added`. The record is kept
 per resource, and these are delivered to every client on no scope, so they
 have no position a client could resume from.
-*Held by `packages/typescript/core/src/__tests__/bus-classification.test.ts`.*
+*Held by `sdk/typescript/core/src/__tests__/bus-classification.test.ts`.*
 
 A **request**, as the service that answers it receives it, is a passing
 frame: a service whose stream is down when a request is published is not
@@ -211,7 +211,7 @@ repairs a drop by asking:
   passing events feed and it holds, and asks for nothing after a handover or
   at the first open
   ([CACHE-SEMANTICS B13](CACHE-SEMANTICS.md), from
-  the `reopened` row of [`protocol/specs/src/client/refresh.json`](../specs/src/client/refresh.json)).
+  the `reopened` row of [`specs/src/client/refresh.json`](../specs/src/client/refresh.json)).
   *Held by `sdk/live/missed-while-down`, `sdk/live/refresh-reopened`, `sdk/live/reconnect`, `sdk/live/first-open`.*
 - **A job's follower** asks for the job's status when the job has been
   silent ([JOBS.md](./JOBS.md#following-a-job)).
@@ -241,12 +241,12 @@ repairs a drop by asking:
     the log's last event as it was before. A log first met after the start
     is a new one, and is taken from its first event.
 
-  *Held by `protocol/specs/src/follower/follow-cases.json`, run by `packages/python/service/tests/test_follow_cases.py`.*
+  *Held by `specs/src/follower/follow-cases.json`, run by `images/shared/python/service/tests/test_follow_cases.py`.*
 
 A row of the refresh table whose trigger is a passing channel may only
 refetch, and `reopened` refetches whatever it does: the table's generator
 refuses anything else.
-*Held by `packages/typescript/core/src/__tests__/cache-refresh.test.ts`.*
+*Held by `sdk/typescript/core/src/__tests__/cache-refresh.test.ts`.*
 
 ### Order
 
@@ -288,14 +288,14 @@ subscriber is given the present state at once.
 - **`closed`** is terminal: the client was disposed.
   *Held by `sdk/wire/request-closed`.*
 
-The timing a client keeps is [`protocol/specs/src/client/timing.json`](../specs/src/client/timing.json),
+The timing a client keeps is [`specs/src/client/timing.json`](../specs/src/client/timing.json),
 from which every SDK generates its constants.
 
 ### Failures
 
 Everything a server refused, and every request the gateway never answered,
 is reported on the error stream as it is thrown to its caller, under a code
-from [`protocol/specs/src/errors/codes.json`](../specs/src/errors/codes.json).
+from [`specs/src/errors/codes.json`](../specs/src/errors/codes.json).
 So is every line the stream carried that names no reader (§ The transport).
 
 - **A listener taken as soon as the client is made hears every failure**,
@@ -303,7 +303,7 @@ So is every line the stream carried that names no reader (§ The transport).
   before the listener was taken. Of what was met before the first listener
   was taken, the latest `errorsKeptForFirstReaderCount` are kept for it, in
   the order met; the oldest is dropped beyond that.
-  *Held by `sdk/wire/stream-rate-limited`, `packages/rust/http-transport/tests/stream.rs`.*
+  *Held by `sdk/wire/stream-rate-limited`, `sdk/rust/http-transport/tests/stream.rs`.*
 - A refused stream is reported, and opened again no sooner than the
   refusal's `Retry-After`; a stream whose credential was refused waits for
   another credential instead (§ A refused credential).
@@ -311,16 +311,16 @@ So is every line the stream carried that names no reader (§ The transport).
 - **A read that got no answer is sent once more**, after
   `requestRetryPauseMs`: one whose connection failed, or closed before any
   response came. A read unanswered at its deadline is not sent again
-  ([`protocol/specs/src/client/timing.json`](../specs/src/client/timing.json)).
+  ([`specs/src/client/timing.json`](../specs/src/client/timing.json)).
   *Held by `sdk/wire/read-unanswered`.*
 - **An upload that got no answer is sent once more**, after
   `requestRetryPauseMs`, with the key it was first sent with: one whose
   connection failed or closed before its answer reached the client, and one
   answered with a status the `transport` rule retries for a keyed request
-  ([`protocol/specs/src/retry/cases.json`](../specs/src/retry/cases.json)).
+  ([`specs/src/retry/cases.json`](../specs/src/retry/cases.json)).
   The Archivist answers the repeat with the resource the first made, so the
   upload resolves with that resource's id.
-  *Held by `sdk/wire/upload-unanswered`, `sdk/wire/upload-answer-lost`, `protocol/specs/src/retry/cases.json`.*
+  *Held by `sdk/wire/upload-unanswered`, `sdk/wire/upload-answer-lost`, `specs/src/retry/cases.json`.*
 - A gateway that cannot be reached fails an emit or a read as `unavailable`
   once its attempts are spent.
   *Held by `sdk/wire/unreachable`.*
@@ -352,7 +352,7 @@ that can renew its token does the same:
   renewal already answered an earlier refusal of the token refused, gives
   the token it holds and renews nothing: a refusal that arrives after the
   renewal costs no second one.
-  *Held by `protocol/specs/src/session/cases.json`, its refusal rows, and by `packages/typescript/http-transport/src/transport/__tests__/http-transport.hooks.test.ts`, `packages/python/sdk/tests/test_refused_token.py`, `packages/go/sdk/stream_test.go`, `packages/rust/http-transport/tests/upload.rs`.*
+  *Held by `specs/src/session/cases.json`, its refusal rows, and by `sdk/typescript/http-transport/src/transport/__tests__/http-transport.hooks.test.ts`, `sdk/python/sdk/tests/test_refused_token.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/upload.rs`.*
 
 A refused credential is renewed, never retried: no retry rule is asked
 about it, and it never waits out a `Retry-After`. A client that cannot renew
@@ -436,18 +436,18 @@ result and failure channels are the registry's.
   them, and the wait for the reply. When it falls due the request fails as
   a timeout, and an emit still in flight is given up: the attempt in
   progress is cancelled, and no attempt is made after it.
-  *Held by `protocol/specs/src/client/clock-cases.json`.*
+  *Held by `specs/src/client/clock-cases.json`.*
 - **A result with a fault** is no result, wherever the fault is: the
   request fails as `error`, saying the payload is not its channel's and
   naming its first fault, as § Identity says a fault is named.
-  *Held by `protocol/specs/src/resources/reader-cases.json`, `packages/go/sdk/replies_test.go`, `packages/typescript/core/src/__tests__/bus-request.test.ts`.*
+  *Held by `specs/src/resources/reader-cases.json`, `sdk/go/sdk/replies_test.go`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`.*
 - **A failure with a fault** is held to its channel's schema as a result
   is: the request fails as `error`, naming its first fault, and a failure
   without words is never given any. A peer sends a code the wire lists,
   and a reader reads a code the wire does not list as absent: the failure
   settles the request as `bus.rejected`, in its own words, and is read
   with no code wherever it is read, by its channel's typed reader too.
-  *Held by `protocol/specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `packages/typescript/core/src/__tests__/bus-request.test.ts`, `packages/go/sdk/replies_test.go`, `packages/rust/sdk/tests/bus.rs`, `packages/python/sdk/tests/test_transport.py`, `packages/kotlin/sdk/src/test/kotlin/semiont/bus/BusTest.kt`, `packages/swift/sdk/Tests/SemiontTests/HTTPTests.swift`, `packages/csharp/sdk/tests/Semiont.Tests/TransportTests.cs`, `packages/haskell/sdk/test/BusCases.hs`.*
+  *Held by `specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`, `sdk/go/sdk/replies_test.go`, `sdk/rust/sdk/tests/bus.rs`, `sdk/python/sdk/tests/test_transport.py`, `sdk/kotlin/sdk/src/test/kotlin/semiont/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynoplexTests/HTTPTests.swift`, `sdk/csharp/sdk/tests/Xynoplex.Tests/TransportTests.cs`, `sdk/haskell/sdk/test/BusCases.hs`.*
 - **A request nobody is there to answer** fails as `peer-unavailable` when
   the gateway can tell, and as a timeout when it cannot.
   *Held by `sdk/wire/request-unanswerable`, `gateway/emit.test.ts`.*
@@ -487,7 +487,7 @@ this emit, never provenance.
 - A payload with a fault is not its channel's, wherever the fault is.
   Every SDK holds a payload, before it decodes it, to the table of what
   each component schema requires (written from the schemas by
-  `packages/codegen/schemas/required-shapes.mjs`, whose header states the order it is
+  `the consumer-owned generator`, whose header states the order it is
   walked in), and finds the same first fault: its `member`, the way to it
   (the names of the members it is within and its own, joined by dots; empty
   for the payload itself), and its `reason`, `lacks` (a required member it
@@ -529,7 +529,7 @@ this emit, never provenance.
   channel's: under `error`, saying "a frame on `<channel>` is not that
   channel's: " and then the fault. Only a reply whose correlation id cannot
   be read, which carries none, leaves its request to wait out its timeout.
-  *Held by `protocol/specs/src/bus/frame-cases.json`, `packages/typescript/core/src/__tests__/bus.test.ts`, `packages/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `packages/python/sdk/tests/test_bus.py`, `packages/kotlin/sdk/src/test/kotlin/semiont/bus/BusTest.kt`, `packages/swift/sdk/Tests/SemiontTests/ClientTests.swift`, `packages/csharp/sdk/tests/Semiont.Tests/TransportTests.cs`, `packages/rust/sdk/tests/typed.rs`, `packages/go/sdk/internal/required/required_test.go`.*
+  *Held by `specs/src/bus/frame-cases.json`, `sdk/typescript/core/src/__tests__/bus.test.ts`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_bus.py`, `sdk/kotlin/sdk/src/test/kotlin/semiont/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynoplexTests/ClientTests.swift`, `sdk/csharp/sdk/tests/Xynoplex.Tests/TransportTests.cs`, `sdk/rust/sdk/tests/typed.rs`, `sdk/go/sdk/internal/required/required_test.go`.*
 
 ## Content and the gateway's own operations
 
@@ -541,7 +541,7 @@ Bytes do not ride the bus.
 - An upload carries an `Idempotency-Key` header of the client's making: a
   new key for each upload, and the same on every sending of it, the one
   sent again with a renewed credential too
-  ([`protocol/specs/src/paths/resources.json`](../specs/src/paths/resources.json)).
+  ([`specs/src/paths/resources.json`](../specs/src/paths/resources.json)).
   *Held by `sdk/wire/upload-keyed`, `sdk/wire/upload-credential-renewed`.*
 - An upload reports its progress as it is sent: how much has gone and how
   much there is, never less than it last said, and all of it by the time it
@@ -565,18 +565,18 @@ Bytes do not ride the bus.
 - An answer with a fault fails as `error`, with the answer's status,
   saying it is not its declared body and naming its first fault, as
   § Identity says a fault is named; it is reported on the error stream too.
-  *Held by `packages/go/sdk/replies_test.go`, `packages/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `packages/python/sdk/tests/test_withheld.py`, `packages/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`, `packages/rust/http-transport/tests/answers.rs`.*
+  *Held by `sdk/go/sdk/replies_test.go`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_withheld.py`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`, `sdk/rust/http-transport/tests/answers.rs`.*
 - A read or one of the gateway's own operations whose credential is refused
   is renewed, as § A refused credential says.
   *Held by `sdk/wire/request-credential-renewed`, `sdk/wire/request-credential-limit-refused-twice`.*
 - So is an upload whose credential is refused, and its progress, sent
   twice, is never less than it last said.
-  *Held by `sdk/wire/upload-credential-renewed`, `packages/typescript/http-transport/src/transport/__tests__/http-content-transport.xhr.test.ts`.*
+  *Held by `sdk/wire/upload-credential-renewed`, `sdk/typescript/http-transport/src/transport/__tests__/http-content-transport.xhr.test.ts`.*
 
 ## Telemetry
 
 A client that exports telemetry exports the spans and the count
-[`protocol/specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
+[`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
 lists, each of its kind and with its attributes, and nothing else under
 their names.
 *Held by `sdk/wire/telemetry`.*
@@ -615,7 +615,7 @@ takes four things from the transport, and nothing else:
 4. **A reopened stream refreshes what the cache holds** of what passing
    events feed.
 
-Which event refreshes what is [`protocol/specs/src/client/refresh.json`](../specs/src/client/refresh.json).
+Which event refreshes what is [`specs/src/client/refresh.json`](../specs/src/client/refresh.json).
 
 ## What this document is not
 

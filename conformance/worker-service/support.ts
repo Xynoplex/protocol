@@ -7,7 +7,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { components } from '@semiont/core';
+import type { components } from '../harness/protocol-core';
 import { expect } from 'vitest';
 import type { RecordedMessage } from '../harness/anthropic';
 import type { RecordedGeneration } from '../harness/ollama';
@@ -35,7 +35,7 @@ function canonical(value: unknown): string {
 
 /**
  * The id of an annotation, derived from what it is as
- * protocol/specs/src/annotations/id-cases.json states: for an annotation whose resource
+ * specs/src/annotations/id-cases.json states: for an annotation whose resource
  * a case learns only as it runs, and so cannot state its id beforehand. `body`
  * is left out for an annotation that has none. worker-service/yield.test.ts
  * holds this to every case of that table.
@@ -133,7 +133,7 @@ export const FORMATS = {
 /**
  * What a linking job's count asks its answer to be: an array of one object,
  * the count. Written as JSON, so that the worker's own tests read it whole
- * (images/worker/tests/test_element_schemas.py).
+ * (consumer-owned Worker implementation).
  */
 export const COUNT_FORMAT = { "type": "array", "items": { "type": "object", "properties": { "count": { "type": "integer" } }, "required": ["count"], "additionalProperties": false } } as const;
 

@@ -1,12 +1,12 @@
 # Dispatcher conformance suite
 
 A black-box suite for the dispatcher. It starts dispatcher processes and meets
-them only as the rest of Semiont does: on the bus, through a real gateway, and
+them only as the rest of Xynoplex does: on the bus, through a real gateway, and
 at the health port. It checks what they do against the job protocol as
-[protocol/contract/JOBS.md](../../contract/JOBS.md) states it, and against
-the schemas `protocol/specs/` gives every channel. It imports nothing from the
+[contract/JOBS.md](../../contract/JOBS.md) states it, and against
+the schemas `specs/` gives every channel. It imports nothing from the
 dispatcher: what names an implementation is `dispatcher` in the run's
-[implementations file](../README.md#the-implementations-file): in Semiont's, the Rust binary
+[implementations file](../README.md#implementation-manifest): in Xynoplex's, the Rust binary
 `target/release/semiont-dispatcher`.
 
 ## The world around a dispatcher
@@ -56,15 +56,15 @@ otherwise hand one case's job to the next.
 - **Boot** (`boot.test.ts`): every refusal to start, the health answer, and a
   clean stop.
 - **Environment** (`environment.test.ts`): what each variable
-  [`protocol/specs/src/service-environment/variables.json`](../../specs/src/service-environment/variables.json)
+  [`specs/src/service-environment/variables.json`](../../specs/src/service-environment/variables.json)
   lists for the dispatcher changes, and that a reply continues its request's
   trace.
 - **Telemetry** (`observability.test.ts`): the `bus.recv` and `bus.emit` spans
   a job's frames make, the queue's size by every status the spec gives a job,
   and, last, everything exported held, in both directions, to the rows of
-  [`protocol/specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
+  [`specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
   that list the dispatcher and the rows of
-  [`protocol/specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
+  [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
   for the SDK transport it reaches the bus through, and to the table's
   `resource`: exported under exactly the keys it lists for the dispatcher,
   with `semiont.kb` the DID of the knowledge base its document names.
@@ -73,10 +73,13 @@ Behaviour JOBS.md lists as a known defect is not pinned by any case.
 
 ## Running it
 
-```bash
-(cd packages/rust && cargo build --release -p semiont-gateway -p semiont-dispatcher)
-npm run build --workspace=@semiont/core
-cd protocol/conformance
-npm ci
-npm run test:dispatcher
+The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
+
+Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
+
+```sh
+npm ci --prefix conformance
+npm run --prefix conformance test:dispatcher -- -- --implementations /absolute/path/to/implementations.json
 ```
+
+Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.

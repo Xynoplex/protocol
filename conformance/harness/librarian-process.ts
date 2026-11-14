@@ -18,7 +18,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { components } from '@semiont/core';
+import type { components } from './protocol-core';
 import { collectLines } from './gateway';
 import { call } from './http';
 import { MODEL_CATALOGUE, runEnvironment } from './paths';

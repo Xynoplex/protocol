@@ -74,12 +74,12 @@ From the launcher: `semiont browse`, and `semiont browse <resourceId> --browser`
 
 ## Channels that stay in the page
 
-`browse:entity-type-clicked`, and the `nav:`, `panel:`, `tabs:`, `shell:` and `settings:` channels, are published on a client's own bus and never cross the wire. They belong to the Browser's interface, not to the protocol. See [react-ui's event internals](../../../packages/typescript/react-ui/docs/EVENTS.md).
+`browse:entity-type-clicked`, and the `nav:`, `panel:`, `tabs:`, `shell:` and `settings:` channels, are published on a client's own bus and never cross the wire. They belong to the Browser's interface, not to the protocol. See [react-ui's event internals](https://github.com/Xynoplex/sdk/tree/main/typescript/react-ui/docs/EVENTS.md).
 
 ## Where it is implemented
 
-- The SDK namespace: [packages/typescript/sdk/src/namespaces/browse.ts](../../../packages/typescript/sdk/src/namespaces/browse.ts)
-- What answers the reads: [the Archivist](../ARCHIVIST.md), in [images/archivist/src/browse.rs](../../../images/archivist/src/browse.rs)
-- What a live query refreshes on: [protocol/specs/src/client/refresh.json](../../specs/src/client/refresh.json)
-- The launcher verb: [packages/go/launcher/verbs/browse.go](../../../packages/go/launcher/verbs/browse.go)
-- The channels and their payloads: [protocol/specs/src/bus/registry.json](../../specs/src/bus/registry.json)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/browse.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/browse.ts)
+- What answers the reads: [the Archivist](../ARCHIVIST.md), in [archivist/src/browse.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/browse.rs)
+- What a live query refreshes on: [specs/src/client/refresh.json](../../specs/src/client/refresh.json)
+- The launcher verb: [cli/internal/launcher/verbs/browse.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/browse.go)
+- The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

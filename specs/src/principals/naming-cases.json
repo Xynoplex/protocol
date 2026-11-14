@@ -1,8 +1,8 @@
 {
   "$comment": "How the principals a reply mentions are named, as every implementation must name them. No stored thing carries a principal's name: a person and an agent are each identified by an id, and what the knowledge base calls them, what each last said it is called, is filled in when a reply is read. Every implementation runs every case and fails on a difference, in whatever language it is written. WHAT A CASE STATES. `reply` is a reply, which is any JSON. `profiles` is what the knowledge base calls its principals: each one's `name` and the moment it gave it (`since`), by its id, as the profiles projection holds them. `named` is the reply with its principals named. THE RULE. A principal is an object whose `@type` is `Person` or `Software`, wherever in the reply it is: the reply itself, a member of an object at any depth, an item of a list at any depth, or a member of another principal. A principal whose `@id` is in `profiles` has its `name` set to the name stated there, in place of any name it carried. A principal whose `@id` is not in `profiles` is left as it is, with the name it carried or with none. Nothing else of a principal changes, and nothing else of the reply does: an object whose `@type` is anything else is no principal, though its `@id` is in `profiles`, and `since` is put nowhere. Add a case here before changing an implementation.",
   "runBy": {
-    "archivist": ["images/archivist/src/naming.rs"],
-    "librarian": ["images/librarian/tests/test_naming_cases.py"]
+    "archivist": ["archivist/src/naming.rs"],
+    "librarian": ["librarian/tests/test_naming_cases.py"]
   },
   "cases": [
     {

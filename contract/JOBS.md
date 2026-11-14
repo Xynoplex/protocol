@@ -55,13 +55,13 @@ it serves.
 The document carries no secret. A broker credential is named, as the environment variable that holds
 it (`queue.userEnv`, `queue.passwordEnv`), and a named variable that is unset is refused at boot. The
 dispatcher's other inputs are the environment variables
-[protocol/specs/src/service-environment/variables.json](../specs/src/service-environment/variables.json) lists
+[specs/src/service-environment/variables.json](../specs/src/service-environment/variables.json) lists
 for it: its service account, `SEMIONT_OIDC_CLIENT_ID` and `SEMIONT_OIDC_CLIENT_SECRET`, the bus log, and
 the telemetry variables.
 
 **Access to the job channels is open.** Any authenticated principal may emit any of the nine
 channels, and the dispatcher acts on the job the frame names. The one capability check is
-`job:claim`'s worker role. This is the system's model — Semiont has no access control
+`job:claim`'s worker role. This is the system's model — Xynoplex has no access control
 ([RBAC.md](RBAC.md)) — not a gap particular to jobs.
 
 ## The job record
@@ -401,7 +401,7 @@ it ([TRANSPORT-CONTRACT.md](./TRANSPORT-CONTRACT.md#delivery)).
 of a job it follows for `jobSilenceMs` asks for the job's status, and asks again every
 `jobStatusPollMs` until the job says something or its status is an end; a status of `complete` or
 `failed` is that end, reported as the frame would have been
-([`protocol/specs/src/client/timing.json`](../specs/src/client/timing.json)). So is a status of
+([`specs/src/client/timing.json`](../specs/src/client/timing.json)). So is a status of
 `cancelled`, which no frame announces: a follower learns of a cancellation here and nowhere else.
 *Held by `sdk/live/job-across-drop`, `sdk/live/job-failed-unheard`, `sdk/live/job-cancelled`.*
 
@@ -411,7 +411,7 @@ that verb's. A completion that is another verb's is not this job's. The follower
 error, and does not report the job as failed.
 
 A follower reports how its job ended under the codes every SDK shares
-([`protocol/specs/src/errors/codes.json`](../specs/src/errors/codes.json), `job`). A `job:fail` whose
+([`specs/src/errors/codes.json`](../specs/src/errors/codes.json), `job`). A `job:fail` whose
 `willRetry` is `true` is not an end, of a `mark` job or of a `yield` job: the follower reports the
 setback and keeps following, and does not ask for the status of the attempt that died. Any other
 `job:fail`, and a status of `failed`, end it as `job.failed`, with the worker's message; a status of
@@ -504,7 +504,7 @@ deleted at the first sweep.
 ## Checkpoints
 
 A checkpoint is how much of a job is already done, recorded on the job so a later attempt skips it.
-It has two parts, merged differently ([`checkpoint.rs`](../../images/dispatcher/handlers/src/checkpoint.rs)):
+It has two parts, merged differently ([`checkpoint.rs`](https://github.com/Xynoplex/images/tree/main/dispatcher/handlers/src/checkpoint.rs)):
 
 - **`completedUnits` is a set, merged by union.** A unit is an entity type for a linking job, a
   category for a tagging job, and the job's own motivation for every other `mark` job. A unit
@@ -570,9 +570,9 @@ states `transient`.
 
 A worker evaluates the same predicate, on
 the record it claimed, to set `willRetry` on its `job:fail`: `willRetryAfter` in the TypeScript SDK
-([`claims.ts`](../../packages/typescript/sdk/src/claims.ts)), and `will_retry_after` in the Rust SDK
-([`claims.rs`](../../packages/rust/sdk/src/claims.rs)) and the Python SDK
-([`claims.py`](../../packages/python/sdk/src/semiont/claims.py)), which a held job's `fail` applies. The
+([`claims.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/claims.ts)), and `will_retry_after` in the Rust SDK
+([`claims.rs`](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/src/claims.rs)) and the Python SDK
+([`claims.py`](https://github.com/Xynoplex/sdk/tree/main/python/sdk/src/semiont/claims.py)), which a held job's `fail` applies. The
 dispatcher's own is the Rust SDK's. Every implementation answers
 [`retry-cases.json`](../specs/src/jobs/retry-cases.json) alike. With the budgets set at admission, a `yield` job is never retried and a
 `mark` job is retried at most once.
@@ -591,7 +591,7 @@ transition needs, and writes only if nobody wrote in between; on a conflict it r
 times, and then fails the operation with `Job <jobId> transition failed after 20 CAS attempts`.
 Admission is the one write that is not a compare-and-swap: it creates the record, failing if the id
 exists, and then publishes the job's message, on the subject of its type. The exact layout — bucket, stream, subjects, consumer
-and record encoding — is specified machine-readably in [`protocol/specs/src/jobs/storage.json`](../specs/src/jobs/storage.json).
+and record encoding — is specified machine-readably in [`specs/src/jobs/storage.json`](../specs/src/jobs/storage.json).
 
 **A stored record that does not decode** — not a
 [`JobRecord`](../specs/src/components/schemas/JobRecord.json), an id its kind refuses included —

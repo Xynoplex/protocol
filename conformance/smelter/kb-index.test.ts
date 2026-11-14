@@ -1,7 +1,7 @@
 /**
  * Where a Smelter keeps its knowledge base's index (SMELTER.md § The index):
  * in collections of that knowledge base's own, named from its DID as
- * protocol/specs/src/vectors/payload-cases.json states. Another knowledge
+ * specs/src/vectors/payload-cases.json states. Another knowledge
  * base's collections on the same Qdrant are none of its: its start neither
  * reads them nor purges them, making its own index anew leaves them as they
  * are, and what it writes lands in its own. A Smelter whose settings name
@@ -10,11 +10,11 @@
  * (SMELTER.md § Boot). With it, that the suite names a knowledge base's
  * collections as the table's `collectionsNamed` cases state, and mints the
  * token of each service it starts with the claims
- * protocol/specs/src/vectors/token-cases.json states, and no others.
+ * specs/src/vectors/token-cases.json states, and no others.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { kbDid } from '@semiont/core';
+import { kbDid } from '../harness/protocol-core';
 import { jwtVerify } from 'jose';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
 import { SPEC_SOURCE } from '../harness/paths';
@@ -79,7 +79,7 @@ const ELSEWHERE = kbIdentity('a comment is not part of the value');
 
 /** The first case of a part of the table: a case fails here where the table has none. */
 function first<T>(found: T | undefined, what: string): T {
-  if (found === undefined) throw new Error(`protocol/specs/src/vectors/payload-cases.json states no ${what}`);
+  if (found === undefined) throw new Error(`specs/src/vectors/payload-cases.json states no ${what}`);
   return found;
 }
 

@@ -1,6 +1,6 @@
 /**
  * How long the gateway waits for the Archivist, as the Archivist document's
- * `x-semiont-limits` say (protocol/specs/src/archivist/openapi.json, whose
+ * `x-semiont-limits` say (specs/src/archivist/openapi.json, whose
  * description states the rule): a read's answer begins within
  * `connectSeconds` and `readSeconds` together of the read's first send, each
  * next part of an answer within `readSeconds`, and an upload's answer within
@@ -10,13 +10,13 @@
  * loopback. The gateway's own tests hold that a read whose connection is not
  * taken in time is not sent again, and that a read's wait counts from its
  * first send with its retry inside it, over a stand-in for its connector
- * (images/gateway/src/archivist.rs).
+ * (consumer-owned Gateway implementation).
  *
  * Plane-independent, and slow: the one case waits four waits out side by
  * side, the longest `connectSeconds` and `readSeconds` together. The fourth is
  * an upload the Archivist recorded and never answered: its resend, under its
  * key, is answered with the resource it made
- * (protocol/specs/src/paths/resources.json, A key).
+ * (specs/src/paths/resources.json, A key).
  */
 import { randomUUID } from 'node:crypto';
 import { request } from 'node:http';

@@ -5,13 +5,9 @@
  */
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { isAbsolute, join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readImplementations } from './implementations';
-import { REPO_ROOT } from './paths';
-
-const SHIPPED = fileURLToPath(new URL('../semiont.implementations.json', import.meta.url));
 
 /** A file of `content` in a directory of its own, and that directory. */
 function written(content: string): { file: string; directory: string } {
@@ -36,23 +32,6 @@ function complete(prefix: string): Record<string, unknown> {
 }
 
 describe('the implementations file', () => {
-  it('Semiont\'s own file is of the shape, and every path it names is in the repository', () => {
-    const implementations = readImplementations(['--implementations', SHIPPED]);
-    const commands = [
-      implementations.gateway,
-      implementations.dispatcher,
-      implementations.archivist,
-      ...Object.values(implementations.sdks).flatMap((drivers) => [drivers.wire, drivers.live?.command, drivers.worker]),
-      ...Object.values(implementations.workerServices),
-      ...Object.values(implementations.weaverServices).map((service) => service.command),
-      ...Object.values(implementations.smelterServices),
-      ...Object.values(implementations.librarianServices),
-    ];
-    const paths = commands.flatMap((command) => command ?? []).filter((argument) => isAbsolute(argument));
-    expect(paths.length).toBeGreaterThan(0);
-    for (const path of paths) expect(relative(REPO_ROOT, path).startsWith('..'), path).toBe(false);
-  });
-
   it('resolves an argument that starts with ./ or ../ against the file\'s own directory, and passes any other as written', () => {
     const { file, directory } = written(JSON.stringify(complete('./bin/')));
     const implementations = readImplementations(['vitest', 'run', '--', '--implementations', file]);

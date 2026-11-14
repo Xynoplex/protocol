@@ -1,6 +1,6 @@
 # Roles
 
-What a caller's role decides in Semiont, which is very little. For how callers are authenticated, and how tokens are issued, verified and revoked, see the operator's [Authentication](../../docs/operator/administration/AUTHENTICATION.md).
+What a caller's role decides in Xynoplex, which is very little. For how callers are authenticated, and how tokens are issued, verified and revoked, see the operator's [Authentication](../../docs/operator/administration/AUTHENTICATION.md).
 
 ## One decision: authenticated, or not
 
@@ -18,10 +18,10 @@ A role is a string in a flat `roles` array at the top level of a token. It is de
 
 | Role | Marks | What it permits |
 |---|---|---|
-| `semiont-service` | A service's account: one of Semiont's own processes, not a person | Reading through the archivist |
+| `semiont-service` | A service's account: one of Xynoplex's own processes, not a person | Reading through the archivist |
 | `semiont-worker` | A principal that may run jobs | Claiming a job: the dispatcher admits a `job:claim` only from a token that carries it |
 
-Every one of Semiont's services carries `semiont-service`, so it proves a caller is a service and nothing finer. `semiont-worker` is a separate grant, made only to workers.
+Every one of Xynoplex's services carries `semiont-service`, so it proves a caller is a service and nothing finer. `semiont-worker` is a separate grant, made only to workers.
 
 **A worker is authorized by the role, not by which client it is.** That is what lets a worker that is not the deployment's own take part: the operator grants its client the role at the issuer, and nothing else changes.
 
@@ -45,7 +45,7 @@ A write from a worker that cites no job, or a job it does not hold, is refused.
 
 ## Where it is implemented
 
-- The role names and how a claim is read: the Rust SDK's [roles.rs](../../packages/rust/sdk/src/roles.rs), held to the literal the launcher writes into the realm by `npm run lint:service-role`
-- The gateway's principal: [images/gateway/src/principal.rs](../../images/gateway/src/principal.rs)
-- The Archivist's HTTP surface: [images/archivist/src/surface.rs](../../images/archivist/src/surface.rs)
-- The dispatcher's claim check: [images/dispatcher/handlers/src/handlers.rs](../../images/dispatcher/handlers/src/handlers.rs)
+- The role names and how a claim is read: the Rust SDK's [roles.rs](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/src/roles.rs), held to the literal the launcher writes into the realm by `npm run lint:service-role`
+- The gateway's principal: [gateway/src/principal.rs](https://github.com/Xynoplex/images/tree/main/gateway/src/principal.rs)
+- The Archivist's HTTP surface: [archivist/src/surface.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/surface.rs)
+- The dispatcher's claim check: [dispatcher/handlers/src/handlers.rs](https://github.com/Xynoplex/images/tree/main/dispatcher/handlers/src/handlers.rs)

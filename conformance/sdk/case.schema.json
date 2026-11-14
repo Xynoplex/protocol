@@ -35,7 +35,7 @@
     "needs": {
       "type": "string",
       "pattern": "^([a-z0-9-]+/)+([a-z0-9-]+-)?cases\\.json$",
-      "description": "The case table of protocol/specs/src whose behaviour the case needs, by its path there. The case is not run for an SDK that table names under `notYetReached`, and is run for it once the table no longer does."
+      "description": "The case table of specs/src whose behaviour the case needs, by its path there. The case is not run for an SDK that table names under `notYetReached`, and is run for it once the table no longer does."
     },
   "tier": {
       "enum": [
@@ -46,7 +46,7 @@
     },
     "telemetry": {
       "const": true,
-      "description": "Run the client exporting to an OTLP receiver, and once it has exited hold what it exported to protocol/specs/src/sdk-telemetry/telemetry.json. A worker case also holds the worker to a trace of its own for each job it ran (worker/README.md)."
+      "description": "Run the client exporting to an OTLP receiver, and once it has exited hold what it exported to specs/src/sdk-telemetry/telemetry.json. A worker case also holds the worker to a trace of its own for each job it ran (worker/README.md)."
     },
     "steps": {
       "type": "array",

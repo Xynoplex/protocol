@@ -12,7 +12,7 @@ import { JsonMetricsSerializer, JsonTraceSerializer, ProtobufMetricsSerializer, 
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, MetricReader } from '@opentelemetry/sdk-metrics';
 import { InMemorySpanExporter, SimpleSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
-import { kbDid } from '@semiont/core';
+import { kbDid } from './protocol-core';
 import { expect, it } from 'vitest';
 import { startOtlp, type OtlpReceiver } from './otlp';
 

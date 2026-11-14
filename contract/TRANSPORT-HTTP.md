@@ -10,7 +10,7 @@ it.
 If the code deviates from what is written here, the code is wrong, or this
 document is wrong and is corrected deliberately. There is no third option.
 
-The OpenAPI document ([protocol/specs/src/openapi.json](../specs/src/openapi.json))
+The OpenAPI document ([specs/src/openapi.json](../specs/src/openapi.json))
 is the other half, and the half a machine reads: every route, every status
 each answers and its body, the headers, the stream's messages and id
 formats, the limits (`x-semiont-limits`, `maxItems`), and the claims a
@@ -20,9 +20,9 @@ its own initiative.
 
 **How this document is held.** As in the contract, each rule ends with
 *Held by* and what fails when it is broken: a file of the gateway suite
-([`protocol/conformance/gateway`](../conformance/gateway/README.md)),
+([`conformance/gateway`](../conformance/gateway/README.md)),
 which checks a running gateway against this document and the spec; a case
-of the SDK suite ([`protocol/conformance/sdk`](../conformance/sdk/README.md)),
+of the SDK suite ([`conformance/sdk`](../conformance/sdk/README.md)),
 which checks every SDK; or a test of the reference client. "Held by no
 case" marks a rule nothing checks.
 
@@ -167,13 +167,13 @@ is its mechanism over HTTP.
 
 - **Schema validation.** Every inbound payload is validated against the
   schema the registry names for its channel
-  ([protocol/specs/src/bus/registry.json](../specs/src/bus/registry.json)): a
+  ([specs/src/bus/registry.json](../specs/src/bus/registry.json)): a
   channel with a named schema must match it, or 400; a channel the
   registry gives no schema is not validated; a channel not in the registry
   is a 400.
 - **Ids.** The spec names four kinds of id, each a schema whose pattern is
   the rule a value of that kind is held to
-  ([protocol/specs/src/identifiers/kinds.json](../specs/src/identifiers/kinds.json)).
+  ([specs/src/identifiers/kinds.json](../specs/src/identifiers/kinds.json)).
   A resource's, an annotation's and a job's id is a name: 1 to 128 letters,
   digits, `_` and `-`, never a URI or a path. Whoever did something is
   named by a DID. Every property that carries an id refers to its kind, so
@@ -310,7 +310,7 @@ recovered; its request has timed out long before.
 
 What a client does so that the contract holds over a connection that can
 drop. The timing named here is
-[`protocol/specs/src/client/timing.json`](../specs/src/client/timing.json).
+[`specs/src/client/timing.json`](../specs/src/client/timing.json).
 
 ### Connection lifecycle
 
@@ -338,7 +338,7 @@ closed          → (terminal)
 while the request is pending: a request waits on this state before it is
 sent.
 
-*Held by `sdk/wire/outage`, `sdk/wire/unauthenticated`, `sdk/wire/attach-gate`, `packages/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
+*Held by `sdk/wire/outage`, `sdk/wire/unauthenticated`, `sdk/wire/attach-gate`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
 
 ### Reconnect discipline
 
@@ -347,7 +347,7 @@ sent.
 - A connect the gateway has not answered within `streamOpenTimeoutMs` has
   failed. The answer is its status and headers: once the stream is open, it
   may carry nothing for as long as nothing happens.
-  *Held by `packages/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `packages/python/sdk/tests/test_http_transport.py`, `packages/go/sdk/stream_test.go`, `packages/rust/http-transport/tests/stream.rs`, `packages/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`.*
 - The client opens its stream again on an equal-jitter exponential
   backoff: a wait in [cap/2, cap], where cap is `reconnectMs` doubled per
   failure up to `maxReconnectMs`, and a successful open resets it. A
@@ -363,7 +363,7 @@ sent.
   status. Its body is read within `httpRequestTimeoutMs`, as any refusal's
   is: a body not read by then is the refusal with none of the gateway's
   words.
-  *Held by `packages/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `packages/python/sdk/tests/test_http_transport.py`, `packages/go/sdk/stream_test.go`, `packages/rust/http-transport/tests/stream.rs`, `packages/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`.*
 - **A refused credential is not retried**: a 401, or a 429 whose `code` is
   `refusal-rate`. The refused token is remembered and never sent again; the
   client is `unauthenticated` and checks, every `reconnectMs` and with no
@@ -372,7 +372,7 @@ sent.
   the token refused
   ([TRANSPORT-CONTRACT.md § A refused credential](./TRANSPORT-CONTRACT.md#a-refused-credential)). The same
   rule keeps a client with no token from sending a request at all.
-  *Held by `sdk/wire/unauthenticated`, `sdk/wire/stream-credential-renewed`, `sdk/wire/stream-credential-limit-renewed`, `packages/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
+  *Held by `sdk/wire/unauthenticated`, `sdk/wire/stream-credential-renewed`, `sdk/wire/stream-credential-limit-renewed`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
 
 **A changed subscription** — a scope taken or let go — is a **handoff**:
 
@@ -389,7 +389,7 @@ sent.
   old stream stays live and the state stays `open`. The live stream ending
   while a handoff's connect is in flight is a drop, and that connect is
   its recovery.
-  *Held by `packages/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
 - A client holds at most one live stream, one connecting, and one
   retiring, however fast its subscription changes: a principal's stream
   limit counts them.
@@ -406,7 +406,7 @@ request, and for teardown, where nobody remains to receive the bytes.
 An event written to any live connection is delivered exactly once,
 wherever a handoff or a reopening lands relative to it.
 
-*Held by `sdk/wire/overlap-dedup`, `packages/typescript/http-transport/src/transport/__tests__/actor-liveness.property.test.ts`.*
+*Held by `sdk/wire/overlap-dedup`, `sdk/typescript/http-transport/src/transport/__tests__/actor-liveness.property.test.ts`.*
 
 ### Delivering a frame once
 
@@ -433,7 +433,7 @@ own.
   one that got no answer, and is not made again. A read whose connection
   failed, or closed before any response came, is not that: it is sent once
   more ([TRANSPORT-CONTRACT.md § Failures](./TRANSPORT-CONTRACT.md#failures)).
-  *Held by `protocol/specs/src/client/clock-cases.json`.*
+  *Held by `specs/src/client/clock-cases.json`.*
 
 ### Emitting
 
@@ -443,13 +443,13 @@ own.
 - An emit carries an `Idempotency-Key` header of the client's making: a new
   key for each emit, and the same on every attempt at it, the one sent
   again with a renewed credential too
-  ([`protocol/specs/src/paths/bus_emit.json`](../specs/src/paths/bus_emit.json)).
+  ([`specs/src/paths/bus_emit.json`](../specs/src/paths/bus_emit.json)).
   *Held by `sdk/wire/emit-keyed`, `sdk/wire/emit-credential-renewed`.*
 - Each attempt has a deadline of `emitTimeoutMs`. An attempt refused by a
   limit (429), by a gateway that says it will recover (503, 504), or
   unanswered at its deadline is made again inside `emitRetry`, no sooner
   than a refusal's `Retry-After`; any other refusal is final
-  ([`protocol/specs/src/retry/cases.json`](../specs/src/retry/cases.json)).
+  ([`specs/src/retry/cases.json`](../specs/src/retry/cases.json)).
   *Held by `sdk/wire/emit-rate-limited`, `sdk/wire/emit-budget-spent`, `sdk/wire/emit-refused`, `sdk/wire/unreachable`.*
 - An attempt whose answer was lost, its connection closed before the answer
   reached the client, is made again inside `emitRetry` with the emit's key
@@ -509,11 +509,11 @@ every frame that spans two.
 A client subscribes globally to the channels every client hears and to an
 operation's reply channels, and per resource to the channels a scope
 carries. Both sets are the registry's `audience`, generated into
-`BRIDGED_CHANNELS` and `RESOURCE_SCOPED_CHANNELS` (`@semiont/core`), and
+`BRIDGED_CHANNELS` and `RESOURCE_SCOPED_CHANNELS` (`@xynoplex/core`), and
 they are disjoint: a channel in both would reach a client twice, under two
 ids.
 
-*Held by `packages/typescript/core/src/__tests__/bus-invariants.test.ts`.*
+*Held by `sdk/typescript/core/src/__tests__/bus-invariants.test.ts`.*
 
 A transport is always given its global channels, and assumes none of its
 own: a full client gives it `BRIDGED_CHANNELS`. A client that awaits only
@@ -534,19 +534,19 @@ with more than one tenant.
 
 ## Where the code lives
 
-- `images/gateway/src/routes/bus.rs`, `images/gateway/src/routes/stream.rs` —
+- `gateway/src/routes/bus.rs`, `gateway/src/routes/stream.rs` —
   the `/bus/emit` and `/bus/subscribe` routes.
-- `protocol/specs/src/bus/registry.json` — the authority: channels, payloads,
+- `specs/src/bus/registry.json` — the authority: channels, payloads,
   operations.
-- `packages/typescript/http-transport/src/transport/http-transport.ts` — the
+- `sdk/typescript/http-transport/src/transport/http-transport.ts` — the
   reference client's `ITransport`.
-- `packages/typescript/http-transport/src/transport/actor-state-unit.ts` — its
+- `sdk/typescript/http-transport/src/transport/actor-state-unit.ts` — its
   stream: the reader, the reconnect and handoff logic, the subscription
   matrix.
-- `packages/typescript/core/src/bus.ts` — `Bus.request`.
-- `packages/rust/http-transport/src/transport.rs` — the Rust client's
+- `sdk/typescript/core/src/bus.ts` — `Bus.request`.
+- `sdk/rust/http-transport/src/transport.rs` — the Rust client's
   `Transport`, and `actor.rs`, its stream.
-- `packages/rust/sdk/src/bus.rs` — its bus request.
-- `packages/python/sdk/src/semiont/http/transport.py` — the Python client's
+- `sdk/rust/sdk/src/bus.rs` — its bus request.
+- `sdk/python/sdk/src/semiont/http/transport.py` — the Python client's
   `Transport`, and `stream.py`, its stream.
-- `packages/python/sdk/src/semiont/bus.py` — its bus request.
+- `sdk/python/sdk/src/semiont/bus.py` — its bus request.

@@ -42,11 +42,11 @@ From the launcher: `semiont beckon <resourceId> --annotation <annotationId>`, or
 
 ## Local signals
 
-`beckon.hover` and `beckon.sparkle` publish on the client's own bus and nowhere else: one viewer's own highlight when the pointer rests on an annotation, and its own sparkle on an annotation just created. How a viewer turns hovers and clicks into highlights and scrolling is react-ui's: see [annotation interaction](../../../packages/typescript/react-ui/docs/ANNOTATION-CLICK.md).
+`beckon.hover` and `beckon.sparkle` publish on the client's own bus and nowhere else: one viewer's own highlight when the pointer rests on an annotation, and its own sparkle on an annotation just created. How a viewer turns hovers and clicks into highlights and scrolling is react-ui's: see [annotation interaction](https://github.com/Xynoplex/sdk/tree/main/typescript/react-ui/docs/ANNOTATION-CLICK.md).
 
 ## Where it is implemented
 
-- The SDK namespace: [packages/typescript/sdk/src/namespaces/beckon.ts](../../../packages/typescript/sdk/src/namespaces/beckon.ts)
-- The gateway's relay: [images/gateway/src/routes/bus.rs](../../../images/gateway/src/routes/bus.rs) and [stream.rs](../../../images/gateway/src/routes/stream.rs)
-- The launcher verb: [packages/go/launcher/verbs/beckon.go](../../../packages/go/launcher/verbs/beckon.go)
-- The channels and their payloads: [protocol/specs/src/bus/registry.json](../../specs/src/bus/registry.json)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/beckon.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/beckon.ts)
+- The gateway's relay: [gateway/src/routes/bus.rs](https://github.com/Xynoplex/images/tree/main/gateway/src/routes/bus.rs) and [stream.rs](https://github.com/Xynoplex/images/tree/main/gateway/src/routes/stream.rs)
+- The launcher verb: [cli/internal/launcher/verbs/beckon.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/beckon.go)
+- The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)
