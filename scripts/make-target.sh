@@ -15,15 +15,19 @@ case "$TARGET" in
 esac
 
 case "$TARGET" in
-  install) COMMAND='npm ci' ;;
-  conformance-install) COMMAND='npm ci --prefix conformance' ;;
-  bundle) COMMAND='npm run specs:bundle' ;;
-  lint) COMMAND='npm run specs:lint' ;;
-  check) COMMAND='npm run specs:check' ;;
-  conformance-typecheck) COMMAND='npm ci --prefix conformance && npm run specs:bundle && npm run typecheck --prefix conformance' ;;
-  conformance-fixtures) COMMAND='npm ci --prefix conformance && npm run specs:bundle && npm run test:fixtures --prefix conformance' ;;
+  install) COMMAND='npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null' ;;
+  conformance-install) COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null' ;;
+  bundle) COMMAND='npm run --silent specs:bundle' ;;
+  lint) COMMAND='npm run --silent specs:lint' ;;
+  check) COMMAND='npm run --silent specs:check' ;;
+  conformance-typecheck)
+    COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null && npm run --silent specs:bundle && npm run --silent typecheck --prefix conformance'
+    ;;
+  conformance-fixtures)
+    COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null && npm run --silent specs:bundle && npm run --silent test:fixtures --prefix conformance'
+    ;;
   validate)
-    COMMAND='npm ci && npm ci --prefix conformance && npm run specs:bundle && npm run specs:lint && npm run specs:check && npm run typecheck --prefix conformance && npm run test:fixtures --prefix conformance'
+    COMMAND='printf "==> Installing protocol dependencies\n"; npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Installing conformance dependencies\n"; npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Bundling specifications\n"; npm run --silent specs:bundle; printf "==> Linting specifications\n"; npm run --silent specs:lint; printf "==> Checking protocol consistency\n"; npm run --silent specs:check; printf "==> Type-checking conformance harness\n"; npm run --silent typecheck --prefix conformance; printf "==> Running conformance fixtures\n"; npm run --silent test:fixtures --prefix conformance'
     ;;
 esac
 

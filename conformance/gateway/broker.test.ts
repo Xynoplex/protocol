@@ -7,7 +7,8 @@
  * job stream, which shares the broker. NATS only.
  */
 import { randomUUID } from 'node:crypto';
-import { connect, type NatsConnection } from 'nats';
+import { jetstreamManager } from '@nats-io/jetstream';
+import { connect, type NatsConnection } from '@nats-io/transport-node';
 import { JOBS_STREAM_SUBJECTS } from '../harness/protocol-core';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { operationFor } from '../harness/spec';
@@ -22,7 +23,7 @@ eachPlane('the broker', (world) => {
   beforeAll(async () => {
     nc = await connect({ servers: world().broker!.url });
     // The dispatcher's stream, as the dispatcher declares it.
-    await (await nc.jetstreamManager()).streams.add({ name: JOBS, subjects: [...JOBS_STREAM_SUBJECTS] });
+    await (await jetstreamManager(nc)).streams.add({ name: JOBS, subjects: [...JOBS_STREAM_SUBJECTS] });
   });
   afterAll(async () => {
     await nc.close();
@@ -45,7 +46,7 @@ eachPlane('the broker', (world) => {
     await stream.frame(result, (f) => f.correlationId === correlationId);
     await world().subscribe(alice, { clientId, global: [result], pendingReplies: [correlationId] });
 
-    const jsm = await nc.jetstreamManager();
+    const jsm = await jetstreamManager(nc);
     const names: string[] = [];
     for await (const info of jsm.streams.list()) names.push(info.config.name);
     expect(names.filter((n) => n !== JOBS && !n.startsWith('KV_'))).toEqual([]);
