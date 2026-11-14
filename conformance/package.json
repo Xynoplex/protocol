@@ -7,6 +7,7 @@
   "scripts": {
     "generate:types": "openapi-typescript ../specs/openapi.json -o harness/generated/openapi-types.ts",
     "typecheck": "npm run generate:types && tsc --noEmit",
+    "test:fixtures": "vitest run --config vitest.fixtures.config.ts",
     "typecheck:smelter": "tsc --noEmit -p tsconfig.smelter.json",
     "typecheck:librarian": "tsc --noEmit -p tsconfig.librarian.json",
     "pretest": "npm run typecheck && npm run typecheck:smelter && npm run typecheck:librarian",

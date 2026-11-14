@@ -1,4 +1,4 @@
-.PHONY: install conformance-install bundle lint check conformance-typecheck validate
+.PHONY: install conformance-install bundle lint check conformance-typecheck conformance-fixtures validate
 
 install:
 	npm ci
@@ -18,4 +18,7 @@ check:
 conformance-typecheck: conformance-install bundle
 	npm run typecheck --prefix conformance
 
-validate: install bundle lint check conformance-typecheck
+conformance-fixtures: conformance-install bundle
+	npm run test:fixtures --prefix conformance
+
+validate: install bundle lint check conformance-typecheck conformance-fixtures
