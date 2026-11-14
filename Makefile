@@ -3,24 +3,25 @@
 .DEFAULT_GOAL := validate
 
 install:
-	npm ci
+	bash scripts/make-target.sh install
 
 conformance-install:
-	npm ci --prefix conformance
+	bash scripts/make-target.sh conformance-install
 
 bundle:
-	npm run specs:bundle
+	bash scripts/make-target.sh bundle
 
 lint:
-	npm run specs:lint
+	bash scripts/make-target.sh lint
 
 check:
-	npm run specs:check
+	bash scripts/make-target.sh check
 
-conformance-typecheck: conformance-install bundle
-	npm run typecheck --prefix conformance
+conformance-typecheck:
+	bash scripts/make-target.sh conformance-typecheck
 
-conformance-fixtures: conformance-install bundle
-	npm run test:fixtures --prefix conformance
+conformance-fixtures:
+	bash scripts/make-target.sh conformance-fixtures
 
-validate: install bundle lint check conformance-typecheck conformance-fixtures
+validate:
+	bash scripts/make-target.sh validate
