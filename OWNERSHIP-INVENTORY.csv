@@ -4,6 +4,7 @@ path,classification,owner,notes
 .github/dependabot.yml,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 .github/workflows/ci.yml,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 .gitignore,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
+.gitmodules,Repository build tooling,Xynoplex/protocol,"Pins build-tools, the build scripts the xynolog repositories share."
 CONTRIBUTING.md,Repository governance and documentation,Xynoplex/protocol,Contribution workflow and compatibility policy.
 HISTORY-MAP.md,Repository governance and documentation,Xynoplex/protocol,History extraction map and cutoff provenance.
 LICENSE,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
@@ -13,6 +14,7 @@ OWNERSHIP-INVENTORY.csv,Repository governance and documentation,Xynoplex/protoco
 OWNERSHIP.md,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 README.md,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 VERSION,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
+build-tools,Repository build tooling,xynolog/build-tools,"The shared build scripts: the container runtime, make help and its test."
 conformance/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/archivist/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/archivist/anchored-text.test.ts,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -387,10 +389,7 @@ scripts/checks/specs/check-ownership-inventory.mjs,Protocol validation tooling,X
 scripts/checks/specs/check-protocol.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reference-forms.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reply-bounds.mjs,Protocol validation tooling,Xynoplex/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
-scripts/container-runtime.sh,Repository build tooling,Xynoplex/protocol,"Detects and validates the configured container runtime for local validation."
-scripts/make-help.awk,Repository build tooling,Xynoplex/protocol,"Prints make help from the Makefile's own ## lines."
 scripts/make-target.sh,Repository build tooling,Xynoplex/protocol,"Runs protocol Node and npm tasks inside the detected container runtime."
-scripts/test_make_help.py,Repository build tooling,Xynoplex/protocol,"Fails when make help and the Makefile's public targets differ."
 specs/.gitignore,Protocol authoring tooling,Xynoplex/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/.redocly.lint-ignore.yaml,Protocol authoring tooling,Xynoplex/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/README.md,Protocol authoring tooling,Xynoplex/protocol,"Build, lint, and bundling configuration for normative sources."
