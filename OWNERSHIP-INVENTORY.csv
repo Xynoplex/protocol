@@ -14,6 +14,7 @@ OWNERSHIP-INVENTORY.csv,Repository governance and documentation,Xynoplex/protoco
 OWNERSHIP.md,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 README.md,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
 VERSION,Repository governance and documentation,Xynoplex/protocol,"Standalone repository policy, provenance, or build configuration."
+advisories.toml,Repository build tooling,Xynoplex/protocol,"Published advisories for the dependencies, each ignored with why; build-tools/advisories.py holds the lockfiles to it."
 build-tools,Repository build tooling,xynolog/build-tools,"The shared build scripts: the container runtime, make help and its test."
 conformance/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/archivist/README.md,Portable conformance,Xynoplex/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
