@@ -23,15 +23,15 @@
         "librarian": {
           "access": [
             {
-              "collection": "dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2de46-resources",
+              "collection": "6b1d3b041157d357324b3914cbfc79d3a6b026d0711bbb33da9bdb1e76df0575-resources",
               "access": "r"
             },
             {
-              "collection": "dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2de46-annotations",
+              "collection": "6b1d3b041157d357324b3914cbfc79d3a6b026d0711bbb33da9bdb1e76df0575-annotations",
               "access": "r"
             },
             {
-              "collection": "dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2de46-declined",
+              "collection": "6b1d3b041157d357324b3914cbfc79d3a6b026d0711bbb33da9bdb1e76df0575-declined",
               "access": "r"
             }
           ]
