@@ -21,7 +21,7 @@
     "wasAttributedTo": [
       {
         "@type": "Person",
-        "@id": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:ada"
+        "@id": "did:web:example.org:test-kb:users:ada"
       }
     ]
   },

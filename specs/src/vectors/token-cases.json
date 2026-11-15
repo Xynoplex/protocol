@@ -15,7 +15,7 @@
   "cases": [
     {
       "why": "a knowledge base of the shape xynolog init writes: its Smelter may do anything, and its Librarian may read its three collections",
-      "kb": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb",
+      "kb": "did:web:example.org:test-kb",
       "claims": {
         "smelter": {
           "access": "m"

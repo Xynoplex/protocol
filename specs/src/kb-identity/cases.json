@@ -17,12 +17,12 @@
     {
       "why": "the shape xynolog init writes",
       "dir": "arxiv-kb",
-      "config": "project:\n  name: \"ArXiv Research Papers\"\n\ngit:\n  sync: true\n\nsite:\n  # Permanent did:web identity for everything this KB mints.\n  domain: \"the-ai-alliance.github.io:semiont-arxiv-kb\"\n  siteName: \"ArXiv Research Papers\"\n",
+      "config": "project:\n  name: \"ArXiv Research Papers\"\n\ngit:\n  sync: true\n\nsite:\n  # Permanent did:web identity for everything this KB mints.\n  domain: \"example.org:test-kb\"\n  siteName: \"ArXiv Research Papers\"\n",
       "refused": false,
       "name": "ArXiv Research Papers",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb",
-      "resource": "https://the-ai-alliance.github.io/semiont-arxiv-kb"
+      "domain": "example.org:test-kb",
+      "did": "did:web:example.org:test-kb",
+      "resource": "https://example.org/test-kb"
     },
     {
       "why": "no project file: the directory name, and no identity",

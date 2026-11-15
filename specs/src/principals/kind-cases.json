@@ -15,12 +15,12 @@
   "cases": [
     {
       "why": "a person",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:3f1c2e0a-9b7d-4c1e-8a2f-6d5b4c3a2e10",
+      "did": "did:web:example.org:test-kb:users:3f1c2e0a-9b7d-4c1e-8a2f-6d5b4c3a2e10",
       "kind": "person"
     },
     {
       "why": "an agent: one encoded segment after `agents`, its account's subject",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:agents:8d2f7a10-4c3e-4b1a-9e5d-2f6c8b0a1d34",
+      "did": "did:web:example.org:test-kb:agents:8d2f7a10-4c3e-4b1a-9e5d-2f6c8b0a1d34",
       "kind": "software"
     },
     {
@@ -50,7 +50,7 @@
     },
     {
       "why": "the knowledge base's own DID, which seeds the vocabulary, has no kind segment",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb",
+      "did": "did:web:example.org:test-kb",
       "kind": "person"
     },
     {

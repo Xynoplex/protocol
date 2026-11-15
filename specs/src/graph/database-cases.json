@@ -8,7 +8,7 @@
   "cases": [
     {
       "why": "a knowledge base of the shape xynolog init writes: its graph is in the database named by the hash of its DID",
-      "kb": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb",
+      "kb": "did:web:example.org:test-kb",
       "database": "kb-dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2"
     },
     {
