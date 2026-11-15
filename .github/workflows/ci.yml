@@ -27,8 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Make help lists every public target
-        run: python3 scripts/test_make_help.py
+        run: python3 build-tools/test_make_help.py --root .
       - uses: actions/setup-node@v4
         with:
           node-version: 26

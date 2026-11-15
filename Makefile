@@ -2,14 +2,14 @@
 
 .PHONY: help install conformance-install bundle lint check conformance-typecheck conformance-fixtures validate
 
-# `make help` prints the `##` lines below, in order (scripts/make-help.awk).
+# `make help` prints the `##` lines below, in order (build-tools/make-help.awk).
 # Every target runs its npm task in a Node container (scripts/make-target.sh).
 ##@ Xynoplex Protocol: make [target] [VARIABLE=value ...]
 ##@ Variables
 ## CONTAINER_RUNTIME=name: container|docker|podman; else the first to respond
 
 help:
-	@awk -f scripts/make-help.awk Makefile Makefile
+	@awk -f build-tools/make-help.awk Makefile Makefile
 
 ##@ Validate
 ## validate: Install, bundle, lint, check, type-check the conformance harness and run its fixtures

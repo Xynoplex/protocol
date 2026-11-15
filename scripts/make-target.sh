@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
-source "$ROOT/scripts/container-runtime.sh"
+source "$ROOT/build-tools/container-runtime.sh"
 RUNTIME="$(detect_container_runtime)"
 TARGET="${1:-}"
 
