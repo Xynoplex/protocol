@@ -16,13 +16,13 @@ The previous monorepo `packages/codegen/groups.txt` grouped generators by histor
 
 | Group | Owner |
 | --- | --- |
-| `bus`, `typescript`, `python`, `go`, `haskell`, `ocaml`, `unicode-case`, `encoding-cases` | `Xynoplex/sdk` when outputs are SDK source; protocol schema authoring/bundle checks remain here. |
-| `stack-go`, `mcp-tools-go`, `control`, `discovery-go` | `Xynoplex/cli` |
-| `model-catalogue` | `Xynoplex/images` |
-| Protocol OpenAPI bundling and lint | `Xynoplex/protocol` |
+| `bus`, `typescript`, `python`, `go`, `haskell`, `ocaml`, `unicode-case`, `encoding-cases` | `xynolog/sdk` when outputs are SDK source; protocol schema authoring/bundle checks remain here. |
+| `stack-go`, `mcp-tools-go`, `control`, `discovery-go` | `xynolog/cli` |
+| `model-catalogue` | `xynolog/images` |
+| Protocol OpenAPI bundling and lint | `xynolog/protocol` |
 
 A generator that produces outputs in more than one repository must be split or moved to the consumer that owns those outputs; a generated file must have one authoritative generator. The `openapi-schema.mjs` helper is protocol-owned only for generating protocol bundles. If consumers need it to generate implementation types, they consume the published protocol schema as input and own their generation invocation.
 
 ## Provenance
 
-The inventory documents the current ownership boundary. See [`NOTICE`](NOTICE) for the pre-2026-08-27 source provenance and post-boundary Xynoplex ownership statement. The extracted Git history was reconstructed as a single cutoff snapshot followed by applicable post-cutoff commits; rewritten commits are signed and retain their original authorship and messages.
+The inventory documents the current ownership boundary. See [`NOTICE`](NOTICE) for the pre-2026-08-27 source provenance and post-boundary Xynolog ownership statement. The extracted Git history was reconstructed as a single cutoff snapshot followed by applicable post-cutoff commits; rewritten commits are signed and retain their original authorship and messages.

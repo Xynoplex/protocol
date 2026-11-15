@@ -3,13 +3,13 @@
   "runBy": {
     "ocaml": ["sdk/ocaml/sdk/test/closure_behavior.ml"],
     "haskell": ["sdk/haskell/sdk/test/TextCases.hs"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/RepresentationTests.cs"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/MediaTypesTests.swift"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RepresentationTests.cs"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/MediaTypesTests.swift"],
     "typescript": ["sdk/typescript/core/src/__tests__/media-type-registry.test.ts"],
     "rust": ["sdk/rust/sdk/tests/media_types.rs"],
     "python": ["sdk/python/sdk/tests/test_media_types.py"],
     "go": ["sdk/go/sdk/mediatypes/mediatypes_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/mediatypes/MediaTypesTest.kt"]
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/mediatypes/MediaTypesTest.kt"]
   },
   "cloneFormat": [
     {

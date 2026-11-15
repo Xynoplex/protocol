@@ -17,7 +17,7 @@
         "minLength": 1
       },
       "maxItems": 256,
-      "description": "Correlation ids of requests this client still awaits a reply to. The gateway writes every reply it still retains for them (for `x-semiont-limits.replyRetentionSeconds` after it was published) as an ordinary frame with its ReplyEventId, so a reply that also arrived live dedups client-side. A client can have no more pending than it may have unanswered requests, so this bound is also the number of unanswered requests `POST /bus/emit` allows a client."
+      "description": "Correlation ids of requests this client still awaits a reply to. The gateway writes every reply it still retains for them (for `x-xynolog-limits.replyRetentionSeconds` after it was published) as an ordinary frame with its ReplyEventId, so a reply that also arrived live dedups client-side. A client can have no more pending than it may have unanswered requests, so this bound is also the number of unanswered requests `POST /bus/emit` allows a client."
     },
     "scoped": {
       "type": "array",

@@ -42,7 +42,7 @@ from a model's reply; and
 [`naming-cases.json`](../specs/src/principals/naming-cases.json), how
 principals are named, which the Archivist runs too. The runner of each is the file named for it in
 `librarian/tests`, such as `test_score_cases.py`. The others are tests of
-Xynoplex's own Librarian and of the packages it is built on. A rule marked
+Xynolog's own Librarian and of the packages it is built on. A rule marked
 "Held by no case" is one nothing checks.
 `npm run lint:transport-contract` fails when a case or a test named here does
 not exist, and when a case of the suite is named by no rule.
@@ -84,7 +84,7 @@ on; and how it logs.
 Whoever starts a Librarian writes the document: the launcher for the
 Librarian it starts, and anyone else to the same schema. The launcher writes
 the settle bound and the semantic floor the knowledge base's KnowledgeIndex
-document states, which `semiont init` writes as 15,000 milliseconds and 0.6.
+document states, which `xynolog init` writes as 15,000 milliseconds and 0.6.
 The Librarian supplies no value.
 
 - **Started with no `--config`, with a path it cannot read, or with a document
@@ -105,8 +105,8 @@ The Librarian supplies no value.
   after which a held job is called stalled**
   ([`heldJobStallMs`](../specs/src/client/timing.json)). The refusal names
   `gather.settleTimeoutMs`. *Held by `librarian/tests/test_config.py` and `librarian/boot`.*
-- **Its service account is `SEMIONT_OIDC_CLIENT_ID` and
-  `SEMIONT_OIDC_CLIENT_SECRET` in its environment** ([Environment](#environment)).
+- **Its service account is `XYNOLOG_OIDC_CLIENT_ID` and
+  `XYNOLOG_OIDC_CLIENT_SECRET` in its environment** ([Environment](#environment)).
   With either missing or empty it refuses to start, and names the one that is
   missing. *Held by `librarian/tests/test_service.py` and `librarian/boot`.*
 - **A secret is read from the variable the document names for it:** the graph
@@ -544,7 +544,7 @@ within a bound, and nothing else it does waits.
 - **A graph that never comes to hold the resource fails the gather,** with a
   message that says the graph is behind the views and that the resource is
   not missing. It is logged as a warning and counted
-  (`semiont.gather.degraded`, `projection` `graph`).
+  (`xynolog.gather.degraded`, `projection` `graph`).
   *Held by `librarian/tests/test_knowledge_graph_cases.py`, and by `librarian/barriers`, for the failure and its message.*
 - **The wait for the index, which only a gather of a resource makes, and
   only for bytes the index does not hold yet.** When the index answers no
@@ -559,7 +559,7 @@ within a bound, and nothing else it does waits.
   *Held by `librarian/tests/test_resource_gather.py` and `librarian/tests/test_progress.py`, and by `librarian/barriers`, for a resource the Smelter then indexes, for one it skips, and for an indexed resource and an image asked of a Librarian that has heard no decision.*
 - **An index that does not settle within the bound leaves the context
   without `semanticContext`, and the gather is answered.** It is logged as a
-  warning and counted (`semiont.gather.degraded`, `projection` `vectors`).
+  warning and counted (`xynolog.gather.degraded`, `projection` `vectors`).
   *Held by `librarian/tests/test_resource_gather.py`, and by `librarian/barriers`, for the answer, when it comes and the warning.*
 - **The counter has five values of `projection`:** `graph`, a graph that
   did not come to hold the resource; `vectors`, an index that failed or did
@@ -705,7 +705,7 @@ order of the rules below.
   *Held by `librarian/tests/test_reply_cases.py` and `librarian/tests/test_resource_gather.py`, and by `librarian/gather`, for a reply of two suggestions.*
 - **A model that fails at either leaves the context with neither, and the
   gather is answered.** It is logged as a warning and counted
-  (`semiont.gather.degraded`, `projection` `suggestions`).
+  (`xynolog.gather.degraded`, `projection` `suggestions`).
   *Held by `librarian/tests/test_resource_gather.py`, and by `librarian/gather`, for the answer.*
 - **The vector index is asked for what is like the resource:** at most
   `maxResources` passages of other resources that score 0.5 or more against
@@ -722,7 +722,7 @@ order of the rules below.
   *Held by `librarian/tests/test_resource_gather.py`, and by `librarian/gather`, for the names and the excluded entity types, and `librarian/barriers`, for none.*
 - **An index that fails leaves the context without `semanticContext`, and
   the gather is answered.** It is logged as a warning and counted
-  (`semiont.gather.degraded`, `projection` `vectors`), and nothing waits. An
+  (`xynolog.gather.degraded`, `projection` `vectors`), and nothing waits. An
   index with no such collection fails the gather.
   *Held by `librarian/tests/test_resource_gather.py`.*
 - **`metadata` states the resource's language and `resourceType`
@@ -838,7 +838,7 @@ This one states them together.
   summary, which is nothing but what the model says.
   *Held by `librarian/tests/test_annotation_gather.py`, `librarian/tests/test_resource_gather.py`, `librarian/tests/test_summary.py`, `librarian/tests/test_referenced_by.py`, `librarian/tests/test_score_cases.py` and `librarian/tests/test_search_cases.py`.*
 - **A gather that goes without a part is answered, logged as a warning and
-  counted** on `semiont.gather.degraded`, by what it went without
+  counted** on `xynolog.gather.degraded`, by what it went without
   ([The two waits](#the-two-waits)).
   *Held by `librarian/tests/test_annotation_gather.py` and `librarian/tests/test_resource_gather.py`.*
 - **A search that goes without a source is answered, and logged as a
@@ -980,7 +980,7 @@ opens its health port.
 - **It serves the knowledge base its document names, and no other.** Before
   it reaches the graph database it asks the knowledge base which it is
   (`browse:kb-requested`, which the Archivist answers from the committed
-  `.semiont/config.yaml`), and asks again while nothing answers there
+  `.xynolog/config.yaml`), and asks again while nothing answers there
   (`bus.peer-unavailable`). It asks on a stream of its own, which names that
   request's replies and no request it answers, and closes it before it
   reaches the graph database. A request reaches every stream that names its
@@ -1038,7 +1038,7 @@ opens its health port.
 ## Telemetry
 
 - **A Librarian started with `OTEL_EXPORTER_OTLP_ENDPOINT` exports, as
-  `semiont-librarian`, exactly what
+  `xynolog-librarian`, exactly what
   [`specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
   lists for the librarian, and the rows of
   [`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
@@ -1047,13 +1047,13 @@ opens its health port.
   span for each frame it sends and each it receives on the bus, and a count
   of the frames it sent; a span for each read of a resource's anchored text;
   a count, the tokens and the duration of each request of a model; and the
-  count of gathers that went without something, `semiont.gather.degraded`
+  count of gathers that went without something, `xynolog.gather.degraded`
   ([The two waits](#the-two-waits)). Every span and metric it exports is one
   of those rows, of the row's kind, carrying only the row's attributes; and
   every one of those rows that its work can make arrives, with every
   attribute the row does not mark as conditional. All of it is exported under
   the resource the table's `resource` rows list for the librarian: its name,
-  its version, and `semiont.kb`, the DID of the knowledge base its document's
+  its version, and `xynolog.kb`, the DID of the knowledge base its document's
   `kb` names.
   *Held by `librarian/telemetry`.*
 - **What is counted of a request of a model is the driver's to count,** the
@@ -1074,24 +1074,24 @@ and no others:
 
 | Variable | What it is |
 |---|---|
-| `SEMIONT_OIDC_CLIENT_ID`, `SEMIONT_OIDC_CLIENT_SECRET` | Its service account at the knowledge base's issuer. Required |
+| `XYNOLOG_OIDC_CLIENT_ID`, `XYNOLOG_OIDC_CLIENT_SECRET` | Its service account at the knowledge base's issuer. Required |
 | the variables its document names | The graph database's password, required; its token for the vector index, required; its embedding provider's key and the key of each actor's model, each for a provider that takes one, and required then. A stack the launcher starts names `NEO4J_PASSWORD` for the first, and gives it the password the launcher keeps; where the launcher runs the Qdrant, it names `QDRANT_TOKEN` for the second, and gives it a token the launcher mints. An Ollama takes no key |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | The OTLP/HTTP collector its spans and metrics are exported to ([Telemetry](#telemetry)). Without it, and without the console exporter, it exports nothing and writes no span or metric anywhere |
-| `OTEL_SERVICE_NAME` | The `service.name` its spans and metrics carry; `semiont-librarian` when unset or empty |
+| `OTEL_SERVICE_NAME` | The `service.name` its spans and metrics carry; `xynolog-librarian` when unset or empty |
 | `OTEL_SDK_DISABLED` | Set to `true`, it exports nothing, whatever else is set |
 | `OTEL_CONSOLE_EXPORTER` | Set to `true`, with no endpoint, it writes spans and metrics to its output instead of exporting them |
 | `OTEL_METRICS_EXPORTER` | Set to `console`, it writes metrics to its output, while spans still go to the endpoint |
 | `OTEL_METRIC_EXPORT_INTERVAL` | The milliseconds between metric exports; 30000 when unset |
-| `SUPERVISE_EVENTS`, `SUPERVISE_NAME` | The supervisor's events log, one `starting <name>` line for each life of the process, and that name. With both, it reports `semiont.process.restarts`: the lives the log records, less one. Without either, the metric does not exist |
+| `SUPERVISE_EVENTS`, `SUPERVISE_NAME` | The supervisor's events log, one `starting <name>` line for each life of the process, and that name. With both, it reports `xynolog.process.restarts`: the lives the log records, less one. Without either, the metric does not exist |
 
 The libraries it is built on read some unasked. Its OpenTelemetry SDK and
 exporter read the standard variables they read on their own, such as how long
 a finished span waits to be exported (`OTEL_BSP_SCHEDULE_DELAY`), but none
-that would say where its telemetry goes or the name it goes under. Xynoplex's
-SDK reads `SEMIONT_BUS_LOG`, and with any value that is not empty writes a
+that would say where its telemetry goes or the name it goes under. Xynolog's
+SDK reads `XYNOLOG_BUS_LOG`, and with any value that is not empty writes a
 line to the service's output for each frame it sends and receives. The
 librarian image sets `SUPERVISE_NAME` and `SUPERVISE_PROBE`; the image's
-supervisor reads those two and `SEMIONT_SUPERVISE`, and sets
+supervisor reads those two and `XYNOLOG_SUPERVISE`, and sets
 `SUPERVISE_EVENTS`.
 
 What each telemetry variable does is what the Worker service's does
@@ -1104,7 +1104,7 @@ for it is the Worker's, held to it by `librarian/tests/test_census.py`.
 
 Each of these is what today's Librarian does, and is wrong. Another
 implementation does not copy them. Each names the module of
-`librarian/src/semiont_librarian` it is in.
+`librarian/src/xynolog_librarian` it is in.
 
 - **A resource the Smelter skipped, of a media type that has text, is
   waited for once the Librarian no longer keeps the Smelter's decision of
@@ -1142,5 +1142,5 @@ implementation does not copy them. Each names the module of
   Librarian's own, but for a limits request.
 - **Telemetry of each request.** No span and no metric says how long a
   search or a gather took to answer, nor how many were answered or failed:
-  its log says the failures, and what a model cost is the `semiont.inference.*`
+  its log says the failures, and what a model cost is the `xynolog.inference.*`
   rows.

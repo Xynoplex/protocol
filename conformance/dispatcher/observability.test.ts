@@ -50,16 +50,16 @@ withDispatcher(
         const span = await eventually(`a ${name} span`, 10_000, () => otlp().spans.find((s) => s.name === name));
         expect(span.kind).toBe(kind);
         expect(span.attributes['bus.channel']).toBe(channel);
-        expect(span.resource['service.name']).toBe('semiont-dispatcher');
+        expect(span.resource['service.name']).toBe('xynolog-dispatcher');
       }
     });
 
-    it('semiont.job.queue.size reports the queue by each status the spec gives a job', async () => {
+    it('xynolog.job.queue.size reports the queue by each status the spec gives a job', async () => {
       const statuses = (spec().schema('JobStatusResponse')['properties'] as { status: { enum: string[] } }).status.enum;
-      const row = telemetry('dispatcher').metrics.find((r) => r.name === metricName('semiont.job.queue.size'));
+      const row = telemetry('dispatcher').metrics.find((r) => r.name === metricName('xynolog.job.queue.size'));
       expect(row?.attributes.find((a) => a.key === 'job.status')?.values).toEqual(statuses);
       await eventually('a queue size for every status', 10_000, () => {
-        const seen = otlp().metrics.get('semiont.job.queue.size')?.attributes.get('job.status');
+        const seen = otlp().metrics.get('xynolog.job.queue.size')?.attributes.get('job.status');
         return seen && statuses.every((s) => seen.has(s)) ? true : undefined;
       });
     });

@@ -154,18 +154,18 @@ withArchivist('a resource', (world) => {
       return body;
     };
     const good = { name: 'Refused', storageUri: 'file://docs/refused.md', format: 'text/markdown' };
-    const post = (body: BodyInit, headers: Record<string, string> = { 'Semiont-Principal': ada, 'Idempotency-Key': randomUUID() }) =>
+    const post = (body: BodyInit, headers: Record<string, string> = { 'Xynolog-Principal': ada, 'Idempotency-Key': randomUUID() }) =>
       world().http('POST', '/resources', { body, headers, route: '/resources' });
 
     const unattributed = await post(form(good), { 'Idempotency-Key': randomUUID() });
     expect(unattributed.status).toBe(400);
-    expect(unattributed.json).toEqual({ error: 'Semiont-Principal is required: the record attributes every resource to someone' });
+    expect(unattributed.json).toEqual({ error: 'Xynolog-Principal is required: the record attributes every resource to someone' });
 
-    const unkeyed = await post(form(good), { 'Semiont-Principal': ada });
+    const unkeyed = await post(form(good), { 'Xynolog-Principal': ada });
     expect(unkeyed.status).toBe(400);
     expect((unkeyed.json as { error: string }).error).toContain('Idempotency-Key');
 
-    const notMultipart = await world().http('POST', '/resources', { json: good, headers: { 'Semiont-Principal': ada, 'Idempotency-Key': randomUUID() }, route: '/resources' });
+    const notMultipart = await world().http('POST', '/resources', { json: good, headers: { 'Xynolog-Principal': ada, 'Idempotency-Key': randomUUID() }, route: '/resources' });
     expect(notMultipart.status).toBe(400);
     expect(notMultipart.json).toEqual({ error: 'The body is not multipart/form-data' });
 
@@ -283,7 +283,7 @@ withArchivist('a resource', (world) => {
 
   it('files every stream, view and index entry where the shard table says', async () => {
     const id = await world().created(world().world.personDid('ada'), { name: 'Filed', storageUri: 'file://docs/résumé 📚.md', content: 'filed\n' });
-    expect(world().streamDir(id)).toContain(`/.semiont/events/${shardOf(id)}/${id}`);
+    expect(world().streamDir(id)).toContain(`/.xynolog/events/${shardOf(id)}/${id}`);
     expect(existsSync(world().viewPath(id))).toBe(true);
     await eventually('the index entry', 5_000, () => world().storageUriEntry('file://docs/résumé 📚.md'));
   });

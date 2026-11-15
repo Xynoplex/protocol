@@ -52,7 +52,7 @@ eachWorkerService('a started worker', (world) => {
     const w = world();
     const grants = w.world.issuer.grants.get(WORKER_CLIENT) ?? 0;
     // A client the issuer does not hold: a worker that signed in as it would be refused.
-    const served = await w.start({ unlisted: { SEMIONT_OIDC_CLIENT_ID: 'semiont-worker-of-the-environment' } });
+    const served = await w.start({ unlisted: { XYNOLOG_OIDC_CLIENT_ID: 'xynolog-worker-of-the-environment' } });
     expect(served.signIns().map(({ did }) => did)).toEqual([w.did]);
     expect(w.world.issuer.grants.get(WORKER_CLIENT) ?? 0).toBe(grants + 1);
   });

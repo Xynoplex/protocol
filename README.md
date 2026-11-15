@@ -1,6 +1,6 @@
-# Xynoplex Protocol
+# Xynolog Protocol
 
-The cross-implementation contracts shared by the Xynoplex SDKs, services,
+The cross-implementation contracts shared by the Xynolog SDKs, services,
 CLI, Desktop app, and independent implementations.
 
 | Directory | Contents |
@@ -16,7 +16,7 @@ moving `main` branch. The canonical consumer path is a Git submodule named
 `protocol`, pinned to the commit that the consumer supports:
 
 ```sh
-git submodule add https://github.com/Xynoplex/protocol.git protocol
+git submodule add https://github.com/xynolog/protocol.git protocol
 git submodule update --init --recursive
 ```
 
@@ -33,7 +33,7 @@ it deliberately, regenerate any owned output, and run that consumer's checks.
 4. Run the applicable black-box suite in `conformance/` with an
    implementations manifest that names your build and driver commands.
 
-The conformance kit does not contain Xynoplex's process launch commands. Each
+The conformance kit does not contain Xynolog's process launch commands. Each
 implementation repository owns its manifest and build setup. See
 [`conformance/README.md`](conformance/README.md) for its schema and suite
 requirements.
@@ -53,8 +53,8 @@ ever disagree.
 
 ## Source and compatibility
 
-The repository name and documentation use Xynoplex. Historical wire
-identifiers such as `semiont` remain where changing them would break deployed
+The repository name and documentation use Xynolog. Historical wire
+identifiers such as `xynolog` remain where changing them would break deployed
 clients or persisted data. Such values are protocol compatibility details,
 not a claim about current product branding.
 

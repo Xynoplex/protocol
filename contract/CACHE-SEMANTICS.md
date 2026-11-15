@@ -24,7 +24,7 @@ Three rules carry most of the contract:
 3. **Accessors are lazy**: calling a live-query method is pure — safe
    from render — and the fetch decision runs on first subscribe.
 
-Ergonomics: `isReady` / `readyValue` from `@xynoplex/sdk` unwrap states in
+Ergonomics: `isReady` / `readyValue` from `@xynolog/sdk` unwrap states in
 pipes and handlers.
 
 This is the **three-outcome contract** — the name source comments and
@@ -51,7 +51,7 @@ Every SDK. The behaviors are numbered so that each can be tested by name:
   ([Test-parity](#test-parity)).
 
 The examples are TypeScript, where the cache is `createCache` in
-`@xynoplex/sdk`. The behaviors are the same in every SDK. In every SDK a host
+`@xynolog/sdk`. The behaviors are the same in every SDK. In every SDK a host
 can also make a cache of its own, over a fetch it gives. The client's event
 table refreshes only the client's caches, so a host invalidates its own.
 
@@ -251,7 +251,7 @@ minimal compared to the correctness benefit of stable observable
 identities. Stored values are kept the same way: there is no expiry
 and no collection of keys nobody observes.
 
-The full cache lifetime matches a `XynoplexClient` instance, which
+The full cache lifetime matches a `XynologClient` instance, which
 matches a browser tab or a CLI process — so the leak is strictly
 bounded.
 
@@ -291,10 +291,10 @@ Boundaries:
    reader finds the key at rest between the two asks (B17).
 
 Liveness: B14's one-retry budget is pinned by liveness axioms **L1/L2**
-(`assertLivenessAxioms` from `@xynoplex/core/testing/axioms`) — L2's settlement bound on the swallowed
+(`assertLivenessAxioms` from `@xynolog/core/testing/axioms`) — L2's settlement bound on the swallowed
 paths is `timeoutMs × (1 + this retry)`, enforced against the real
 `BrowseNamespace` + cache + `Bus.request` composition by the property
-suite ([browse-liveness.property.test.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/__tests__/browse-liveness.property.test.ts)).
+suite ([browse-liveness.property.test.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/__tests__/browse-liveness.property.test.ts)).
 Changing the retry count is a policy change that must edit L2's budget
 visibly, not drift past it.
 
@@ -326,7 +326,7 @@ holds it.** No observer sees `failed` while another sees `pending`.
    governs them.
 
 Rationale: liveness axiom L1, which the property suite
-([browse-liveness.property.test.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/__tests__/browse-liveness.property.test.ts))
+([browse-liveness.property.test.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/__tests__/browse-liveness.property.test.ts))
 holds the real composition to.
 B14 converts "reply lost" into one slow load when the retry succeeds;
 B15 covers the remaining corner — the retry ALSO fails — where an idle
@@ -355,7 +355,7 @@ a key's state is computed from), and stuns all later acts:
    regardless (structural no-op, belt and braces).
 3. `dispose()` is idempotent.
 4. At the namespace level, `BrowseNamespace.dispose()` (called by
-   `XynoplexClient.dispose()`) disposes all owned caches (A7-owned: it
+   `XynologClient.dispose()`) disposes all owned caches (A7-owned: it
    constructed them) and detaches its bus-event subscriptions, so late
    invalidation events cannot refetch into disposed caches.
 
@@ -735,7 +735,7 @@ and where in the trigger's event the keys and the value it acts with are.
 A trigger is a channel of the bus; `reopened`, the stream open again after
 a drop (B13); or `unreadable`, an event on one of the table's channels that
 cannot be read. Every SDK applies its own generation of the table
-(TypeScript's `BrowseNamespace` applies `CACHE_REFRESH` in `@xynoplex/core`).
+(TypeScript's `BrowseNamespace` applies `CACHE_REFRESH` in `@xynolog/core`).
 
 What an event names is the table's too. A row's `names` are the ways to the
 resource and the annotation the event names, and its `carries` the way to
@@ -847,7 +847,7 @@ state (B13). They live for the namespace's lifetime, which matches the
 client's (see B11): `dispose()` is the only place that detaches them
 (B16). A second run of `subscribeToEvents()` would double every
 effect. The constructor is the only call site; audit that the
-constructor runs once per `XynoplexClient`.
+constructor runs once per `XynologClient`.
 
 ## Test-parity
 

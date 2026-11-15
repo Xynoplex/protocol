@@ -15,7 +15,7 @@ resource metadata, because the Archivist publishes none.
 
 The shapes do not differ, so they are not repeated. Bodies `$ref` the shared
 `../components/schemas/`, where they are also registered in the gateway's
-document so that `@xynoplex/core` generates their types and validators. The
+document so that `@xynolog/core` generates their types and validators. The
 upload body (`ResourceUpload`) is one schema that both documents' `POST
 /resources` name, because the gateway forwards it untouched.
 

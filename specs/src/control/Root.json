@@ -16,10 +16,10 @@
     },
     "current": {
       "type": "string",
-      "description": "For a local root: how the control server's own directory selects it, when it does — standing in it (cwd), or SEMIONT_ROOT.",
+      "description": "For a local root: how the control server's own directory selects it, when it does — standing in it (cwd), or XYNOLOG_ROOT.",
       "enum": [
         "cwd",
-        "semiont-root"
+        "xynolog-root"
       ]
     },
     "registered": {

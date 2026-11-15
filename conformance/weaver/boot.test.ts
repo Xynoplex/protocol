@@ -38,9 +38,9 @@ eachWeaver('a Weaver, as a process', (world) => {
   it('refuses to start without its service account, and names what is missing', async () => {
     await world().stop();
     try {
-      const { code, output } = await world().refused({ env: { ...world().launch().env, SEMIONT_OIDC_CLIENT_SECRET: undefined } });
+      const { code, output } = await world().refused({ env: { ...world().launch().env, XYNOLOG_OIDC_CLIENT_SECRET: undefined } });
       expect(code).not.toBe(0);
-      expect(output).toContain('SEMIONT_OIDC_CLIENT_SECRET');
+      expect(output).toContain('XYNOLOG_OIDC_CLIENT_SECRET');
     } finally {
       await world().start();
     }

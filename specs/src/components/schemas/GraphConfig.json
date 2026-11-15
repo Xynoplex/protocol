@@ -1,5 +1,5 @@
 {
-  "description": "The graph database a service writes or reads, and what that kind of database needs to be reached: one of the kinds `semiont-graph` has a store for, told apart by `type`. A secret is never a value here: a database's password is named by the environment variable that holds it.",
+  "description": "The graph database a service writes or reads, and what that kind of database needs to be reached: one of the kinds `xynolog-graph` has a store for, told apart by `type`. A secret is never a value here: a database's password is named by the environment variable that holds it.",
   "oneOf": [
     {
       "$ref": "./Neo4jGraphConfig.json"

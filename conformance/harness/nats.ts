@@ -37,7 +37,7 @@ export async function startBroker(options: BrokerOptions = {}): Promise<Broker> 
   const port = await freePort();
   const store = mkdtempSync(join(tmpdir(), 'conformance-nats-'));
   // nats-server takes its largest message from a config file and from no flag.
-  const config = join(store, 'semiont.conf');
+  const config = join(store, 'xynolog.conf');
   writeFileSync(config, `max_payload: ${2 * spec().limits('post', '/bus/emit')['maxBodyBytes']!}\n`);
   let child: ChildProcess | undefined;
 

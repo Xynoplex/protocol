@@ -60,8 +60,8 @@ it: the launcher for the Weaver it starts, and anyone else to the same schema.
 
 - **A graph that lives in one process's memory is refused.** It could not be
   shared with a reader of the graph. *Held by `weaver/boot`.*
-- **Its service account is `SEMIONT_OIDC_CLIENT_ID` and
-  `SEMIONT_OIDC_CLIENT_SECRET` in its environment** ([Environment](#environment)).
+- **Its service account is `XYNOLOG_OIDC_CLIENT_ID` and
+  `XYNOLOG_OIDC_CLIENT_SECRET` in its environment** ([Environment](#environment)).
   With either missing it refuses to start, and names what is missing.
   *Held by `weaver/boot`.*
 - **The database's password is read from the variable its document names.**
@@ -101,7 +101,7 @@ Each event the fold applies changes the graph in one way.
 history and the graph it leaves, and is the rule; this section says it in
 prose.
 
-A table holds the histories someone wrote. Xynoplex's Weaver is held beyond
+A table holds the histories someone wrote. Xynolog's Weaver is held beyond
 them by `weaver/tests/test_properties.py`: over histories a generator
 makes, delivered in any order and some of them twice, its graph is what a
 second fold, which shares nothing with it, says the record leaves.
@@ -225,7 +225,7 @@ reconcile once that sweep is done.
 - **It serves the knowledge base its settings name, and no other.** Before it
   connects to the graph database it asks the knowledge base which it is
   (`browse:kb-requested`, which the Archivist answers from the committed
-  `.semiont/config.yaml`), and asks again while nothing answers there
+  `.xynolog/config.yaml`), and asks again while nothing answers there
   (`bus.peer-unavailable`). It asks on a stream of its own, which names that
   request's replies and not `weave:rebuild`, and closes it before it connects
   to the graph database. A request reaches every stream that names its
@@ -322,7 +322,7 @@ holds what the Weaver once applied to it.
 ## Telemetry
 
 - **A Weaver started with `OTEL_EXPORTER_OTLP_ENDPOINT` exports, as
-  `semiont-weaver`, exactly what
+  `xynolog-weaver`, exactly what
   [`specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
   lists for the weaver, and the rows of
   [`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
@@ -334,7 +334,7 @@ holds what the Weaver once applied to it.
   of those rows that its work can make arrives, with every attribute the row
   does not mark as conditional. All of it is exported under the resource the
   table's `resource` rows list for the weaver: its name, its version, and
-  `semiont.kb`, the DID of the knowledge base its document's `kb` names.
+  `xynolog.kb`, the DID of the knowledge base its document's `kb` names.
   *Held by `weaver/telemetry`.*
 - **An event it logs while a span is current carries that span's trace and
   its own id** (`trace_id` and `span_id`), in either form of its log. One
@@ -348,21 +348,21 @@ and no others:
 
 | Variable | What it is |
 |---|---|
-| `SEMIONT_OIDC_CLIENT_ID`, `SEMIONT_OIDC_CLIENT_SECRET` | Its service account at the knowledge base's issuer. Required |
+| `XYNOLOG_OIDC_CLIENT_ID`, `XYNOLOG_OIDC_CLIENT_SECRET` | Its service account at the knowledge base's issuer. Required |
 | the variable its document names | The graph database's password. Required. A stack the launcher starts names `NEO4J_PASSWORD`, and gives it the password the launcher keeps |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | The OTLP/HTTP collector its spans and metrics are exported to ([Telemetry](#telemetry)). Without it, and without the console exporter, it exports nothing and writes no span or metric anywhere |
-| `OTEL_SERVICE_NAME` | The `service.name` its spans and metrics carry; `semiont-weaver` when unset or empty |
+| `OTEL_SERVICE_NAME` | The `service.name` its spans and metrics carry; `xynolog-weaver` when unset or empty |
 | `OTEL_SDK_DISABLED` | Set to `true`, it exports nothing, whatever else is set |
 | `OTEL_CONSOLE_EXPORTER` | Set to `true`, with no endpoint, it writes spans and metrics to its output instead of exporting them |
 | `OTEL_METRICS_EXPORTER` | Set to `console`, it writes metrics to its output, while spans still go to the endpoint |
 | `OTEL_METRIC_EXPORT_INTERVAL` | The milliseconds between metric exports; 30000 when unset |
-| `SUPERVISE_EVENTS`, `SUPERVISE_NAME` | The supervisor's events log, one `starting <name>` line for each life of the process, and that name. With both, it reports `semiont.process.restarts`: the lives the log records, less one. Without either, the metric does not exist |
+| `SUPERVISE_EVENTS`, `SUPERVISE_NAME` | The supervisor's events log, one `starting <name>` line for each life of the process, and that name. With both, it reports `xynolog.process.restarts`: the lives the log records, less one. Without either, the metric does not exist |
 
 The libraries it is built on read some unasked. Its OpenTelemetry SDK and
 exporter read the standard variables they read on their own, such as how long
 a finished span waits to be exported (`OTEL_BSP_SCHEDULE_DELAY`), but none
-that would say where its telemetry goes or the name it goes under. Xynoplex's
-SDK reads `SEMIONT_BUS_LOG`, and with any value that is not empty writes a
+that would say where its telemetry goes or the name it goes under. Xynolog's
+SDK reads `XYNOLOG_BUS_LOG`, and with any value that is not empty writes a
 line to the service's output for each frame it sends and receives.
 
 What each telemetry variable does is what the Worker service's does

@@ -563,7 +563,7 @@
       }
     },
     {
-      "why": "a knowledge base of the shape semiont init writes: each of its collections is named by the hash of its DID, a hyphen and the collection's word",
+      "why": "a knowledge base of the shape xynolog init writes: each of its collections is named by the hash of its DID, a hyphen and the collection's word",
       "collectionsNamed": {
         "kb": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb",
         "names": {

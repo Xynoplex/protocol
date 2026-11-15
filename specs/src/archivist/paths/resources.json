@@ -2,7 +2,7 @@
   "post": {
     "operationId": "storeResource",
     "summary": "Store an upload and record the resource",
-    "description": "The gateway's `POST /resources`, forwarded untouched, with the principal the gateway verified. The Archivist stores the bytes at `storageUri`, outside git, and records the resource — as a clone of the token's source when the upload carries `cloneToken` — attributed to `Semiont-Principal`. It answers once the resource is recorded. An upload whose `Idempotency-Key` the Archivist holds for the same principal makes nothing new: with the same fields and bytes it is answered with the resource that key made, and with others it is refused 422. One that arrives while the first is still being recorded waits for it. The Archivist holds a key as long as the resource it made.",
+    "description": "The gateway's `POST /resources`, forwarded untouched, with the principal the gateway verified. The Archivist stores the bytes at `storageUri`, outside git, and records the resource — as a clone of the token's source when the upload carries `cloneToken` — attributed to `Xynolog-Principal`. It answers once the resource is recorded. An upload whose `Idempotency-Key` the Archivist holds for the same principal makes nothing new: with the same fields and bytes it is answered with the resource that key made, and with others it is refused 422. One that arrives while the first is still being recorded waits for it. The Archivist holds a key as long as the resource it made.",
     "security": [
       {
         "serviceAccount": []
@@ -10,7 +10,7 @@
     ],
     "parameters": [
       {
-        "name": "Semiont-Principal",
+        "name": "Xynolog-Principal",
         "in": "header",
         "required": true,
         "description": "The DID of the caller the gateway verified. The record attributes the resource to it. Believed because only a service account can call this route.",
@@ -20,10 +20,10 @@
         }
       },
       {
-        "name": "Semiont-Roles",
+        "name": "Xynolog-Roles",
         "in": "header",
         "required": false,
-        "description": "That caller's roles, comma-separated; absent when it has none. A worker's `semiont-worker` is what obliges its upload to cite a job.",
+        "description": "That caller's roles, comma-separated; absent when it has none. A worker's `xynolog-worker` is what obliges its upload to cite a job.",
         "schema": {
           "type": "string"
         }
@@ -62,7 +62,7 @@
         }
       },
       "400": {
-        "description": "`Semiont-Principal` or `Idempotency-Key` is missing; the body is not multipart/form-data, or not a ResourceUpload; the base media type is not supported; or `entityTypes` or `generator` is not what it must be. The message names what is wrong.",
+        "description": "`Xynolog-Principal` or `Idempotency-Key` is missing; the body is not multipart/form-data, or not a ResourceUpload; the base media type is not supported; or `entityTypes` or `generator` is not what it must be. The message names what is wrong.",
         "content": {
           "application/json": {
             "schema": {

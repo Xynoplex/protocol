@@ -37,8 +37,8 @@ describe('starting a gateway', () => {
 
   const env = (overrides: GatewayEnvironment = {}): GatewayEnvironment => ({
     JWT_SECRET: randomBytes(32).toString('hex'),
-    SEMIONT_OIDC_CLIENT_ID: GATEWAY_CLIENT,
-    SEMIONT_OIDC_CLIENT_SECRET: secret,
+    XYNOLOG_OIDC_CLIENT_ID: GATEWAY_CLIENT,
+    XYNOLOG_OIDC_CLIENT_SECRET: secret,
     ...overrides,
   });
   const settings = async (change: (s: GatewaySettings) => void = () => {}) => {
@@ -55,8 +55,8 @@ describe('starting a gateway', () => {
   const refusals: Array<[string, () => Promise<{ settings: GatewaySettings; env: GatewayEnvironment; args?: (document: string) => string[] }>, RegExp]> = [
     ['no JWT_SECRET', async () => ({ settings: await settings(), env: env({ JWT_SECRET: undefined }) }), /JWT_SECRET/],
     ['a JWT_SECRET key shorter than 32 characters', async () => ({ settings: await settings(), env: env({ JWT_SECRET: `${'a'.repeat(40)},short` }) }), /JWT_SECRET/],
-    ['no service-account client id', async () => ({ settings: await settings(), env: env({ SEMIONT_OIDC_CLIENT_ID: undefined }) }), /SEMIONT_OIDC_CLIENT_ID/],
-    ['no service-account secret', async () => ({ settings: await settings(), env: env({ SEMIONT_OIDC_CLIENT_SECRET: undefined }) }), /SEMIONT_OIDC_CLIENT_SECRET/],
+    ['no service-account client id', async () => ({ settings: await settings(), env: env({ XYNOLOG_OIDC_CLIENT_ID: undefined }) }), /XYNOLOG_OIDC_CLIENT_ID/],
+    ['no service-account secret', async () => ({ settings: await settings(), env: env({ XYNOLOG_OIDC_CLIENT_SECRET: undefined }) }), /XYNOLOG_OIDC_CLIENT_SECRET/],
     ['no knowledge-base domain', async () => ({ settings: await settings((s) => delete s.kb.domain), env: env() }), /\/kb\b.*\bdomain\b/],
     ['no Archivist address', async () => ({ settings: await settings((s) => delete s.archivist.host), env: env() }), /\/archivist\b.*\bhost\b/],
     ['no issuer', async () => ({ settings: await settings((s) => delete s.identity.issuer), env: env() }), /\/identity\b.*\bissuer\b/],
@@ -93,7 +93,7 @@ describe('starting a gateway', () => {
       expect(code, output).not.toBe(0);
       expect(code, output).not.toBeNull();
       expect(output).toMatch(names);
-      const secrets = [...(e.JWT_SECRET?.split(',') ?? []), e.SEMIONT_OIDC_CLIENT_SECRET].filter((v): v is string => (v?.trim().length ?? 0) >= 8);
+      const secrets = [...(e.JWT_SECRET?.split(',') ?? []), e.XYNOLOG_OIDC_CLIENT_SECRET].filter((v): v is string => (v?.trim().length ?? 0) >= 8);
       for (const value of secrets) expect(output, 'a secret in the output').not.toContain(value.trim());
     });
   }

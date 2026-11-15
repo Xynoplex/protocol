@@ -1,7 +1,7 @@
 # discovery — the launcher's KB discovery contract
 
 One standalone contract: the schema for `<stateDir>/discovery/kbs.json`,
-which the Xynoplex CLI (`Xynoplex/cli`) regenerates on every stack
+which the Xynolog CLI (`xynolog/cli`) regenerates on every stack
 mutation and consumers read from disk (Node) or fetch same-origin via the
 Browser's static server (web browsers).
 
@@ -19,7 +19,7 @@ stay small and closed. Hence the one hard rule:
   and the API refs INTO this directory — never the reverse.
 
 TypeScript consumers do not bind these files directly: `openapi.json`
-registers them into the bundle by reference, so `@xynoplex/core` generates
+registers them into the bundle by reference, so `@xynolog/core` generates
 their types alongside the API's.
 
 A future standalone contract gets its OWN sibling

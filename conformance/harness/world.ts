@@ -22,7 +22,7 @@ import { subscribe, type BusFrame, type BusStream, type SubscribeBody } from './
 export const PLANES: readonly Plane[] = ['in-process', 'nats'];
 
 /** The service account the gateway reaches the Archivist with. */
-export const GATEWAY_CLIENT = 'semiont-gateway';
+export const GATEWAY_CLIENT = 'xynolog-gateway';
 /** A service account for participants the suite plays — the Archivist's bus half, a worker. */
 export const PARTICIPANT_CLIENT = 'conformance-participant';
 
@@ -71,8 +71,8 @@ export class World {
     const broker = plane === 'nats' ? await startBroker(options.broker) : undefined;
     const env: GatewayEnvironment = {
       JWT_SECRET: randomBytes(32).toString('hex'),
-      SEMIONT_OIDC_CLIENT_ID: GATEWAY_CLIENT,
-      SEMIONT_OIDC_CLIENT_SECRET: secret,
+      XYNOLOG_OIDC_CLIENT_ID: GATEWAY_CLIENT,
+      XYNOLOG_OIDC_CLIENT_SECRET: secret,
       ...options.env,
     };
     const base = await defaultSettings({

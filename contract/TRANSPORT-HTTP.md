@@ -13,7 +13,7 @@ document is wrong and is corrected deliberately. There is no third option.
 The OpenAPI document ([specs/src/openapi.json](../specs/src/openapi.json))
 is the other half, and the half a machine reads: every route, every status
 each answers and its body, the headers, the stream's messages and id
-formats, the limits (`x-semiont-limits`, `maxItems`), and the claims a
+formats, the limits (`x-xynolog-limits`, `maxItems`), and the claims a
 token must carry (the `bearerAuth` scheme). This document states what a
 schema cannot: order, entitlement, recovery, and what each side does on
 its own initiative.
@@ -102,25 +102,25 @@ The numbers live in the spec, not here:
 
 | Limit | Where | Past it |
 |---|---|---|
-| A JSON request body | each operation's `x-semiont-limits.maxBodyBytes` | 413, unread when its Content-Length says so |
+| A JSON request body | each operation's `x-xynolog-limits.maxBodyBytes` | 413, unread when its Content-Length says so |
 | Scopes on one connection | `BusSubscribeRequest.scoped.maxItems` | 400 |
 | Pending replies named on subscribe | `BusSubscribeRequest.pendingReplies.maxItems` | 400 |
 | Unanswered requests per client | the same `maxItems` | 429 `unanswered-requests` on the next emit; `Retry-After` is when the oldest expires |
-| Streams one principal holds, across replicas | `/bus/subscribe` `x-semiont-limits.streamsPerPrincipal` | 429 `streams` |
-| Emits one principal makes, per gateway process | `/bus/emit` `x-semiont-limits.emitsPerPrincipal` (a rate and a burst) | 429 `emit-rate` |
+| Streams one principal holds, across replicas | `/bus/subscribe` `x-xynolog-limits.streamsPerPrincipal` | 429 `streams` |
+| Emits one principal makes, per gateway process | `/bus/emit` `x-xynolog-limits.emitsPerPrincipal` (a rate and a burst) | 429 `emit-rate` |
 | Bytes queued for all of one gateway's streams | GatewayConfig `capacity.queuedBytes` | 503 `capacity` on the next `/bus/subscribe` |
 | Connections one gateway holds open | GatewayConfig `capacity.connections` | the connection is closed unanswered |
-| How long a request's head may take to come whole: a connection's first, from its opening; any other, from its first byte | the document's `x-semiont-limits.requestHeadSeconds` | the connection is closed with nothing written to it |
-| How long a connection is kept after an answer for its next request to begin, longer than clients commonly keep an idle connection pooled, so the gateway never closes one a client may still reuse | the document's `x-semiont-limits.idleConnectionSeconds` | the connection is closed with nothing written to it |
-| How long a claim lasts unanswered | `/bus/emit` `x-semiont-limits.claimSeconds` | the claim expires; its reply is no longer routed |
-| How long a reply is retained | `/bus/subscribe` `x-semiont-limits.replyRetentionSeconds` | `pendingReplies` no longer recovers it |
-| Heartbeat interval | `x-semiont-limits.heartbeatSeconds` | — |
-| Bytes written to a connection and not yet taken | `x-semiont-limits.pendingWriteBytes` | the connection is closed |
-| Live frames arriving during a replay | `x-semiont-limits.replayBufferEvents` | the connection is closed |
-| How old the issuer's key set may be | `bearerAuth` `x-semiont-limits.keySetMaxAgeSeconds` | it is fetched again before an issuer token is verified |
-| How soon the key set is fetched again, for a key id it lacks or after a fetch that failed | `bearerAuth` `x-semiont-limits.keyRefetchCooldownSeconds` | until then a token that needs the fetch is refused 401 |
-| How long one fetch of the key set may take, discovery included | `bearerAuth` `x-semiont-limits.keyFetchDeadlineSeconds` | the fetch has failed; the tokens waiting on it are refused 401 |
-| Requests one holder has had refused, per gateway process: the holder a refused token names, unverified, or one count for every request that names none | `bearerAuth` `x-semiont-limits.refusalBurst` at once, `refusalsPerSecond` after; `refusalHolders` holders counted | 429 `refusal-rate`, which a client that can renew its token takes as its 401 |
+| How long a request's head may take to come whole: a connection's first, from its opening; any other, from its first byte | the document's `x-xynolog-limits.requestHeadSeconds` | the connection is closed with nothing written to it |
+| How long a connection is kept after an answer for its next request to begin, longer than clients commonly keep an idle connection pooled, so the gateway never closes one a client may still reuse | the document's `x-xynolog-limits.idleConnectionSeconds` | the connection is closed with nothing written to it |
+| How long a claim lasts unanswered | `/bus/emit` `x-xynolog-limits.claimSeconds` | the claim expires; its reply is no longer routed |
+| How long a reply is retained | `/bus/subscribe` `x-xynolog-limits.replyRetentionSeconds` | `pendingReplies` no longer recovers it |
+| Heartbeat interval | `x-xynolog-limits.heartbeatSeconds` | — |
+| Bytes written to a connection and not yet taken | `x-xynolog-limits.pendingWriteBytes` | the connection is closed |
+| Live frames arriving during a replay | `x-xynolog-limits.replayBufferEvents` | the connection is closed |
+| How old the issuer's key set may be | `bearerAuth` `x-xynolog-limits.keySetMaxAgeSeconds` | it is fetched again before an issuer token is verified |
+| How soon the key set is fetched again, for a key id it lacks or after a fetch that failed | `bearerAuth` `x-xynolog-limits.keyRefetchCooldownSeconds` | until then a token that needs the fetch is refused 401 |
+| How long one fetch of the key set may take, discovery included | `bearerAuth` `x-xynolog-limits.keyFetchDeadlineSeconds` | the fetch has failed; the tokens waiting on it are refused 401 |
+| Requests one holder has had refused, per gateway process: the holder a refused token names, unverified, or one count for every request that names none | `bearerAuth` `x-xynolog-limits.refusalBurst` at once, `refusalsPerSecond` after; `refusalHolders` holders counted | 429 `refusal-rate`, which a client that can renew its token takes as its 401 |
 
 A closed connection is not an error the client handles: it reopens its
 stream with each scope's position and its `pendingReplies`, and loses
@@ -128,7 +128,7 @@ nothing either covers.
 
 A limit on a principal does not ask whether it is a person or an agent. It
 states a baseline and a coefficient per role, and a role changes the
-coefficient whoever holds it: `semiont-service` and `semiont-worker` are
+coefficient whoever holds it: `xynolog-service` and `xynolog-worker` are
 unlimited. A refusal by a limit names it in the body's `code` and says in
 `Retry-After` how many seconds to wait; a client waits at least that long.
 One code is not a wait: `refusal-rate` answers only a request whose token
@@ -347,7 +347,7 @@ sent.
 - A connect the gateway has not answered within `streamOpenTimeoutMs` has
   failed. The answer is its status and headers: once the stream is open, it
   may carry nothing for as long as nothing happens.
-  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`.*
 - The client opens its stream again on an equal-jitter exponential
   backoff: a wait in [cap/2, cap], where cap is `reconnectMs` doubled per
   failure up to `maxReconnectMs`, and a successful open resets it. A
@@ -363,7 +363,7 @@ sent.
   status. Its body is read within `httpRequestTimeoutMs`, as any refusal's
   is: a body not read by then is the refusal with none of the gateway's
   words.
-  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`.*
 - **A refused credential is not retried**: a 401, or a 429 whose `code` is
   `refusal-rate`. The refused token is remembered and never sent again; the
   client is `unauthenticated` and checks, every `reconnectMs` and with no
@@ -509,7 +509,7 @@ every frame that spans two.
 A client subscribes globally to the channels every client hears and to an
 operation's reply channels, and per resource to the channels a scope
 carries. Both sets are the registry's `audience`, generated into
-`BRIDGED_CHANNELS` and `RESOURCE_SCOPED_CHANNELS` (`@xynoplex/core`), and
+`BRIDGED_CHANNELS` and `RESOURCE_SCOPED_CHANNELS` (`@xynolog/core`), and
 they are disjoint: a channel in both would reach a client twice, under two
 ids.
 
@@ -547,6 +547,6 @@ with more than one tenant.
 - `sdk/rust/http-transport/src/transport.rs` — the Rust client's
   `Transport`, and `actor.rs`, its stream.
 - `sdk/rust/sdk/src/bus.rs` — its bus request.
-- `sdk/python/sdk/src/semiont/http/transport.py` — the Python client's
+- `sdk/python/sdk/src/xynolog/http/transport.py` — the Python client's
   `Transport`, and `stream.py`, its stream.
-- `sdk/python/sdk/src/semiont/bus.py` — its bus request.
+- `sdk/python/sdk/src/xynolog/bus.py` — its bus request.

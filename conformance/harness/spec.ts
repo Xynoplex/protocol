@@ -155,36 +155,36 @@ export class Spec {
     return schema;
   }
 
-  /** An operation's `x-semiont-limits`, every value a positive integer. */
+  /** An operation's `x-xynolog-limits`, every value a positive integer. */
   limits(method: Method, path: string): Record<string, number> {
-    const limits = this.operation(method, path)['x-semiont-limits'];
+    const limits = this.operation(method, path)['x-xynolog-limits'];
     const out: Record<string, number> = {};
     if (isObject(limits)) for (const [k, v] of Object.entries(limits)) if (typeof v === 'number') out[k] = v;
     return out;
   }
 
-  /** One of the document's own `x-semiont-limits`, which hold for every connection. */
+  /** One of the document's own `x-xynolog-limits`, which hold for every connection. */
   documentLimit(key: string): number {
-    const limits = this.doc['x-semiont-limits'];
+    const limits = this.doc['x-xynolog-limits'];
     const value = isObject(limits) ? limits[key] : undefined;
-    if (typeof value !== 'number') throw new Error(`the spec states no x-semiont-limits.${key}`);
+    if (typeof value !== 'number') throw new Error(`the spec states no x-xynolog-limits.${key}`);
     return value;
   }
 
-  /** One of a security scheme's `x-semiont-limits`. */
+  /** One of a security scheme's `x-xynolog-limits`. */
   schemeLimit(scheme: string, key: string): number {
     const components = this.doc['components'];
     const schemes = isObject(components) ? components['securitySchemes'] : undefined;
     const declared = isObject(schemes) ? schemes[scheme] : undefined;
-    const limits = isObject(declared) ? declared['x-semiont-limits'] : undefined;
+    const limits = isObject(declared) ? declared['x-xynolog-limits'] : undefined;
     const value = isObject(limits) ? limits[key] : undefined;
-    if (typeof value !== 'number') throw new Error(`the spec's security scheme ${scheme} states no x-semiont-limits.${key}`);
+    if (typeof value !== 'number') throw new Error(`the spec's security scheme ${scheme} states no x-xynolog-limits.${key}`);
     return value;
   }
 
   /** A limit on a principal: its baseline, and a coefficient per role (`'unlimited'`, or the baseline's shape). */
   principalLimit<C>(method: Method, path: string, key: string): { baseline: C; roles: Record<string, C | 'unlimited'> } {
-    const limit = (this.operation(method, path)['x-semiont-limits'] as Record<string, unknown> | undefined)?.[key];
+    const limit = (this.operation(method, path)['x-xynolog-limits'] as Record<string, unknown> | undefined)?.[key];
     if (!isObject(limit) || !('baseline' in limit)) throw new Error(`${method.toUpperCase()} ${path} states no principal limit ${key}`);
     return { baseline: limit['baseline'] as C, roles: (limit['roles'] ?? {}) as Record<string, C | 'unlimited'> };
   }
@@ -550,7 +550,7 @@ export function principalCases(domain: string): { people: PersonCase[]; agents: 
 }
 
 /** The case of kb-identity/cases.json the suite's knowledge base is. */
-export const SUITE_KB = 'the shape semiont init writes';
+export const SUITE_KB = 'the shape xynolog init writes';
 
 export interface KbIdentity {
   name: string;
@@ -569,7 +569,7 @@ export function kbIdentity(why: string): KbIdentity {
   return { name: chosen.name, domain: chosen.domain, did: chosen.did, resource: chosen.resource };
 }
 
-/** A duration of the timing every Xynoplex client keeps (client/timing.json), by its name: milliseconds. */
+/** A duration of the timing every Xynolog client keeps (client/timing.json), by its name: milliseconds. */
 export function clientTiming(name: string): number {
   const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'client/timing.json'), 'utf8')) as { timing: Array<{ name: string; value: unknown }> };
   const value = table.timing.find((t) => t.name === name)?.value;

@@ -55,7 +55,7 @@
         "$ref": "../components/responses/InternalError.json"
       }
     },
-    "x-semiont-limits": {
+    "x-xynolog-limits": {
       "maxBodyBytes": 1048576
     }
   }

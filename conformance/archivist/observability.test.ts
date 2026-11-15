@@ -48,29 +48,29 @@ withArchivist(
         const span = await eventually(`a ${name} span`, 10_000, () => otlp().spans.find((s) => s.name === name));
         expect(span.kind).toBe(kind);
         expect(span.attributes['bus.channel']).toBe(channel);
-        expect(span.resource['service.name']).toBe('semiont-archivist');
+        expect(span.resource['service.name']).toBe('xynolog-archivist');
       }
     });
 
-    it('semiont.archivist.fact_pump.depth returns to zero once what was appended is published', async () => {
-      const depth = metricName('semiont.archivist.fact_pump.depth');
+    it('xynolog.archivist.fact_pump.depth returns to zero once what was appended is published', async () => {
+      const depth = metricName('xynolog.archivist.fact_pump.depth');
       await eventually('a depth of zero', 10_000, () => (otlp().metrics.get(depth)?.values.at(-1) === 0 ? true : undefined));
     });
 
-    it('semiont.git.duration measures each git command, by command', async () => {
-      const duration = metricName('semiont.git.duration');
+    it('xynolog.git.duration measures each git command, by command', async () => {
+      const duration = metricName('xynolog.git.duration');
       await eventually('a measured add, rm and rev-parse', 15_000, () => {
         const seen = otlp().metrics.get(duration)?.attributes.get('git.command');
         return seen && ['add', 'rm', 'rev-parse'].every((command) => seen.has(command)) ? true : undefined;
       });
     });
 
-    it('semiont.git.staging.failures counts a batch that could not be staged, by why', async () => {
+    it('xynolog.git.staging.failures counts a batch that could not be staged, by why', async () => {
       const owner = await world().person('owner');
       const release = await holdGitIndex(world().dirs.root);
       try {
         await world().created(owner.did, { name: 'Unstaged', storageUri: 'file://observed/b.md', content: 'unstaged\n' });
-        const failures = metricName('semiont.git.staging.failures');
+        const failures = metricName('xynolog.git.staging.failures');
         await eventually('a counted degradation', 20_000, () => (otlp().metrics.get(failures)?.attributes.get('reason')?.has('index-lock') ? true : undefined));
       } finally {
         release();

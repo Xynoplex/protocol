@@ -3,13 +3,13 @@
   "runBy": {
     "ocaml": ["sdk/ocaml/sdk/test/closure_behavior.ml"],
     "haskell": ["sdk/haskell/sdk/test/TextCases.hs"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/RepresentationTests.cs"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RepresentationTests.cs"],
     "typescript": ["sdk/typescript/core/src/__tests__/decode-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/resources.rs", "sdk/rust/sdk/tests/decode_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_decode_cases.py"],
     "go": ["sdk/go/sdk/resources_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/resources/DecodeCasesTest.kt"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/DecodeRepresentationTests.swift"]
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/resources/DecodeCasesTest.kt"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/DecodeRepresentationTests.swift"]
   },
   "cases": [
     {

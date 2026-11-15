@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "The heartbeat: `event: ping` with an empty `data:` line. The first is written once the stream has caught up (after any replay), then one every `x-semiont-limits.heartbeatSeconds`. It carries no id, so it never disturbs a client's last-seen ids.",
+  "description": "The heartbeat: `event: ping` with an empty `data:` line. The first is written once the stream has caught up (after any replay), then one every `x-xynolog-limits.heartbeatSeconds`. It carries no id, so it never disturbs a client's last-seen ids.",
   "properties": {
     "event": {
       "type": "string",

@@ -40,12 +40,12 @@ eachSmelter('what a Smelter exports', (world) => {
 
     const signalled = spanName('bus.emit:{channel}', { channel: 'smelt:settled' });
     const span = await eventually('the span of a decision it signalled', 15_000, () => otlp().spans.find((s) => s.name === signalled));
-    expect(span.resource['service.name']).toBe('semiont-smelter');
+    expect(span.resource['service.name']).toBe('xynolog-smelter');
 
     expect(await outsideTheTable(otlp(), 'smelter', world().kb.world.served.domain), received(otlp())).toEqual([]);
 
     // The index holds the resource's points now. A reading is up to an export interval old, so the gauge is waited for.
-    const size = metricName('semiont.vector.index.size');
+    const size = metricName('xynolog.vector.index.size');
     const held = await eventually('the gauge to say how many points the index holds', 15_000, async () => {
       const points = (await world().index.count('resources')) + (await world().index.count('annotations'));
       return otlp().metrics.get(size)?.values.at(-1) === points ? points : undefined;

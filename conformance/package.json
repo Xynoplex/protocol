@@ -1,9 +1,9 @@
 {
-  "name": "@xynoplex/protocol-conformance",
+  "name": "@xynolog/protocol-conformance",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Black-box conformance suites for Xynoplex services and SDKs, driven by implementation-provided commands and checked against this repository's protocol definitions.",
+  "description": "Black-box conformance suites for Xynolog services and SDKs, driven by implementation-provided commands and checked against this repository's protocol definitions.",
   "scripts": {
     "generate:types": "openapi-typescript ../specs/openapi.json -o harness/generated/openapi-types.ts",
     "typecheck": "npm run generate:types && tsc --noEmit",

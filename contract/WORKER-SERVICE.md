@@ -60,17 +60,17 @@ holds the count.
   what was expected of it, and never a value found in the document.
   *Held by `worker-service/boot`.*
 - **B3.** The document carries no secret. The key the service proves itself
-  with at every knowledge base is `SEMIONT_OIDC_CLIENT_KEY` in its environment:
+  with at every knowledge base is `XYNOLOG_OIDC_CLIENT_KEY` in its environment:
   an RSA private key, PEM and unencrypted. Each knowledge base names the client
   its issuer holds the key's public half on (`knowledgeBases[<k>].identity`'s
   `clientId`): the service's account there. Each sign-in carries an assertion
   signed with the key (RFC 7523, `private_key_jwt`;
   `specs/src/session/client-assertion-cases.json`), and no secret. With the key
-  unset or empty it writes `[fatal] SEMIONT_OIDC_CLIENT_KEY is not set in the
+  unset or empty it writes `[fatal] XYNOLOG_OIDC_CLIENT_KEY is not set in the
   worker's environment: a worker signs in as a service account` and exits with
   status 1. With a key it cannot read it writes `[fatal]
-  SEMIONT_OIDC_CLIENT_KEY in the worker's environment is not an unencrypted PEM
-  private key`, and with one that is not RSA `[fatal] SEMIONT_OIDC_CLIENT_KEY in
+  XYNOLOG_OIDC_CLIENT_KEY in the worker's environment is not an unencrypted PEM
+  private key`, and with one that is not RSA `[fatal] XYNOLOG_OIDC_CLIENT_KEY in
   the worker's environment is not an RSA key: a worker signs its assertions with
   RS256`, each exiting with status 1. Nothing it writes carries the key.
   *Held by `worker-service/boot`.*
@@ -973,7 +973,7 @@ focused on a resource or on an annotation.
 ## Telemetry
 
 - **T1.** A service started with `OTEL_EXPORTER_OTLP_ENDPOINT` exports, as
-  `semiont-worker`, under a resource of exactly the keys the table's
+  `xynolog-worker`, under a resource of exactly the keys the table's
   `resource` rows list for the worker: its name and its version. It serves
   several knowledge bases, so its resource names none
   ([T4](#telemetry)). It exports exactly what
@@ -988,35 +988,35 @@ focused on a resource or on an annotation.
   attribute the row does not mark as conditional.
   *Held by `worker-service/telemetry`.*
 - **T2.** A job is a `job:{jobType}` span, from the claim that handed it over
-  to its settle, and is counted (`semiont.job.outcome`) and timed
-  (`semiont.job.duration`) by its type, its motivation when it is a `mark`
+  to its settle, and is counted (`xynolog.job.outcome`) and timed
+  (`xynolog.job.duration`) by its type, its motivation when it is a `mark`
   job, and how it ended: `completed`, a declined job among them, `failed`, or
   `cancelled`.
   *Held by `worker-service/telemetry`.*
 - **T3.** A generation is a span, `inference:structured` when it asks for an
   array of objects and `inference:text` when it does not, that names the
   engine's provider and model and the tokens asked for. It is counted
-  (`semiont.inference.calls`) and timed once, by how it ended, however many
+  (`xynolog.inference.calls`) and timed once, by how it ended, however many
   times its request was made ([F10](#failures)). The tokens its provider
-  reported for it are counted as reported (`semiont.inference.tokens`), what
+  reported for it are counted as reported (`xynolog.inference.tokens`), what
   the model read as `input` and what it wrote as `output`, under the
   provider and the model. What learns a model's limits
   ([M2 and M5](#limits)) is no generation, and is not counted.
   *Held by `worker-service/telemetry`, `worker-service/anthropic`.*
 - **T4.** Each span and data point of a row that lists the worker alone
-  carries `semiont.kb`: the DID of the knowledge base whose claims handed
+  carries `xynolog.kb`: the DID of the knowledge base whose claims handed
   the job over, `did:web:` and the domain its document names there. Of a
   service of two knowledge bases, what it records of each job names that
   job's own. The rows it shares with others name none: what the process says
   of itself, the SDK's rows, and what a provider's driver counts of a
-  generation (`semiont.inference.*`), since one engine's client serves every
+  generation (`xynolog.inference.*`), since one engine's client serves every
   knowledge base that names it.
   *Held by `worker-service/telemetry`.*
 
 ## Environment
 
 Beside its document, a Worker service reads its environment for the key it
-signs in with (`SEMIONT_OIDC_CLIENT_KEY`, [B3](#configuration)), for the keys
+signs in with (`XYNOLOG_OIDC_CLIENT_KEY`, [B3](#configuration)), for the keys
 its document names
 ([B4](#configuration)), and for the variables of this section. Its own code
 reads no other. The libraries it is built on read some unasked. Its
@@ -1040,7 +1040,7 @@ its own, such as a proxy and the certificates it trusts.
   makes when it settles a job is not in that job's trace.
   *Held by `worker-service/environment`.*
 - **E3.** `OTEL_SERVICE_NAME` is the `service.name` its spans and metrics
-  carry; `semiont-worker` when unset or empty.
+  carry; `xynolog-worker` when unset or empty.
   *Held by `worker-service/environment`.*
 - **E4.** `OTEL_SDK_DISABLED` set to `true` exports nothing, whatever else is
   set.
@@ -1059,14 +1059,14 @@ its own, such as a proxy and the certificates it trusts.
   to be exported in a batch; 5000 when unset. The OpenTelemetry SDK reads it,
   not the service's own code.
   *Held by `worker-service/environment`.*
-- **E9.** `SEMIONT_BUS_LOG`, with any value that is not empty, writes one line
+- **E9.** `XYNOLOG_BUS_LOG`, with any value that is not empty, writes one line
   to the service's output for each frame it sends, beginning `[bus EMIT]
   <channel>`, and one for each frame it receives, beginning `[bus RECV]
   <channel>`. Unset, it writes none.
   *Held by `worker-service/environment`.*
 - **E10.** `SUPERVISE_EVENTS` is the supervisor's events log, one `starting
   <name>` line for each life of the process, and `SUPERVISE_NAME` is that
-  name. With both, the service reports `semiont.process.restarts`: the lives
+  name. With both, the service reports `xynolog.process.restarts`: the lives
   the log records, less one. Without either, the metric does not exist.
   *Held by `worker-service/environment`.*
 - **E11.** `LOG_LEVEL` and `LOG_FORMAT` are not read. How much the service

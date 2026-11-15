@@ -93,7 +93,7 @@ The whole document is read: a long one is processed in pieces sized to the model
 
 ```typescript
 // Annotate by hand
-const { annotationId } = await semiont.mark.annotation({
+const { annotationId } = await xynolog.mark.annotation({
   motivation: 'highlighting',
   target: {
     source: resourceId,
@@ -105,7 +105,7 @@ const { annotationId } = await semiont.mark.annotation({
 });
 
 // Have an agent find the references
-semiont.mark.delegate(resourceId, {
+xynolog.mark.delegate(resourceId, {
   motivation: 'linking',
   entityTypes: ['Person', 'Organization'],
 }).subscribe({
@@ -114,7 +114,7 @@ semiont.mark.delegate(resourceId, {
 });
 ```
 
-From the launcher: `semiont mark --delegate <resourceId> --motivation linking --entity-type Person`.
+From the launcher: `xynolog mark --delegate <resourceId> --motivation linking --entity-type Person`.
 
 ## Local signals
 
@@ -122,8 +122,8 @@ From the launcher: `semiont mark --delegate <resourceId> --motivation linking --
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/mark.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/mark.ts)
-- What records the events: [the Archivist](../ARCHIVIST.md), in [archivist/src/commands.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/commands.rs)
-- The Worker service, which runs the detections: [worker](https://github.com/Xynoplex/images/tree/main/worker/README.md), held to [WORKER-SERVICE.md](../WORKER-SERVICE.md)
-- The launcher verb: [cli/internal/launcher/verbs/mark.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/mark.go)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/mark.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/mark.ts)
+- What records the events: [the Archivist](../ARCHIVIST.md), in [archivist/src/commands.rs](https://github.com/xynolog/images/tree/main/archivist/src/commands.rs)
+- The Worker service, which runs the detections: [worker](https://github.com/xynolog/images/tree/main/worker/README.md), held to [WORKER-SERVICE.md](../WORKER-SERVICE.md)
+- The launcher verb: [cli/internal/launcher/verbs/mark.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/mark.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

@@ -14,13 +14,13 @@
       "sdk/python/sdk/tests/test_persisted_cases.py"
     ],
     "kotlin": [
-      "sdk/kotlin/sdk/src/test/kotlin/semiont/registry/PersistedCasesTest.kt"
+      "sdk/kotlin/sdk/src/test/kotlin/xynolog/registry/PersistedCasesTest.kt"
     ],
     "swift": [
-      "sdk/swift/sdk/Tests/SemiontTests/PersistedCasesTests.swift"
+      "sdk/swift/sdk/Tests/XynologTests/PersistedCasesTests.swift"
     ],
     "csharp": [
-      "sdk/csharp/sdk/tests/Semiont.Tests/PersistedCasesTests.cs"
+      "sdk/csharp/sdk/tests/Xynolog.Tests/PersistedCasesTests.cs"
     ],
     "go": [
       "sdk/go/sdk/registry/persisted_cases_test.go"
@@ -45,13 +45,13 @@
       "kbId": "kb-a",
       "did": "did:web:kb.example.org:users:jo%40example.org",
       "personKey": "gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I",
-      "lastEventIdKey": "semiont.lastEventId.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I",
+      "lastEventIdKey": "xynolog.lastEventId.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I",
       "cacheKeys": {
-        "resource": "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource",
-        "annotations": "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotations",
-        "annotation": "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotation",
-        "entityTypes": "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.entityTypes",
-        "tagSchemas": "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.tagSchemas"
+        "resource": "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource",
+        "annotations": "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotations",
+        "annotation": "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotation",
+        "entityTypes": "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.entityTypes",
+        "tagSchemas": "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.tagSchemas"
       }
     },
     {
@@ -59,27 +59,27 @@
       "kbId": "3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90",
       "did": "did:web:kb.example.org:users:ann%40example.org",
       "personKey": "oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM",
-      "lastEventIdKey": "semiont.lastEventId.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM",
+      "lastEventIdKey": "xynolog.lastEventId.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM",
       "cacheKeys": {
-        "resource": "semiont.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.resource",
-        "annotations": "semiont.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.annotations",
-        "annotation": "semiont.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.annotation",
-        "entityTypes": "semiont.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.entityTypes",
-        "tagSchemas": "semiont.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.tagSchemas"
+        "resource": "xynolog.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.resource",
+        "annotations": "xynolog.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.annotations",
+        "annotation": "xynolog.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.annotation",
+        "entityTypes": "xynolog.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.entityTypes",
+        "tagSchemas": "xynolog.cache.3f2c7a4e-0d1b-4c8e-9a6f-2b5d8e1c7a90.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.tagSchemas"
       }
     }
   ],
   "forgetStorage": {
-    "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource": "{\"version\":1,\"entries\":[]}",
-    "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotations": "{\"version\":1,\"entries\":[]}",
-    "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotation": "{\"version\":1,\"entries\":[]}",
-    "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.entityTypes": "{\"version\":1,\"entries\":[]}",
-    "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.tagSchemas": "{\"version\":1,\"entries\":[]}",
-    "semiont.lastEventId.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I": "{\"res-1\":\"p-res-1-3\"}",
-    "semiont.cache.kb-a.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.resource": "{\"version\":1,\"entries\":[]}",
-    "semiont.lastEventId.kb-a.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM": "{\"res-1\":\"p-res-1-4\"}",
-    "semiont.cache.kb-b.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource": "{\"version\":1,\"entries\":[]}",
-    "semiont.lastEventId.kb-b.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I": "{\"res-1\":\"p-res-1-5\"}"
+    "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource": "{\"version\":1,\"entries\":[]}",
+    "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotations": "{\"version\":1,\"entries\":[]}",
+    "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.annotation": "{\"version\":1,\"entries\":[]}",
+    "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.entityTypes": "{\"version\":1,\"entries\":[]}",
+    "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.tagSchemas": "{\"version\":1,\"entries\":[]}",
+    "xynolog.lastEventId.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I": "{\"res-1\":\"p-res-1-3\"}",
+    "xynolog.cache.kb-a.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM.resource": "{\"version\":1,\"entries\":[]}",
+    "xynolog.lastEventId.kb-a.oJXMBS_YgRdGkRGgoRP3a1gD4T1VeD9aCS3GlygJEOM": "{\"res-1\":\"p-res-1-4\"}",
+    "xynolog.cache.kb-b.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource": "{\"version\":1,\"entries\":[]}",
+    "xynolog.lastEventId.kb-b.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I": "{\"res-1\":\"p-res-1-5\"}"
   },
   "forget": [
     {
@@ -193,8 +193,8 @@
     "domain": "kb.example.org"
   },
   "startupStorage": {
-    "semiont.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource": "{\"version\":1,\"entries\":[[\"res-1\",{\"@context\":\"https://schema.org/\",\"@id\":\"res-1\",\"name\":\"kept\",\"representations\":[]},1700000000000],[\"res-2\",{\"@context\":\"https://schema.org/\",\"@id\":\"res-2\",\"name\":\"kept\",\"representations\":[]},1700000000000]]}",
-    "semiont.lastEventId.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I": "{\"res-1\":\"p-res-1-7\"}"
+    "xynolog.cache.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I.resource": "{\"version\":1,\"entries\":[[\"res-1\",{\"@context\":\"https://schema.org/\",\"@id\":\"res-1\",\"name\":\"kept\",\"representations\":[]},1700000000000],[\"res-2\",{\"@context\":\"https://schema.org/\",\"@id\":\"res-2\",\"name\":\"kept\",\"representations\":[]},1700000000000]]}",
+    "xynolog.lastEventId.kb-a.gqB898gk4Ww_orAHhzDCSVl7yHP9UEsX0DA_xbGbq-I": "{\"res-1\":\"p-res-1-7\"}"
   },
   "startup": [
     {

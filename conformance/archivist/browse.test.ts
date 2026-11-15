@@ -199,7 +199,7 @@ withArchivist('browsing', (world) => {
     expect(entries.find((e) => e.name === 'b.md')!.size).toBe(2);
 
     const root = (await reader.ask('browse:directory-requested', { path: '.' }))['entries'] as Array<{ name: string }>;
-    expect(root.map((e) => e.name)).not.toContain('.semiont');
+    expect(root.map((e) => e.name)).not.toContain('.xynolog');
     expect(root.map((e) => e.name)).not.toContain('.git');
 
     for (const [path, message] of [['../outside', 'path escapes project root'], ['/etc', 'path escapes project root'], ['tree/missing', 'path not found']] as const) {

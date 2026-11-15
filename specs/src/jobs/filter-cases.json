@@ -2,13 +2,13 @@
   "$comment": "Whether a job matches a filter, as every implementation must answer it: the Dispatcher choosing the next job a claim takes, and a party checking an announcement against its own claim before it asks. A filter is a partial job description (JobFilter). A job matches when every field the filter states equals the job's at the same path; what the filter leaves out is not compared. `job` is the description as it is announced or held: its `jobType` and its `params`. Each implementation runs every case and fails on a difference. Add a case here before changing any of them.",
   "runBy": {
     "ocaml": ["sdk/ocaml/sdk/test/worker_filters.ml"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/WorkerTests.cs"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/WorkerTablesTests.swift"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/WorkerTests.cs"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/WorkerTablesTests.swift"],
     "typescript": ["sdk/typescript/core/src/__tests__/job-filter.test.ts"],
     "rust": ["sdk/rust/sdk/tests/job_filter.rs"],
     "python": ["sdk/python/sdk/tests/test_claims.py"],
     "go": ["sdk/go/sdk/claims_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/jobs/JobTablesTest.kt"],
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/jobs/JobTablesTest.kt"],
     "haskell": ["sdk/haskell/sdk/test/WorkerCases.hs"]
   },
   "cases": [

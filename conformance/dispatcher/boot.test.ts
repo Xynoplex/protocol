@@ -72,7 +72,7 @@ withDispatcher('the dispatcher\'s boot', (world) => {
     expect(refusal.output).toMatch(/queue\.passwordEnv/);
   });
 
-  it.each(['SEMIONT_OIDC_CLIENT_ID', 'SEMIONT_OIDC_CLIENT_SECRET'])('refuses to start without its service account\'s %s, naming it', async (missing) => {
+  it.each(['XYNOLOG_OIDC_CLIENT_ID', 'XYNOLOG_OIDC_CLIENT_SECRET'])('refuses to start without its service account\'s %s, naming it', async (missing) => {
     const env = Object.fromEntries(Object.entries(world().env).filter(([name]) => name !== missing));
     const refusal = await refusedDispatcherBoot(await launch(world(), { env }));
     expect(refusal.code).not.toBe(0);

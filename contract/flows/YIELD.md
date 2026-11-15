@@ -55,7 +55,7 @@ What can be uploaded, authored and generated is declared per media type in [`spe
 
 ```typescript
 // Upload
-const { resourceId } = await semiont.yield.resource({
+const { resourceId } = await xynolog.yield.resource({
   name: 'My Document',
   file: new File([content], 'doc.md'),
   format: 'text/markdown',
@@ -63,7 +63,7 @@ const { resourceId } = await semiont.yield.resource({
 });
 
 // Generate from a gathered context. Awaiting gives the job's completion.
-const done = await semiont.yield.delegate({
+const done = await xynolog.yield.delegate({
   title: 'Generated Summary',
   storageUri: 'file://generated/summary.md',
   context: gatheredContext,
@@ -73,12 +73,12 @@ if (done.result && 'resourceId' in done.result) {
 }
 ```
 
-From the launcher: `semiont yield --upload <file>`, and `semiont yield --help` for generation.
+From the launcher: `xynolog yield --upload <file>`, and `xynolog yield --help` for generation.
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/yield.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/yield.ts)
-- What records the events: [the Archivist](../ARCHIVIST.md), in [archivist/src/commands.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/commands.rs)
-- The Worker service, which runs the generation: [worker](https://github.com/Xynoplex/images/tree/main/worker/README.md), held to [WORKER-SERVICE.md](../WORKER-SERVICE.md#generation)
-- The launcher verb: [cli/internal/launcher/verbs/yield.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/yield.go)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/yield.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/yield.ts)
+- What records the events: [the Archivist](../ARCHIVIST.md), in [archivist/src/commands.rs](https://github.com/xynolog/images/tree/main/archivist/src/commands.rs)
+- The Worker service, which runs the generation: [worker](https://github.com/xynolog/images/tree/main/worker/README.md), held to [WORKER-SERVICE.md](../WORKER-SERVICE.md#generation)
+- The launcher verb: [cli/internal/launcher/verbs/yield.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/yield.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

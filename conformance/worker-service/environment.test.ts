@@ -64,8 +64,8 @@ eachWorkerService("the worker's environment", (world) => {
     expect([...named].sort()).toEqual([...READ_FROM_THE_ENVIRONMENT, 'LOG_LEVEL', 'LOG_FORMAT'].sort());
   });
 
-  it('OTEL_SERVICE_NAME names the service its spans are exported under; semiont-worker when unset', async () => {
-    for (const [name, expected] of [[undefined, 'semiont-worker'], ['conformance-renamed', 'conformance-renamed']] as const) {
+  it('OTEL_SERVICE_NAME names the service its spans are exported under; xynolog-worker when unset', async () => {
+    for (const [name, expected] of [[undefined, 'xynolog-worker'], ['conformance-renamed', 'conformance-renamed']] as const) {
       await withEnv(
         world(),
         (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_BSP_SCHEDULE_DELAY: '100', OTEL_SERVICE_NAME: name }),
@@ -146,7 +146,7 @@ eachWorkerService("the worker's environment", (world) => {
         await settle(2_000);
         expect(otlp.spans).toEqual([]);
         expect([...otlp.metrics.keys()]).toEqual([]);
-        expect(served.process.output.filter((line) => line.includes(CLAIM) || line.includes('semiont.process.start_time'))).toEqual([]);
+        expect(served.process.output.filter((line) => line.includes(CLAIM) || line.includes('xynolog.process.start_time'))).toEqual([]);
       },
     );
   });
@@ -179,7 +179,7 @@ eachWorkerService("the worker's environment", (world) => {
       (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_BSP_SCHEDULE_DELAY: '100', OTEL_METRIC_EXPORT_INTERVAL: '500', OTEL_METRICS_EXPORTER: 'console' }),
       async (served, otlp) => {
         await eventually(`the ${CLAIM} it sent`, 10_000, () => otlp.spans.find(sent(CLAIM)));
-        const started = metricName('semiont.process.start_time');
+        const started = metricName('xynolog.process.start_time');
         await eventually(`${started} in the output`, 10_000, () => (served.process.output.some((line) => line.includes(started)) ? true : undefined));
         expect([...otlp.metrics.keys()]).toEqual([]);
       },
@@ -211,11 +211,11 @@ eachWorkerService("the worker's environment", (world) => {
     );
   });
 
-  it('SEMIONT_BUS_LOG writes a line for each frame the worker sends and receives; unset, it writes none', async () => {
+  it('XYNOLOG_BUS_LOG writes a line for each frame the worker sends and receives; unset, it writes none', async () => {
     for (const on of [false, true]) {
       await withEnv(
         world(),
-        () => ({ SEMIONT_BUS_LOG: on ? '1' : undefined }),
+        () => ({ XYNOLOG_BUS_LOG: on ? '1' : undefined }),
         async (served) => {
           if (on) {
             for (const line of [`[bus EMIT] ${CLAIM}`, `[bus RECV] ${NOTHING_PENDING}`]) {
@@ -230,7 +230,7 @@ eachWorkerService("the worker's environment", (world) => {
     }
   });
 
-  it('SUPERVISE_EVENTS and SUPERVISE_NAME report semiont.process.restarts: the lives the supervisor recorded, less one', async () => {
+  it('SUPERVISE_EVENTS and SUPERVISE_NAME report xynolog.process.restarts: the lives the supervisor recorded, less one', async () => {
     const events = join(tmpdir(), `worker-conformance-supervisor-${randomUUID()}.log`);
     const life = (n: number) => `[supervise 2026-09-30T00:00:0${n}Z] starting worker (rapid failures so far: ${n})`;
     writeFileSync(events, [life(0), life(1), life(2)].join('\n') + '\n');
@@ -239,7 +239,7 @@ eachWorkerService("the worker's environment", (world) => {
         world(),
         (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_METRIC_EXPORT_INTERVAL: '500', SUPERVISE_EVENTS: events, SUPERVISE_NAME: 'worker' }),
         async (_served, otlp) => {
-          const restarts = metricName('semiont.process.restarts');
+          const restarts = metricName('xynolog.process.restarts');
           const values = await eventually(restarts, 10_000, () => {
             const seen = otlp.metrics.get(restarts)?.values;
             return seen && seen.length > 0 ? seen : undefined;
@@ -255,8 +255,8 @@ eachWorkerService("the worker's environment", (world) => {
           (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_METRIC_EXPORT_INTERVAL: '500', ...half }),
           async (_served, otlp) => {
             // Two exports of what it does report, and the restarts in neither.
-            await eventually('two metric exports', 10_000, () => ((otlp.metrics.get(metricName('semiont.process.start_time'))?.values.length ?? 0) >= 2 ? true : undefined));
-            expect(otlp.metrics.has(metricName('semiont.process.restarts'))).toBe(false);
+            await eventually('two metric exports', 10_000, () => ((otlp.metrics.get(metricName('xynolog.process.start_time'))?.values.length ?? 0) >= 2 ? true : undefined));
+            expect(otlp.metrics.has(metricName('xynolog.process.restarts'))).toBe(false);
           },
         );
       }

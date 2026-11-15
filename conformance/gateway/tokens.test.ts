@@ -124,10 +124,10 @@ eachPlane('credentials', (world) => {
   it('a cookie is not a credential: alone it is none, and beside a bearer token it changes nothing', async () => {
     const { token } = await world().agent('cookie');
     const person = await world().person('cookie-eater');
-    for (const cookie of [`semiont-token=${token}`, `semiont-token=${person}`]) {
+    for (const cookie of [`xynolog-token=${token}`, `xynolog-token=${person}`]) {
       expectNoCredential(await call(world().origin, 'GET', '/api/users/me', { headers: { cookie } }), 'get', '/api/users/me', cookie.slice(0, 30));
     }
-    const both = await call(world().origin, 'GET', '/api/users/me', { token: person, headers: { cookie: 'semiont-token=junk' } });
+    const both = await call(world().origin, 'GET', '/api/users/me', { token: person, headers: { cookie: 'xynolog-token=junk' } });
     expect(both.status, both.text).toBe(200);
   });
 
@@ -288,7 +288,7 @@ eachPlane('an issuer that cannot be reached', (world) => {
 
 // Plane-independent, and slow: the verifier refetches the issuer's keys on a
 // kid it has not seen at most once per cooldown (`bearerAuth`'s
-// `x-semiont-limits.keyRefetchCooldownSeconds`), so the case waits one
+// `x-xynolog-limits.keyRefetchCooldownSeconds`), so the case waits one
 // out. Its own world, because every token signed after it uses the new key.
 eachPlane('issuer key rotation', (world) => {
   const cooldownMs = spec().schemeLimit('bearerAuth', 'keyRefetchCooldownSeconds') * 1000;

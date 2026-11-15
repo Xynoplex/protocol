@@ -17,7 +17,7 @@
     },
     "service": {
       "type": "string",
-      "description": "Just this service's container, as --service names it. Absent: each Semiont service the stack runs.",
+      "description": "Just this service's container, as --service names it. Absent: each Xynolog service the stack runs.",
       "minLength": 1
     }
   },

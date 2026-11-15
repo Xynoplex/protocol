@@ -30,23 +30,23 @@ Each is a frame sent with no reply awaited. The gateway relays it to every conne
 ## Example
 
 ```typescript
-const watching = await semiont.beckon.attention(resourceId, annotationId);
+const watching = await xynolog.beckon.attention(resourceId, annotationId);
 if (watching === 0) console.warn('nobody is watching');
-await semiont.beckon.attention(resourceId); // the resource itself, brought forward
+await xynolog.beckon.attention(resourceId); // the resource itself, brought forward
 
-await semiont.beckon.openResource(resourceId);
-await semiont.beckon.sparkleAll(annotationId);
+await xynolog.beckon.openResource(resourceId);
+await xynolog.beckon.sparkleAll(annotationId);
 ```
 
-From the launcher: `semiont beckon <resourceId> --annotation <annotationId>`, or `semiont beckon <resourceId>` for a focus on the resource alone.
+From the launcher: `xynolog beckon <resourceId> --annotation <annotationId>`, or `xynolog beckon <resourceId>` for a focus on the resource alone.
 
 ## Local signals
 
-`beckon.hover` and `beckon.sparkle` publish on the client's own bus and nowhere else: one viewer's own highlight when the pointer rests on an annotation, and its own sparkle on an annotation just created. How a viewer turns hovers and clicks into highlights and scrolling is react-ui's: see [annotation interaction](https://github.com/Xynoplex/sdk/tree/main/typescript/react-ui/docs/ANNOTATION-CLICK.md).
+`beckon.hover` and `beckon.sparkle` publish on the client's own bus and nowhere else: one viewer's own highlight when the pointer rests on an annotation, and its own sparkle on an annotation just created. How a viewer turns hovers and clicks into highlights and scrolling is react-ui's: see [annotation interaction](https://github.com/xynolog/sdk/tree/main/typescript/react-ui/docs/ANNOTATION-CLICK.md).
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/beckon.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/beckon.ts)
-- The gateway's relay: [gateway/src/routes/bus.rs](https://github.com/Xynoplex/images/tree/main/gateway/src/routes/bus.rs) and [stream.rs](https://github.com/Xynoplex/images/tree/main/gateway/src/routes/stream.rs)
-- The launcher verb: [cli/internal/launcher/verbs/beckon.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/beckon.go)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/beckon.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/beckon.ts)
+- The gateway's relay: [gateway/src/routes/bus.rs](https://github.com/xynolog/images/tree/main/gateway/src/routes/bus.rs) and [stream.rs](https://github.com/xynolog/images/tree/main/gateway/src/routes/stream.rs)
+- The launcher verb: [cli/internal/launcher/verbs/beckon.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/beckon.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

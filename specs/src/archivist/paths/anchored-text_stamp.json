@@ -8,7 +8,7 @@
         "serviceAccount": []
       }
     ],
-    "x-semiont-limits": {
+    "x-xynolog-limits": {
       "maxBodyBytes": 4096
     },
     "requestBody": {

@@ -133,7 +133,7 @@ withArchivist('the anchored-text store', (world) => {
     expect(oversized.status).toBe(413);
   });
 
-  it('admits each of its four operations only with semiont-service', async () => {
+  it('admits each of its four operations only with xynolog-service', async () => {
     const reader = world().world.personDid('reader');
     const content = Buffer.from('%PDF-1.4 admitted only as a service\n');
     const id = await world().created(reader, { name: 'Admitted', storageUri: 'file://scans/admitted.pdf', format: 'application/pdf', content });

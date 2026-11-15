@@ -56,7 +56,7 @@ eachPlane('emitting', (world, plane) => {
     const watcher = await world().subscribe(await world().person('watcher'), { clientId: randomUUID(), global: [BROADCAST] });
     const person = await world().person('stamped');
     const worker = await world().agent('stamp-model', [SERVICE_ROLE, WORKER_ROLE]);
-    const forged = { _userId: 'did:web:forged.example:users:mallory', _roles: ['semiont-admin'] };
+    const forged = { _userId: 'did:web:forged.example:users:mallory', _roles: ['xynolog-admin'] };
 
     const marker1 = randomUUID();
     await world().emit(person, { channel: BROADCAST, payload: { annotationId: marker1, resourceId: 'res-1', ...forged } });

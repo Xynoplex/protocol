@@ -4,7 +4,7 @@ import { readImplementations } from './harness/implementations';
 // What the suites test: the implementations file the run names after vitest's
 // own arguments, `-- --implementations <file>` (harness/implementations.ts).
 const implementations = readImplementations(process.argv);
-if (implementations.modelCatalogue) process.env['XYNOPLEX_CONFORMANCE_MODEL_CATALOGUE'] = implementations.modelCatalogue;
+if (implementations.modelCatalogue) process.env['XYNOLOG_CONFORMANCE_MODEL_CATALOGUE'] = implementations.modelCatalogue;
 
 // Every file boots its own processes, issuer, Archivist and broker on ports of
 // its own, so files run in parallel; the cases inside a file share them and

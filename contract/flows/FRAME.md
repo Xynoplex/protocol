@@ -7,7 +7,7 @@ A knowledge base has two vocabularies:
 - **Entity types**: the kinds of thing a reference can be about and a resource can be classified as, such as `Person`, `Organization` or `Concept`.
 - **Tag schemas**: frameworks for a passage's role in a structure, such as IRAC for legal reasoning or IMRAD for a scientific paper. Each has an id and a list of categories.
 
-Neither is fixed by Xynoplex. The participants in a knowledge base grow them.
+Neither is fixed by Xynolog. The participants in a knowledge base grow them.
 
 ## Operations
 
@@ -44,10 +44,10 @@ Both belong to the knowledge base as a whole and to no resource. They are record
 
 ### Tag schemas
 
-A tag schema belongs to the knowledge base that uses it, not to Xynoplex. A knowledge base registers its own, typically when a skill or script starts:
+A tag schema belongs to the knowledge base that uses it, not to Xynolog. A knowledge base registers its own, typically when a skill or script starts:
 
 ```typescript
-import type { TagSchema } from '@xynoplex/sdk';
+import type { TagSchema } from '@xynolog/sdk';
 
 const LEGAL_IRAC_SCHEMA: TagSchema = {
   id: 'legal-irac',
@@ -62,23 +62,23 @@ const LEGAL_IRAC_SCHEMA: TagSchema = {
   ],
 };
 
-await semiont.frame.addTagSchema(LEGAL_IRAC_SCHEMA);
+await xynolog.frame.addTagSchema(LEGAL_IRAC_SCHEMA);
 ```
 
 ## Example
 
 ```typescript
-await semiont.frame.addEntityType('Person');
-await semiont.frame.addEntityTypes(['Location', 'Organization', 'Event']);
+await xynolog.frame.addEntityType('Person');
+await xynolog.frame.addEntityTypes(['Location', 'Organization', 'Event']);
 ```
 
-From the launcher: `semiont frame --entity-type Person --entity-type Organization`, and `semiont browse --entity-types` to read them back.
+From the launcher: `xynolog frame --entity-type Person --entity-type Organization`, and `xynolog browse --entity-types` to read them back.
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/frame.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/frame.ts)
-- What records the events, and how the two vocabularies are projected and read: [the Archivist](../ARCHIVIST.md), in [archivist](https://github.com/Xynoplex/images/tree/main/archivist/)
-- Where the dispatcher resolves a schema id: [dispatcher/handlers/src/admission.rs](https://github.com/Xynoplex/images/tree/main/dispatcher/handlers/src/admission.rs)
-- The entity types a new knowledge base starts with: `DEFAULT_ENTITY_TYPES`, in [archivist/src/main.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/main.rs)
-- The launcher verb: [cli/internal/launcher/verbs/frame.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/frame.go)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/frame.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/frame.ts)
+- What records the events, and how the two vocabularies are projected and read: [the Archivist](../ARCHIVIST.md), in [archivist](https://github.com/xynolog/images/tree/main/archivist/)
+- Where the dispatcher resolves a schema id: [dispatcher/handlers/src/admission.rs](https://github.com/xynolog/images/tree/main/dispatcher/handlers/src/admission.rs)
+- The entity types a new knowledge base starts with: `DEFAULT_ENTITY_TYPES`, in [archivist/src/main.rs](https://github.com/xynolog/images/tree/main/archivist/src/main.rs)
+- The launcher verb: [cli/internal/launcher/verbs/frame.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/frame.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

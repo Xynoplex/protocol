@@ -20,7 +20,7 @@ import { runEnvironment } from './paths';
 export type WorkerSettings = components['schemas']['WorkerConfig'];
 
 export interface WorkerEnvironment {
-  SEMIONT_OIDC_CLIENT_KEY?: string;
+  XYNOLOG_OIDC_CLIENT_KEY?: string;
   OTEL_EXPORTER_OTLP_ENDPOINT?: string;
   [name: string]: string | undefined;
 }
@@ -32,14 +32,14 @@ export interface WorkerEnvironment {
  * the OpenTelemetry SDK a service exports with.
  */
 export const READ_FROM_THE_ENVIRONMENT = [
-  'SEMIONT_OIDC_CLIENT_KEY',
+  'XYNOLOG_OIDC_CLIENT_KEY',
   'OTEL_EXPORTER_OTLP_ENDPOINT',
   'OTEL_SERVICE_NAME',
   'OTEL_SDK_DISABLED',
   'OTEL_CONSOLE_EXPORTER',
   'OTEL_METRICS_EXPORTER',
   'OTEL_METRIC_EXPORT_INTERVAL',
-  'SEMIONT_BUS_LOG',
+  'XYNOLOG_BUS_LOG',
   'SUPERVISE_EVENTS',
   'SUPERVISE_NAME',
   'OTEL_BSP_SCHEDULE_DELAY',

@@ -140,7 +140,7 @@ eachWorkerService('what a worker exports', (world) => {
     const schemas = spec().doc['components'] as { schemas: Record<string, { enum?: string[]; discriminator?: { mapping: Record<string, string> }; properties?: Record<string, { enum?: string[] }> }> };
     const motivations = Object.keys(schemas.schemas['MarkJobParams']!.discriminator!.mapping);
     const providers = schemas.schemas['Engine']!.properties!['provider']!.enum;
-    for (const row of [rows.spans.find((r) => r.name === 'job:{jobType}'), rows.metrics.find((r) => r.name === 'semiont.job.outcome'), rows.metrics.find((r) => r.name === 'semiont.job.duration')]) {
+    for (const row of [rows.spans.find((r) => r.name === 'job:{jobType}'), rows.metrics.find((r) => r.name === 'xynolog.job.outcome'), rows.metrics.find((r) => r.name === 'xynolog.job.duration')]) {
       expect(valuesOf(row, 'job.type')).toEqual(schemas.schemas['JobType']!.enum);
       expect(valuesOf(row, 'job.motivation')).toEqual(motivations);
     }
@@ -165,23 +165,23 @@ eachWorkerService('what a worker exports', (world) => {
       const job = jobs[name]!;
       const span = await eventually(`the span of ${job.metadata.id}`, 15_000, () => otlp().spans.find((s) => s.name === spanName('job:{jobType}', { jobType: job.metadata.type }) && s.attributes['job.id'] === job.metadata.id));
       expect(span.kind).toBe(SPAN_KIND[row.kind]);
-      expect(span.resource['service.name']).toBe('semiont-worker');
-      expect(span.attributes).toEqual({ ...attributes, 'job.id': job.metadata.id, 'resource.id': job.params.resourceId, 'semiont.kb': kbDid(w.domain) });
+      expect(span.resource['service.name']).toBe('xynolog-worker');
+      expect(span.attributes).toEqual({ ...attributes, 'job.id': job.metadata.id, 'resource.id': job.params.resourceId, 'xynolog.kb': kbDid(w.domain) });
     }
 
     // Its jobs counted and timed by how they ended: nine completed, the two declined among them, two failed, and one cancelled.
-    for (const metric of ['semiont.job.outcome', 'semiont.job.duration']) {
+    for (const metric of ['xynolog.job.outcome', 'xynolog.job.duration']) {
       const seen = await eventually(`${metric} with every outcome and every motivation`, 15_000, () => {
         const got = otlp().metrics.get(metricName(metric));
         return got && got.attributes.get('job.outcome')?.size === 3 && got.attributes.get('job.motivation')?.size === 5 && got.attributes.get('job.type')?.size === 2 ? got : undefined;
       });
       expect([...seen.attributes.get('job.outcome')!].sort()).toEqual(['cancelled', 'completed', 'failed']);
-      expect([...seen.attributes.get('semiont.kb')!]).toEqual([kbDid(w.domain)]);
+      expect([...seen.attributes.get('xynolog.kb')!]).toEqual([kbDid(w.domain)]);
     }
 
     // What the provider said it read and wrote, counted as it said it.
     await eventually('the tokens of the generation that reported them', 15_000, () => {
-      const directions = otlp().metrics.get(metricName('semiont.inference.tokens'))?.attributes.get('inference.direction');
+      const directions = otlp().metrics.get(metricName('xynolog.inference.tokens'))?.attributes.get('inference.direction');
       return directions?.size === 2 ? true : undefined;
     });
 
@@ -203,15 +203,15 @@ eachWorkerService('what a worker exports', (world) => {
     for (const [kb, job] of [[w, jobs[0]!], [second, jobs[1]!]] as const) {
       await settled(served.at(kb), job);
       const span = await eventually(`the span of ${job.metadata.id}`, 15_000, () => otlp().spans.find((s) => s.name === spanName('job:{jobType}', { jobType: 'mark' }) && s.attributes['job.id'] === job.metadata.id));
-      expect(span.attributes['semiont.kb'], kb.domain).toBe(kbDid(kb.domain));
+      expect(span.attributes['xynolog.kb'], kb.domain).toBe(kbDid(kb.domain));
     }
     // Each job's count names its own knowledge base: between them, the two.
-    for (const metric of ['semiont.job.outcome', 'semiont.job.duration']) {
+    for (const metric of ['xynolog.job.outcome', 'xynolog.job.duration']) {
       const seen = await eventually(`${metric} of the second knowledge base`, 15_000, () => {
         const got = otlp().metrics.get(metricName(metric));
-        return got?.attributes.get('semiont.kb')?.has(kbDid(second.domain)) ? got : undefined;
+        return got?.attributes.get('xynolog.kb')?.has(kbDid(second.domain)) ? got : undefined;
       });
-      expect([...seen.attributes.get('semiont.kb')!].sort(), metric).toEqual([kbDid(w.domain), kbDid(second.domain)].sort());
+      expect([...seen.attributes.get('xynolog.kb')!].sort(), metric).toEqual([kbDid(w.domain), kbDid(second.domain)].sort());
     }
   });
 });

@@ -69,28 +69,28 @@ On the wire the request names the resource, and may name a `motivation` to keep 
 
 ```typescript
 // Around one annotation
-semiont.gather.annotation(resourceId, annotationId, { contextWindow: 2000 }).subscribe({
+xynolog.gather.annotation(resourceId, annotationId, { contextWindow: 2000 }).subscribe({
   next: (complete) => console.log('Context:', complete.response),
 });
 
 // Around a whole resource
-const context = await semiont.gather.resource(resourceId, {
+const context = await xynolog.gather.resource(resourceId, {
   depth: 2,
   maxResources: 10,
   excludeEntityTypes: ['Draft'],
 });
 
 // What refers to a resource
-const references = await semiont.gather.referencedBy(resourceId).fresh();
+const references = await xynolog.gather.referencedBy(resourceId).fresh();
 for (const ref of references) console.log(`${ref.resourceName ?? ref.target.source}: "${ref.target.selector.exact}"`);
 ```
 
-From the launcher: `semiont gather <resourceId>` for a resource, and `semiont gather <resourceId> <annotationId>` for an annotation.
+From the launcher: `xynolog gather <resourceId>` for a resource, and `xynolog gather <resourceId> <annotationId>` for an annotation.
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/gather.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/gather.ts)
-- The Gatherer, in the Librarian: [annotation_gather.py](https://github.com/Xynoplex/images/tree/main/librarian/src/semiont_librarian/annotation_gather.py) and [resource_gather.py](https://github.com/Xynoplex/images/tree/main/librarian/src/semiont_librarian/resource_gather.py)
-- What refers to a resource: [referenced_by.py](https://github.com/Xynoplex/images/tree/main/librarian/src/semiont_librarian/referenced_by.py)
-- The launcher verb: [cli/internal/launcher/verbs/gather.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/gather.go)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/gather.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/gather.ts)
+- The Gatherer, in the Librarian: [annotation_gather.py](https://github.com/xynolog/images/tree/main/librarian/src/xynolog_librarian/annotation_gather.py) and [resource_gather.py](https://github.com/xynolog/images/tree/main/librarian/src/xynolog_librarian/resource_gather.py)
+- What refers to a resource: [referenced_by.py](https://github.com/xynolog/images/tree/main/librarian/src/xynolog_librarian/referenced_by.py)
+- The launcher verb: [cli/internal/launcher/verbs/gather.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/gather.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

@@ -5,7 +5,7 @@
  * trusted issuer, which admits the Archivist's service account; and a gateway
  * on the in-process plane, the Archivist's only route to the bus.
  *
- * Cases meet the Archivist in the three places the rest of Xynoplex does: on
+ * Cases meet the Archivist in the three places the rest of Xynolog does: on
  * the bus, as people, workers and sidecars emitting through the gateway and
  * reading replies and facts off their streams; at its HTTP surface, as a
  * service; and in the files it keeps, which other processes read. Every frame
@@ -31,7 +31,7 @@ import type { BusStream } from './stream';
 import { endCase, PARTICIPANT_CLIENT, World } from './world';
 
 /** The Archivist's service account at the issuer. */
-export const ARCHIVIST_CLIENT = 'semiont-archivist';
+export const ARCHIVIST_CLIENT = 'xynolog-archivist';
 
 export type Engines = ArchivistSettings['engines'];
 export type Annotation = components['schemas']['Annotation'];
@@ -227,19 +227,19 @@ export class ArchivistWorld {
       anchoredTextDir: join(base, 'anchored-text'),
     };
     const gitSync = options.gitSync ?? true;
-    mkdirSync(join(dirs.root, '.semiont'), { recursive: true });
+    mkdirSync(join(dirs.root, '.xynolog'), { recursive: true });
     mkdirSync(dirs.stateHome, { recursive: true });
     mkdirSync(dirs.anchoredTextDir, { recursive: true });
     writeFileSync(
-      join(dirs.root, '.semiont', 'config.yaml'),
+      join(dirs.root, '.xynolog', 'config.yaml'),
       `project:\n  name: ${JSON.stringify(world.kb.name)}\ngit:\n  sync: ${gitSync}\nsite:\n  domain: ${JSON.stringify(world.kb.domain)}\n  siteName: ${JSON.stringify(world.kb.name)}\n`,
     );
     if (gitSync) execFileSync('git', ['init', '--quiet'], { cwd: dirs.root });
     options.before?.(dirs);
 
     const env: ArchivistEnvironment = {
-      SEMIONT_OIDC_CLIENT_ID: ARCHIVIST_CLIENT,
-      SEMIONT_OIDC_CLIENT_SECRET: secret,
+      XYNOLOG_OIDC_CLIENT_ID: ARCHIVIST_CLIENT,
+      XYNOLOG_OIDC_CLIENT_SECRET: secret,
       ...options.env,
     };
     const settings: ArchivistSettings = {
@@ -352,7 +352,7 @@ export class ArchivistWorld {
     form.set('file', new Blob([typeof content === 'string' ? content : new Uint8Array(content)]), 'upload');
     return this.http('POST', '/resources', {
       body: form,
-      headers: { 'Semiont-Principal': principal, 'Idempotency-Key': key, ...(roles.length > 0 ? { 'Semiont-Roles': roles.join(',') } : {}) },
+      headers: { 'Xynolog-Principal': principal, 'Idempotency-Key': key, ...(roles.length > 0 ? { 'Xynolog-Roles': roles.join(',') } : {}) },
       route: '/resources',
     });
   }
@@ -384,8 +384,8 @@ export class ArchivistWorld {
   /** A resource's stream directory, or the `__system__` stream's. */
   streamDir(resourceId: string): string {
     return resourceId === '__system__'
-      ? join(this.dirs.root, '.semiont', 'events', '__system__')
-      : join(this.dirs.root, '.semiont', 'events', ...shardOf(resourceId).split('/'), resourceId);
+      ? join(this.dirs.root, '.xynolog', 'events', '__system__')
+      : join(this.dirs.root, '.xynolog', 'events', ...shardOf(resourceId).split('/'), resourceId);
   }
 
   /** A stream's files, in order. */

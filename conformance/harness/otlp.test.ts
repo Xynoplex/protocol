@@ -17,7 +17,7 @@ import { expect, it } from 'vitest';
 import { startOtlp, type OtlpReceiver } from './otlp';
 
 /** A service's resource, naming a knowledge base whose domain holds `%`, `,` and `=`, which a DID passes through intact. */
-const SERVICE = { 'service.name': 'otlp-receiver', 'service.version': '0.0.0', 'semiont.kb': kbDid('example.org%3A8443:kb,a=b') };
+const SERVICE = { 'service.name': 'otlp-receiver', 'service.version': '0.0.0', 'xynolog.kb': kbDid('example.org%3A8443:kb,a=b') };
 /** Another, naming no knowledge base. */
 const ANOTHER = { 'service.name': 'otlp-receiver-too', 'service.version': '0.0.0' };
 
@@ -37,13 +37,13 @@ async function anExport(attributes: Record<string, string>) {
 
   const collector = new Collector();
   const meter = new MeterProvider({ resource, readers: [collector] }).getMeter('receiver');
-  meter.createCounter('semiont.bus.emit').add(2, { 'bus.channel': 'beckon:focus' });
-  meter.createUpDownCounter('semiont.sse.subscribers').add(-1);
-  meter.createObservableGauge('semiont.runtime.heap').addCallback((observer) => {
+  meter.createCounter('xynolog.bus.emit').add(2, { 'bus.channel': 'beckon:focus' });
+  meter.createUpDownCounter('xynolog.sse.subscribers').add(-1);
+  meter.createObservableGauge('xynolog.runtime.heap').addCallback((observer) => {
     observer.observe(3.5, { 'heap.stat': 'used' });
     observer.observe(9, { 'heap.stat': 'rss' });
   });
-  meter.createHistogram('semiont.inference.duration').record(4, { 'inference.outcome': 'success' });
+  meter.createHistogram('xynolog.inference.duration').record(4, { 'inference.outcome': 'success' });
   const { resourceMetrics } = await collector.collect();
   return { spans: finished.getFinishedSpans(), metrics: resourceMetrics };
 }
@@ -65,7 +65,7 @@ it('reads a protobuf export as it reads the same export sent as JSON', async () 
 
     expect(asJson.spans.map((s) => s.name).sort()).toEqual(['archivist.content.get', 'bus.dispatch:beckon:focus']);
     expect(asProtobuf.spans).toEqual(asJson.spans);
-    expect([...asJson.metrics.keys()].sort()).toEqual(['semiont.bus.emit', 'semiont.inference.duration', 'semiont.runtime.heap', 'semiont.sse.subscribers']);
+    expect([...asJson.metrics.keys()].sort()).toEqual(['xynolog.bus.emit', 'xynolog.inference.duration', 'xynolog.runtime.heap', 'xynolog.sse.subscribers']);
     expect(asProtobuf.metrics).toEqual(asJson.metrics);
   } finally {
     await asJson.close();

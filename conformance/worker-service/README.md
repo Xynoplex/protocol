@@ -2,7 +2,7 @@
 
 A black-box suite for the Worker service: the process a worker image runs. It
 starts the service from a command, with a configuration document and an
-environment, and meets it only where the rest of Xynoplex does: on the bus and
+environment, and meets it only where the rest of Xynolog does: on the bus and
 at the gateway's HTTP surface, at its provider, at its health port, and in
 what it writes and how it exits. It checks what the service does against
 [contract/WORKER-SERVICE.md](../../contract/WORKER-SERVICE.md).
@@ -14,7 +14,7 @@ a model, what it commits, how it ends a job, how it stops.
 
 The suite imports nothing from a Worker service. What names one is its entry
 in `workerServices` in the run's [implementations file](../README.md#implementation-manifest).
-Xynoplex's names its own, the Python service of the owning consumer repository, `python -P -m semiont_worker` by the
+Xynolog's names its own, the Python service of the owning consumer repository, `python -P -m xynolog_worker` by the
 interpreter of its project's environment (the owning consumer repository). Every case
 runs against every entry.
 
@@ -78,7 +78,7 @@ Beside them, shared by every knowledge base's engines:
 No dispatcher, no Archivist, no Smelter and no model runs. This is the tier
 that sees every message the service sends.
 
-The service's key is the world's own, in `SEMIONT_OIDC_CLIENT_KEY`; which
+The service's key is the world's own, in `XYNOLOG_OIDC_CLIENT_KEY`; which
 client it signs in as at each knowledge base is its document's. A case starts
 a fresh service, which is stopped when the case ends.
 
@@ -198,7 +198,7 @@ rule names exists, and every case is named by a rule.
 ## Adding an implementation
 
 Name its command in `workerServices` in an implementations file. One of
-Xynoplex implementations goes in implementation manifest supplied by the consumer repository,
+Xynolog implementations goes in implementation manifest supplied by the consumer repository,
 and what builds it in
 [harness/worker-service-setup.ts](../harness/worker-service-setup.ts). It is
 started as the one there is: `<command> --config <document>`, with the

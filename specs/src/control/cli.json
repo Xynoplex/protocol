@@ -35,7 +35,7 @@
         "--runtime": {"fields": ["status.snapshot.runtime"]},
         "--service": {"cliOnly": "narrows the report to one service; a snapshot reports every service, and a client picks the one it shows"},
         "--refresh": {"cliOnly": "re-reads a codespace's identity over ssh: a repair, not a read"},
-        "--verbose": {"cliOnly": "presentation: a snapshot always carries each knowledge base's session; the launcher's paths are settings.path's and semiont status --verbose's"},
+        "--verbose": {"cliOnly": "presentation: a snapshot always carries each knowledge base's session; the launcher's paths are settings.path's and xynolog status --verbose's"},
         "-v": {"cliOnly": "presentation: as --verbose"},
         "--billing": {"cliOnly": "GitHub's monthly bill per repository, which no client of this API shows"},
         "--help": {"cliOnly": "help text, for a person"},
@@ -122,7 +122,7 @@
       "positionals": [
         {"name": "<name>", "fields": ["settings.get.name", "settings.set.name", "settings.unset.name", "settings.path.document"]},
         {"name": "<value>", "fields": ["settings.set.value"]},
-        {"name": "secret", "cliOnly": "the secret sources: semiont settings secret set reads a value's pointer at the terminal, and no client of this API edits them"}
+        {"name": "secret", "cliOnly": "the secret sources: xynolog settings secret set reads a value's pointer at the terminal, and no client of this API edits them"}
       ],
       "flags": {
         "--root": {"fields": ["settings.list.root", "settings.get.root", "settings.set.root", "settings.unset.root"]},

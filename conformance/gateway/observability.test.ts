@@ -62,7 +62,7 @@ eachPlane(
       expect(span.kind).toBe(SERVER);
       expect(span.parentSpanId).toBe(t.spanId);
       expect(span.attributes['bus.channel']).toBe('beckon:focus');
-      expect(span.resource['service.name']).toBe('semiont-gateway');
+      expect(span.resource['service.name']).toBe('xynolog-gateway');
 
       const frame = await watcher.frame('beckon:focus', (f) => f.payload['annotationId'] === marker);
       const carried = (frame.payload[registry().trace.field] as { traceparent?: string } | undefined)?.traceparent ?? '';
@@ -177,7 +177,7 @@ eachPlane(
       expect((await call(world().origin, 'GET', '/api/users/me', { token: 'not-a-token' })).status).toBe(401);
       expect((await call(world().origin, 'GET', '/api/resources/res-metered?token=not-a-media-token')).status).toBe(401);
       const unauthenticated = await eventually('every reason a request is refused 401 for', 15_000, () => {
-        const reasons = otlp().metrics.get(metricName('semiont.gateway.unauthenticated'))?.attributes.get('unauthenticated.reason');
+        const reasons = otlp().metrics.get(metricName('xynolog.gateway.unauthenticated'))?.attributes.get('unauthenticated.reason');
         return reasons?.size === 3 ? reasons : undefined;
       });
       expect([...unauthenticated].sort()).toEqual(['invalid_media_token', 'invalid_token', 'missing_token']);

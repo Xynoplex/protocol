@@ -1,6 +1,6 @@
 /**
  * How long the gateway waits for the Archivist, as the Archivist document's
- * `x-semiont-limits` say (specs/src/archivist/openapi.json, whose
+ * `x-xynolog-limits` say (specs/src/archivist/openapi.json, whose
  * description states the rule): a read's answer begins within
  * `connectSeconds` and `readSeconds` together of the read's first send, each
  * next part of an answer within `readSeconds`, and an upload's answer within

@@ -7,9 +7,9 @@
     "rust": ["sdk/rust/sdk/src/resources.rs", "sdk/rust/sdk/tests/resource_reader_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_resource_readers.py"],
     "go": ["sdk/go/sdk/resources_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/resources/ResourceReadersTest.kt"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/ResourceReaderCasesTests.swift"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/ResourceReaderCasesTests.cs"]
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/resources/ResourceReadersTest.kt"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/ResourceReaderCasesTests.swift"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/ResourceReaderCasesTests.cs"]
   },
   "cases": [
     {

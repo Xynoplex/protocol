@@ -3,13 +3,13 @@
   "runBy": {
     "ocaml": ["sdk/ocaml/sdk/probes/capabilities.ml"],
     "haskell": ["sdk/haskell/sdk/test/AnnotationCases.hs"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/AnnotationCasesTests.cs"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/AnnotationTests.swift"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/AnnotationCasesTests.cs"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/AnnotationTests.swift"],
     "typescript": ["sdk/typescript/core/src/__tests__/offset-cases.test.ts", "sdk/typescript/react-ui/src/lib/__tests__/code-point-offsets.test.ts"],
     "rust": ["sdk/rust/sdk/src/text_offsets.rs"],
     "python": ["sdk/python/sdk/tests/test_offsets.py"],
     "go": ["sdk/go/sdk/annotations/offsets_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/annotations/OffsetCasesTest.kt"]
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/annotations/OffsetCasesTest.kt"]
   },
   "cases": [
     {

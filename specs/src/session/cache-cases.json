@@ -15,13 +15,13 @@
       "sdk/go/sdk/cache_cases_test.go"
     ],
     "kotlin": [
-      "sdk/kotlin/sdk/src/test/kotlin/semiont/storage/CacheCasesTest.kt"
+      "sdk/kotlin/sdk/src/test/kotlin/xynolog/storage/CacheCasesTest.kt"
     ],
     "swift": [
-      "sdk/swift/sdk/Tests/SemiontTests/CacheCasesTests.swift"
+      "sdk/swift/sdk/Tests/XynologTests/CacheCasesTests.swift"
     ],
     "csharp": [
-      "sdk/csharp/sdk/tests/Semiont.Tests/CacheCasesTests.cs"
+      "sdk/csharp/sdk/tests/Xynolog.Tests/CacheCasesTests.cs"
     ],
     "haskell": [
       "sdk/haskell/sdk/test/CacheDocumentCases.hs"

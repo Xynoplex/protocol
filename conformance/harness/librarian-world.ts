@@ -11,7 +11,7 @@
  * embedding provider, one the Librarian asks and one the Smelter asks, which
  * give the same text the same vector.
  *
- * Cases meet the Librarian where the rest of Xynoplex does: on the bus, as a
+ * Cases meet the Librarian where the rest of Xynolog does: on the bus, as a
  * person who is signed in asks it and reads its reply; at its providers; at
  * its health port; and in what it writes to its output. Nothing is put in the
  * graph or the index but by the Weaver and the Smelter, from what a case
@@ -52,9 +52,9 @@ import { lastOf } from './weaver-world';
 import { endCase } from './world';
 
 /** The service accounts of the three services, at the issuer. */
-export const LIBRARIAN_CLIENT = 'semiont-librarian';
-const WEAVER_CLIENT = 'semiont-weaver';
-const SMELTER_CLIENT = 'semiont-smelter';
+export const LIBRARIAN_CLIENT = 'xynolog-librarian';
+const WEAVER_CLIENT = 'xynolog-weaver';
+const SMELTER_CLIENT = 'xynolog-smelter';
 
 /** The variable the settings of the Librarian and of the Weaver name for the graph database's password. */
 const GRAPH_PASSWORD = 'NEO4J_PASSWORD';
@@ -262,8 +262,8 @@ export class LibrarianWorld {
         semanticFloor: SEMANTIC_FLOOR,
       },
       env: {
-        SEMIONT_OIDC_CLIENT_ID: LIBRARIAN_CLIENT,
-        SEMIONT_OIDC_CLIENT_SECRET: secrets.librarian,
+        XYNOLOG_OIDC_CLIENT_ID: LIBRARIAN_CLIENT,
+        XYNOLOG_OIDC_CLIENT_SECRET: secrets.librarian,
         [GRAPH_PASSWORD]: graphDatabase.password,
         [VECTORS_TOKEN]: minted(vectorDatabase.key, claims.librarian),
       },
@@ -277,7 +277,7 @@ export class LibrarianWorld {
       weaver: {
         service: weaverService,
         settings: { kb: served, gatewayUrl, issuer, archivist, graph },
-        env: { SEMIONT_OIDC_CLIENT_ID: WEAVER_CLIENT, SEMIONT_OIDC_CLIENT_SECRET: secrets.weaver, [GRAPH_PASSWORD]: graphDatabase.password },
+        env: { XYNOLOG_OIDC_CLIENT_ID: WEAVER_CLIENT, XYNOLOG_OIDC_CLIENT_SECRET: secrets.weaver, [GRAPH_PASSWORD]: graphDatabase.password },
         home: mkdtempSync(join(tmpdir(), 'conformance-librarian-weaver-')),
       },
       smelter: {
@@ -292,7 +292,7 @@ export class LibrarianWorld {
           chunking: { chunkSize: 512, overlap: 64 },
           pdfsAtOnce: 1,
         },
-        env: { SEMIONT_OIDC_CLIENT_ID: SMELTER_CLIENT, SEMIONT_OIDC_CLIENT_SECRET: secrets.smelter, [VECTORS_TOKEN]: minted(vectorDatabase.key, claims.smelter) },
+        env: { XYNOLOG_OIDC_CLIENT_ID: SMELTER_CLIENT, XYNOLOG_OIDC_CLIENT_SECRET: secrets.smelter, [VECTORS_TOKEN]: minted(vectorDatabase.key, claims.smelter) },
         home: mkdtempSync(join(tmpdir(), 'conformance-librarian-smelter-')),
       },
       index: vectorIndex(vectorDatabase, did),

@@ -30,7 +30,7 @@
     },
     {
       "why": "a domain with a raw port colon, as a host:port domain is sometimes written",
-      "did": "did:web:localhost:4000:agents:semiont-worker",
+      "did": "did:web:localhost:4000:agents:xynolog-worker",
       "kind": "software"
     },
     {

@@ -33,14 +33,14 @@ import { refusedWorkerBoot, spawnWorkerService, type WorkerEnvironment, type Wor
 import { endCase, World } from './world';
 
 /** The client the world's own knowledge base's issuer holds the worker's key on: the worker's account there. */
-export const WORKER_CLIENT = 'semiont-worker';
+export const WORKER_CLIENT = 'xynolog-worker';
 
 /**
  * The client the second knowledge base's issuer holds the worker's key on:
  * another than the first's, so that what the worker says it is called at each
  * is told apart.
  */
-export const SECOND_WORKER_CLIENT = 'semiont-worker-second';
+export const SECOND_WORKER_CLIENT = 'xynolog-worker-second';
 
 /** The case of kb-identity/cases.json the second knowledge base is. */
 const SECOND_KB = 'plain scalars, and a version, which names nothing';
@@ -594,7 +594,7 @@ export class WorkerServiceWorld extends StandInKnowledgeBase {
       ANTHROPIC_ENGINES.map((engine) => engine.model),
       ANTHROPIC_MODEL,
     );
-    const made = new WorkerServiceWorld(implementation, command, world, ollama, anthropic, { SEMIONT_OIDC_CLIENT_KEY: key }, publicKey);
+    const made = new WorkerServiceWorld(implementation, command, world, ollama, anthropic, { XYNOLOG_OIDC_CLIENT_KEY: key }, publicKey);
     await made.attend();
     return made;
   }

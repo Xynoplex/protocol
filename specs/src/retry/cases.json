@@ -3,14 +3,14 @@
   "runBy": {
     "ocaml": ["sdk/ocaml/sdk/test/completion_behavior.ml"],
     "haskell": ["sdk/haskell/sdk/test/Main.hs"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/RetryTests.cs"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RetryTests.cs"],
     "typescript": ["sdk/typescript/core/src/__tests__/retry-agreement.test.ts"],
     "rust": ["sdk/rust/sdk/src/retry.rs", "sdk/rust/sdk/tests/retry_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_retry.py"],
     "go": ["sdk/go/sdk/retry_test.go"],
     "worker": ["worker/tests/test_retry_job_rule.py"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/TransportTablesTests.swift"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/retry/RetryCasesTest.kt"]
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/TransportTablesTests.swift"],
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/retry/RetryCasesTest.kt"]
   },
   "rules": [
     {

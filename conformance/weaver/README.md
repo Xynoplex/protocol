@@ -1,14 +1,14 @@
 # Weaver conformance suite
 
 A black-box suite for the Weaver: the process a weaver image runs. It starts
-the Weaver from a command and meets it only where the rest of Xynoplex does: in
+the Weaver from a command and meets it only where the rest of Xynolog does: in
 the graph it writes, on the bus, and at its health port. It checks what the
 Weaver does against
 [contract/WEAVER.md](../../contract/WEAVER.md).
 
 The suite imports nothing from a Weaver. What names one is its entry in
 `weaverServices` in the run's [implementations file](../README.md#implementation-manifest).
-Xynoplex's names its own, the Python service of the consumer repository,
+Xynolog's names its own, the Python service of the consumer repository,
 started by the interpreter of its locked environment. Every case runs against
 every entry.
 
@@ -22,7 +22,7 @@ the case table the Weaver's codec is held to, and the harness's reader is held
 to the same table (`harness/graph-codec.test.ts`, which the gateway project
 runs with the harness's other tests of itself). So the suite judges a Weaver
 by something other than the Weaver's own code. The other way would be for
-`semiont_graph` to offer a small command that prints a resource's rows,
+`xynolog_graph` to offer a small command that prints a resource's rows,
 decoded, as JSON, which the harness would call: one codec in the repository
 and no copy here, at the cost that the suite would then read a Weaver through
 the Weaver's codec.
@@ -96,7 +96,7 @@ again finds what it kept; one that is replaced starts with nothing.
   held to the telemetry table in both directions: every row the table lists
   for it arrives, under its name, and nothing arrives that the table does not
   list; and all of it under the resource the table lists for it, with
-  `semiont.kb` the DID of the knowledge base its document names.
+  `xynolog.kb` the DID of the knowledge base its document names.
 
 ## Running it
 

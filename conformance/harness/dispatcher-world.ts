@@ -23,7 +23,7 @@ import type { BusFrame, BusStream } from './stream';
 import { endCase, World } from './world';
 
 /** The dispatcher's service account at the issuer. */
-export const DISPATCHER_CLIENT = 'semiont-dispatcher';
+export const DISPATCHER_CLIENT = 'xynolog-dispatcher';
 
 /** The four operations the dispatcher answers with a correlated reply. */
 export const JOB_OPERATIONS = ['job:create', 'job:claim', 'job:status-requested', 'job:cancel-requested'] as const;
@@ -278,8 +278,8 @@ export class DispatcherWorld {
     const broker = await startBroker(options.broker);
     const credentials = options.broker?.user ? { userEnv: 'QUEUE_USER', passwordEnv: 'QUEUE_PASSWORD' } : {};
     const env: DispatcherEnvironment = {
-      SEMIONT_OIDC_CLIENT_ID: DISPATCHER_CLIENT,
-      SEMIONT_OIDC_CLIENT_SECRET: secret,
+      XYNOLOG_OIDC_CLIENT_ID: DISPATCHER_CLIENT,
+      XYNOLOG_OIDC_CLIENT_SECRET: secret,
       ...(options.broker?.user ? { QUEUE_USER: options.broker.user, QUEUE_PASSWORD: options.broker.password } : {}),
       ...options.env,
     };

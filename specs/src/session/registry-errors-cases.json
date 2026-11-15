@@ -5,9 +5,9 @@
     "rust": ["sdk/rust/sdk/tests/browser.rs"],
     "python": ["sdk/python/sdk/tests/test_registry_errors_cases.py"],
     "go": ["sdk/go/sdk/registry/registry_errors_cases_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/registry/RegistryErrorsCasesTest.kt"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/RegistryErrorsCasesTests.swift"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/RegistryErrorsCasesTests.cs"],
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/registry/RegistryErrorsCasesTest.kt"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/RegistryErrorsCasesTests.swift"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RegistryErrorsCasesTests.cs"],
     "haskell": ["sdk/haskell/sdk/test/RegistryErrorsCases.hs"],
     "ocaml": ["sdk/ocaml/sdk/test/registry_behavior.ml"]
   },

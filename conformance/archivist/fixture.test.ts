@@ -48,7 +48,7 @@ withArchivist('a tree written before', (world) => {
     expect((annotations.json as { total: number }).total).toBe(1);
 
     const replay = await world().http('GET', `/events/${SHARED}?fromSequence=1`, { route: '/events/{resourceId}' });
-    const lines = readFileSync(join(FIXTURE, 'kb/.semiont/events/66/9b', SHARED, 'events-000001.jsonl'), 'utf8').split('\n').filter(Boolean);
+    const lines = readFileSync(join(FIXTURE, 'kb/.xynolog/events/66/9b', SHARED, 'events-000001.jsonl'), 'utf8').split('\n').filter(Boolean);
     expect((replay.json as { events: unknown[] }).events).toEqual(lines.map((line) => JSON.parse(line)));
 
     const content = await world().http('GET', `/resources/${SHARED}/content`, { route: '/resources/{id}/content' });
@@ -69,7 +69,7 @@ withArchivist('a tree written before', (world) => {
     expect(world().view(SHARED)).toMatchObject({ lastSequence: before + 1, resource: { archived: true } });
     // What was there is as it was.
     expect(world().streamLines(SHARED).slice(0, before)).toEqual(
-      readFileSync(join(FIXTURE, 'kb/.semiont/events/66/9b', SHARED, 'events-000001.jsonl'), 'utf8').split('\n').filter(Boolean),
+      readFileSync(join(FIXTURE, 'kb/.xynolog/events/66/9b', SHARED, 'events-000001.jsonl'), 'utf8').split('\n').filter(Boolean),
     );
   });
 }, { gitSync: false, before: (dirs) => cpSync(join(FIXTURE, 'kb'), dirs.root, { recursive: true }) });

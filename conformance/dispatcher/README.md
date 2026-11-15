@@ -1,13 +1,13 @@
 # Dispatcher conformance suite
 
 A black-box suite for the dispatcher. It starts dispatcher processes and meets
-them only as the rest of Xynoplex does: on the bus, through a real gateway, and
+them only as the rest of Xynolog does: on the bus, through a real gateway, and
 at the health port. It checks what they do against the job protocol as
 [contract/JOBS.md](../../contract/JOBS.md) states it, and against
 the schemas `specs/` gives every channel. It imports nothing from the
 dispatcher: what names an implementation is `dispatcher` in the run's
-[implementations file](../README.md#implementation-manifest): in Xynoplex's, the Rust binary
-`target/release/semiont-dispatcher`.
+[implementations file](../README.md#implementation-manifest): in Xynolog's, the Rust binary
+`target/release/xynolog-dispatcher`.
 
 ## The world around a dispatcher
 
@@ -67,7 +67,7 @@ otherwise hand one case's job to the next.
   [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
   for the SDK transport it reaches the bus through, and to the table's
   `resource`: exported under exactly the keys it lists for the dispatcher,
-  with `semiont.kb` the DID of the knowledge base its document names.
+  with `xynolog.kb` the DID of the knowledge base its document names.
 
 Behaviour JOBS.md lists as a known defect is not pinned by any case.
 

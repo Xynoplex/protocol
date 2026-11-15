@@ -18,7 +18,7 @@ function declared(role: string): string {
   return role;
 }
 
-export const SERVICE_ROLE = declared('semiont-service');
-export const WORKER_ROLE = declared('semiont-worker');
+export const SERVICE_ROLE = declared('xynolog-service');
+export const WORKER_ROLE = declared('xynolog-worker');
 export const KIND_CLAIM = declared('kind');
 export const AGENT_KIND = declared('agent');

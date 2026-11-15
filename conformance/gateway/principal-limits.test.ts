@@ -1,5 +1,5 @@
 /**
- * What one principal may take (`x-semiont-limits` on /bus/subscribe and
+ * What one principal may take (`x-xynolog-limits` on /bus/subscribe and
  * /bus/emit): a baseline, and a coefficient per role. A person and an agent
  * are indistinguishable here — the same case runs for each, and each must
  * behave alike; only a role changes the coefficient, whoever holds it.
