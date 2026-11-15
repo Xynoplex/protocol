@@ -5,6 +5,10 @@ version: 2
 # open. A release waits a week before it is proposed, and a major release a
 # month.
 
+# Security updates are grouped the same way, in a group of each entry's own,
+# and Dependabot raises them when an advisory is published, not on the
+# schedule; neither the cooldown nor the one-PR limit holds them back.
+
 updates:
   - package-ecosystem: npm
     labels: ["dependencies"]
@@ -19,6 +23,9 @@ updates:
       default-days: 7
       semver-major-days: 30
     groups:
+      npm-security:
+        applies-to: security-updates
+        patterns: ["*"]
       npm:
         patterns: ["*"]
     ignore:
