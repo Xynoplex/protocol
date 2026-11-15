@@ -47,13 +47,32 @@ jobs:
       - run: make validate
       - run: git diff --exit-code -- specs/openapi.json specs/archivist.openapi.json
 
+  # No dependency in any lockfile has a published advisory that advisories.toml
+  # does not ignore with a reason, and no ignore outlives its finding
+  # (build-tools/advisories.py).
+  advisories:
+    name: No dependency has an advisory nobody judged
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          submodules: true
+
+      - name: Install osv-scanner
+        run: |
+          bash build-tools/install-osv-scanner.sh "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Scan every lockfile
+        run: python3 build-tools/advisories.py --root .
+
   # What the ruleset requires. It waits for every other job, a census holds
   # that list to the workflow's jobs, and it fails when any of them failed or
   # was cancelled. A job skipped by its own condition passes.
   gate:
     name: CI Gate
     if: always()
-    needs: [dco, labels, protocol]
+    needs: [dco, labels, protocol, advisories]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
