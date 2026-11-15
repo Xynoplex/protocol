@@ -50,7 +50,7 @@
       "reply": {
         "wasAttributedTo": [
           { "@type": "Person", "@id": "did:web:example.org:users:ada" },
-          { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "name": "anthropic model", "provider": "anthropic", "model": "model" }
+          { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "name": "anthropic model", "provider": "anthropic", "model": "model" }
         ]
       },
       "profiles": {
@@ -59,7 +59,7 @@
       "named": {
         "wasAttributedTo": [
           { "@type": "Person", "@id": "did:web:example.org:users:ada", "name": "Ada Lovelace" },
-          { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "name": "anthropic model", "provider": "anthropic", "model": "model" }
+          { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "name": "anthropic model", "provider": "anthropic", "model": "model" }
         ]
       }
     },
@@ -222,25 +222,25 @@
     {
       "why": "an agent with a profile, identified and not named, is given the name, as a person is, and the engine it stated is kept",
       "reply": {
-        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "provider": "ollama", "model": "gemma" }
+        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "provider": "ollama", "model": "gemma" }
       },
       "profiles": {
-        "did:web:example.org:agents:semiont-worker": { "name": "semiont-worker", "since": "2020-03-04T05:06:07.000Z" }
+        "did:web:example.org:agents:xynolog-worker": { "name": "xynolog-worker", "since": "2020-03-04T05:06:07.000Z" }
       },
       "named": {
-        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "name": "semiont-worker", "provider": "ollama", "model": "gemma" }
+        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "name": "xynolog-worker", "provider": "ollama", "model": "gemma" }
       }
     },
     {
       "why": "a name an agent carried is replaced by the name of its profile: here the carried one named its engine",
       "reply": {
-        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "name": "ollama gemma", "provider": "ollama", "model": "gemma" }
+        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "name": "ollama gemma", "provider": "ollama", "model": "gemma" }
       },
       "profiles": {
-        "did:web:example.org:agents:semiont-worker": { "name": "semiont-worker", "since": "2020-03-04T05:06:07.000Z" }
+        "did:web:example.org:agents:xynolog-worker": { "name": "xynolog-worker", "since": "2020-03-04T05:06:07.000Z" }
       },
       "named": {
-        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "name": "semiont-worker", "provider": "ollama", "model": "gemma" }
+        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "name": "xynolog-worker", "provider": "ollama", "model": "gemma" }
       }
     },
     {
@@ -249,7 +249,7 @@
         "generator": { "@type": "Software", "@id": "did:web:example.org:agents:stranger", "provider": "ollama", "model": "gemma" }
       },
       "profiles": {
-        "did:web:example.org:agents:semiont-worker": { "name": "semiont-worker", "since": "2020-03-04T05:06:07.000Z" }
+        "did:web:example.org:agents:xynolog-worker": { "name": "xynolog-worker", "since": "2020-03-04T05:06:07.000Z" }
       },
       "named": {
         "generator": { "@type": "Software", "@id": "did:web:example.org:agents:stranger", "provider": "ollama", "model": "gemma" }
@@ -259,15 +259,15 @@
       "why": "a person and an agent in one reply are each named by their own profile",
       "reply": {
         "creator": { "@type": "Person", "@id": "did:web:example.org:users:ada" },
-        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "provider": "ollama", "model": "gemma" }
+        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "provider": "ollama", "model": "gemma" }
       },
       "profiles": {
         "did:web:example.org:users:ada": { "name": "Ada Lovelace", "since": "2020-03-04T05:06:07.000Z" },
-        "did:web:example.org:agents:semiont-worker": { "name": "semiont-worker", "since": "2020-03-04T05:06:07.000Z" }
+        "did:web:example.org:agents:xynolog-worker": { "name": "xynolog-worker", "since": "2020-03-04T05:06:07.000Z" }
       },
       "named": {
         "creator": { "@type": "Person", "@id": "did:web:example.org:users:ada", "name": "Ada Lovelace" },
-        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:semiont-worker", "name": "semiont-worker", "provider": "ollama", "model": "gemma" }
+        "generator": { "@type": "Software", "@id": "did:web:example.org:agents:xynolog-worker", "name": "xynolog-worker", "provider": "ollama", "model": "gemma" }
       }
     },
     {

@@ -42,7 +42,7 @@ eachWeaver('what a Weaver exports', (world) => {
 
     const signalled = spanName('bus.emit:{channel}', { channel: 'weave:applied' });
     const span = await eventually('the span of a mark it signalled', 15_000, () => otlp().spans.find((s) => s.name === signalled));
-    expect(span.resource['service.name']).toBe('semiont-weaver');
+    expect(span.resource['service.name']).toBe('xynolog-weaver');
 
     expect(await outsideTheTable(otlp(), 'weaver', world().settings.kb.domain), received(otlp())).toEqual([]);
   });

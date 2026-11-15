@@ -31,6 +31,6 @@ export function runEnvironment(): Record<string, string> {
  * reads it only for a provider whose own API does not state a model's facts,
  * and no suite here runs one.
  */
-export const MODEL_CATALOGUE = process.env['XYNOPLEX_CONFORMANCE_MODEL_CATALOGUE'] ?? '';
+export const MODEL_CATALOGUE = process.env['XYNOLOG_CONFORMANCE_MODEL_CATALOGUE'] ?? '';
 
 export const SPEC_SOURCE = join(REPO_ROOT, 'specs/src');

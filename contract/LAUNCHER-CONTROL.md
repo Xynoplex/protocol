@@ -1,6 +1,6 @@
 # The launcher's control API
 
-`semiont control` serves the launcher's control API: a program drives the
+`xynolog control` serves the launcher's control API: a program drives the
 launcher the way a person drives its commands. Desktop is its client. Each
 method is one of the launcher's commands, run by the code the command runs;
 what the command would print is the request's progress, and what it would
@@ -95,7 +95,7 @@ exist.
   handler in `cli/internal/launcher/control_ops.go`.*
 
 - **P4.** `identity.users.list` names one local root explicitly and returns
-  only each account's sign-in name, Xynoplex identity and enabled state. It
+  only each account's sign-in name, Xynolog identity and enabled state. It
   returns no passwords, tokens or profile secrets. Like `identity.useradd`,
   it refuses codespace targets and external identity providers.
   *Held by the method and schemas in `specs/src/control/` and the
@@ -255,7 +255,7 @@ exist.
   table says what it is.
   *Held by `cli/internal/launcher/control_census_test.go`.*
 - **L2.** `roots.init` creates and registers a new local knowledge base by
-  running `semiont init` with explicit params and `--yes`. Its caller states
+  running `xynolog init` with explicit params and `--yes`. Its caller states
   the destination directory and permanent did:web domain. The method never
   overwrites an existing KB and does not expose template copying, `--force`,
   or `--no-git`.
@@ -263,7 +263,7 @@ exist.
 - **L3.** The API reports what the command reports. It differs from the
   command line in two places, both so that a client is never left to guess:
   - `status.snapshot` reports a stack that is starting, marked `starting`,
-    where `semiont status --root` refuses to report it;
+    where `xynolog status --root` refuses to report it;
   - `auth.login` with a valid stored session is refused with
-    `control.already-signed-in`, where `semiont login` signs in again.
+    `control.already-signed-in`, where `xynolog login` signs in again.
   *Held by no case.*

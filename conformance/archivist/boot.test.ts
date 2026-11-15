@@ -28,13 +28,13 @@ const documentOf = (settings: ArchivistSettings) => JSON.parse(JSON.stringify(se
 function tree(config: string | null, git: boolean): { root: string; remove: () => void } {
   const base = mkdtempSync(join(tmpdir(), 'conformance-kb-refused-'));
   const root = join(base, 'kb');
-  mkdirSync(join(root, '.semiont'), { recursive: true });
-  if (config !== null) writeFileSync(join(root, '.semiont', 'config.yaml'), config);
+  mkdirSync(join(root, '.xynolog'), { recursive: true });
+  if (config !== null) writeFileSync(join(root, '.xynolog', 'config.yaml'), config);
   if (git) execFileSync('git', ['init', '--quiet'], { cwd: root });
   return { root, remove: () => rmSync(base, { recursive: true, force: true }) };
 }
 
-/** A project file (.semiont/config.yaml) of the world's domain, syncing git or not. */
+/** A project file (.xynolog/config.yaml) of the world's domain, syncing git or not. */
 const projectFile = (domain: string, sync: boolean) =>
   `project:\n  name: Refused\ngit:\n  sync: ${sync}\nsite:\n  domain: ${JSON.stringify(domain)}\n  siteName: Refused\n`;
 
@@ -93,9 +93,9 @@ withArchivist("the Archivist's boot", (world) => {
 
   it('refuses to start without its service account', async () => {
     const options = await launch(world());
-    const refusal = await refusedArchivistBoot({ ...options, env: { ...options.env, SEMIONT_OIDC_CLIENT_SECRET: undefined } });
+    const refusal = await refusedArchivistBoot({ ...options, env: { ...options.env, XYNOLOG_OIDC_CLIENT_SECRET: undefined } });
     expect(refusal.code).not.toBe(0);
-    expect(refusal.output).toMatch(/SEMIONT_OIDC_CLIENT_SECRET/);
+    expect(refusal.output).toMatch(/XYNOLOG_OIDC_CLIENT_SECRET/);
   });
 
   it('refuses a knowledge base that commits no project file, and so declares no domain', async () => {
@@ -135,7 +135,7 @@ withArchivist("the Archivist's boot", (world) => {
       expect(refusal.output).toMatch(/\[fatal\]/);
       for (const named of [world().world.origin, world().world.kb.resource, other.resource, other.did]) expect(refusal.output).toContain(named);
       expect(readdirSync(stateHome)).toEqual([]);
-      expect(readdirSync(join(kb.root, '.semiont'))).toEqual(['config.yaml']);
+      expect(readdirSync(join(kb.root, '.xynolog'))).toEqual(['config.yaml']);
     } finally {
       kb.remove();
     }

@@ -552,11 +552,11 @@ eachWorkerService('a worker on Anthropic', (world) => {
 
     // The generation's span names who was asked, and for how much, at which knowledge base.
     const span = await eventually('the span of the generation', 15_000, () => otlp().spans.find((s) => s.name === spanName('inference:structured')));
-    expect(span.attributes).toEqual({ 'inference.provider': 'anthropic', 'inference.model': engine.model, 'inference.max_tokens': ANTHROPIC_OUTPUT, 'semiont.kb': kbDid(w.domain) });
+    expect(span.attributes).toEqual({ 'inference.provider': 'anthropic', 'inference.model': engine.model, 'inference.max_tokens': ANTHROPIC_OUTPUT, 'xynolog.kb': kbDid(w.domain) });
 
     // The two counts the provider stated, and no other.
     const tokens = await eventually('the tokens of the generation, read and written', 15_000, () => {
-      const seen = otlp().metrics.get(metricName('semiont.inference.tokens'));
+      const seen = otlp().metrics.get(metricName('xynolog.inference.tokens'));
       return seen?.attributes.get('inference.direction')?.size === 2 ? seen : undefined;
     });
     expect([...tokens.attributes.get('inference.provider')!]).toEqual(['anthropic']);
@@ -568,10 +568,10 @@ eachWorkerService('a worker on Anthropic', (world) => {
     expect(w.anthropic.requests.map((r) => `${r.method} ${r.path}`)).toEqual([`GET /v1/models/${engine.model}`, 'POST /v1/messages', 'POST /v1/messages']);
     const ended = { 'inference.provider': ['anthropic'], 'inference.model': [engine.model], 'inference.outcome': ['success'] };
     const carried = (metric: { attributes: Map<string, Set<string>> }) => Object.fromEntries([...metric.attributes].map(([key, values]) => [key, [...values]]));
-    const calls = await eventually('the count of generations', 15_000, () => otlp().metrics.get(metricName('semiont.inference.calls')));
+    const calls = await eventually('the count of generations', 15_000, () => otlp().metrics.get(metricName('xynolog.inference.calls')));
     expect(carried(calls)).toEqual(ended);
     expect([...new Set(calls.values)]).toEqual([1]);
-    const durations = await eventually('the time the generation took', 15_000, () => otlp().metrics.get(metricName('semiont.inference.duration')));
+    const durations = await eventually('the time the generation took', 15_000, () => otlp().metrics.get(metricName('xynolog.inference.duration')));
     expect(carried(durations)).toEqual(ended);
   });
 

@@ -1,6 +1,6 @@
 # Transport Contract
 
-What a Xynoplex client and the bus promise each other, whatever carries the
+What a Xynolog client and the bus promise each other, whatever carries the
 bus. Every SDK implements this contract, and every consumer of an SDK may
 rely on it. What the HTTP wire adds — the routes, the ids on the stream,
 the order of a replay, the limits — is
@@ -63,7 +63,7 @@ carries a `scope` that is not a resource's id. It is told to the error
 stream: as `error`, with no status, saying "the stream carried what is not
 a frame: " and then its first fault, in the words a request's refusal says
 it in.
-*Held by `specs/src/bus/frame-cases.json`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/go/sdk/stream_test.go`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/StreamTest.kt`, `sdk/swift/sdk/Tests/XynoplexTests/FrameCasesTests.swift`, `sdk/csharp/sdk/tests/Xynoplex.Tests/FrameCasesTests.cs`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
+*Held by `specs/src/bus/frame-cases.json`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/go/sdk/stream_test.go`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/StreamTest.kt`, `sdk/swift/sdk/Tests/XynologTests/FrameCasesTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/FrameCasesTests.cs`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
 
 The **registry** ([`specs/src/bus/registry.json`](../specs/src/bus/registry.json))
 is the authority for channels. It classifies each on independent axes:
@@ -76,7 +76,7 @@ whether it is an event of the record; and whether emitting it writes.
 
 ## The surface
 
-The TypeScript rendering, in `@xynoplex/core`, is the reference. Another
+The TypeScript rendering, in `@xynolog/core`, is the reference. Another
 language's SDK offers the same operations in its own idiom.
 
 **`ITransport`: the bus**
@@ -101,7 +101,7 @@ language's SDK offers the same operations in its own idiom.
 | `bridgeInto(bus)` | Delivers what the transport receives onto a client's bus |
 | `dispose()` | Ends the transport |
 
-`Bus` (`@xynoplex/core`) is the typed bus over any transport, and a client hands its own out as `client.wire`. Its `request(operation, payload, timeoutMs?, signal?)` is a request and its reply.
+`Bus` (`@xynolog/core`) is the typed bus over any transport, and a client hands its own out as `client.wire`. Its `request(operation, payload, timeoutMs?, signal?)` is a request and its reply.
 
 **`IContentTransport`**: `putBinary`, `getBinary`, `getBinaryStream`, `getResourceGraph`, `getAnnotations`, `getAnchoredText` and `dispose`.
 
@@ -110,7 +110,7 @@ language's SDK offers the same operations in its own idiom.
 The lists above are held to the interfaces. This compiles only while each list names exactly its interface's members:
 
 ```ts
-import type { ITransport, IContentTransport, IGatewayOperations } from '@xynoplex/core';
+import type { ITransport, IContentTransport, IGatewayOperations } from '@xynolog/core';
 
 type Exactly<T, K extends keyof T> = Exclude<keyof T, K> extends never ? true : never;
 
@@ -166,7 +166,7 @@ that identity lets the gateway and the client do.
 | So a consumer may | apply each once, in order | await it inside its deadline | act only in ways that are safe when missed |
 
 A channel's class follows from the registry's axes and is generated beside
-them, as `delivery` in `CHANNEL_ATTRS` (`@xynoplex/core`): an operation's
+them, as `delivery` in `CHANNEL_ATTRS` (`@xynolog/core`): an operation's
 result and failure are correlated; an event of the record whose audience is
 a resource's scope is positioned; every other channel that crosses the wire
 is passing.
@@ -447,7 +447,7 @@ result and failure channels are the registry's.
   and a reader reads a code the wire does not list as absent: the failure
   settles the request as `bus.rejected`, in its own words, and is read
   with no code wherever it is read, by its channel's typed reader too.
-  *Held by `specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`, `sdk/go/sdk/replies_test.go`, `sdk/rust/sdk/tests/bus.rs`, `sdk/python/sdk/tests/test_transport.py`, `sdk/kotlin/sdk/src/test/kotlin/semiont/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynoplexTests/HTTPTests.swift`, `sdk/csharp/sdk/tests/Xynoplex.Tests/TransportTests.cs`, `sdk/haskell/sdk/test/BusCases.hs`.*
+  *Held by `specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`, `sdk/go/sdk/replies_test.go`, `sdk/rust/sdk/tests/bus.rs`, `sdk/python/sdk/tests/test_transport.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/HTTPTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/haskell/sdk/test/BusCases.hs`.*
 - **A request nobody is there to answer** fails as `peer-unavailable` when
   the gateway can tell, and as a timeout when it cannot.
   *Held by `sdk/wire/request-unanswerable`, `gateway/emit.test.ts`.*
@@ -529,7 +529,7 @@ this emit, never provenance.
   channel's: under `error`, saying "a frame on `<channel>` is not that
   channel's: " and then the fault. Only a reply whose correlation id cannot
   be read, which carries none, leaves its request to wait out its timeout.
-  *Held by `specs/src/bus/frame-cases.json`, `sdk/typescript/core/src/__tests__/bus.test.ts`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_bus.py`, `sdk/kotlin/sdk/src/test/kotlin/semiont/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynoplexTests/ClientTests.swift`, `sdk/csharp/sdk/tests/Xynoplex.Tests/TransportTests.cs`, `sdk/rust/sdk/tests/typed.rs`, `sdk/go/sdk/internal/required/required_test.go`.*
+  *Held by `specs/src/bus/frame-cases.json`, `sdk/typescript/core/src/__tests__/bus.test.ts`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_bus.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/ClientTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/rust/sdk/tests/typed.rs`, `sdk/go/sdk/internal/required/required_test.go`.*
 
 ## Content and the gateway's own operations
 
@@ -565,7 +565,7 @@ Bytes do not ride the bus.
 - An answer with a fault fails as `error`, with the answer's status,
   saying it is not its declared body and naming its first fault, as
   § Identity says a fault is named; it is reported on the error stream too.
-  *Held by `sdk/go/sdk/replies_test.go`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_withheld.py`, `sdk/kotlin/sdk/src/test/kotlin/semiont/http/HttpTransportTest.kt`, `sdk/rust/http-transport/tests/answers.rs`.*
+  *Held by `sdk/go/sdk/replies_test.go`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_withheld.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`, `sdk/rust/http-transport/tests/answers.rs`.*
 - A read or one of the gateway's own operations whose credential is refused
   is renewed, as § A refused credential says.
   *Held by `sdk/wire/request-credential-renewed`, `sdk/wire/request-credential-limit-refused-twice`.*

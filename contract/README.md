@@ -1,6 +1,6 @@
-# Xynoplex Protocol
+# Xynolog Protocol
 
-**Xynoplex accumulates mappings and builds the structures to navigate them.**
+**Xynolog accumulates mappings and builds the structures to navigate them.**
 
 A mapping is a claim that some passage relates to some thing — a highlight, a comment, an entity reference, a resolved link between a mention and its target. Every one is anchored to a specific passage, attributed to the participant who asserted it, timestamped, and appended to a log that is never rewritten. Mappings only accumulate. The knowledge graph, the vector index, and the materialized views are projections built over them, so that what has accumulated can be navigated at corpus scale.
 
@@ -17,7 +17,7 @@ Every operation belongs to one of eight verbs. They fall into three groups, by w
 - **[Yield](flows/YIELD.md)** brings a resource in: by upload, by generation, by cloning.
 - **[Mark](flows/MARK.md)** annotates a passage or a region: a highlight, a comment, an assessment, a tag, a reference.
 - **[Bind](flows/BIND.md)** says what a reference refers to: the act of making a mention of "Paris" point at the right Paris.
-- **[Frame](flows/FRAME.md)** defines the vocabulary the other three are expressed in: entity types and tag schemas. Neither is fixed by Xynoplex; the participants in a knowledge base grow them.
+- **[Frame](flows/FRAME.md)** defines the vocabulary the other three are expressed in: entity types and tag schemas. Neither is fixed by Xynolog; the participants in a knowledge base grow them.
 
 Yield and Mark are where delegation enters. Each has a form done by hand and a delegated form, and the two produce the same events: `yield.resource` uploads a document while `yield.delegate` generates one, and `mark.annotation` records a highlight you made while `mark.delegate` has an agent find them across a resource. Same verb, same result, different author.
 
@@ -68,32 +68,32 @@ The same holds one level up. **[`specs/src/client/surface.json`](../specs/src/cl
 The eight verbs are also the eight namespaces of a client in every SDK: `yield`, `mark`, `bind`, `frame`, `browse`, `match`, `gather` and `beckon`. The protocol's vocabulary and the typed surface are one to one, so there is no translation step between reading a verb's contract and writing code. In TypeScript:
 
 ```typescript
-import { MemorySignIn, XynoplexSession, httpKb } from '@xynoplex/sdk';
+import { MemorySignIn, XynologSession, httpKb } from '@xynolog/sdk';
 
 const kb = httpKb({ id: 'demo', label: 'Demo', host: 'localhost', port: 4000, protocol: 'http' });
 const kept = new MemorySignIn();
-await XynoplexSession.signInDevice({
+await XynologSession.signInDevice({
   kb,
   kept,
   onCode: ({ verificationUriComplete, verificationUri }) =>
     console.error(`Approve at ${verificationUriComplete ?? verificationUri}`),
 });
-const opened = await XynoplexSession.fromKept({ kb, kept });
-const semiont = opened.session.client;
+const opened = await XynologSession.fromKept({ kb, kept });
+const xynolog = opened.session.client;
 
-await semiont.mark.delegate(resourceId, { motivation: 'linking', entityTypes: ['Person'] });  // write
-const { response: context } = await semiont.gather.annotation(resourceId, annotationId);   // read
-const results = await semiont.match.search(resourceId, annotationId, context);              // read
-await semiont.bind.body(resourceId, annotationId, [                                          // write
+await xynolog.mark.delegate(resourceId, { motivation: 'linking', entityTypes: ['Person'] });  // write
+const { response: context } = await xynolog.gather.annotation(resourceId, annotationId);   // read
+const results = await xynolog.match.search(resourceId, annotationId, context);              // read
+await xynolog.bind.body(resourceId, annotationId, [                                          // write
   { op: 'add', item: { type: 'SpecificResource', source: targetResourceId, purpose: 'linking' } },
 ]);
 ```
 
 Three surfaces speak these verbs:
 
-- **The SDKs**, in [TypeScript](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/Xynoplex/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/Xynoplex/sdk/tree/main/go/sdk/README.md) and [Kotlin](https://github.com/Xynoplex/sdk/tree/main/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](../../docs/builder/README.md)**.
+- **The SDKs**, in [TypeScript](https://github.com/xynolog/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/xynolog/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/xynolog/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/xynolog/sdk/tree/main/go/sdk/README.md) and [Kotlin](https://github.com/xynolog/sdk/tree/main/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](../../docs/builder/README.md)**.
 - **[Agent skills](../../docs/builder/skills/)** are ready-made skill definitions that agentic coding assistants use to work in a knowledge base without writing integration code.
-- **[The launcher](https://github.com/Xynoplex/cli/tree/main/README.md)**, the `semiont` binary, exposes the verbs as terminal commands against a running stack; `semiont <verb> --help` for each.
+- **[The launcher](https://github.com/xynolog/cli/tree/main/README.md)**, the `xynolog` binary, exposes the verbs as terminal commands against a running stack; `xynolog <verb> --help` for each.
 
 For product framing and getting a knowledge base running, see the **[project README](../../README.md)**.
 
@@ -113,7 +113,7 @@ For product framing and getting a knowledge base running, see the **[project REA
 | [LIBRARIAN.md](LIBRARIAN.md) | The Librarian, the process a librarian image runs: its configuration document and what it refuses to start on, the eight requests it answers from the graph, the vector index and its models, how each candidate of a reference is scored, the context it gathers around an annotation and around a resource, and the two waits it makes for the Weaver and the Smelter |
 | [TRANSPORT-CONTRACT.md](TRANSPORT-CONTRACT.md) | What every transport promises a client, in any language |
 | [TRANSPORT-HTTP.md](TRANSPORT-HTTP.md) | The HTTP transport: `/bus/emit`, the `/bus/subscribe` stream, content, limits |
-| [LAUNCHER-CONTROL.md](LAUNCHER-CONTROL.md) | `semiont control`, the launcher's API for a program that drives it: framing, versions, params, errors, progress, turns, cancellation, shutdown, secrets, and how each command's options map to it |
+| [LAUNCHER-CONTROL.md](LAUNCHER-CONTROL.md) | `xynolog control`, the launcher's API for a program that drives it: framing, versions, params, errors, progress, turns, cancellation, shutdown, secrets, and how each command's options map to it |
 | [CACHE-SEMANTICS.md](CACHE-SEMANTICS.md) | The numbered behaviors every SDK's live queries are held to |
 | [RBAC.md](RBAC.md) | Roles: the one authorization decision, and the two roles that mark services |
 | [W3C-WEB-ANNOTATION.md](W3C-WEB-ANNOTATION.md), [W3C-SELECTORS.md](W3C-SELECTORS.md) | The annotation model, and which selectors apply to which media |

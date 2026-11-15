@@ -60,26 +60,26 @@ Driving another participant's viewer is [Beckon](BECKON.md): `beckon.openResourc
 
 ```typescript
 // A live query: emits again whenever the resource changes
-semiont.browse.resource(resourceId).subscribe((st) => {
+xynolog.browse.resource(resourceId).subscribe((st) => {
   if (st.status === 'ready') console.log('Resource:', st.value.name);
 });
 
 // One-shot reads
-const resource = await semiont.browse.resource(resourceId).fresh();
-const history = await semiont.browse.annotationHistory(resourceId, annotationId);
-const { name, domain } = await semiont.browse.kb();
+const resource = await xynolog.browse.resource(resourceId).fresh();
+const history = await xynolog.browse.annotationHistory(resourceId, annotationId);
+const { name, domain } = await xynolog.browse.kb();
 ```
 
-From the launcher: `semiont browse`, and `semiont browse <resourceId> --browser` to open a resource in the Browser.
+From the launcher: `xynolog browse`, and `xynolog browse <resourceId> --browser` to open a resource in the Browser.
 
 ## Channels that stay in the page
 
-`browse:entity-type-clicked`, and the `nav:`, `panel:`, `tabs:`, `shell:` and `settings:` channels, are published on a client's own bus and never cross the wire. They belong to the Browser's interface, not to the protocol. See [react-ui's event internals](https://github.com/Xynoplex/sdk/tree/main/typescript/react-ui/docs/EVENTS.md).
+`browse:entity-type-clicked`, and the `nav:`, `panel:`, `tabs:`, `shell:` and `settings:` channels, are published on a client's own bus and never cross the wire. They belong to the Browser's interface, not to the protocol. See [react-ui's event internals](https://github.com/xynolog/sdk/tree/main/typescript/react-ui/docs/EVENTS.md).
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/browse.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/browse.ts)
-- What answers the reads: [the Archivist](../ARCHIVIST.md), in [archivist/src/browse.rs](https://github.com/Xynoplex/images/tree/main/archivist/src/browse.rs)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/browse.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/browse.ts)
+- What answers the reads: [the Archivist](../ARCHIVIST.md), in [archivist/src/browse.rs](https://github.com/xynolog/images/tree/main/archivist/src/browse.rs)
 - What a live query refreshes on: [specs/src/client/refresh.json](../../specs/src/client/refresh.json)
-- The launcher verb: [cli/internal/launcher/verbs/browse.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/browse.go)
+- The launcher verb: [cli/internal/launcher/verbs/browse.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/browse.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

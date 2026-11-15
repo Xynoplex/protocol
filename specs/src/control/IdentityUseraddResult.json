@@ -9,7 +9,7 @@
     },
     "identity": {
       "type": "string",
-      "description": "The identity the account acts under in Semiont."
+      "description": "The identity the account acts under in Xynolog."
     },
     "created": {
       "type": "boolean",

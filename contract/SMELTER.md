@@ -34,7 +34,7 @@ the work a start plans;
 [`specs/src/smelter/extraction-cases.json`](../specs/src/smelter/extraction-cases.json),
 what each kind of PDF becomes; and
 [`specs/src/text/chunk-cases.json`](../specs/src/text/chunk-cases.json),
-how a text is cut. The others are tests of Xynoplex's own Smelter. A rule
+how a text is cut. The others are tests of Xynolog's own Smelter. A rule
 marked "Held by no case" is one nothing checks.
 `npm run lint:transport-contract` fails when a case or a test named here does
 not exist, and when a case of the suite is named by no rule.
@@ -78,8 +78,8 @@ and anyone else to the same schema.
   is missing. *Held by `smelter/tests/test_service.py` and `smelter/boot`.*
 - **An index that lives in one process's memory is refused.** Nothing else
   could search it. *Held by `smelter/tests/test_service.py`.*
-- **Its service account is `SEMIONT_OIDC_CLIENT_ID` and
-  `SEMIONT_OIDC_CLIENT_SECRET` in its environment** ([Environment](#environment)).
+- **Its service account is `XYNOLOG_OIDC_CLIENT_ID` and
+  `XYNOLOG_OIDC_CLIENT_SECRET` in its environment** ([Environment](#environment)).
   With either missing it refuses to start, and names what is missing.
   *Held by `smelter/tests/test_service.py` and `smelter/boot`.*
 - **An embedding provider's key is read from the variable its document
@@ -484,7 +484,7 @@ started by a reconcile.
 - **It serves the knowledge base its settings name, and no other.** Before it
   reaches its vector database it asks the knowledge base which it is
   (`browse:kb-requested`, which the Archivist answers from the committed
-  `.semiont/config.yaml`), and asks again while nothing answers there
+  `.xynolog/config.yaml`), and asks again while nothing answers there
   (`bus.peer-unavailable`), as it asks again for a page of the catalog. It
   asks on a stream of its own, which names that request's replies and not
   the command it answers (`smelt:rebuild-anchors`), and closes it before it
@@ -539,7 +539,7 @@ the work it plans for each difference, and is the rule; this section says it
 in prose.
 
 - **It runs when the Smelter starts with a resource no cursor names:** after
-  every `semiont start`, whose container keeps no cursor, and after an index
+  every `xynolog start`, whose container keeps no cursor, and after an index
   was made anew. A Smelter started again with its cursors takes what was
   recorded since, and runs none. A reconcile asked for while another runs
   waits for it.
@@ -712,7 +712,7 @@ every resource had a cursor at its start.
 ## Telemetry
 
 - **A Smelter started with `OTEL_EXPORTER_OTLP_ENDPOINT` exports, as
-  `semiont-smelter`, exactly what
+  `xynolog-smelter`, exactly what
   [`specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
   lists for the smelter, and the rows of
   [`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)
@@ -724,10 +724,10 @@ every resource had a cursor at its start.
   the row's attributes; and every one of those rows that its work can make
   arrives, with every attribute the row does not mark as conditional. All of
   it is exported under the resource the table's `resource` rows list for the
-  smelter: its name, its version, and `semiont.kb`, the DID of the knowledge
+  smelter: its name, its version, and `xynolog.kb`, the DID of the knowledge
   base its document's `kb` names.
   *Held by `smelter/telemetry`.*
-- **`semiont.vector.index.size` is the number of points its index holds,** of
+- **`xynolog.vector.index.size` is the number of points its index holds,** of
   resources and of annotations together. A Smelter that exports asks its
   index for the number when it has started, and again once in each export
   interval, and the gauge says what was last answered. While the index does
@@ -746,21 +746,21 @@ and no others:
 
 | Variable | What it is |
 |---|---|
-| `SEMIONT_OIDC_CLIENT_ID`, `SEMIONT_OIDC_CLIENT_SECRET` | Its service account at the knowledge base's issuer. Required |
+| `XYNOLOG_OIDC_CLIENT_ID`, `XYNOLOG_OIDC_CLIENT_SECRET` | Its service account at the knowledge base's issuer. Required |
 | the variables its document names | Its token for the vector index, required. A stack the launcher starts names `QDRANT_TOKEN` for it where the launcher runs the Qdrant, and gives it a token the launcher mints. Its embedding provider's key, for a provider that takes one, and required then. An Ollama takes none |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | The OTLP/HTTP collector its spans and metrics are exported to ([Telemetry](#telemetry)). Without it, and without the console exporter, it exports nothing and writes no span or metric anywhere |
-| `OTEL_SERVICE_NAME` | The `service.name` its spans and metrics carry; `semiont-smelter` when unset or empty |
+| `OTEL_SERVICE_NAME` | The `service.name` its spans and metrics carry; `xynolog-smelter` when unset or empty |
 | `OTEL_SDK_DISABLED` | Set to `true`, it exports nothing, whatever else is set |
 | `OTEL_CONSOLE_EXPORTER` | Set to `true`, with no endpoint, it writes spans and metrics to its output instead of exporting them |
 | `OTEL_METRICS_EXPORTER` | Set to `console`, it writes metrics to its output, while spans still go to the endpoint |
 | `OTEL_METRIC_EXPORT_INTERVAL` | The milliseconds between metric exports; 30000 when unset |
-| `SUPERVISE_EVENTS`, `SUPERVISE_NAME` | The supervisor's events log, one `starting <name>` line for each life of the process, and that name. With both, it reports `semiont.process.restarts`: the lives the log records, less one. Without either, the metric does not exist |
+| `SUPERVISE_EVENTS`, `SUPERVISE_NAME` | The supervisor's events log, one `starting <name>` line for each life of the process, and that name. With both, it reports `xynolog.process.restarts`: the lives the log records, less one. Without either, the metric does not exist |
 
 The libraries it is built on read some unasked. Its OpenTelemetry SDK and
 exporter read the standard variables they read on their own, such as how long
 a finished span waits to be exported (`OTEL_BSP_SCHEDULE_DELAY`), but none
-that would say where its telemetry goes or the name it goes under. Xynoplex's
-SDK reads `SEMIONT_BUS_LOG`, and with any value that is not empty writes a
+that would say where its telemetry goes or the name it goes under. Xynolog's
+SDK reads `XYNOLOG_BUS_LOG`, and with any value that is not empty writes a
 line to the service's output for each frame it sends and receives. It runs
 the `tesseract` program, which finds its own language data.
 

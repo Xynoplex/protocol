@@ -1,6 +1,6 @@
 # W3C Web Annotation Selectors
 
-Which selectors a Xynoplex annotation carries, and why the answer depends on the
+Which selectors a Xynolog annotation carries, and why the answer depends on the
 resource it points at.
 
 A resource's media type constrains the selectors that can apply to it. Text
@@ -13,14 +13,14 @@ how a scanned page gets one at all, is
 **Related Documentation:**
 - [Anchoring](../../docs/architecture/ANCHORING.md) - How a coordinate map is derived, stored and turned into a selector
 - [W3C Web Annotation Implementation](./W3C-WEB-ANNOTATION.md) - Complete annotation architecture
-- [Xynoplex Protocol](./README.md) - The eight verbs and the bus these annotations travel on
+- [Xynolog Protocol](./README.md) - The eight verbs and the bus these annotations travel on
 - [OpenAPI Specification](../specs/src/openapi.json) - Machine-readable API spec
 - [Media Types](../../docs/architecture/MEDIA-TYPES.md) - What each media type declares, and what that changes
-- [@xynoplex/core Utilities](https://github.com/Xynoplex/sdk/tree/main/typescript/core/docs/Utilities.md) - Implementation aids: fuzzy anchoring, SVG selector parsing, position validation
+- [@xynolog/core Utilities](https://github.com/xynolog/sdk/tree/main/typescript/core/docs/Utilities.md) - Implementation aids: fuzzy anchoring, SVG selector parsing, position validation
 
 ## Text selectors
 
-Xynoplex implements **W3C-compliant text selectors** using a combination of TextPositionSelector and TextQuoteSelector for robustness.
+Xynolog implements **W3C-compliant text selectors** using a combination of TextPositionSelector and TextQuoteSelector for robustness.
 
 ### What a text annotation carries
 
@@ -52,7 +52,7 @@ Every text annotation includes both selector types:
 Specifies a span by two offsets from the start of the resource's text:
 
 ```typescript
-import type { TextPositionSelector } from '@xynoplex/core';
+import type { TextPositionSelector } from '@xynolog/core';
 
 const position: TextPositionSelector = {
   type: 'TextPositionSelector',
@@ -68,7 +68,7 @@ the count the Web Annotation Data Model requires, and it is the same number in
 every language. A character outside the Basic Multilingual Plane (an emoji, a
 mathematical letter, some CJK) is one code point, where a JavaScript string
 has two UTF-16 code units for it, so an offset is a string's own position only
-up to the first such character. `textOffsets` in `@xynoplex/core` converts
+up to the first such character. `textOffsets` in `@xynolog/core` converts
 between the two, and
 [`specs/src/text/offset-cases.json`](../specs/src/text/offset-cases.json)
 holds the count for every implementation.
@@ -80,7 +80,7 @@ holds the count for every implementation.
 Specifies the exact text with optional context:
 
 ```typescript
-import type { TextQuoteSelector } from '@xynoplex/core';
+import type { TextQuoteSelector } from '@xynolog/core';
 
 const quote: TextQuoteSelector = {
   type: 'TextQuoteSelector',
@@ -110,11 +110,11 @@ the text that starts at end, as long as suffix is       is suffix   // when suff
 
 Every position and every length there is counted in code points.
 
-This write-time reconciliation (`reconcile` in `@xynoplex/core`, and in every SDK) is where fuzzy matching lives — verbatim, then deterministic normalization (smart quotes, whitespace), then Levenshtein within a 5% tolerance — because the source content is in hand and the output is the authoritative record. All five annotation-detection workers converge on it. When `exact` appears more than once, prefix/suffix disambiguate; an undisambiguated multi-occurrence match is flagged `first-of-many` for audit rather than silently anchored. See [@xynoplex/core Utilities](https://github.com/Xynoplex/sdk/tree/main/typescript/core/docs/Utilities.md#reconcile-what-a-model-quoted).
+This write-time reconciliation (`reconcile` in `@xynolog/core`, and in every SDK) is where fuzzy matching lives — verbatim, then deterministic normalization (smart quotes, whitespace), then Levenshtein within a 5% tolerance — because the source content is in hand and the output is the authoritative record. All five annotation-detection workers converge on it. When `exact` appears more than once, prefix/suffix disambiguate; an undisambiguated multi-occurrence match is flagged `first-of-many` for audit rather than silently anchored. See [@xynolog/core Utilities](https://github.com/xynolog/sdk/tree/main/typescript/core/docs/Utilities.md#reconcile-what-a-model-quoted).
 
 ### Render-Time Anchoring (Verbatim Only)
 
-Because the stored selectors already agree, the renderer trusts them and re-anchors only on a **verbatim** quote match. The one legitimate render-time discrepancy is *positional drift*: content shifted above the span after the annotation was written, so the `TextPositionSelector` is stale but `exact` still exists byte-identical. `anchorAnnotation` (`@xynoplex/core`) recovers it — uniquely, disambiguated by prefix/suffix, or (for repeated text) by closest-to-offset position — and flags anything it cannot resolve verbatim as low-confidence rather than fuzzy-matching at render time. This is the W3C-intended use of `TextQuoteSelector` for recovery; the fuzzy fallback chain stays on the write side.
+Because the stored selectors already agree, the renderer trusts them and re-anchors only on a **verbatim** quote match. The one legitimate render-time discrepancy is *positional drift*: content shifted above the span after the annotation was written, so the `TextPositionSelector` is stale but `exact` still exists byte-identical. `anchorAnnotation` (`@xynolog/core`) recovers it — uniquely, disambiguated by prefix/suffix, or (for repeated text) by closest-to-offset position — and flags anything it cannot resolve verbatim as low-confidence rather than fuzzy-matching at render time. This is the W3C-intended use of `TextQuoteSelector` for recovery; the fuzzy fallback chain stays on the write side.
 
 ### The text of a resource
 

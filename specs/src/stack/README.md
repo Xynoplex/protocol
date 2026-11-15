@@ -2,7 +2,7 @@
 
 A knowledge base's repository commits its stack as documents in Kubernetes'
 resource format (`apiVersion`, `kind`, `metadata`, `spec`), one file for each
-document in `.semiont/stack/`. Each kind is a group of services that lives
+document in `.xynolog/stack/`. Each kind is a group of services that lives
 and dies together, and each document names every container it runs with its
 image and its memory. A document never states where anything listens: the
 documents refer to one another by `metadata.name`, and whoever runs the
@@ -16,7 +16,7 @@ deployment elsewhere edits its own copy.
 | `Inference` | [`Inference.json`](Inference.json) | the providers a machine reaches, and the engine for each job and each Librarian actor ([`ArchivistEngines`](../components/schemas/ArchivistEngines.json)) |
 
 Every kind's `apiVersion` is [`ApiVersion.json`](ApiVersion.json)'s:
-`semiont.the-ai-alliance.github.io/v1alpha1`. The objects the kinds share are
+`xynolog.org/v1alpha1`. The objects the kinds share are
 [`Metadata.json`](Metadata.json), [`Image.json`](Image.json),
 [`Resources.json`](Resources.json), [`SecretRef.json`](SecretRef.json),
 [`HostPort.json`](HostPort.json) and [`Provider.json`](Provider.json).
@@ -42,7 +42,7 @@ the file is what runs.
 
 ## The project file
 
-A knowledge base's project file, `.semiont/config.yaml`, is held to
+A knowledge base's project file, `.xynolog/config.yaml`, is held to
 [`../kb-identity/ProjectConfig.json`](../kb-identity/ProjectConfig.json): its
 name, whether its changes are staged in git, and its identity. No stack
 document restates any of it.

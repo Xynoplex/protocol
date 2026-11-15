@@ -782,9 +782,9 @@
           { "@context": "https://schema.org/", "@id": "res-a", "name": "A manual page", "representations": [{ "mediaType": "text/troff", "storageUri": "file://manual.1", "checksum": "sha256:res-a", "rel": "original" }] }
         ],
         "served": {
-          "res-a": { "text": ".TH SEMIONT 1", "contentType": "text/troff" }
+          "res-a": { "text": ".TH XYNOLOG 1", "contentType": "text/troff" }
         },
-        "previews": [".TH SEMIONT 1"]
+        "previews": [".TH XYNOLOG 1"]
       }
     },
     {

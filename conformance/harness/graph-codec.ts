@@ -6,7 +6,7 @@
  * This suite reads the graph with a reader of its own, held to the same case
  * table the Weaver's codec is held to (specs/src/graph/codec-cases.json, run
  * by graph-codec.test.ts), so that it judges a Weaver by something other than
- * the Weaver's own code. The other way would be for `semiont_graph` to offer
+ * the Weaver's own code. The other way would be for `xynolog_graph` to offer
  * a small command that prints a resource's rows, decoded, as JSON, which the
  * harness would call: one codec in the repository and no copy here, at the
  * cost that the suite would then read a Weaver through the Weaver's codec.

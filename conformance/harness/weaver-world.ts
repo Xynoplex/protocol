@@ -4,7 +4,7 @@
  * answers, a gateway, the trusted issuer), the Weaver's own service account at
  * that issuer, and a real neo4j, cleared when the world is made.
  *
- * Cases meet the Weaver in the three places the rest of Xynoplex does: in the
+ * Cases meet the Weaver in the three places the rest of Xynolog does: in the
  * graph it writes; on the bus, where it signals what it has applied and
  * answers a rebuild; and at its health port. Nothing is recorded but through
  * the Archivist, as people, workers and services record: the Weaver is given
@@ -33,7 +33,7 @@ import type { WeaverService } from './implementations';
 import { endCase } from './world';
 
 /** The Weaver's service account at the issuer. */
-export const WEAVER_CLIENT = 'semiont-weaver';
+export const WEAVER_CLIENT = 'xynolog-weaver';
 
 /** The variable the Weaver's settings name for the graph database's password. */
 const GRAPH_PASSWORD = 'NEO4J_PASSWORD';
@@ -193,7 +193,7 @@ export class WeaverWorld {
         archivist: { host: '127.0.0.1', port: kb.settings.port },
         graph: { type: 'neo4j', ...at, passwordEnv: GRAPH_PASSWORD },
       },
-      { SEMIONT_OIDC_CLIENT_ID: WEAVER_CLIENT, SEMIONT_OIDC_CLIENT_SECRET: secret, [GRAPH_PASSWORD]: password },
+      { XYNOLOG_OIDC_CLIENT_ID: WEAVER_CLIENT, XYNOLOG_OIDC_CLIENT_SECRET: secret, [GRAPH_PASSWORD]: password },
       mkdtempSync(join(tmpdir(), 'conformance-weaver-')),
       signals,
       hand,

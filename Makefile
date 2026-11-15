@@ -4,7 +4,7 @@
 
 # `make help` prints the `##` lines below, in order (build-tools/make-help.awk).
 # Every target runs its npm task in a Node container (scripts/make-target.sh).
-##@ Xynoplex Protocol: make [target] [VARIABLE=value ...]
+##@ Xynolog Protocol: make [target] [VARIABLE=value ...]
 ##@ Variables
 ## CONTAINER_RUNTIME=name: container|docker|podman; else the first to respond
 

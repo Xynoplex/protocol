@@ -280,8 +280,8 @@ export async function startArchivist(issuer: IssuerServer, audience: string): Pr
           else file = Buffer.from(await value.arrayBuffer());
         }
         if (mode.unanswered.has(fields['storageUri'] ?? '')) return;
-        const principal = req.headers['semiont-principal'];
-        if (typeof principal !== 'string') return json(400, { error: 'Missing Semiont-Principal' });
+        const principal = req.headers['xynolog-principal'];
+        if (typeof principal !== 'string') return json(400, { error: 'Missing Xynolog-Principal' });
         const key = req.headers['idempotency-key'];
         if (typeof key !== 'string') return json(400, { error: 'Missing Idempotency-Key' });
         const missing = uploadRequired.filter((k) => (k === 'file' ? !file : !fields[k]));
@@ -300,7 +300,7 @@ export async function startArchivist(issuer: IssuerServer, audience: string): Pr
         const resourceId = `res-${randomUUID()}`;
         content.set(fields['storageUri']!, file!);
         resources.set(resourceId, { storageUri: fields['storageUri']!, mediaType: fields['format']! });
-        const roles = req.headers['semiont-roles'];
+        const roles = req.headers['xynolog-roles'];
         const recorded: RecordedUpload = { fields, file: file!, principal, roles: typeof roles === 'string' ? roles : undefined, key, resourceId };
         uploads.push(recorded);
         keyed.set(keyedAs, recorded);

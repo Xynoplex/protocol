@@ -10,7 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { JWT_BEARER, startIssuer, type IssuerServer } from './issuer';
 import { SERVICE_ROLE, WORKER_ROLE } from './roles';
 
-const CLIENT = 'semiont-worker-alice-laptop';
+const CLIENT = 'xynolog-worker-alice-laptop';
 const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
 const other = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey;
 
@@ -60,7 +60,7 @@ describe('the issuer admits a key account by its assertion', () => {
     ['signed by another key', () => assertion(other, claims())],
     ['expired', () => assertion(privateKey, claims({ exp: now() - 1 }))],
     ['addressed to another token endpoint', () => assertion(privateKey, claims({ aud: 'https://elsewhere.example/token' }))],
-    ['naming another subject than its issuer', () => assertion(privateKey, claims({ sub: 'semiont-gateway' }))],
+    ['naming another subject than its issuer', () => assertion(privateKey, claims({ sub: 'xynolog-gateway' }))],
   ])('refuses one %s', async (_, made) => {
     expect((await grant(made())).status).toBe(401);
   });

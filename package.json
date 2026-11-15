@@ -1,12 +1,12 @@
 {
-  "name": "@xynoplex/protocol",
+  "name": "@xynolog/protocol",
   "version": "0.1.0",
   "private": false,
-  "description": "Cross-implementation contracts, specifications, and conformance suites for Xynoplex",
+  "description": "Cross-implementation contracts, specifications, and conformance suites for Xynolog",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Xynoplex/protocol.git"
+    "url": "https://github.com/xynolog/protocol.git"
   },
   "scripts": {
     "specs:bundle": "redocly bundle --config specs/redocly.yaml specs/src/openapi.json -o specs/openapi.json && redocly bundle --config specs/redocly.yaml specs/src/archivist/openapi.json -o specs/archivist.openapi.json",

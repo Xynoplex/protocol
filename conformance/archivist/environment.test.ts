@@ -3,7 +3,7 @@
  * the Archivist changes, seen from outside. Each case runs an Archivist world
  * of its own with the environment it is about, and makes the Archivist answer
  * one request: a `browse:kb-requested`. Its service account,
- * SEMIONT_OIDC_CLIENT_ID and SEMIONT_OIDC_CLIENT_SECRET, is boot.test.ts's.
+ * XYNOLOG_OIDC_CLIENT_ID and XYNOLOG_OIDC_CLIENT_SECRET, is boot.test.ts's.
  *
  * A span is told by what it carries rather than by name: its kind, and the
  * channel it is about.
@@ -51,8 +51,8 @@ const about = (channel: string, kind: number) => (span: ReceivedSpan) => span.ki
 const settle = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe("the Archivist's environment", () => {
-  it('OTEL_SERVICE_NAME names the service its spans are exported under; semiont-archivist when unset', async () => {
-    for (const [name, expected] of [[undefined, 'semiont-archivist'], ['conformance-renamed', 'conformance-renamed']] as const) {
+  it('OTEL_SERVICE_NAME names the service its spans are exported under; xynolog-archivist when unset', async () => {
+    for (const [name, expected] of [[undefined, 'xynolog-archivist'], ['conformance-renamed', 'conformance-renamed']] as const) {
       await withArchivistEnv(
         (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_BSP_SCHEDULE_DELAY: '100', OTEL_SERVICE_NAME: name }),
         async (world, otlp) => {
@@ -106,7 +106,7 @@ describe("the Archivist's environment", () => {
       async (world, otlp) => {
         await ask(world);
         await eventually(`the ${REQUEST} it received`, 10_000, () => otlp.spans.find(about(REQUEST, CONSUMER)));
-        const started = metricName('semiont.process.start_time');
+        const started = metricName('xynolog.process.start_time');
         await eventually(`${started} in the output`, 10_000, () => (world.archivist.output.some((l) => l.includes(started)) ? true : undefined));
         expect([...otlp.metrics.keys()]).toEqual([]);
       },
@@ -132,10 +132,10 @@ describe("the Archivist's environment", () => {
     );
   });
 
-  it('SEMIONT_BUS_LOG writes a line per frame the Archivist receives and sends; unset, it writes none', async () => {
+  it('XYNOLOG_BUS_LOG writes a line per frame the Archivist receives and sends; unset, it writes none', async () => {
     for (const on of [false, true]) {
       await withArchivistEnv(
-        () => ({ SEMIONT_BUS_LOG: on ? '1' : undefined }),
+        () => ({ XYNOLOG_BUS_LOG: on ? '1' : undefined }),
         async (world) => {
           await ask(world);
           if (on) {
@@ -151,7 +151,7 @@ describe("the Archivist's environment", () => {
     }
   });
 
-  it('SUPERVISE_EVENTS and SUPERVISE_NAME report semiont.process.restarts: the lives the supervisor recorded, less one', async () => {
+  it('SUPERVISE_EVENTS and SUPERVISE_NAME report xynolog.process.restarts: the lives the supervisor recorded, less one', async () => {
     const events = join(tmpdir(), `archivist-conformance-supervisor-${randomUUID()}.log`);
     const life = (n: number) => `[supervise 2026-09-30T00:00:0${n}Z] starting archivist (rapid failures so far: ${n})`;
     writeFileSync(events, [life(0), life(1), life(2)].join('\n') + '\n');
@@ -159,7 +159,7 @@ describe("the Archivist's environment", () => {
       await withArchivistEnv(
         (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_METRIC_EXPORT_INTERVAL: '500', SUPERVISE_EVENTS: events, SUPERVISE_NAME: 'archivist' }),
         async (_world, otlp) => {
-          const restarts = metricName('semiont.process.restarts');
+          const restarts = metricName('xynolog.process.restarts');
           const values = await eventually(restarts, 10_000, () => {
             const seen = otlp.metrics.get(restarts)?.values;
             return seen && seen.length > 0 ? seen : undefined;

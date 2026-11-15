@@ -79,7 +79,7 @@ eachLibrarian('a Librarian, as a process', (world) => {
       expect(output).toMatch(named);
     });
 
-    it.each(['SEMIONT_OIDC_CLIENT_ID', 'SEMIONT_OIDC_CLIENT_SECRET'])('refuses to start without %s, half of its service account, and names it', async (variable) => {
+    it.each(['XYNOLOG_OIDC_CLIENT_ID', 'XYNOLOG_OIDC_CLIENT_SECRET'])('refuses to start without %s, half of its service account, and names it', async (variable) => {
       const { code, output } = await world().refused({ env: { ...world().launch().env, [variable]: undefined } });
       expect(code).not.toBe(0);
       expect(output).toContain(variable);

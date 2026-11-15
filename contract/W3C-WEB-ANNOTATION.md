@@ -1,11 +1,11 @@
 # W3C Web Annotation Data Model
 
-Xynoplex implements the [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/), a standard specification for creating, sharing, and managing annotations across the web.
+Xynolog implements the [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/), a standard specification for creating, sharing, and managing annotations across the web.
 
 **Related Documentation:**
 - [W3C Selectors](./W3C-SELECTORS.md) - Which selectors apply to text, PDFs and images
 - [Knowledge System](../../docs/architecture/KNOWLEDGE-SYSTEM.md) - How annotations flow through the event store, materialized views, and graph
-- [Xynoplex Protocol](./README.md) - The eight verbs and the bus these annotations travel on
+- [Xynolog Protocol](./README.md) - The eight verbs and the bus these annotations travel on
 - [OpenAPI Specification](../specs/src/openapi.json) - Machine-readable API contract
 
 ## Table of Contents
@@ -64,7 +64,7 @@ Every W3C annotation has these required fields:
 {
   "generator": {
     "@type": "Software",
-    "@id": "did:web:example.org:agents:semiont-worker",
+    "@id": "did:web:example.org:agents:xynolog-worker",
     "name": "anthropic claude-sonnet-4-6",
     "provider": "anthropic",
     "model": "claude-sonnet-4-6",
@@ -79,7 +79,7 @@ Every W3C annotation has these required fields:
 
 ## Annotation Types
 
-Xynoplex uses five W3C motivations. Each decides what the annotation's body holds:
+Xynolog uses five W3C motivations. Each decides what the annotation's body holds:
 
 | Motivation | Records | Body |
 |---|---|---|
@@ -374,7 +374,7 @@ See [W3C-SELECTORS.md](./W3C-SELECTORS.md) for complete selector documentation.
 
 ## JSON-LD Export
 
-Xynoplex annotations are fully W3C-compliant and can be exported as standard JSON-LD:
+Xynolog annotations are fully W3C-compliant and can be exported as standard JSON-LD:
 
 ```json
 {
@@ -410,7 +410,7 @@ Xynoplex annotations are fully W3C-compliant and can be exported as standard JSO
   ],
   "creator": {
     "@type": "Person",
-    "@id": "did:web:semiont.app:users:alice",
+    "@id": "did:web:xynolog.app:users:alice",
     "name": "Alice"
   },
   "created": "2025-10-24T10:30:00Z"

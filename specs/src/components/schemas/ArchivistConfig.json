@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "Everything the Archivist reads at boot: nothing in it is defaulted by the Archivist. The launcher writes it for the Archivist it starts, from the knowledge base's stack documents, and the Archivist reads it from the path its `--config` flag names (its image passes `/etc/semiont/archivist.json`). Started without `--config`, or with a path that names no file, the Archivist refuses to start and says which. No secret is a value here. What the knowledge base says of itself is not here either: its name, its `site.domain` and its `git.sync` are read from the committed `.semiont/config.yaml` of the tree at `root`. The Archivist's other inputs are the environment variables specs/src/service-environment/variables.json lists for it. A document that does not validate is refused at boot, naming each failing field.",
+  "description": "Everything the Archivist reads at boot: nothing in it is defaulted by the Archivist. The launcher writes it for the Archivist it starts, from the knowledge base's stack documents, and the Archivist reads it from the path its `--config` flag names (its image passes `/etc/xynolog/archivist.json`). Started without `--config`, or with a path that names no file, the Archivist refuses to start and says which. No secret is a value here. What the knowledge base says of itself is not here either: its name, its `site.domain` and its `git.sync` are read from the committed `.xynolog/config.yaml` of the tree at `root`. The Archivist's other inputs are the environment variables specs/src/service-environment/variables.json lists for it. A document that does not validate is refused at boot, naming each failing field.",
   "properties": {
     "gatewayUrl": {
       "type": "string",
@@ -25,7 +25,7 @@
     "root": {
       "type": "string",
       "minLength": 1,
-      "description": "The knowledge base's working tree: the directory holding `.semiont/`. The event log, the content and the committed config are under it."
+      "description": "The knowledge base's working tree: the directory holding `.xynolog/`. The event log, the content and the committed config are under it."
     },
     "stateHome": {
       "type": "string",

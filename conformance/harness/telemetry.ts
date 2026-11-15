@@ -49,7 +49,7 @@ export function expectedOn(rows: TelemetryRow[], plane?: string): TelemetryRow[]
 }
 
 /** The resource attribute a service names the knowledge base it serves by. */
-const KB = 'semiont.kb';
+const KB = 'xynolog.kb';
 
 /**
  * Wait for every row `service` must export to arrive at `otlp`, with every

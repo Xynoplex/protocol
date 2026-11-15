@@ -2,7 +2,7 @@
  * What each variable in specs/src/service-environment/variables.json changes,
  * seen from outside, and what the document's logFormat changes. Each case runs
  * a gateway of its own with the environment it is about. JWT_SECRET,
- * SEMIONT_OIDC_CLIENT_ID and SEMIONT_OIDC_CLIENT_SECRET are boot.test.ts's, as is `--config`,
+ * XYNOLOG_OIDC_CLIENT_ID and XYNOLOG_OIDC_CLIENT_SECRET are boot.test.ts's, as is `--config`,
  * and observability.test.ts exports to OTEL_EXPORTER_OTLP_ENDPOINT throughout.
  */
 import { randomUUID } from 'node:crypto';
@@ -43,8 +43,8 @@ async function emit(world: World): Promise<void> {
 const settle = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe("the gateway's environment", () => {
-  it('OTEL_SERVICE_NAME names the service its spans are exported under; semiont-gateway when unset', async () => {
-    for (const [name, expected] of [[undefined, 'semiont-gateway'], ['conformance-renamed', 'conformance-renamed']] as const) {
+  it('OTEL_SERVICE_NAME names the service its spans are exported under; xynolog-gateway when unset', async () => {
+    for (const [name, expected] of [[undefined, 'xynolog-gateway'], ['conformance-renamed', 'conformance-renamed']] as const) {
       await withGateway(
         (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_BSP_SCHEDULE_DELAY: '100', OTEL_SERVICE_NAME: name }),
         async (world, otlp) => {
@@ -84,7 +84,7 @@ describe("the gateway's environment", () => {
       async (world, otlp) => {
         await emit(world);
         await eventually(DISPATCH, 10_000, () => otlp.spans.find((s) => s.name === DISPATCH));
-        const emits = metricName('semiont.bus.emit');
+        const emits = metricName('xynolog.bus.emit');
         await eventually(`${emits} in the output`, 10_000, () => (world.gateway.output.some((l) => l.includes(emits)) ? true : undefined));
         expect([...otlp.metrics.keys()]).toEqual([]);
       },
@@ -110,10 +110,10 @@ describe("the gateway's environment", () => {
     );
   });
 
-  it('SEMIONT_BUS_LOG writes a line per frame the gateway accepts; unset, it writes none', async () => {
+  it('XYNOLOG_BUS_LOG writes a line per frame the gateway accepts; unset, it writes none', async () => {
     for (const on of [false, true]) {
       await withGateway(
-        () => ({ SEMIONT_BUS_LOG: on ? '1' : undefined }),
+        () => ({ XYNOLOG_BUS_LOG: on ? '1' : undefined }),
         async (world) => {
           await emit(world);
           if (on) {
@@ -127,7 +127,7 @@ describe("the gateway's environment", () => {
     }
   });
 
-  it('SUPERVISE_EVENTS and SUPERVISE_NAME report semiont.process.restarts: the lives the supervisor recorded, less one', async () => {
+  it('SUPERVISE_EVENTS and SUPERVISE_NAME report xynolog.process.restarts: the lives the supervisor recorded, less one', async () => {
     const events = join(tmpdir(), `gateway-conformance-supervisor-${randomUUID()}.log`);
     const life = (n: number) => `[supervise 2026-09-27T00:00:0${n}Z] starting gateway (rapid failures so far: ${n})`;
     writeFileSync(events, [life(0), life(1), life(2)].join('\n') + '\n');
@@ -135,7 +135,7 @@ describe("the gateway's environment", () => {
       await withGateway(
         (otlp) => ({ OTEL_EXPORTER_OTLP_ENDPOINT: otlp.endpoint, OTEL_METRIC_EXPORT_INTERVAL: '500', SUPERVISE_EVENTS: events, SUPERVISE_NAME: 'gateway' }),
         async (_world, otlp) => {
-          const restarts = metricName('semiont.process.restarts');
+          const restarts = metricName('xynolog.process.restarts');
           const values = await eventually(restarts, 10_000, () => {
             const seen = otlp.metrics.get(restarts)?.values;
             return seen && seen.length > 0 ? seen : undefined;

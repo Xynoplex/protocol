@@ -33,8 +33,8 @@ export interface GatewaySettings extends Omit<Document, 'kb' | 'identity' | 'arc
 
 export interface GatewayEnvironment {
   JWT_SECRET?: string;
-  SEMIONT_OIDC_CLIENT_ID?: string;
-  SEMIONT_OIDC_CLIENT_SECRET?: string;
+  XYNOLOG_OIDC_CLIENT_ID?: string;
+  XYNOLOG_OIDC_CLIENT_SECRET?: string;
   OTEL_EXPORTER_OTLP_ENDPOINT?: string;
   [name: string]: string | undefined;
 }

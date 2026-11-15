@@ -57,7 +57,7 @@ A limit below 1 is refused, for either search.
 ## Example
 
 ```typescript
-semiont.match.search(resourceId, referenceId, gatheredContext, {
+xynolog.match.search(resourceId, referenceId, gatheredContext, {
   limit: 10,
   useSemanticScoring: true,
 }).subscribe({
@@ -65,11 +65,11 @@ semiont.match.search(resourceId, referenceId, gatheredContext, {
 });
 
 // Resources by text
-const found = await semiont.match.resources('Paris', { entityType: 'Location', limit: 20 }).fresh();
+const found = await xynolog.match.resources('Paris', { entityType: 'Location', limit: 20 }).fresh();
 console.log(found.matchKind, found.resources.map((r) => r.name));
 ```
 
-From the launcher: `semiont match <resourceId> <annotationId>` for a reference's candidates, and `semiont match --search <text>` for resources by text.
+From the launcher: `xynolog match <resourceId> <annotationId>` for a reference's candidates, and `xynolog match --search <text>` for resources by text.
 
 ## Local signals
 
@@ -77,8 +77,8 @@ From the launcher: `semiont match <resourceId> <annotationId>` for a reference's
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/match.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/match.ts)
-- The Matcher, in the Librarian: [reference_search.py](https://github.com/Xynoplex/images/tree/main/librarian/src/semiont_librarian/reference_search.py)
-- The search for resources by text: [text_search.py](https://github.com/Xynoplex/images/tree/main/librarian/src/semiont_librarian/text_search.py)
-- The launcher verb: [cli/internal/launcher/verbs/match.go](https://github.com/Xynoplex/cli/tree/main/internal/launcher/verbs/match.go)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/match.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/match.ts)
+- The Matcher, in the Librarian: [reference_search.py](https://github.com/xynolog/images/tree/main/librarian/src/xynolog_librarian/reference_search.py)
+- The search for resources by text: [text_search.py](https://github.com/xynolog/images/tree/main/librarian/src/xynolog_librarian/text_search.py)
+- The launcher verb: [cli/internal/launcher/verbs/match.go](https://github.com/xynolog/cli/tree/main/internal/launcher/verbs/match.go)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

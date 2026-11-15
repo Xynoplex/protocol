@@ -1,15 +1,15 @@
 # Archivist conformance suite
 
 A black-box suite for the Archivist. It starts Archivist processes and meets
-them only where the rest of Xynoplex does: on the bus, through a real gateway;
+them only where the rest of Xynolog does: on the bus, through a real gateway;
 at their HTTP surface, as a service; and in the files they keep, which other
 processes read. It checks what they do against
 [contract/ARCHIVIST.md](../../contract/ARCHIVIST.md), the schemas
 `specs/` gives every channel and every file, and the Archivist's
 [API](../../specs/src/archivist/openapi.json). It imports nothing from the
 Archivist: what names an implementation is `archivist` in the run's
-[implementations file](../README.md#implementation-manifest): in Xynoplex's, the Rust binary
-`target/release/semiont-archivist`.
+[implementations file](../README.md#implementation-manifest): in Xynolog's, the Rust binary
+`target/release/xynolog-archivist`.
 
 ## The world around an Archivist
 
@@ -17,7 +17,7 @@ Each file runs its cases in a world of its own
 ([harness/archivist-world.ts](../harness/archivist-world.ts)):
 
 - a knowledge base's working tree, made fresh, with its committed
-  `.semiont/config.yaml`, and a git checkout unless the file is about one that is
+  `.xynolog/config.yaml`, and a git checkout unless the file is about one that is
   not;
 - a state volume and an anchored-text store beside it;
 - the trusted issuer, which grants the Archivist's service account;
@@ -109,7 +109,7 @@ what its schema says; and a case fails otherwise, whatever it was about.
   [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json)
   for the SDK transport it reaches the bus through, and to the table's
   `resource`: exported under exactly the keys it lists for the Archivist,
-  with `semiont.kb` the DID of the `site.domain` its tree commits.
+  with `xynolog.kb` the DID of the `site.domain` its tree commits.
 - **Staging** (`staging.test.ts`): what reaches the git index and within what
   bound, what an archive unstages, the branch, a batch that cannot be staged,
   and a knowledge base that does not sync git, which runs none.

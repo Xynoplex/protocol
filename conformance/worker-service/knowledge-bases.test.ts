@@ -183,14 +183,14 @@ eachWorkerService('a worker of two knowledge bases', (world) => {
     expect(there.streams()).toHaveLength(1);
     expect(logged(served.process.stdout, KB_LOG.refused)).toHaveLength(1);
     // Nothing it wrote carries its key or a token it was granted.
-    for (const secret of [w.env.SEMIONT_OIDC_CLIENT_KEY!, ...served.tokens(), ...there.tokens()]) expect(served.process.output.join('\n')).not.toContain(secret);
+    for (const secret of [w.env.XYNOLOG_OIDC_CLIENT_KEY!, ...served.tokens(), ...there.tokens()]) expect(served.process.output.join('\n')).not.toContain(secret);
   });
 
   it('refuses a knowledge base whose issuer refuses its sign-in, saying so once in its log, and works at the other', async () => {
     const w = world();
     const second = await w.second();
     // A client the second issuer does not hold.
-    const served = await servingBoth(w, second, { client: 'semiont-worker-unregistered' });
+    const served = await servingBoth(w, second, { client: 'xynolog-worker-unregistered' });
     await eventually('the refusal in its log', 15_000, () => (logged(served.process.stdout, KB_LOG.refused).length > 0 ? true : undefined));
     expect(logged(served.process.stdout, KB_LOG.refused)).toEqual([expect.objectContaining({ level: 'error', domain: second.domain, reason: expect.any(String) })]);
     // It got no token there, so it asked that gateway nothing.
@@ -203,7 +203,7 @@ eachWorkerService('a worker of two knowledge bases', (world) => {
     w.ollama.script({ response: '[]' });
     await w.announce(job);
     await settled(served, job);
-    expect(served.process.output.join('\n')).not.toContain(w.env.SEMIONT_OIDC_CLIENT_KEY!);
+    expect(served.process.output.join('\n')).not.toContain(w.env.XYNOLOG_OIDC_CLIENT_KEY!);
   });
 
   it('keeps its work at a knowledge base whose stream drops: it opens the stream again with the bearer it holds, is not started again there, and goes on claiming, while the other keeps its stream and the job it holds', async () => {
@@ -300,7 +300,7 @@ eachWorkerService('a worker of two knowledge bases', (world) => {
     w.ollama.release({ response: '[]' });
     await settled(there, held);
     // Nothing it wrote carries its key or a token it was granted.
-    for (const secret of [w.env.SEMIONT_OIDC_CLIENT_KEY!, ...served.tokens(), ...there.tokens()]) expect(served.process.output.join('\n')).not.toContain(secret);
+    for (const secret of [w.env.XYNOLOG_OIDC_CLIENT_KEY!, ...served.tokens(), ...there.tokens()]) expect(served.process.output.join('\n')).not.toContain(secret);
   });
 
   it('does not answer GET /health until a knowledge base is confirmed, and then answers it with the one not yet confirmed starting', async () => {

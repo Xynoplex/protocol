@@ -2,13 +2,13 @@
 
 A black-box suite for the Librarian: the process a librarian image runs. It
 starts the Librarian from a command and meets it only where the rest of
-Xynoplex does: on the bus, at its providers, and at its health port. It checks
+Xynolog does: on the bus, at its providers, and at its health port. It checks
 what the Librarian does against
 [contract/LIBRARIAN.md](../../contract/LIBRARIAN.md).
 
 The suite imports nothing from a Librarian. What names one is its entry in
 `librarianServices` in the run's
-[implementations file](../README.md#implementation-manifest). Xynoplex's names
+[implementations file](../README.md#implementation-manifest). Xynolog's names
 the Librarian in Python (the consumer repository),
 run by the interpreter of its project's locked environment. Another
 implementation joins by adding its entry, and every case runs against every
@@ -165,7 +165,7 @@ the stand-in answers what the real Archivist answers when it is asked.
   held to the telemetry table in both directions: every row the table lists
   for it arrives, under its name, and nothing arrives that the table does not
   list; and all of it under the resource the table lists for it, with
-  `semiont.kb` the DID of the knowledge base its document names. Its traffic
+  `xynolog.kb` the DID of the knowledge base its document names. Its traffic
   is a gather whose model answers and reports its tokens, one whose model
   fails, one around a bound reference whose model fails on the linked
   resource's summary and on the relationship sentence, one that reads a PDF's

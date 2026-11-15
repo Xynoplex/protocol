@@ -5,7 +5,7 @@ What a worker promises the dispatcher and everyone who follows a job. A
 Worker service, or one written on an SDK by somebody else, in any language.
 What the dispatcher does with a worker's messages is [JOBS.md](./JOBS.md).
 How to write a worker is the
-[`semiont-worker` skill](../../docs/builder/skills/semiont-worker/SKILL.md).
+[`xynolog-worker` skill](../../docs/builder/skills/xynolog-worker/SKILL.md).
 
 If the code deviates from what is written here, the code is wrong, or this
 document is wrong and is corrected deliberately. There is no third option.
@@ -22,7 +22,7 @@ here does not exist, and when a case of the worker suite is named by no rule.
 ## What a worker is
 
 A worker signs in as an agent, an account whose token carries the
-`semiont-worker` role; the dispatcher refuses a claim from anyone else
+`xynolog-worker` role; the dispatcher refuses a claim from anyone else
 ([JOBS.md § `job:claim`](./JOBS.md#jobclaim)). It holds one job at a time. A
 process that runs several jobs at once runs several workers, and they may
 share one sign-in and one stream: the Worker service is one agent, with a

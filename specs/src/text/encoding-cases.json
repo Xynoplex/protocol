@@ -21,13 +21,13 @@
       "sdk/go/sdk/resources_test.go"
     ],
     "kotlin": [
-      "sdk/kotlin/sdk/src/test/kotlin/semiont/resources/DecodeCasesTest.kt"
+      "sdk/kotlin/sdk/src/test/kotlin/xynolog/resources/DecodeCasesTest.kt"
     ],
     "swift": [
-      "sdk/swift/sdk/Tests/SemiontTests/DecodeRepresentationTests.swift"
+      "sdk/swift/sdk/Tests/XynologTests/DecodeRepresentationTests.swift"
     ],
     "csharp": [
-      "sdk/csharp/sdk/tests/Semiont.Tests/RepresentationTests.cs"
+      "sdk/csharp/sdk/tests/Xynolog.Tests/RepresentationTests.cs"
     ]
   },
   "cases": [

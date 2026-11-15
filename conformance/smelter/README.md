@@ -1,14 +1,14 @@
 # Smelter conformance suite
 
 A black-box suite for the Smelter: the process a smelter image runs. It starts
-the Smelter from a command and meets it only where the rest of Xynoplex does: in
+the Smelter from a command and meets it only where the rest of Xynolog does: in
 the vector index and the anchored-text store it writes, on the bus, at its
 embedding provider and at its health port. It checks what the Smelter does
 against [contract/SMELTER.md](../../contract/SMELTER.md).
 
 The suite imports nothing from a Smelter, and nothing a Smelter is built on.
 What names one is its entry in `smelterServices` in the run's
-[implementations file](../README.md#implementation-manifest). Xynoplex's names
+[implementations file](../README.md#implementation-manifest). Xynolog's names
 the Smelter in Python (the consumer repository),
 run by the interpreter of its project's locked environment. Another
 implementation joins by adding its entry, and every case runs against every
@@ -102,7 +102,7 @@ among those the provider records for that start. A case that wants only what cam
 marks the point (`provider.mark()`) and asks for what was sent since.
 
 **Each start is of a container made again.** A world's `start()` takes away
-the cursors an earlier start kept, as every `semiont start` does, so a
+the cursors an earlier start kept, as every `xynolog start` does, so a
 Smelter starts every resource the record holds by a reconcile, which runs
 after health answers; `start()` waits until the start has swept the record.
 A case about what happens while the reconcile runs starts the Smelter to
@@ -160,7 +160,7 @@ A case about what happens while the reconcile runs starts the Smelter to
   [`specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
   lists for it that its traffic can make, and nothing the table does not
   list, all of it under the resource the table lists for it, with
-  `semiont.kb` the DID of the knowledge base its document names; and its
+  `xynolog.kb` the DID of the knowledge base its document names; and its
   gauge of the index comes to say the number of points the index holds.
 
 ## Running it

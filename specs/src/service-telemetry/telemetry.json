@@ -1,5 +1,5 @@
 {
-  "$comment": "The telemetry each Semiont service exports over OTLP, in any language: every span and metric, the services that export it, its kind, and the attributes it carries. A service exports the rows that list it and no others. Each service's conformance suite holds it to this table from outside, in both directions: every span and metric its observability cases receive must be a row listing the service, of the listed kind, carrying only listed attribute keys (and, where a row lists values, only those values); and every row listing it whose `when` is `export` or `traffic` must arrive, with every attribute not marked `only`. `when`: `export` — whenever export is on; `traffic` — once the service's observability cases' traffic has run; `supervised` — only under the supervisor (SUPERVISE_EVENTS and SUPERVISE_NAME set), checked by the environment cases; `fatal` — only on a fatal error, which no case causes. `planes`, where given, names the only signal planes a gateway row arrives on. `sdk` names the services that reach the bus through an SDK, and for each the SDK transports it uses, or, of a transport it uses part of, the rows it exports, by name: such a service also exports the rows specs/src/sdk-telemetry/telemetry.json lists for those transports, and those rows, and its suite holds it to both tables as one. In a span name, `{channel}` is the bus channel. `{jobType}` is the job's type. Span kinds are OTLP's; a metric's `instrument` is `counter` (a monotonic sum), `up-down counter` (a non-monotonic sum), `gauge` or `histogram`. `resource` lists the attributes of the resource every span and metric of a service is exported under, and the services that carry each: a service's resource carries exactly the keys listed for it.",
+  "$comment": "The telemetry each Xynolog service exports over OTLP, in any language: every span and metric, the services that export it, its kind, and the attributes it carries. A service exports the rows that list it and no others. Each service's conformance suite holds it to this table from outside, in both directions: every span and metric its observability cases receive must be a row listing the service, of the listed kind, carrying only listed attribute keys (and, where a row lists values, only those values); and every row listing it whose `when` is `export` or `traffic` must arrive, with every attribute not marked `only`. `when`: `export` — whenever export is on; `traffic` — once the service's observability cases' traffic has run; `supervised` — only under the supervisor (SUPERVISE_EVENTS and SUPERVISE_NAME set), checked by the environment cases; `fatal` — only on a fatal error, which no case causes. `planes`, where given, names the only signal planes a gateway row arrives on. `sdk` names the services that reach the bus through an SDK, and for each the SDK transports it uses, or, of a transport it uses part of, the rows it exports, by name: such a service also exports the rows specs/src/sdk-telemetry/telemetry.json lists for those transports, and those rows, and its suite holds it to both tables as one. In a span name, `{channel}` is the bus channel. `{jobType}` is the job's type. Span kinds are OTLP's; a metric's `instrument` is `counter` (a monotonic sum), `up-down counter` (a non-monotonic sum), `gauge` or `histogram`. `resource` lists the attributes of the resource every span and metric of a service is exported under, and the services that carry each: a service's resource carries exactly the keys listed for it.",
   "sdk": {
     "dispatcher": [
       "bus"
@@ -36,7 +36,7 @@
         "weaver",
         "worker"
       ],
-      "meaning": "The service's name: `semiont-<service>`, or what `OTEL_SERVICE_NAME` says."
+      "meaning": "The service's name: `xynolog-<service>`, or what `OTEL_SERVICE_NAME` says."
     },
     {
       "key": "service.version",
@@ -49,10 +49,10 @@
         "weaver",
         "worker"
       ],
-      "meaning": "The version of Semiont the service was built as."
+      "meaning": "The version of Xynolog the service was built as."
     },
     {
-      "key": "semiont.kb",
+      "key": "xynolog.kb",
       "services": [
         "gateway",
         "dispatcher",
@@ -61,7 +61,7 @@
         "smelter",
         "weaver"
       ],
-      "meaning": "The DID of the knowledge base the service serves: `kb_did` of its document's `kb.domain`, or, for the Archivist, which reads what the knowledge base says of itself from its tree, of the `site.domain` its committed `.semiont/config.yaml` names. A service that serves several knowledge bases names none in its resource, and carries `semiont.kb` instead on each span and data point of its own rows that list it: the DID of the knowledge base whose job the work was."
+      "meaning": "The DID of the knowledge base the service serves: `kb_did` of its document's `kb.domain`, or, for the Archivist, which reads what the knowledge base says of itself from its tree, of the `site.domain` its committed `.xynolog/config.yaml` names. A service that serves several knowledge bases names none in its resource, and carries `xynolog.kb` instead on each span and data point of its own rows that list it: the DID of the knowledge base whose job the work was."
     }
   ],
   "spans": [
@@ -260,7 +260,7 @@
           "key": "resource.id"
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
@@ -280,7 +280,7 @@
           "key": "media.type"
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
@@ -312,7 +312,7 @@
           "key": "inference.max_tokens"
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
@@ -344,14 +344,14 @@
           "key": "inference.max_tokens"
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     }
   ],
   "metrics": [
     {
-      "name": "semiont.bus.emit",
+      "name": "xynolog.bus.emit",
       "services": [
         "gateway"
       ],
@@ -369,7 +369,7 @@
       ]
     },
     {
-      "name": "semiont.bus.reply.suppressed",
+      "name": "xynolog.bus.reply.suppressed",
       "services": [
         "gateway"
       ],
@@ -383,7 +383,7 @@
       ]
     },
     {
-      "name": "semiont.bus.resume_gap",
+      "name": "xynolog.bus.resume_gap",
       "services": [
         "gateway"
       ],
@@ -397,7 +397,7 @@
       ]
     },
     {
-      "name": "semiont.bus.unanswerable",
+      "name": "xynolog.bus.unanswerable",
       "services": [
         "gateway"
       ],
@@ -414,7 +414,7 @@
       ]
     },
     {
-      "name": "semiont.sse.subscribers",
+      "name": "xynolog.sse.subscribers",
       "services": [
         "gateway"
       ],
@@ -424,7 +424,7 @@
       "attributes": []
     },
     {
-      "name": "semiont.gateway.refused",
+      "name": "xynolog.gateway.refused",
       "services": [
         "gateway"
       ],
@@ -446,7 +446,7 @@
       ]
     },
     {
-      "name": "semiont.gateway.unauthenticated",
+      "name": "xynolog.gateway.unauthenticated",
       "services": [
         "gateway"
       ],
@@ -465,7 +465,7 @@
       ]
     },
     {
-      "name": "semiont.bus.correlation.size",
+      "name": "xynolog.bus.correlation.size",
       "services": [
         "gateway"
       ],
@@ -483,7 +483,7 @@
       ]
     },
     {
-      "name": "semiont.process.start_time",
+      "name": "xynolog.process.start_time",
       "services": [
         "gateway",
         "dispatcher",
@@ -499,7 +499,7 @@
       "attributes": []
     },
     {
-      "name": "semiont.runtime.event_loop.lag",
+      "name": "xynolog.runtime.event_loop.lag",
       "services": [
         "gateway",
         "dispatcher",
@@ -524,7 +524,7 @@
       ]
     },
     {
-      "name": "semiont.runtime.heap",
+      "name": "xynolog.runtime.heap",
       "services": [
         "gateway",
         "dispatcher",
@@ -550,7 +550,7 @@
       ]
     },
     {
-      "name": "semiont.process.restarts",
+      "name": "xynolog.process.restarts",
       "services": [
         "gateway",
         "dispatcher",
@@ -566,7 +566,7 @@
       "attributes": []
     },
     {
-      "name": "semiont.process.abnormal_exit",
+      "name": "xynolog.process.abnormal_exit",
       "services": [
         "gateway",
         "dispatcher",
@@ -590,7 +590,7 @@
       ]
     },
     {
-      "name": "semiont.job.queue.size",
+      "name": "xynolog.job.queue.size",
       "services": [
         "dispatcher"
       ],
@@ -611,7 +611,7 @@
       ]
     },
     {
-      "name": "semiont.vector.index.size",
+      "name": "xynolog.vector.index.size",
       "services": [
         "smelter"
       ],
@@ -621,7 +621,7 @@
       "attributes": []
     },
     {
-      "name": "semiont.archivist.fact_pump.depth",
+      "name": "xynolog.archivist.fact_pump.depth",
       "services": [
         "archivist"
       ],
@@ -631,7 +631,7 @@
       "attributes": []
     },
     {
-      "name": "semiont.git.duration",
+      "name": "xynolog.git.duration",
       "services": [
         "archivist"
       ],
@@ -650,7 +650,7 @@
       ]
     },
     {
-      "name": "semiont.git.staging.failures",
+      "name": "xynolog.git.staging.failures",
       "services": [
         "archivist"
       ],
@@ -668,7 +668,7 @@
       ]
     },
     {
-      "name": "semiont.job.outcome",
+      "name": "xynolog.job.outcome",
       "services": [
         "worker"
       ],
@@ -703,12 +703,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.job.duration",
+      "name": "xynolog.job.duration",
       "services": [
         "worker"
       ],
@@ -743,12 +743,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.inference.calls",
+      "name": "xynolog.inference.calls",
       "services": [
         "worker",
         "librarian"
@@ -782,7 +782,7 @@
       ]
     },
     {
-      "name": "semiont.inference.duration",
+      "name": "xynolog.inference.duration",
       "services": [
         "worker",
         "librarian"
@@ -816,7 +816,7 @@
       ]
     },
     {
-      "name": "semiont.inference.tokens",
+      "name": "xynolog.inference.tokens",
       "services": [
         "worker",
         "librarian"
@@ -850,7 +850,7 @@
       ]
     },
     {
-      "name": "semiont.detection.calls",
+      "name": "xynolog.detection.calls",
       "services": [
         "worker"
       ],
@@ -889,12 +889,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.detection.call.duration",
+      "name": "xynolog.detection.call.duration",
       "services": [
         "worker"
       ],
@@ -933,12 +933,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.detection.call.items",
+      "name": "xynolog.detection.call.items",
       "services": [
         "worker"
       ],
@@ -977,12 +977,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.detection.call.tokens",
+      "name": "xynolog.detection.call.tokens",
       "services": [
         "worker"
       ],
@@ -1028,12 +1028,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.detection.anchors",
+      "name": "xynolog.detection.anchors",
       "services": [
         "worker"
       ],
@@ -1061,12 +1061,12 @@
           ]
         },
         {
-          "key": "semiont.kb"
+          "key": "xynolog.kb"
         }
       ]
     },
     {
-      "name": "semiont.gather.degraded",
+      "name": "xynolog.gather.degraded",
       "services": [
         "librarian"
       ],

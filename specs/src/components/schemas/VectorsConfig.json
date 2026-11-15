@@ -1,5 +1,5 @@
 {
-  "description": "The vector index a service writes or searches, and what that kind of index needs to be reached: one of the kinds `semiont-vectors` has a store for, told apart by `type`.",
+  "description": "The vector index a service writes or searches, and what that kind of index needs to be reached: one of the kinds `xynolog-vectors` has a store for, told apart by `type`.",
   "oneOf": [
     {
       "$ref": "./QdrantVectorsConfig.json"

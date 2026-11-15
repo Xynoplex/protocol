@@ -9,7 +9,7 @@ section that touches one says what happens and links there.
 The client side of the two job types is in the flow documents: [Yield](flows/YIELD.md), whose
 `yield` job makes a resource, and [Mark](flows/MARK.md), whose `mark` job annotates one. What a
 worker promises is [WORKER-CONTRACT.md](WORKER-CONTRACT.md), and how one is built is in the
-[`semiont-worker` skill](../../docs/builder/skills/semiont-worker/SKILL.md). Channel payloads
+[`xynolog-worker` skill](../../docs/builder/skills/xynolog-worker/SKILL.md). Channel payloads
 are named in [the registry](../specs/src/bus/registry.json); the bus conventions this document
 relies on (`_userId`, `correlationId`, audiences) are in [EVENT-BUS.md](EVENT-BUS.md). The
 [dispatcher conformance suite](../conformance/dispatcher/README.md) checks a running
@@ -47,7 +47,7 @@ subscriber, not as one member of a competing group, so a second dispatcher would
 document is a [`DispatcherConfig`](../specs/src/components/schemas/DispatcherConfig.json): the knowledge base it serves ([`KbIdentity`](../specs/src/components/schemas/KbIdentity.json): its name and domain, which its telemetry names it by), the
 gateway's URL, the issuer its service account signs in at, the broker holding the queue, the port it
 answers `/health` on, the queue's clocks, and its log level and format. Its image passes
-`--config /etc/semiont/dispatcher.json`, and the launcher writes the document there, from the
+`--config /etc/xynolog/dispatcher.json`, and the launcher writes the document there, from the
 knowledge base's stack documents. Started without `--config`, or with a path that names no file, no JSON, or a
 document the schema refuses, the dispatcher writes the reason to stderr and exits with status 1 before
 it serves.
@@ -56,12 +56,12 @@ The document carries no secret. A broker credential is named, as the environment
 it (`queue.userEnv`, `queue.passwordEnv`), and a named variable that is unset is refused at boot. The
 dispatcher's other inputs are the environment variables
 [specs/src/service-environment/variables.json](../specs/src/service-environment/variables.json) lists
-for it: its service account, `SEMIONT_OIDC_CLIENT_ID` and `SEMIONT_OIDC_CLIENT_SECRET`, the bus log, and
+for it: its service account, `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET`, the bus log, and
 the telemetry variables.
 
 **Access to the job channels is open.** Any authenticated principal may emit any of the nine
 channels, and the dispatcher acts on the job the frame names. The one capability check is
-`job:claim`'s worker role. This is the system's model — Xynoplex has no access control
+`job:claim`'s worker role. This is the system's model — Xynolog has no access control
 ([RBAC.md](RBAC.md)) — not a gap particular to jobs.
 
 ## The job record
@@ -244,7 +244,7 @@ the reply, so the order of `job:created` and `job:queued` is not fixed.
 Hands the caller the next pending job its claim matches. Reads `accepts`, `_roles` and
 `_userId` ([`JobClaimCommand`](../specs/src/components/schemas/JobClaimCommand.json)).
 
-1. **The caller must be a worker.** `_roles` must contain `semiont-worker`, the role the gateway
+1. **The caller must be a worker.** `_roles` must contain `xynolog-worker`, the role the gateway
    stamps from the caller's token. Otherwise the reply is `job:claim-failed`,
    `code: "unauthorized"`, message
    `job:claim refused: the caller is not a worker for this knowledge base`. This is checked before
@@ -504,7 +504,7 @@ deleted at the first sweep.
 ## Checkpoints
 
 A checkpoint is how much of a job is already done, recorded on the job so a later attempt skips it.
-It has two parts, merged differently ([`checkpoint.rs`](https://github.com/Xynoplex/images/tree/main/dispatcher/handlers/src/checkpoint.rs)):
+It has two parts, merged differently ([`checkpoint.rs`](https://github.com/xynolog/images/tree/main/dispatcher/handlers/src/checkpoint.rs)):
 
 - **`completedUnits` is a set, merged by union.** A unit is an entity type for a linking job, a
   category for a tagging job, and the job's own motivation for every other `mark` job. A unit
@@ -570,9 +570,9 @@ states `transient`.
 
 A worker evaluates the same predicate, on
 the record it claimed, to set `willRetry` on its `job:fail`: `willRetryAfter` in the TypeScript SDK
-([`claims.ts`](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/claims.ts)), and `will_retry_after` in the Rust SDK
-([`claims.rs`](https://github.com/Xynoplex/sdk/tree/main/rust/sdk/src/claims.rs)) and the Python SDK
-([`claims.py`](https://github.com/Xynoplex/sdk/tree/main/python/sdk/src/semiont/claims.py)), which a held job's `fail` applies. The
+([`claims.ts`](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/claims.ts)), and `will_retry_after` in the Rust SDK
+([`claims.rs`](https://github.com/xynolog/sdk/tree/main/rust/sdk/src/claims.rs)) and the Python SDK
+([`claims.py`](https://github.com/xynolog/sdk/tree/main/python/sdk/src/xynolog/claims.py)), which a held job's `fail` applies. The
 dispatcher's own is the Rust SDK's. Every implementation answers
 [`retry-cases.json`](../specs/src/jobs/retry-cases.json) alike. With the budgets set at admission, a `yield` job is never retried and a
 `mark` job is retried at most once.

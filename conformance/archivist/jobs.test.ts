@@ -185,7 +185,7 @@ withArchivist('a job, in the record', (world) => {
     const content = 'Generated prose.\n';
     const uri = `file://jobs/generated-${randomUUID()}.md`;
 
-    const uploaded = await world().upload(worker.did, { name: 'Generated', storageUri: uri, content, jobId, sourceResourceId: id, generationPrompt: 'Write about it' }, ['semiont-service', 'semiont-worker']);
+    const uploaded = await world().upload(worker.did, { name: 'Generated', storageUri: uri, content, jobId, sourceResourceId: id, generationPrompt: 'Write about it' }, ['xynolog-service', 'xynolog-worker']);
     expect(uploaded.status).toBe(200);
     const generated = (uploaded.json as { resourceId: string }).resourceId;
     expect(world().stored(generated)[0]).toMatchObject({
@@ -205,10 +205,10 @@ withArchivist('a job, in the record', (world) => {
     expect(world().view(generated)!.resource).toMatchObject({ wasDerivedFrom: id });
 
     // Without the job, or without the resource the job was assigned on, a worker's upload is not recorded.
-    const uncited = await world().upload(worker.did, { name: 'Uncited', storageUri: `file://jobs/uncited-${randomUUID()}.md`, content }, ['semiont-service', 'semiont-worker']);
+    const uncited = await world().upload(worker.did, { name: 'Uncited', storageUri: `file://jobs/uncited-${randomUUID()}.md`, content }, ['xynolog-service', 'xynolog-worker']);
     expect(uncited.status).toBe(500);
     expect(uncited.json).toEqual({ error: 'yield:create refused: a worker-role emitter must cite the job it fulfils in `jobId`' });
-    const sourceless = await world().upload(worker.did, { name: 'Sourceless', storageUri: `file://jobs/sourceless-${randomUUID()}.md`, content, jobId }, ['semiont-service', 'semiont-worker']);
+    const sourceless = await world().upload(worker.did, { name: 'Sourceless', storageUri: `file://jobs/sourceless-${randomUUID()}.md`, content, jobId }, ['xynolog-service', 'xynolog-worker']);
     expect(sourceless.status).toBe(500);
     expect(sourceless.json).toEqual({ error: 'yield:create refused: a create citing a job must name the source resource its job was assigned on (generatedFrom.resourceId)' });
   });
@@ -217,7 +217,7 @@ withArchivist('a job, in the record', (world) => {
     const worker = await world().worker('citer');
     const requester = await world().person('requester');
     const { id, jobId } = await assigned(world(), worker, requester, 'yield');
-    const made = await world().upload(worker.did, { name: 'Made', storageUri: `file://jobs/made-${randomUUID()}.md`, content: TEXT, jobId, sourceResourceId: id }, ['semiont-service', 'semiont-worker']);
+    const made = await world().upload(worker.did, { name: 'Made', storageUri: `file://jobs/made-${randomUUID()}.md`, content: TEXT, jobId, sourceResourceId: id }, ['xynolog-service', 'xynolog-worker']);
     expect(made.status).toBe(200);
     const generated = (made.json as { resourceId: string }).resourceId;
     const batch = [whole(generated, 'worker'), whole(generated, 'marks')];
@@ -241,7 +241,7 @@ withArchivist('a job, in the record', (world) => {
     const other = await world().worker('bystander');
     const requester = await world().person('requester');
     const { id, jobId } = await assigned(world(), worker, requester, 'yield');
-    const made = await world().upload(worker.did, { name: 'Made', storageUri: `file://jobs/made-${randomUUID()}.md`, content: TEXT, jobId, sourceResourceId: id }, ['semiont-service', 'semiont-worker']);
+    const made = await world().upload(worker.did, { name: 'Made', storageUri: `file://jobs/made-${randomUUID()}.md`, content: TEXT, jobId, sourceResourceId: id }, ['xynolog-service', 'xynolog-worker']);
     expect(made.status).toBe(200);
     const generated = (made.json as { resourceId: string }).resourceId;
 
@@ -253,7 +253,7 @@ withArchivist('a job, in the record', (world) => {
 
     // A resource the same worker made under another job.
     const second = await assigned(world(), worker, requester, 'yield');
-    const madeBySecond = await world().upload(worker.did, { name: 'Made by another job', storageUri: `file://jobs/second-${randomUUID()}.md`, content: TEXT, jobId: second.jobId, sourceResourceId: second.id }, ['semiont-service', 'semiont-worker']);
+    const madeBySecond = await world().upload(worker.did, { name: 'Made by another job', storageUri: `file://jobs/second-${randomUUID()}.md`, content: TEXT, jobId: second.jobId, sourceResourceId: second.id }, ['xynolog-service', 'xynolog-worker']);
     expect(madeBySecond.status).toBe(200);
     const secondMade = (madeBySecond.json as { resourceId: string }).resourceId;
     expect(await worker.refused('mark:commit', { resourceId: secondMade, jobId, annotations: [whole(secondMade, 'worker')] })).toBe(

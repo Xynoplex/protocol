@@ -37,16 +37,16 @@ document is an [`ArchivistConfig`](../specs/src/components/schemas/ArchivistConf
 gateway's URL, the issuer, the working tree's root, the state volume, the anchored-text store's
 directory, the engine
 for each job and each actor, the port of its HTTP surface, whether to skip the boot rebuild, the staging
-bounds, and its log level and format. Its image passes `--config /etc/semiont/archivist.json`, and
+bounds, and its log level and format. Its image passes `--config /etc/xynolog/archivist.json`, and
 the launcher writes the document there, from the knowledge base's stack documents. Started without
 `--config`, or with a path that names no file, no JSON, or a document the schema refuses, the
 Archivist writes the reason to stderr and exits with status 1 before it serves.
 
 The document carries no secret. The Archivist's own account at the issuer is the pair
-`SEMIONT_OIDC_CLIENT_ID` and `SEMIONT_OIDC_CLIENT_SECRET`; without both it does not start.
+`XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET`; without both it does not start.
 
 **What the knowledge base says of itself is read from the tree,** not from the document: the
-committed project file, `<root>/.semiont/config.yaml`, held to
+committed project file, `<root>/.xynolog/config.yaml`, held to
 [`ProjectConfig`](../specs/src/kb-identity/ProjectConfig.json). The Archivist reads three of its
 keys:
 
@@ -75,7 +75,7 @@ Three trees:
 
 | Tree | Where | Holds |
 |---|---|---|
-| The working tree | `root` | The content, and under `.semiont/events/` the event log. Committed by people |
+| The working tree | `root` | The content, and under `.xynolog/events/` the event log. Committed by people |
 | The state directory | `stateHome` | The views and projections, at its top: an Archivist serves one knowledge base, so the volume is that knowledge base's alone. Rebuilt from the log; never committed |
 | The anchored-text store | `anchoredTextDir` | Text extracted from content, with where each word is. Written by the Archivist, from what the Smelter stores over HTTP |
 
@@ -103,9 +103,9 @@ every implementation runs.
 
 ### The event log
 
-Each resource has a stream, a directory `<root>/.semiont/events/<ab>/<cd>/<resourceId>/`. Events
+Each resource has a stream, a directory `<root>/.xynolog/events/<ab>/<cd>/<resourceId>/`. Events
 about the knowledge base itself, which name no resource, are in the stream
-`<root>/.semiont/events/__system__/`, which is not sharded.
+`<root>/.xynolog/events/__system__/`, which is not sharded.
 
 A stream is a sequence of files named `events-NNNNNN.jsonl`, numbered from `000001` in six decimal
 digits. A file holds at most 10,000 events; the next event opens the next file. The first file is
@@ -275,7 +275,7 @@ an older stamp stay until the store is cleared.
 
 The Archivist records what it is told on these channels. Every command carries `_userId`, the DID of
 its sender, which the gateway sets. A reply carries the command's correlation id. A reply whose JSON
-is larger than a bus message may be, `POST /bus/emit`'s `x-semiont-limits.maxBodyBytes` in the
+is larger than a bus message may be, `POST /bus/emit`'s `x-xynolog-limits.maxBodyBytes` in the
 gateway's [API](../specs/src/paths/bus_emit.json), is not sent: the operation's failure channel
 is answered at once, with `{message}`, `The answer could not be sent: it is <n> bytes, and a bus
 message may be <maxBodyBytes>`. Any other reply that cannot be sent, as one within that size whose
@@ -486,7 +486,7 @@ what they missed from the log, by position (`GET /events/{resourceId}`). The num
 
 The Archivist serves these routes on its port. Every route but `/health` requires `Authorization:
 Bearer <token>`: a token of the knowledge base's issuer, for the knowledge base's audience, whose
-flat `roles` claim includes `semiont-service`. Every refusal is `401` with body
+flat `roles` claim includes `xynolog-service`. Every refusal is `401` with body
 `{"error":"unauthorized"}` and a `WWW-Authenticate` header: `Bearer error="invalid_token"` when a
 token was presented, `Bearer` when none was.
 
@@ -494,7 +494,7 @@ token was presented, `Bearer` when none was.
 |---|---|
 | `GET` `/health` | `200` `{"status":"ok","actors":["stower","browser","cloneTokenManager"]}`. It answers once the Archivist has booted |
 | `GET` `/events` | `200` `{"streams":[{"resourceId":…,"lastSequence":n},…]}`: every stream of the log, `__system__` among them, each with the sequence number of its last event (0 for a stream with none), in no order. A failed read: `500` `{"error":"stream listing failed"}` |
-| `GET` `/events/{resourceId}`, with `?fromSequence=N` | `200` `{"events":[…],"lastSequence":n}`: the stream's stored events from sequence `N` on, in log order, at most the operation's `x-semiont-limits.maxEvents` of them, and the sequence number of the stream's last event (0 for a stream with none). A reader that wants more asks again from the sequence after the last event it was given, until it has the last. The id `__system__` reads the knowledge base's own stream. A stream that is not there has no events. Only the files that hold events from `N` on are read. `N` must be an integer of at least 1, in decimal digits, and the id an id: `400` `{"error":"resourceId path segment and integer fromSequence >= 1 are required"}`. A failed read: `500` `{"error":"event read failed"}` |
+| `GET` `/events/{resourceId}`, with `?fromSequence=N` | `200` `{"events":[…],"lastSequence":n}`: the stream's stored events from sequence `N` on, in log order, at most the operation's `x-xynolog-limits.maxEvents` of them, and the sequence number of the stream's last event (0 for a stream with none). A reader that wants more asks again from the sequence after the last event it was given, until it has the last. The id `__system__` reads the knowledge base's own stream. A stream that is not there has no events. Only the files that hold events from `N` on are read. `N` must be an integer of at least 1, in decimal digits, and the id an id: `400` `{"error":"resourceId path segment and integer fromSequence >= 1 are required"}`. A failed read: `500` `{"error":"event read failed"}` |
 | `GET` `/resources/{id}/content` | `200` with the content streamed, and `Content-Type` the media type recorded. A file missing from the tree: `500` `{"error":"content read failed"}`. No view: `404` `{"error":"Resource not found: <id>","code":"resource"}`. A view with no storage URI: `404` `{"error":"Resource representation not found: no storageUri for <id>","code":"representation"}` |
 | `GET` `/resources/{id}/jsonld` | `200`, `Content-Type: application/ld+json; charset=utf-8`: `{resource, annotations}` from the view, built from the log if there is none, principals named. `404` `{"error":"Resource not found"}` |
 | `GET` `/resources/{id}/annotations` | `200`, `Content-Type: application/json`: `{annotations, total}` in the view's order, principals named. No view, or an id that is not one: `404` `{"error":"Resource not found"}` |
@@ -505,7 +505,7 @@ token was presented, `Bearer` when none was.
 | `PUT` `/anchored-text/stamp` | States the stamp, an [`AnchoredTextStamp`](../specs/src/components/schemas/AnchoredTextStamp.json): `204`. A body that is not one: `400`. The Smelter's |
 | `POST` `/resources` | Stores content and records it; see below |
 
-A body larger than its operation's `x-semiont-limits.maxBodyBytes` in the
+A body larger than its operation's `x-xynolog-limits.maxBodyBytes` in the
 [API](../specs/src/archivist/openapi.json) is `413`: refused unread when its `Content-Length`
 says so, and otherwise once more than that has arrived.
 
@@ -528,7 +528,7 @@ The answer is decided from the resource's first representation, in this order:
    text, and asking again does not change that.
 3. The stored entry for the checksum, when the store has one: the extracted text with each word's
    place, or the decline.
-4. With no entry, the Archivist waits up to the operation's `x-semiont-limits.settleWaitSeconds`
+4. With no entry, the Archivist waits up to the operation's `x-xynolog-limits.settleWaitSeconds`
    for the Smelter to say on the bus that it has settled that content (`smelt:settled`, naming the
    resource and the checksum), and then reads the entry again. If there is still none, or the wait runs out: `{"kind":"not-yet"}`,
    whether the Smelter said it indexed the content or skipped it. The Smelter stores what deriving
@@ -557,16 +557,16 @@ that follows the signal does not wait.
 **`POST /resources`** takes `multipart/form-data` with a `file` part and the fields of a
 [`ResourceUpload`](../specs/src/components/schemas/ResourceUpload.json).
 
-1. The `Xynoplex-Principal` header names who the resource is attributed to; without it: `400`
-   `{"error":"Xynoplex-Principal is required: the record attributes every resource to someone"}`.
-   `Xynoplex-Roles` lists that principal's roles, separated by commas.
+1. The `Xynolog-Principal` header names who the resource is attributed to; without it: `400`
+   `{"error":"Xynolog-Principal is required: the record attributes every resource to someone"}`.
+   `Xynolog-Roles` lists that principal's roles, separated by commas.
 2. The `Idempotency-Key` header names the upload, the same on every attempt at it. Without it,
    or with one that is not visible ASCII, or of a length outside the header's `minLength` and
    `maxLength` in the [API](../specs/src/archivist/openapi.json): `400`, whose `error` names
    `Idempotency-Key`.
 3. A body that is not multipart: `400` `{"error":"The body is not multipart/form-data"}`. Fields
    the schema refuses: `400` with the schema's reasons. A `format` whose media type is not one
-   Xynoplex knows: `400` `{"error":"Unsupported media type: <type>"}`. `entityTypes` must be a JSON
+   Xynolog knows: `400` `{"error":"Unsupported media type: <type>"}`. `entityTypes` must be a JSON
    list of names, and `generator` a JSON agent.
 4. **The key names the resource.** Its id is the first 32 hex digits of the SHA-256 of the JSON
    array `[principal, key]`, so the same key from two principals names two resources. An upload
@@ -622,8 +622,8 @@ status 0.
 
 ## Telemetry
 
-The Archivist exports as `semiont-archivist`, under the resource the table's
-`resource` rows list for it: its name, its version, and `semiont.kb`, the DID
+The Archivist exports as `xynolog-archivist`, under the resource the table's
+`resource` rows list for it: its name, its version, and `xynolog.kb`, the DID
 of the knowledge base its committed project file's `site.domain` names. Its spans and metrics are the rows
 [`specs/src/service-telemetry/telemetry.json`](../specs/src/service-telemetry/telemetry.json)
 lists for it, and those
@@ -633,9 +633,9 @@ the transport it reaches the bus through. Its own:
 | Signal | Name | Meaning |
 |---|---|---|
 | Span | `bus.recv:<channel>`, `bus.emit:<channel>` | One frame received from or sent to the gateway. A reply is in the trace of the request it answers |
-| Gauge | `semiont.archivist.fact_pump.depth` | Events appended and not yet published |
-| Histogram | `semiont.git.duration` | How long each git command took, by `git.command` |
-| Counter | `semiont.git.staging.failures` | Staging degradations, by `reason`: `index-lock` or `other` |
+| Gauge | `xynolog.archivist.fact_pump.depth` | Events appended and not yet published |
+| Histogram | `xynolog.git.duration` | How long each git command took, by `git.command` |
+| Counter | `xynolog.git.staging.failures` | Staging degradations, by `reason`: `index-lock` or `other` |
 
 ## Known defects
 

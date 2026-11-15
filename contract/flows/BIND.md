@@ -66,12 +66,12 @@ The protocol does not reject a second writer. An application that wants one targ
 ## Example
 
 ```typescript
-await semiont.bind.body(resourceId, annotationId, [
+await xynolog.bind.body(resourceId, annotationId, [
   { op: 'add', item: { type: 'SpecificResource', source: targetResourceId, purpose: 'linking' } },
 ]);
 ```
 
-From the launcher: `semiont bind <resourceId> <annotationId> <targetResourceId>`, and `--unbind` to reverse it.
+From the launcher: `xynolog bind <resourceId> <annotationId> <targetResourceId>`, and `--unbind` to reverse it.
 
 ## Local signals
 
@@ -79,6 +79,6 @@ From the launcher: `semiont bind <resourceId> <annotationId> <targetResourceId>`
 
 ## Where it is implemented
 
-- The SDK namespace: [sdk/typescript/sdk/src/namespaces/bind.ts](https://github.com/Xynoplex/sdk/tree/main/typescript/sdk/src/namespaces/bind.ts)
-- How body operations are applied: [the Archivist's specification](../ARCHIVIST.md), and [archivist/record/src/view.rs](https://github.com/Xynoplex/images/tree/main/archivist/record/src/view.rs)
+- The SDK namespace: [sdk/typescript/sdk/src/namespaces/bind.ts](https://github.com/xynolog/sdk/tree/main/typescript/sdk/src/namespaces/bind.ts)
+- How body operations are applied: [the Archivist's specification](../ARCHIVIST.md), and [archivist/record/src/view.rs](https://github.com/xynolog/images/tree/main/archivist/record/src/view.rs)
 - The channels and their payloads: [specs/src/bus/registry.json](../../specs/src/bus/registry.json)

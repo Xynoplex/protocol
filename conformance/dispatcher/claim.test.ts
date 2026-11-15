@@ -50,7 +50,7 @@ withDispatcher('job:claim', (world) => {
   it('refuses a person who writes the worker role into the claim: roles come from the token alone', async () => {
     const person = await world().person('pretender');
     await (await world().person('creator')).created('mark', { motivation: 'highlighting' }, resourceIdOf());
-    const answer = await person.request('job:claim', { accepts: everyJob(), _roles: ['semiont-worker'] });
+    const answer = await person.request('job:claim', { accepts: everyJob(), _roles: ['xynolog-worker'] });
     expect(answer.payload).toMatchObject({ code: 'unauthorized', message: NOT_A_WORKER });
   });
 

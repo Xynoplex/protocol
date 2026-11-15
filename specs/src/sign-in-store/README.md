@@ -1,8 +1,8 @@
-# sign-in-store — the sign-ins `semiont login` keeps
+# sign-in-store — the sign-ins `xynolog login` keeps
 
-One standalone contract: `<stateDir>/tokens.json`, where the Xynoplex CLI
-(`Xynoplex/cli`) keeps the session of each stack a person has signed in
-to, and where an application built on any Xynoplex SDK finds it. One sign-in
+One standalone contract: `<stateDir>/tokens.json`, where the Xynolog CLI
+(`xynolog/cli`) keeps the session of each stack a person has signed in
+to, and where an application built on any Xynolog SDK finds it. One sign-in
 serves the launcher's verbs and that application.
 
 It is a contract because programs in nine languages read and write the
@@ -83,16 +83,16 @@ whole.
 
 Every writer takes the lock:
 
-- the Go SDK (`Xynoplex/sdk/go/sdk`, `SignInStore`), through which the launcher
+- the Go SDK (`xynolog/sdk/go/sdk`, `SignInStore`), through which the launcher
   keeps its sign-ins;
-- the Rust SDK (`semiont::sign_in_store`);
-- the Python SDK (`semiont.sign_in_store`);
-- the Kotlin SDK (`semiont.signin.SignInStore`);
-- the Swift SDK (`SignInStore`, `sdk/swift/sdk/Sources/Xynoplex/SignIn`);
-- the C# SDK (`Xynoplex.SignIn.SignInStore`);
+- the Rust SDK (`xynolog::sign_in_store`);
+- the Python SDK (`xynolog.sign_in_store`);
+- the Kotlin SDK (`xynolog.signin.SignInStore`);
+- the Swift SDK (`SignInStore`, `sdk/swift/sdk/Sources/Xynolog/SignIn`);
+- the C# SDK (`Xynolog.SignIn.SignInStore`);
 - the TypeScript SDK (`SignInStore`, `sdk/typescript/sdk/src/session/sign-in-store.ts`);
-- the Haskell SDK (`Xynoplex.SignInStore`);
-- the OCaml SDK (`Xynoplex.Sign_in_store`).
+- the Haskell SDK (`Xynolog.SignInStore`);
+- the OCaml SDK (`Xynolog.Sign_in_store`).
 
 The TypeScript SDK reaches no file itself. It takes the lock, reads, and
 renames through the files its caller gives it (`SignInFiles`), and hands

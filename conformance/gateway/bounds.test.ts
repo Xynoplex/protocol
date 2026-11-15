@@ -1,10 +1,10 @@
 /**
  * The bounds on a connection (contract/TRANSPORT-HTTP.md § Limits).
- * On /bus/subscribe (its `x-semiont-limits`): a client that stops taking
+ * On /bus/subscribe (its `x-xynolog-limits`): a client that stops taking
  * frames is disconnected once `pendingWriteBytes` are waiting for it, and a
  * replay that live frames outrun past `replayBufferEvents` is abandoned. A
  * disconnected client is visible on `session:left`. On any connection (the
- * document's `x-semiont-limits`): its first request's head must come whole
+ * document's `x-xynolog-limits`): its first request's head must come whole
  * within `requestHeadSeconds` of its opening; after an answer it is kept
  * `idleConnectionSeconds` for its next request, and a head begun must come
  * whole within `requestHeadSeconds` of its first byte. The close

@@ -8,7 +8,7 @@
  * store is the Archivist's: the Smelter mounts none of it, and keeps it on
  * the Archivist's surface.
  *
- * Cases meet the Smelter where the rest of Xynoplex does: in the index it
+ * Cases meet the Smelter where the rest of Xynolog does: in the index it
  * writes and in the anchored-text store, each read here by the suite's own
  * hand; on the bus, where it signals what it has decided and answers a
  * rebuild; at its health port; at its provider; and in what it writes to its
@@ -42,7 +42,7 @@ import type { BusStream } from './stream';
 import { endCase } from './world';
 
 /** The Smelter's service account at the issuer. */
-export const SMELTER_CLIENT = 'semiont-smelter';
+export const SMELTER_CLIENT = 'xynolog-smelter';
 
 /** The model the world's Smelter is told to embed with. The stand-in answers for any. */
 export const EMBEDDING_MODEL = 'conformance-embedder';
@@ -112,7 +112,7 @@ export class SmelterWorld {
         chunking: { chunkSize: 512, overlap: 64 },
         pdfsAtOnce: 1,
       },
-      { SEMIONT_OIDC_CLIENT_ID: SMELTER_CLIENT, SEMIONT_OIDC_CLIENT_SECRET: secret, [VECTORS_TOKEN]: minted(database.key, claimsFor(did).smelter) },
+      { XYNOLOG_OIDC_CLIENT_ID: SMELTER_CLIENT, XYNOLOG_OIDC_CLIENT_SECRET: secret, [VECTORS_TOKEN]: minted(database.key, claimsFor(did).smelter) },
       mkdtempSync(join(tmpdir(), 'conformance-smelter-')),
       signals,
     );
@@ -148,7 +148,7 @@ export class SmelterWorld {
   /**
    * Start the Smelter, as this world launches one or as a case changes that,
    * and wait until its start has ended, however it ended. Each start is of a
-   * container made again, as every `semiont start` makes one: no cursor of an
+   * container made again, as every `xynolog start` makes one: no cursor of an
    * earlier start is left, so every resource the record holds is started by a
    * reconcile (SMELTER.md § Reconcile). With `until` `serving`, wait only
    * until its health answers: its reconcile may still be at work, and

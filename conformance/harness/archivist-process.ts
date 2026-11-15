@@ -22,8 +22,8 @@ import { serviceEnvironment } from './spec';
 export type ArchivistSettings = components['schemas']['ArchivistConfig'];
 
 export interface ArchivistEnvironment {
-  SEMIONT_OIDC_CLIENT_ID?: string;
-  SEMIONT_OIDC_CLIENT_SECRET?: string;
+  XYNOLOG_OIDC_CLIENT_ID?: string;
+  XYNOLOG_OIDC_CLIENT_SECRET?: string;
   [name: string]: string | undefined;
 }
 

@@ -1,5 +1,5 @@
 {
-  "$comment": "Every environment variable a Semiont service written in Rust reads, beside its configuration document (GatewayConfig, DispatcherConfig, ArchivistConfig) and the broker variables that document names (the gateway's signal.userEnv and signal.passwordEnv, the dispatcher's queue.userEnv and queue.passwordEnv). A service, in any language, reads the rows that list it and no variable the table does not list for it — beyond the standard OTEL_* variables an OpenTelemetry SDK reads on its own, and the options variable of the allocator it links (jemalloc's _RJEM_MALLOC_CONF, which it reads before any of its code runs), which the table neither promises nor refuses. `services` names the services that read each. `readBy` says what reads it: `service`, the service's own code — which lint:service-environment scans in both directions, over each service's crate and every workspace crate it links: a read not listed for that service fails it, and so does a row nothing in it reads; `opentelemetry`, the OpenTelemetry SDK. `providedBy` says what sets each where the launcher runs the service: `launcher` (lint:service-environment checks the service's line of the launcher's boot golden passes it), `image` (the image or its supervisor sets it; checked there too), or `operator` (nothing sets it; an operator may). A service's conformance suite sets only the rows that list it, and exercises each by name; one gateway case also sets a variable a runtime would read for itself (TOKIO_WORKER_THREADS), to show that it changes nothing.",
+  "$comment": "Every environment variable a Xynolog service written in Rust reads, beside its configuration document (GatewayConfig, DispatcherConfig, ArchivistConfig) and the broker variables that document names (the gateway's signal.userEnv and signal.passwordEnv, the dispatcher's queue.userEnv and queue.passwordEnv). A service, in any language, reads the rows that list it and no variable the table does not list for it — beyond the standard OTEL_* variables an OpenTelemetry SDK reads on its own, and the options variable of the allocator it links (jemalloc's _RJEM_MALLOC_CONF, which it reads before any of its code runs), which the table neither promises nor refuses. `services` names the services that read each. `readBy` says what reads it: `service`, the service's own code — which lint:service-environment scans in both directions, over each service's crate and every workspace crate it links: a read not listed for that service fails it, and so does a row nothing in it reads; `opentelemetry`, the OpenTelemetry SDK. `providedBy` says what sets each where the launcher runs the service: `launcher` (lint:service-environment checks the service's line of the launcher's boot golden passes it), `image` (the image or its supervisor sets it; checked there too), or `operator` (nothing sets it; an operator may). A service's conformance suite sets only the rows that list it, and exercises each by name; one gateway case also sets a variable a runtime would read for itself (TOKIO_WORKER_THREADS), to show that it changes nothing.",
   "variables": [
     {
       "name": "JWT_SECRET",
@@ -12,7 +12,7 @@
       "effect": "The gateway's signing key ring: comma-separated keys of at least 32 characters, whitespace around each ignored. Media tokens are signed with the first key, and a media token signed with any key is accepted. Unset, or with a key shorter than 32 characters, the gateway refuses to start."
     },
     {
-      "name": "SEMIONT_OIDC_CLIENT_ID",
+      "name": "XYNOLOG_OIDC_CLIENT_ID",
       "services": [
         "gateway",
         "dispatcher",
@@ -24,7 +24,7 @@
       "effect": "The client id of the service's own account at the issuer, whose token the service signs in with: the gateway's reaches the Archivist, and the dispatcher's and the Archivist's are each one's bearer at the bus. Unset, the service refuses to start."
     },
     {
-      "name": "SEMIONT_OIDC_CLIENT_SECRET",
+      "name": "XYNOLOG_OIDC_CLIENT_SECRET",
       "services": [
         "gateway",
         "dispatcher",
@@ -57,7 +57,7 @@
       "readBy": "service",
       "providedBy": "operator",
       "required": false,
-      "effect": "The `service.name` exported spans and metrics carry; `semiont-gateway`, `semiont-dispatcher` or `semiont-archivist` when unset."
+      "effect": "The `service.name` exported spans and metrics carry; `xynolog-gateway`, `xynolog-dispatcher` or `xynolog-archivist` when unset."
     },
     {
       "name": "OTEL_SDK_DISABLED",
@@ -120,7 +120,7 @@
       "effect": "Milliseconds a finished span waits to be exported in a batch; 5000 when unset."
     },
     {
-      "name": "SEMIONT_BUS_LOG",
+      "name": "XYNOLOG_BUS_LOG",
       "services": [
         "gateway",
         "dispatcher",
@@ -141,7 +141,7 @@
       "readBy": "service",
       "providedBy": "image",
       "required": false,
-      "effect": "The supervisor's events log, one `starting <SUPERVISE_NAME>` line per life of the process. With SUPERVISE_NAME, the service reports `semiont.process.restarts` from it: its lives, less one. Without either, the metric does not exist."
+      "effect": "The supervisor's events log, one `starting <SUPERVISE_NAME>` line per life of the process. With SUPERVISE_NAME, the service reports `xynolog.process.restarts` from it: its lives, less one. Without either, the metric does not exist."
     },
     {
       "name": "SUPERVISE_NAME",

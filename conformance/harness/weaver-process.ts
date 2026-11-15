@@ -37,8 +37,8 @@ export interface WeaverSettings {
 }
 
 export interface WeaverEnvironment {
-  SEMIONT_OIDC_CLIENT_ID?: string;
-  SEMIONT_OIDC_CLIENT_SECRET?: string;
+  XYNOLOG_OIDC_CLIENT_ID?: string;
+  XYNOLOG_OIDC_CLIENT_SECRET?: string;
   [name: string]: string | undefined;
 }
 

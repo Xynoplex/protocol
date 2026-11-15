@@ -15,7 +15,7 @@
 //   - an operation with no 500 (every route can fail, and the failure has a
 //     body like any other error), or with a request body and no 400;
 //   - an operation that takes a JSON body and states no
-//     `x-semiont-limits.maxBodyBytes`, or declares no 413 (an unbounded body is
+//     `x-xynolog-limits.maxBodyBytes`, or declares no 413 (an unbounded body is
 //     memory the caller chooses);
 //   - a 429 without a `Retry-After` header: a refused caller is told when to
 //     come back, not left to guess;
@@ -106,7 +106,7 @@ const shapeOf = (c) => (positive(c) ? 'integer' : plainObject(c) && Object.keys(
 function checkLimits(where, limits) {
   if (limits === undefined) return;
   for (const [key, value] of Object.entries(limits)) {
-    const label = `x-semiont-limits.${key}`;
+    const label = `x-xynolog-limits.${key}`;
     if (positive(value)) continue;
     if (!plainObject(value) || !('baseline' in value)) {
       fail(where, `${label} is ${JSON.stringify(value)}, not a positive integer or a baseline with coefficients by role`);
@@ -178,9 +178,9 @@ function checkStream(where, schema, file) {
   const archivist = load(ARCHIVIST);
   const { node: anchoredText } = deref(archivist.paths?.['/resources/{id}/anchored-text'], ARCHIVIST);
   const waits = [
-    ['GET /resources/{id}/anchored-text x-semiont-limits.settleWaitSeconds', anchoredText?.get?.['x-semiont-limits']?.settleWaitSeconds],
-    ['x-semiont-limits.connectSeconds', archivist['x-semiont-limits']?.connectSeconds],
-    ['x-semiont-limits.readSeconds', archivist['x-semiont-limits']?.readSeconds],
+    ['GET /resources/{id}/anchored-text x-xynolog-limits.settleWaitSeconds', anchoredText?.get?.['x-xynolog-limits']?.settleWaitSeconds],
+    ['x-xynolog-limits.connectSeconds', archivist['x-xynolog-limits']?.connectSeconds],
+    ['x-xynolog-limits.readSeconds', archivist['x-xynolog-limits']?.readSeconds],
     [`${timingFile} httpRequestTimeoutMs`, load(TIMING).timing?.find((t) => t.name === 'httpRequestTimeoutMs')?.value],
   ];
   const unstated = waits.filter(([, value]) => !positive(value));
@@ -202,7 +202,7 @@ function checkStream(where, schema, file) {
 for (const ROOT_FILE of ROOT_FILES) {
   const root = load(ROOT_FILE);
   current = ROOT_FILE.slice(REPO.length + 1);
-  checkLimits('the document', root['x-semiont-limits']);
+  checkLimits('the document', root['x-xynolog-limits']);
 
   // ── Security schemes ────────────────────────────────────────────────────
   const schemes = root.components?.securitySchemes ?? {};
@@ -210,7 +210,7 @@ for (const ROOT_FILE of ROOT_FILES) {
     if (!scheme.description || scheme.description.trim() === '') {
       fail(`securitySchemes.${name}`, 'has no description — the claims a credential must carry are protocol');
     }
-    checkLimits(`securitySchemes.${name}`, scheme['x-semiont-limits']);
+    checkLimits(`securitySchemes.${name}`, scheme['x-xynolog-limits']);
   }
 
   // ── Operations ────────────────────────────────────────────────────────────
@@ -232,13 +232,13 @@ for (const ROOT_FILE of ROOT_FILES) {
       }
       const isPublic = requirements.length === 0;
 
-      checkLimits(where, op['x-semiont-limits']);
+      checkLimits(where, op['x-xynolog-limits']);
 
       const responses = op.responses ?? {};
       if (!responses['500']) fail(where, 'declares no 500');
       if (op.requestBody && !responses['400']) fail(where, 'takes a request body and declares no 400');
       const takesJson = op.requestBody && 'application/json' in (deref(op.requestBody, file).node.content ?? {});
-      if (takesJson && op['x-semiont-limits']?.maxBodyBytes === undefined) fail(where, 'takes a JSON body and states no x-semiont-limits.maxBodyBytes');
+      if (takesJson && op['x-xynolog-limits']?.maxBodyBytes === undefined) fail(where, 'takes a JSON body and states no x-xynolog-limits.maxBodyBytes');
       if (takesJson && !responses['413']) fail(where, 'takes a JSON body and declares no 413');
       if (!isPublic && !responses['401']) fail(where, 'is protected and declares no 401');
 
@@ -296,9 +296,9 @@ for (const ROOT_FILE of ROOT_FILES) {
   const longestMs = 2 * budgetMs(timing.emitRetry, timing.emitTimeoutMs) + budgetMs(timing.refreshRetry, timing.httpRequestTimeoutMs);
   const gateway = ROOT_FILES[0];
   const emit = deref(load(gateway).paths['/bus/emit'], gateway).node.post;
-  const held = emit['x-semiont-limits']?.idempotencySeconds;
+  const held = emit['x-xynolog-limits']?.idempotencySeconds;
   current = gateway.slice(REPO.length + 1);
-  if (!positive(held)) fail('POST /bus/emit', 'states no x-semiont-limits.idempotencySeconds');
+  if (!positive(held)) fail('POST /bus/emit', 'states no x-xynolog-limits.idempotencySeconds');
   else if (held * 1000 <= longestMs) {
     fail('POST /bus/emit', `holds a key for ${held} s, and a client's attempts at one emit may span ${longestMs / 1000} s (two emitRetry budgets and a refreshRetry, specs/src/client/timing.json)`);
   }

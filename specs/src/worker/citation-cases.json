@@ -681,7 +681,7 @@
         "focus": {
           "kind": "resource",
           "resource": {
-            "@context": "https://semiont.dev/context/v1",
+            "@context": "https://xynolog.dev/context/v1",
             "@id": "res-1",
             "name": "Focus",
             "representations": []
@@ -738,7 +738,7 @@
             "target": { "source": "res-1" }
           },
           "sourceResource": {
-            "@context": "https://semiont.dev/context/v1",
+            "@context": "https://xynolog.dev/context/v1",
             "@id": "res-1",
             "name": "Source",
             "representations": []
@@ -767,7 +767,7 @@
         "focus": {
           "kind": "resource",
           "resource": {
-            "@context": "https://semiont.dev/context/v1",
+            "@context": "https://xynolog.dev/context/v1",
             "@id": "res-1",
             "name": "The focus's own",
             "representations": []
@@ -800,7 +800,7 @@
         "focus": {
           "kind": "resource",
           "resource": {
-            "@context": "https://semiont.dev/context/v1",
+            "@context": "https://xynolog.dev/context/v1",
             "@id": "res-1",
             "name": "  Padded  ",
             "representations": []

@@ -3,14 +3,14 @@
   "runBy": {
     "ocaml": ["sdk/ocaml/sdk/test/helper_behavior.ml"],
     "haskell": ["sdk/haskell/sdk/test/AnnotationCases.hs"],
-    "csharp": ["sdk/csharp/sdk/tests/Semiont.Tests/AnnotationCasesTests.cs"],
-    "swift": ["sdk/swift/sdk/Tests/SemiontTests/AnnotationTests.swift"],
+    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/AnnotationCasesTests.cs"],
+    "swift": ["sdk/swift/sdk/Tests/XynologTests/AnnotationTests.swift"],
     "typescript": ["sdk/typescript/core/src/__tests__/annotation-id.test.ts", "sdk/typescript/core/src/__tests__/id-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/annotations/id.rs"],
     "python": ["sdk/python/sdk/tests/test_annotation_ids.py", "sdk/python/sdk/tests/test_readme.py"],
     "conformance": ["conformance/worker-service/yield.test.ts"],
     "go": ["sdk/go/sdk/annotations/id_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/semiont/annotations/AnnotationIdsTest.kt"]
+    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/annotations/AnnotationIdsTest.kt"]
   },
   "cases": [
     {

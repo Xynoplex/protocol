@@ -2,13 +2,13 @@
   "get": {
     "operationId": "getResourceEvents",
     "summary": "One stream's events from one sequence number, a page at a time",
-    "description": "The events of one stream whose sequence number is at least `fromSequence`, in log order: at most `x-semiont-limits.maxEvents` of them, with the sequence number of the stream's last event. A reader that wants every event from there asks again from the sequence after the last one it was given, until it has the last. A stream is a resource's, or `__system__`, the knowledge base's own. The one read of the event log by position this surface serves: the gateway reads it to replay a scope a subscriber resumes, and a service that follows the record reads it to take what its stream did not deliver.",
+    "description": "The events of one stream whose sequence number is at least `fromSequence`, in log order: at most `x-xynolog-limits.maxEvents` of them, with the sequence number of the stream's last event. A reader that wants every event from there asks again from the sequence after the last one it was given, until it has the last. A stream is a resource's, or `__system__`, the knowledge base's own. The one read of the event log by position this surface serves: the gateway reads it to replay a scope a subscriber resumes, and a service that follows the record reads it to take what its stream did not deliver.",
     "security": [
       {
         "serviceAccount": []
       }
     ],
-    "x-semiont-limits": {
+    "x-xynolog-limits": {
       "maxEvents": 1000
     },
     "parameters": [

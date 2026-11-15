@@ -1,6 +1,6 @@
 /**
  * What bounds a request whose credential is refused (the bearer scheme's
- * `x-semiont-limits`: `refusalsPerSecond`, `refusalBurst`, `refusalHolders`).
+ * `x-xynolog-limits`: `refusalsPerSecond`, `refusalBurst`, `refusalHolders`).
  *
  * A refused request is counted against the holder its token names, read
  * without verifying it: the token's `iss`, and the claim the gateway names a

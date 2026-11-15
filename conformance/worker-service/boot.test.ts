@@ -175,13 +175,13 @@ eachWorkerService("the worker's boot", (world) => {
     expect(await dialled(world())).toEqual(before);
   });
 
-  it('refuses to start without SEMIONT_OIDC_CLIENT_KEY, or with it empty', async () => {
+  it('refuses to start without XYNOLOG_OIDC_CLIENT_KEY, or with it empty', async () => {
     const before = await dialled(world());
     for (const value of [undefined, '']) {
-      const refusal = await world().refused({ env: { ...world().env, SEMIONT_OIDC_CLIENT_KEY: value } });
+      const refusal = await world().refused({ env: { ...world().env, XYNOLOG_OIDC_CLIENT_KEY: value } });
       expect(refusal.code).toBe(1);
-      expect(fatal(refusal.stderr)).toEqual(["[fatal] SEMIONT_OIDC_CLIENT_KEY is not set in the worker's environment: a worker signs in as a service account"]);
-      expect(refusal.output).not.toContain(world().env.SEMIONT_OIDC_CLIENT_KEY!);
+      expect(fatal(refusal.stderr)).toEqual(["[fatal] XYNOLOG_OIDC_CLIENT_KEY is not set in the worker's environment: a worker signs in as a service account"]);
+      expect(refusal.output).not.toContain(world().env.XYNOLOG_OIDC_CLIENT_KEY!);
     }
     expect(await dialled(world())).toEqual(before);
   });
@@ -193,9 +193,9 @@ eachWorkerService("the worker's boot", (world) => {
       ['not a key at all', 'is not an unencrypted PEM private key'],
       [ec, 'is not an RSA key: a worker signs its assertions with RS256'],
     ] as const) {
-      const refusal = await world().refused({ env: { ...world().env, SEMIONT_OIDC_CLIENT_KEY: held } });
+      const refusal = await world().refused({ env: { ...world().env, XYNOLOG_OIDC_CLIENT_KEY: held } });
       expect(refusal.code).toBe(1);
-      expect(fatal(refusal.stderr)).toEqual([`[fatal] SEMIONT_OIDC_CLIENT_KEY in the worker's environment ${said}`]);
+      expect(fatal(refusal.stderr)).toEqual([`[fatal] XYNOLOG_OIDC_CLIENT_KEY in the worker's environment ${said}`]);
       expect(refusal.output).not.toContain(held);
     }
     expect(await dialled(world())).toEqual(before);
@@ -204,7 +204,7 @@ eachWorkerService("the worker's boot", (world) => {
   it('exits 1, having served nothing, when the issuer of its one knowledge base refuses its sign-in: saying so in its log, and then once on stderr that no knowledge base admits it', async () => {
     // A key the issuer holds no public half of: its assertion is refused.
     const unregistered = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
-    const refusal = await world().refused({ env: { ...world().env, SEMIONT_OIDC_CLIENT_KEY: unregistered } });
+    const refusal = await world().refused({ env: { ...world().env, XYNOLOG_OIDC_CLIENT_KEY: unregistered } });
     expect(refusal.code).toBe(1);
     expect(fatal(refusal.stderr)).toEqual([NONE_ADMITS]);
     const refused = logged(refusal.stdout, KB_LOG.refused);
@@ -224,7 +224,7 @@ eachWorkerService("the worker's boot", (world) => {
     const settings: WorkerSettings = (await w.launch()).settings;
     const [own] = settings.knowledgeBases;
     // The first names a client its issuer does not hold.
-    const knowledgeBases = [w.configuration(w.world.origin, own!.engines, 'semiont-worker-unregistered'), second.configuration(second.world.origin, own!.engines)];
+    const knowledgeBases = [w.configuration(w.world.origin, own!.engines, 'xynolog-worker-unregistered'), second.configuration(second.world.origin, own!.engines)];
     const refusal = await w.refused({ settings: { ...settings, knowledgeBases } });
     expect(refusal.code).toBe(1);
     expect(fatal(refusal.stderr)).toEqual([NONE_ADMITS]);
@@ -232,7 +232,7 @@ eachWorkerService("the worker's boot", (world) => {
     expect([...refused].sort((a, b) => (String(a['domain']) < String(b['domain']) ? -1 : 1))).toEqual(
       [w.domain, second.domain].sort().map((domain) => expect.objectContaining({ level: 'error', domain, reason: expect.any(String) })),
     );
-    expect(refusal.output).not.toContain(w.env.SEMIONT_OIDC_CLIENT_KEY!);
+    expect(refusal.output).not.toContain(w.env.XYNOLOG_OIDC_CLIENT_KEY!);
     expect([w.claims, second.claims]).toEqual([[], []]);
   });
 
@@ -247,7 +247,7 @@ eachWorkerService("the worker's boot", (world) => {
       const said = fatal(refusal.stderr);
       expect(said).toHaveLength(1);
       expect(said[0]).toContain(String(settings.port));
-      expect(refusal.output).not.toContain(world().env.SEMIONT_OIDC_CLIENT_KEY!);
+      expect(refusal.output).not.toContain(world().env.XYNOLOG_OIDC_CLIENT_KEY!);
     } finally {
       await new Promise((resolve) => holder.close(resolve));
     }

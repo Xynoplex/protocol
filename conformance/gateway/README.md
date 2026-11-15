@@ -7,7 +7,7 @@ states it — the OpenAPI document, the bus registry — and as
 states the semantics a schema cannot hold. It imports nothing from the
 gateway: what names an implementation is `gateway` in the run's
 [implementations file](../README.md#implementation-manifest), which [vitest.config.ts](../vitest.config.ts)
-provides to the cases: in Xynoplex's, the Rust gateway's binary, built in the owning consumer repository.
+provides to the cases: in Xynolog's, the Rust gateway's binary, built in the owning consumer repository.
 
 Every case runs against a gateway on each signal plane — in-process, and NATS
 with a real `nats-server` — except the ones that need a broker (replicas, a
@@ -79,7 +79,7 @@ and knowledge bases configured another way).
   the rows of [`specs/src/service-telemetry/telemetry.json`](../../specs/src/service-telemetry/telemetry.json)
   that list the gateway, in both directions — every span and metric a listed row of the listed kind,
   carrying listed attributes, and every row the cases' traffic can produce arrived; and every one
-  exported under exactly the keys the table's `resource` lists for the gateway, with `semiont.kb`
+  exported under exactly the keys the table's `resource` lists for the gateway, with `xynolog.kb`
   the DID of the knowledge base its document names.
 - **Principals** (`tokens.test.ts`): every person and agent case in
   [`specs/src/principals/cases.json`](../../specs/src/principals/cases.json), named

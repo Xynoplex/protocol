@@ -11,7 +11,7 @@ import { sha256, shardOf, withArchivist } from '../harness/archivist-world';
 import { gitByHand, holdGitIndex } from '../harness/git';
 import { eventually } from '../harness/net';
 
-const logOf = (id: string) => `.semiont/events/${shardOf(id)}/${id}/events-000001.jsonl`;
+const logOf = (id: string) => `.xynolog/events/${shardOf(id)}/${id}/events-000001.jsonl`;
 
 withArchivist('staging, in a knowledge base that syncs git', (world) => {
   it('stages the content and the log of a new resource, within the bound', async () => {
@@ -24,7 +24,7 @@ withArchivist('staging, in a knowledge base that syncs git', (world) => {
   });
 
   it('stages the system stream, which the vocabulary seeded at boot wrote', async () => {
-    await world().untilIndexed('.semiont/events/__system__/events-000001.jsonl');
+    await world().untilIndexed('.xynolog/events/__system__/events-000001.jsonl');
   });
 
   it('stages each later event of a stream: the index holds the log as it is on disk', async () => {
