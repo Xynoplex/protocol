@@ -21,7 +21,7 @@
     "wasAttributedTo": [
       {
         "@type": "Person",
-        "@id": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:ada"
+        "@id": "did:web:example.org:test-kb:users:ada"
       }
     ],
     "isDraft": false,
@@ -53,12 +53,12 @@
         "modified": "2026-10-06T00:22:25.705Z",
         "creator": {
           "@type": "Person",
-          "@id": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:ada"
+          "@id": "did:web:example.org:test-kb:users:ada"
         },
         "wasAttributedTo": [
           {
             "@type": "Person",
-            "@id": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:ada"
+            "@id": "did:web:example.org:test-kb:users:ada"
           }
         ],
         "body": [

@@ -3,5 +3,5 @@ project:
 git:
   sync: false
 site:
-  domain: the-ai-alliance.github.io:semiont-arxiv-kb
+  domain: example.org:test-kb
   siteName: ArXiv Research Papers

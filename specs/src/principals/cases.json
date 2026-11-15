@@ -28,84 +28,84 @@
   "people": [
     {
       "why": "a subject of letters and digits is itself",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "alice",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:alice"
+      "did": "did:web:example.org:test-kb:users:alice"
     },
     {
       "why": "a UUID subject is itself",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "3f1c2e0a-9b7d-4c1e-8a2f-6d5b4c3a2e10",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:3f1c2e0a-9b7d-4c1e-8a2f-6d5b4c3a2e10"
+      "did": "did:web:example.org:test-kb:users:3f1c2e0a-9b7d-4c1e-8a2f-6d5b4c3a2e10"
     },
     {
       "why": "an email-shaped subject encodes its @",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "alice@example.org",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:alice%40example.org"
+      "did": "did:web:example.org:test-kb:users:alice%40example.org"
     },
     {
       "why": "a colon in the subject is encoded, so it cannot split the DID",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "google-oauth2:104859221",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:google-oauth2%3A104859221"
+      "did": "did:web:example.org:test-kb:users:google-oauth2%3A104859221"
     },
     {
       "why": "a slash in the subject is encoded",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "tenant/alice",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:tenant%2Falice"
+      "did": "did:web:example.org:test-kb:users:tenant%2Falice"
     },
     {
       "why": "a space is %20",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "Alice Smith",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:Alice%20Smith"
+      "did": "did:web:example.org:test-kb:users:Alice%20Smith"
     },
     {
       "why": "a character outside ASCII is its UTF-8 bytes, each percent-encoded",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "josé",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:jos%C3%A9"
+      "did": "did:web:example.org:test-kb:users:jos%C3%A9"
     },
     {
       "why": "the characters encodeURIComponent leaves alone stay as they are",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "a-b_c.d!e~f*g'h(i)j",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:users:a-b_c.d!e~f*g'h(i)j"
+      "did": "did:web:example.org:test-kb:users:a-b_c.d!e~f*g'h(i)j"
     }
   ],
   "agent": "did:web:{domain}:agents:{subject}",
   "agents": [
     {
       "why": "a subject of letters, digits and hyphens is itself",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "xynolog-worker-local",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:agents:semiont-worker-local"
+      "did": "did:web:example.org:test-kb:agents:xynolog-worker-local"
     },
     {
       "why": "a UUID subject, as an issuer names a client's own account, is itself",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "7c1f3d2a-5b6e-4f80-9a1b-2c3d4e5f6a7b",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:agents:7c1f3d2a-5b6e-4f80-9a1b-2c3d4e5f6a7b"
+      "did": "did:web:example.org:test-kb:agents:7c1f3d2a-5b6e-4f80-9a1b-2c3d4e5f6a7b"
     },
     {
       "why": "a colon in the subject is encoded, so it cannot split the DID",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "service-account:worker",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:agents:service-account%3Aworker"
+      "did": "did:web:example.org:test-kb:agents:service-account%3Aworker"
     },
     {
       "why": "an email-shaped subject encodes its @",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "worker@example.org",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:agents:worker%40example.org"
+      "did": "did:web:example.org:test-kb:agents:worker%40example.org"
     },
     {
       "why": "a slash in the subject is encoded",
-      "domain": "the-ai-alliance.github.io:semiont-arxiv-kb",
+      "domain": "example.org:test-kb",
       "subject": "tenant/worker",
-      "did": "did:web:the-ai-alliance.github.io:semiont-arxiv-kb:agents:tenant%2Fworker"
+      "did": "did:web:example.org:test-kb:agents:tenant%2Fworker"
     }
   ]
 }
