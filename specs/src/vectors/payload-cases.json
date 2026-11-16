@@ -567,9 +567,9 @@
       "collectionsNamed": {
         "kb": "did:web:example.org:test-kb",
         "names": {
-          "resources": "dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2de46-resources",
-          "annotations": "dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2de46-annotations",
-          "declined": "dab801537d2dd1939a1e75fd6ec796cf0240a9f57cd12b655e21a6c675f2de46-declined"
+          "resources": "6b1d3b041157d357324b3914cbfc79d3a6b026d0711bbb33da9bdb1e76df0575-resources",
+          "annotations": "6b1d3b041157d357324b3914cbfc79d3a6b026d0711bbb33da9bdb1e76df0575-annotations",
+          "declined": "6b1d3b041157d357324b3914cbfc79d3a6b026d0711bbb33da9bdb1e76df0575-declined"
         }
       }
     },
