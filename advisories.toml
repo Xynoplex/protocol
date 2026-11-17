@@ -1,3 +1,7 @@
 # Published advisories for this repository's dependencies, each judged and
 # ignored with why. build-tools/advisories.py, in CI, fails on any finding not
 # ignored here and on any ignore that no longer matches a finding.
+
+[[ignore]]
+id = "GHSA-fc5q-39xc-vjpf"
+reason = "picomatch's extglob matching can backtrack without bound on a crafted pattern. No picomatch release fixes it. It is a dev dependency of the conformance tests only (vitest, vite, tinyglobby and fdir), matching the test runner's file globs from this repository's own config. Nothing untrusted reaches it, and nothing protocol publishes includes it."
