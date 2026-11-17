@@ -1,18 +1,19 @@
-Xynoplex Protocol
-Copyright 2026 Xynoplex
+Xynolog Protocol
+Copyright 2026 Xynolog
 
-Historical source through 2026-08-26
+This product is licensed under the Apache License, Version 2.0.
 
-The protocol, specification, and conformance material in the baseline snapshot
-was carried forward from The AI Alliance's Semiont monorepo as it stood through
-2026-08-26. That material remains available under the Apache License, Version
-2.0. Its historical source and project name are retained here to identify
-provenance; they do not describe current ownership or product branding.
+Carried-forward material
 
-Xynoplex work
+The contract and specification material in this repository's baseline
+snapshot, its root commit 033f0de, was carried forward from The AI Alliance's
+Semiont monorepo as it stood through 2026-08-26, under the Apache License,
+Version 2.0. The upstream project is named to identify the source and
+provenance of that material; HISTORY-MAP.md says how it was extracted.
 
-Protocol work on and after 2026-08-27 is owned by Xynoplex. The repository
-history consolidates earlier source into one dated baseline commit, followed
-by the applicable post-boundary changes.
+Xynolog work
+
+All work on the protocol on and after 2026-08-27, every commit after the
+baseline snapshot, is Xynolog's and is owned by Xynolog.
 
 Third-party notices remain with the files or dependencies to which they apply.
