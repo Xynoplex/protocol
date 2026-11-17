@@ -203,7 +203,7 @@ A channel reaches clients in one of two **disjoint** delivery disciplines:
 - **Global fan-out** — forwarded to every connected client, which filters by `correlationId` (correlation replies like `match:search-results`) or just reacts (KB-global events like `frame:entity-type-added`). This is the *bridged* set (see [Fan-in](#fan-in-sse-bridging)).
 - **Resource-scoped** — delivered only to clients that have *joined* a resource's scope via `subscribeToResource(id)`. Publishers emit on a scoped bus (`eventBus.scope(resourceId)`); the HTTP transport carries each subscription as a `{scope, channels, lastEventId?}` entry in the `POST /bus/subscribe` matrix, and scoped SSE frames are tagged with their originating scope. One connection holds many resource scopes at once — distinct resources compose. On the client, subscribing to a resource's `browse.*` live queries attaches a ref-counted scope that auto-detaches on the last unsubscribe — *freshness follows observation*.
 
-Which discipline a channel has is declared, not computed: the registry gives each such channel an `audience` of `everyone` or `scoped`, and the two generated lists (`BRIDGED_BROADCASTS` and `RESOURCE_SCOPED_CHANNELS`, in [bridged-channels.ts](https://github.com/xynolog/sdk/tree/main/typescript/core/src/bridged-channels.ts)) are those declarations. The scoped channels are the events of the record that concern one resource: annotations, a resource's own facts, its renditions, and its jobs. A scoped channel is always a stored event: `validate-registry.mjs` refuses one that is not. The events of the record that concern the whole knowledge base (`frame:entity-type-added`, `yield:created` and their siblings) go to everyone.
+Which discipline a channel has is declared, not computed: the registry gives each such channel an `audience` of `everyone` or `scoped`, and the two generated lists (`BRIDGED_BROADCASTS` and `RESOURCE_SCOPED_CHANNELS`, in [bridged-channels.ts](https://github.com/xynolog/sdk/tree/main/typescript/core/src/bridged-channels.ts)) are those declarations. The scoped channels are the events of the record that concern one resource: annotations, a resource's own facts, its renditions, and its jobs. A scoped channel is always a stored event: [sdk's generator](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/registry.ml) refuses one that is not. The events of the record that concern the whole knowledge base (`frame:entity-type-added`, `yield:created` and their siblings) go to everyone.
 
 **A channel has one audience.** A channel delivered on both the global subscription and a scoped one would arrive twice, with different ids, and be duplicated on the client's bus. One declaration per channel makes that unrepresentable, and an invariant test (`BRIDGED_CHANNELS ∩ RESOURCE_SCOPED_CHANNELS === ∅`) backstops it.
 
@@ -315,20 +315,20 @@ The paths are documented end-to-end (with code shapes and call-site examples) in
 `bus-protocol.ts` and `bus-operations.ts` are **generated files** — do not edit
 them. The authority is **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)**:
 every channel, the payload it carries, and the request/reply operation triples.
-Two generators read it:
+sdk's generator reads it, and refuses a registry that breaks the bus's rules
+before it writes any SDK's file:
 
-| Output | Generator |
+| Output | Writer |
 |---|---|
-| `sdk/typescript/core/src/bus-protocol.ts`, `bus-operations.ts`, `bus-classification.ts` | `node the consumer-owned generator` |
-| `sdk/go/sdk/bus/{channels,operations,bridged}_gen.go` | `node the consumer-owned generator` |
+| `sdk/typescript/core/src/bus-protocol.ts`, `persisted-events.ts`, `bus-operations.ts`, `bridged-channels.ts`, `bus-classification.ts` | [`codegen/lib/bus/typescript.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/typescript.ml) |
+| `sdk/go/bus/{channels,operations,bridged}_gen.go` | [`codegen/lib/bus/go.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/go.ml) |
+| `sdk/python/sdk/src/xynolog/channels.py`, `operations.py` | [`codegen/lib/bus/python.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/python.ml) |
+| `sdk/ocaml/sdk/lib/bus_registry.ml` | [`codegen/lib/ocaml_sdk/bus_modules.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/ocaml_sdk/bus_modules.ml) |
 | The Rust SDK's channel and operation tables | its build script, [`sdk/rust/sdk/build.rs`](https://github.com/xynolog/sdk/tree/main/rust/sdk/build.rs), on every build |
-| `sdk/python/sdk/src/xynolog/channels.py`, `operations.py` | `node the consumer-owned generator` |
 
 ```sh
-npm run generate:bus          # regenerate TypeScript and Go
-npm run generate:bus:check    # verify without writing (what CI runs)
-npm run generate:python       # regenerate every module the Python SDK takes from specs/, these two among them
-npm run generate:python:check # verify without writing (what CI runs)
+make generate          # in sdk: regenerate every generated file
+make check-generated   # in sdk: verify without writing (what CI runs)
 ```
 
 Hand-written TypeScript that the registry cannot express — runtime-only UI
@@ -432,8 +432,8 @@ with the registry, naming the command to run.
 
 The compile-time discipline is strict by design. A new channel requires changes in two places (the registry and the OpenAPI schema), plus an SDK method to call it:
 
-1. **The registry** ([`specs/src/bus/registry.json`](../specs/src/bus/registry.json)) — add the channel with its payload: a `shape` (`schema`, `envelope`, `storedEvent`, `void` or `empty`) and the OpenAPI schema it names (`schema`, or `payload` for a stored event — one that mutates an annotation also takes `"enriched": true`, and one that belongs to no resource `"system": true`), and its `validate` entry: the schema the `/bus/emit` route enforces, or `null` for non-validated. Then run `npm run generate:bus`, which writes the `EventMap` and `CHANNEL_SCHEMAS` entries in both languages. The generated `satisfies Record<EventName, ...>` clause still fails the typecheck if the two maps disagree, and `validate-registry.mjs` refuses a payload stated any other way.
-2. **The routing**, for SSE delivery: a request/reply operation is declared as an `operations` entry in the **registry** (generated into `BUS_OPERATIONS`) (which *derives* its reply channels into `BRIDGED_CHANNELS`); a non-request/reply broadcast that should reach every client is declared **`audience: everyone`** in the registry (and one that should reach only viewers of a resource, `audience: scoped`). You never hand-edit `BRIDGED_CHANNELS` — replies are derived, and broadcasts are registry data. Each list has its own completeness check, an equality test pins the derived bridged set, and `validate-registry.mjs` refuses a broadcast entry that is really an operation's reply.
+1. **The registry** ([`specs/src/bus/registry.json`](../specs/src/bus/registry.json)) — add the channel with its payload: a `shape` (`schema`, `envelope`, `storedEvent`, `void` or `empty`) and the OpenAPI schema it names (`schema`, or `payload` for a stored event — one that mutates an annotation also takes `"enriched": true`, and one that belongs to no resource `"system": true`), and its `validate` entry: the schema the `/bus/emit` route enforces, or `null` for non-validated. Then run `make generate` in the sdk repository, whose generator writes every SDK's bus files from the registry, the `EventMap` and `CHANNEL_SCHEMAS` entries among them. The generated `satisfies Record<EventName, ...>` clause still fails the typecheck if the two maps disagree, and the [registry's decoder](https://github.com/xynolog/sdk/tree/main/codegen/lib/tables/bus_registry.ml) refuses a payload stated any other way. This repository's `make check` refuses the file unless it is spelled as `JSON.stringify(value, null, 2)` writes it.
+2. **The routing**, for SSE delivery: a request/reply operation is declared as an `operations` entry in the **registry** (generated into `BUS_OPERATIONS`) (which *derives* its reply channels into `BRIDGED_CHANNELS`); a non-request/reply broadcast that should reach every client is declared **`audience: everyone`** in the registry (and one that should reach only viewers of a resource, `audience: scoped`). You never hand-edit `BRIDGED_CHANNELS` — replies are derived, and broadcasts are registry data. Each list has its own completeness check, an equality test pins the derived bridged set, and [sdk's generator](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/registry.ml) refuses a broadcast entry that is really an operation's reply.
 
 Then for the OpenAPI schema:
 
@@ -447,7 +447,7 @@ And for the SDK:
 7. Add a namespace method that wraps `this.wire.emit(channel, ...)` or `this.wire.request(...)` for the new operation.
 8. Update [docs/builder/Usage.md](../../docs/builder/Usage.md) under the right verb.
 
-Skipping any step is caught at build time — `CHANNEL_SCHEMAS`'s `satisfies` clause and `validate-registry.mjs` make incomplete additions fail loud and clear.
+Skipping any step is caught at build time — `CHANNEL_SCHEMAS`'s `satisfies` clause and [sdk's generator](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/registry.ml) make incomplete additions fail loud and clear.
 
 ## See also
 
