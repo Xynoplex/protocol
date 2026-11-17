@@ -1,0 +1,29 @@
+{
+  "title": "DeviceCode",
+  "type": "object",
+  "description": "What a device-authorization grant (RFC 8628) shows the person signing in: the code they enter, and where.",
+  "properties": {
+    "userCode": {
+      "type": "string",
+      "description": "The code the person enters at the issuer."
+    },
+    "verificationUri": {
+      "type": "string",
+      "description": "Where the person enters it."
+    },
+    "verificationUriComplete": {
+      "type": "string",
+      "description": "Where the person goes to sign in with the code already entered, when the issuer gives one."
+    },
+    "expiresIn": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many seconds the code stays good for."
+    }
+  },
+  "required": [
+    "userCode",
+    "verificationUri",
+    "expiresIn"
+  ]
+}

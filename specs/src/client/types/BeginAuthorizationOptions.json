@@ -1,0 +1,30 @@
+{
+  "title": "BeginAuthorizationOptions",
+  "type": "object",
+  "description": "What starting an authorization-code grant is told: the knowledge base to sign in to, where the issuer sends the person back, and, re-authenticating, which registered knowledge base it is and what the person believed they chose.",
+  "properties": {
+    "target": {
+      "$ref": "../../components/schemas/HttpEndpoint.json"
+    },
+    "redirectUri": {
+      "type": "string",
+      "description": "Where the issuer sends the person back to."
+    },
+    "kbId": {
+      "type": "string",
+      "description": "The registered knowledge base being re-authenticated, rather than a new address connected to."
+    },
+    "expectedDid": {
+      "type": "string",
+      "description": "The knowledge base's DID the person believed they chose: verified after, never assumed."
+    },
+    "expectedName": {
+      "type": "string",
+      "description": "The knowledge base's name the person believed they chose: verified after, never assumed."
+    }
+  },
+  "required": [
+    "target",
+    "redirectUri"
+  ]
+}

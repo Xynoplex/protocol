@@ -1,0 +1,28 @@
+{
+  "title": "TextSpan",
+  "description": "A span of a text: the code points from `start` up to but not including `end`, the words they are, and maybe the text just before and just after them.",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The offset the span starts at, in Unicode code points from the text's start."
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The offset just past the span, in Unicode code points from the text's start."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    {
+      "$ref": "./QuotedText.json"
+    }
+  ]
+}

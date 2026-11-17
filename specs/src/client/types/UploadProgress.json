@@ -1,0 +1,76 @@
+{
+  "title": "UploadProgress",
+  "description": "What an upload reports as it goes, told apart by `phase`: its size first, then the bytes sent so far, then the resource made.",
+  "oneOf": [
+    {
+      "type": "object",
+      "description": "The upload began.",
+      "properties": {
+        "phase": {
+          "type": "string",
+          "enum": [
+            "started"
+          ]
+        },
+        "totalBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many bytes the upload is."
+        }
+      },
+      "required": [
+        "phase",
+        "totalBytes"
+      ]
+    },
+    {
+      "type": "object",
+      "description": "Bytes were sent.",
+      "properties": {
+        "phase": {
+          "type": "string",
+          "enum": [
+            "progress"
+          ]
+        },
+        "bytesUploaded": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many bytes are sent so far."
+        },
+        "totalBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many bytes the upload is."
+        }
+      },
+      "required": [
+        "phase",
+        "bytesUploaded",
+        "totalBytes"
+      ]
+    },
+    {
+      "type": "object",
+      "description": "The upload ended, and the resource is made.",
+      "properties": {
+        "phase": {
+          "type": "string",
+          "enum": [
+            "finished"
+          ]
+        },
+        "resourceId": {
+          "$ref": "../../components/schemas/ResourceId.json"
+        }
+      },
+      "required": [
+        "phase",
+        "resourceId"
+      ]
+    }
+  ],
+  "discriminator": {
+    "propertyName": "phase"
+  }
+}

@@ -383,6 +383,7 @@ package-lock.json,Repository governance and documentation,xynolog/protocol,"Stan
 package.json,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 scripts/checks/specs/check-archivist.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-case-tables.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
+scripts/checks/specs/check-client-types.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-identifiers.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-jobs.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-offset-units.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
@@ -425,7 +426,22 @@ specs/src/client/refresh.json,Normative protocol source,xynolog/protocol,Compati
 specs/src/client/registry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/state-units.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/surface.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/testing.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/timing.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/AnchorMethod.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/BeginAuthorizationOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/DeviceCode.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/FrameRefusalReason.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/IssuedTokens.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/JobEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/MatchQuality.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/PdfCoordinate.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/PendingAnnotation.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/QuotedText.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/ReconciledSpan.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/SearchState.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/TextSpan.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/UploadProgress.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/responses/AtCapacity.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/responses/InternalError.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/responses/PayloadTooLarge.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -868,6 +884,7 @@ specs/src/retry/cases.json,Normative protocol source,xynolog/protocol,Compatibil
 specs/src/sdk-telemetry/telemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/service-environment/variables.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/service-telemetry/telemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/ClientSecretForm.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/cache-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/client-assertion-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

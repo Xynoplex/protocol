@@ -1,0 +1,34 @@
+{
+  "title": "PdfCoordinate",
+  "type": "object",
+  "description": "A rectangle on a page of a PDF, in PDF points, from the page's bottom-left corner with y increasing upward: what an RFC 3778 fragment selector names.",
+  "properties": {
+    "page": {
+      "type": "integer",
+      "description": "The page the rectangle is on."
+    },
+    "x": {
+      "type": "number",
+      "description": "The rectangle's x."
+    },
+    "y": {
+      "type": "number",
+      "description": "The rectangle's y."
+    },
+    "width": {
+      "type": "number",
+      "description": "The rectangle's width."
+    },
+    "height": {
+      "type": "number",
+      "description": "The rectangle's height."
+    }
+  },
+  "required": [
+    "page",
+    "x",
+    "y",
+    "width",
+    "height"
+  ]
+}

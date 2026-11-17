@@ -1,0 +1,19 @@
+{
+  "title": "IssuedTokens",
+  "type": "object",
+  "description": "The tokens an issuer issued at the end of a sign-in.",
+  "properties": {
+    "access": {
+      "type": "string",
+      "description": "The access token: short-lived, sent as a Bearer token."
+    },
+    "refresh": {
+      "type": "string",
+      "description": "The refresh token: what renews the access token without another sign-in."
+    }
+  },
+  "required": [
+    "access",
+    "refresh"
+  ]
+}

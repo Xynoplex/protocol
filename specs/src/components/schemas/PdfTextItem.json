@@ -4,7 +4,7 @@
   "properties": {
     "start": { "type": "integer", "minimum": 0, "description": "Offset into AnchoredText.text, in Unicode code points from its start, inclusive." },
     "end": { "type": "integer", "minimum": 0, "description": "Offset into AnchoredText.text, in Unicode code points from its start, exclusive." },
-    "page": { "type": "number", "description": "1-indexed page number." },
+    "page": { "type": "integer", "description": "1-indexed page number." },
     "x": { "type": "number" },
     "y": { "type": "number" },
     "width": { "type": "number" },
