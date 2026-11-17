@@ -391,6 +391,7 @@ scripts/checks/specs/check-ownership-inventory.mjs,Protocol validation tooling,x
 scripts/checks/specs/check-protocol.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reference-forms.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-registry-form.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
+scripts/checks/specs/check-registry-prose.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reply-bounds.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/make-target.sh,Repository build tooling,xynolog/protocol,"Runs protocol Node and npm tasks inside the detected container runtime."
 specs/.gitignore,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."

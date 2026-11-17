@@ -1,5 +1,5 @@
 {
-  "$comment": "AUTHORITY for the Xynolog event bus: channels, their payloads, and the request/reply operations. Every SDK's channel table is generated from this file — edit here, then run the generators: TypeScript's (sdk/typescript/core), Go's and Python's by the consumer-owned generator, Rust's by sdk/rust/sdk/build.rs, and Kotlin's by the SDK's own generator as it builds. Payload schemas themselves live in the OpenAPI components; `validate` names the one a channel carries on the wire. A channel's delivery class (positioned, correlated or passing: what a subscriber is promised when its stream drops) is not stated here: the consumer-owned generator derives it from `operations`, `audience` and which channels are events of the record.",
+  "$comment": "AUTHORITY for the Xynolog event bus: channels, their payloads, and the request/reply operations. Every SDK's channel table is generated from this file — edit here, then run the generators: TypeScript's (sdk/typescript/core), Go's and Python's by the consumer-owned generator, Rust's by sdk/rust/sdk/build.rs, and Kotlin's by the SDK's own generator as it builds. Payload schemas themselves live in the OpenAPI components; `validate` names the one a channel carries on the wire. A channel's delivery class (positioned, correlated or passing: what a subscriber is promised when its stream drops) is not stated here: the consumer-owned generator derives it from `operations`, `audience` and which channels are events of the record. Its prose is plain text in no language's shape, which each generator lays out for its own language: a docs entry is `lead`, the blocks written before the entry (\"\" where the listing breaks, a `section`, a `comment`, or a `doc` of the entry itself), and `trailing`, a note after it on its line; prose is a list of paragraphs, each a text or a list of `items`. scripts/checks/specs/check-registry-prose.mjs holds it to that.",
   "channelOrder": {
     "eventMap": [
       "yield:created",
@@ -389,22 +389,25 @@
       "validate": null,
       "docs": {
         "lead": [
+          {
+            "section": "YIELD FLOW — resource creation, update, move, clone"
+          },
           "",
-          "",
-          "  // ========================================================================",
-          "  // YIELD FLOW — resource creation, update, move, clone",
-          "  // ========================================================================",
-          "",
-          "  // Domain events (branded — system of record)"
+          {
+            "comment": [
+              "Domain events (branded — system of record)"
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [
-          "",
-          "  // ── YIELD FLOW ──────────────────────────────────────────────────"
+          {
+            "section": "YIELD FLOW"
+          }
         ],
-        "trailing": "// StoredEvent"
+        "trailing": "StoredEvent"
       }
     },
     {
@@ -490,10 +493,17 @@
       "docs": {
         "lead": [
           "",
-          "  // Generation lifecycle flows through the unified job:* family",
-          "  // (job:start, job:report-progress, job:complete, job:fail).",
+          {
+            "comment": [
+              "Generation lifecycle flows through the unified job:* family (job:start, job:report-progress, job:complete, job:fail)."
+            ]
+          },
           "",
-          "  // Commands"
+          {
+            "comment": [
+              "Commands"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -540,7 +550,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// void"
+        "trailing": "void"
       }
     },
     {
@@ -593,7 +603,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Command results"
+          {
+            "comment": [
+              "Command results"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -641,7 +655,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -669,7 +683,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -683,7 +697,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { response: CloneResourceWithTokenResponse }"
+        "trailing": "{ response: CloneResourceWithTokenResponse }"
       }
     },
     {
@@ -697,7 +711,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -711,7 +725,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { response: GetResourceByTokenResponse }"
+        "trailing": "{ response: GetResourceByTokenResponse }"
       }
     },
     {
@@ -725,7 +739,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -753,7 +767,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -766,20 +780,26 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // MARK FLOW — annotation CRUD, delegated annotation, resource lifecycle",
-          "  // ========================================================================",
+          {
+            "section": "MARK FLOW — annotation CRUD, delegated annotation, resource lifecycle"
+          },
           "",
-          "  // Domain events (branded — system of record)"
+          {
+            "comment": [
+              "Domain events (branded — system of record)"
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── MARK FLOW ───────────────────────────────────────────────────"
+          {
+            "section": "MARK FLOW"
+          }
         ],
-        "trailing": "// StoredEvent"
+        "trailing": "StoredEvent"
       }
     },
     {
@@ -881,11 +901,17 @@
       "docs": {
         "lead": [
           "",
-          "  // Annotation-job lifecycle flows through the unified job:* family",
-          "  // (job:start, job:report-progress, job:complete, job:fail). UI",
-          "  // consumers filter by jobType.",
+          {
+            "comment": [
+              "Annotation-job lifecycle flows through the unified job:* family (job:start, job:report-progress, job:complete, job:fail). UI consumers filter by jobType."
+            ]
+          },
           "",
-          "  // Commands"
+          {
+            "comment": [
+              "Commands"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -972,7 +998,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Command results"
+          {
+            "comment": [
+              "Command results"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1007,13 +1037,11 @@
       "docs": {
         "lead": [
           "",
-          "  /**",
-          "   * Persist a detection unit's annotations as ONE acknowledged batch.",
-          "   * Answered only after every annotation is in the event log, so a",
-          "   * worker can gate unit completion on durability instead of on",
-          "   * emission — which is what makes an Archivist outage a delay rather",
-          "   * than silent data loss.",
-          "   */"
+          {
+            "doc": [
+              "Persist a detection unit's annotations as ONE acknowledged batch. Answered only after every annotation is in the event log, so a worker can gate unit completion on durability instead of on emission — which is what makes an Archivist outage a delay rather than silent data loss."
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -1080,9 +1108,11 @@
       "validate": null,
       "docs": {
         "lead": [
-          "  // archive/unarchive confirmed-write replies (bridged) — correlation-keyed",
-          "  // acks the SDK's Bus.request awaits. Failure routes the real outcome back;",
-          "  // a fire-and-forget command would fail in silence."
+          {
+            "comment": [
+              "archive/unarchive confirmed-write replies (bridged) — correlation-keyed acks the SDK's Bus.request awaits. Failure routes the real outcome back; a fire-and-forget command would fail in silence."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1138,9 +1168,11 @@
       "validate": null,
       "docs": {
         "lead": [
-          "  // update-entity-types confirmed-write reply (bridged) — correlation-keyed ack",
-          "  // the SDK's Bus.request awaits; failure routes the real outcome back, where a",
-          "  // fire-and-forget command would fail in silence."
+          {
+            "comment": [
+              "update-entity-types confirmed-write reply (bridged) — correlation-keyed ack the SDK's Bus.request awaits; failure routes the real outcome back, where a fire-and-forget command would fail in silence."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1185,7 +1217,11 @@
       "docs": {
         "lead": [
           "",
-          "  // UI events"
+          {
+            "comment": [
+              "UI events"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1215,16 +1251,17 @@
       "validate": null,
       "docs": {
         "lead": [
-          "  // Client-local: a delegated job went silent past its deadline (no",
-          "  // progress, no completion, no job:fail). Emitted by mark-state-unit so the",
-          "  // outcome-notification layer can tell the user; a real job failure arrives",
-          "  // as job:fail instead and never produces this."
+          {
+            "comment": [
+              "Client-local: a delegated job went silent past its deadline (no progress, no completion, no job:fail). Emitted by mark-state-unit so the outcome-notification layer can tell the user; a real job failure arrives as job:fail instead and never produces this."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { resourceId; motivation } — client-local UI signal"
+        "trailing": "{ resourceId; motivation } — client-local UI signal"
       }
     },
     {
@@ -1234,19 +1271,17 @@
       "validate": null,
       "docs": {
         "lead": [
-          "  // Client-local UI notifications for annotation command failures, emitted by",
-          "  // the awaiting catch (mark-state-unit), which inherently knows whose command",
-          "  // failed on which resource. Distinct from the `mark:create-failed` /",
-          "  // `mark:delete-failed` wire replies above: those are Bus.request correlation",
-          "  // plumbing (CommandError, matched by correlationId, delivered to the",
-          "  // requesting client) and are NOT for UI consumption — subscribing to",
-          "  // them raw toasts the requester twice."
+          {
+            "comment": [
+              "Client-local UI notifications for annotation command failures, emitted by the awaiting catch (mark-state-unit), which inherently knows whose command failed on which resource. Distinct from the `mark:create-failed` / `mark:delete-failed` wire replies above: those are Bus.request correlation plumbing (CommandError, matched by correlationId, delivered to the requesting client) and are NOT for UI consumption — subscribing to them raw toasts the requester twice."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { resourceId; message } — client-local UI signal"
+        "trailing": "{ resourceId; message } — client-local UI signal"
       }
     },
     {
@@ -1260,7 +1295,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { resourceId; message } — client-local UI signal"
+        "trailing": "{ resourceId; message } — client-local UI signal"
       }
     },
     {
@@ -1270,15 +1305,17 @@
       "validate": null,
       "docs": {
         "lead": [
-          "  // Same pattern for bind body updates initiated by callers that cannot toast",
-          "  // directly (e.g. ReferenceEntry's unlink); awaiting callers with their own",
-          "  // toast surface (the reference wizard) surface failures themselves instead."
+          {
+            "comment": [
+              "Same pattern for bind body updates initiated by callers that cannot toast directly (e.g. ReferenceEntry's unlink); awaiting callers with their own toast surface (the reference wizard) surface failures themselves instead."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { resourceId; message } — client-local UI signal"
+        "trailing": "{ resourceId; message } — client-local UI signal"
       }
     },
     {
@@ -1291,12 +1328,15 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // FRAME FLOW — schema-layer vocabulary (entity types, tag schemas).",
-          "  // The eighth flow.",
-          "  // ========================================================================",
+          {
+            "section": "FRAME FLOW — schema-layer vocabulary (entity types, tag schemas). The eighth flow."
+          },
           "",
-          "  // Domain events (branded — system of record). System-level: no resourceId."
+          {
+            "comment": [
+              "Domain events (branded — system of record). System-level: no resourceId."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1329,7 +1369,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Commands"
+          {
+            "comment": [
+              "Commands"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1359,10 +1403,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Command results — `*-add-ok` / `*-add-failed` are correlation-keyed replies",
-          "  // for the SDK's confirmed `Bus.request` writes (both bridged). In-process callers",
-          "  // (bootstrap/replay/import) instead race the `frame:*-added` domain event and",
-          "  // don't await `*-add-ok`."
+          {
+            "comment": [
+              "Command results — `*-add-ok` / `*-add-failed` are correlation-keyed replies for the SDK's confirmed `Bus.request` writes (both bridged). In-process callers (bootstrap/replay/import) instead race the `frame:*-added` domain event and don't await `*-add-ok`."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1422,14 +1467,15 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // PRINCIPAL FLOW — who a principal is. One line per NAME it has had,",
-          "  // system-level like the frame vocabulary. Never read by provenance: every",
-          "  // artifact joins on the DID, and names are resolved from the projection",
-          "  // when a record is READ.",
-          "  // ========================================================================",
+          {
+            "section": "PRINCIPAL FLOW — who a principal is. One line per NAME it has had, system-level like the frame vocabulary. Never read by provenance: every artifact joins on the DID, and names are resolved from the projection when a record is READ."
+          },
           "",
-          "  // Domain event (branded — system of record). System-level: no resourceId."
+          {
+            "comment": [
+              "Domain event (branded — system of record). System-level: no resourceId."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1446,7 +1492,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Command — what a principal is called: emitted by the gateway from a token's name, or by a principal of itself. The gateway stamps the sender's DID."
+          {
+            "comment": [
+              "Command — what a principal is called: emitted by the gateway from a token's name, or by a principal of itself. The gateway stamps the sender's DID."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1463,9 +1513,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // BIND FLOW — reference linking",
-          "  // ========================================================================",
+          {
+            "section": "BIND FLOW — reference linking"
+          },
           ""
         ],
         "trailing": ""
@@ -1473,7 +1523,9 @@
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── BIND FLOW ───────────────────────────────────────────────────"
+          {
+            "section": "BIND FLOW"
+          }
         ],
         "trailing": ""
       }
@@ -1528,9 +1580,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // MATCH FLOW — search",
-          "  // ========================================================================",
+          {
+            "section": "MATCH FLOW — search"
+          },
           ""
         ],
         "trailing": ""
@@ -1538,7 +1590,9 @@
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── MATCH FLOW ──────────────────────────────────────────────────"
+          {
+            "section": "MATCH FLOW"
+          }
         ],
         "trailing": ""
       }
@@ -1579,7 +1633,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Searching resources by text: lexical first, by meaning when nothing matches."
+          {
+            "comment": [
+              "Searching resources by text: lexical first, by meaning when nothing matches."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1666,9 +1724,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // GATHER FLOW — context gathering",
-          "  // ========================================================================",
+          {
+            "section": "GATHER FLOW — context gathering"
+          },
           ""
         ],
         "trailing": ""
@@ -1676,7 +1734,9 @@
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── GATHER FLOW ─────────────────────────────────────────────────"
+          {
+            "section": "GATHER FLOW"
+          }
         ],
         "trailing": ""
       }
@@ -1706,7 +1766,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// GatherFailed"
+        "trailing": "GatherFailed"
       }
     },
     {
@@ -1748,7 +1808,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// GatherResourceFailed"
+        "trailing": "GatherResourceFailed"
       }
     },
     {
@@ -1778,7 +1838,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { response: ContextualSummaryResponse }"
+        "trailing": "{ response: ContextualSummaryResponse }"
       }
     },
     {
@@ -1792,7 +1852,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -1803,7 +1863,11 @@
       "docs": {
         "lead": [
           "",
-          "  // What refers to a resource: the annotations elsewhere that cite it."
+          {
+            "comment": [
+              "What refers to a resource: the annotations elsewhere that cite it."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -1890,25 +1954,25 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // BROWSE FLOW — knowledge base reads + UI navigation",
-          "  // ========================================================================",
+          {
+            "section": "BROWSE FLOW — knowledge base reads + UI navigation"
+          },
           "",
-          "  // Reads.",
-          "  //",
-          "  // Reply `response` payloads carry DOMAIN-flavored documents: the KS serves",
-          "  // real, validated ids, so these declare the branded `Annotation` /",
-          "  // `ResourceDescriptor` (annotation-types.ts / graph.ts) rather than the raw",
-          "  // OpenAPI flavors — consumers must never need to re-brand (`as Annotation[]`)",
-          "  // what the protocol already guarantees. Field overrides via Omit +",
-          "  // intersection; envelope shape per the reply-shape standard."
+          {
+            "comment": [
+              "Reads.",
+              "Reply `response` payloads carry DOMAIN-flavored documents: the KS serves real, validated ids, so these declare the branded `Annotation` / `ResourceDescriptor` (annotation-types.ts / graph.ts) rather than the raw OpenAPI flavors — consumers must never need to re-brand (`as Annotation[]`) what the protocol already guarantees. Field overrides via Omit + intersection; envelope shape per the reply-shape standard."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── BROWSE FLOW ─────────────────────────────────────────────────"
+          {
+            "section": "BROWSE FLOW"
+          }
         ],
         "trailing": ""
       }
@@ -1938,7 +2002,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -2378,7 +2442,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// BrowseDirectoryFailed"
+        "trailing": "BrowseDirectoryFailed"
       }
     },
     {
@@ -2389,13 +2453,17 @@
       "docs": {
         "lead": [
           "",
-          "  // UI events (session-scoped — fire on the client bus, tied to a KB)"
+          {
+            "comment": [
+              "UI events (session-scoped — fire on the client bus, tied to a KB)"
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// includes runtime `anchorRect?: AnchorRect`"
+        "trailing": "includes runtime `anchorRect?: AnchorRect`"
       }
     },
     {
@@ -2448,11 +2516,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // SHELL — app-scoped UI events (fire on XynologBrowser's bus, not the",
-          "  // per-session client bus). These must work regardless of whether a",
-          "  // KB session is active: panel toggles, sidebar, tab bar, routing.",
-          "  // ========================================================================",
+          {
+            "section": "SHELL — app-scoped UI events (fire on XynologBrowser's bus, not the per-session client bus). These must work regardless of whether a KB session is active: panel toggles, sidebar, tab bar, routing."
+          },
           ""
         ],
         "trailing": ""
@@ -2460,7 +2526,9 @@
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── SHELL (app-scoped UI events, fire on XynologBrowser bus) ────"
+          {
+            "section": "SHELL (app-scoped UI events, fire on XynologBrowser bus)"
+          }
         ],
         "trailing": ""
       }
@@ -2476,7 +2544,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// includes runtime `anchorRect?: AnchorRect`"
+        "trailing": "includes runtime `anchorRect?: AnchorRect`"
       }
     },
     {
@@ -2489,7 +2557,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// void"
+        "trailing": "void"
       }
     },
     {
@@ -2502,7 +2570,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// void"
+        "trailing": "void"
       }
     },
     {
@@ -2572,7 +2640,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// includes runtime `cancelFallback: () => void`"
+        "trailing": "includes runtime `cancelFallback: () => void`"
       }
     },
     {
@@ -2583,9 +2651,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // BECKON FLOW — annotation attention",
-          "  // ========================================================================",
+          {
+            "section": "BECKON FLOW — annotation attention"
+          },
           ""
         ],
         "trailing": ""
@@ -2593,7 +2661,9 @@
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── BECKON FLOW ─────────────────────────────────────────────────"
+          {
+            "section": "BECKON FLOW"
+          }
         ],
         "trailing": ""
       }
@@ -2635,20 +2705,26 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // JOB FLOW — worker commands + domain events",
-          "  // ========================================================================",
+          {
+            "section": "JOB FLOW — worker commands + domain events"
+          },
           "",
-          "  // Domain events (branded — system of record)"
+          {
+            "comment": [
+              "Domain events (branded — system of record)"
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── JOB FLOW ────────────────────────────────────────────────────"
+          {
+            "section": "JOB FLOW"
+          }
         ],
-        "trailing": "// StoredEvent"
+        "trailing": "StoredEvent"
       }
     },
     {
@@ -2704,7 +2780,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Commands"
+          {
+            "comment": [
+              "Commands"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -2917,7 +2997,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Results"
+          {
+            "comment": [
+              "Results"
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -2937,7 +3021,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -3003,9 +3087,11 @@
       "validate": null,
       "docs": {
         "lead": [
-          "  // confirmed-write reply to a cancellation: whether the queue acted on the job it",
-          "  // named (a pending job is cancelled; a running one is left to its worker).",
-          "  // Failure surfaces a queue error rather than being swallowed."
+          {
+            "comment": [
+              "confirmed-write reply to a cancellation: whether the queue acted on the job it named (a pending job is cancelled; a running one is left to its worker). Failure surfaces a queue error rather than being swallowed."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -3036,27 +3122,26 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // WEAVE FLOW — graph projection progress, pushed by the Weaver, not polled",
-          "  // ========================================================================",
+          {
+            "section": "WEAVE FLOW — graph projection progress, pushed by the Weaver, not polled"
+          },
           "",
-          "  /**",
-          "   * Emitted by the Weaver after applying an event (or a batch's last event)",
-          "   * for a resource to the graph. `sequenceNumber` is the resource-stream",
-          "   * sequence of the last applied event. Folded by the Librarian's",
-          "   * `WeaveProgress` into a process-local applied map that its",
-          "   * `when_applied` barrier awaits. The Weaver runs as its own process,",
-          "   * so the signal reaches the fold over the bus.",
-          "   */"
+          {
+            "doc": [
+              "Emitted by the Weaver after applying an event (or a batch's last event) for a resource to the graph. `sequenceNumber` is the resource-stream sequence of the last applied event. Folded by the Librarian's `WeaveProgress` into a process-local applied map that its `when_applied` barrier awaits. The Weaver runs as its own process, so the signal reaches the fold over the bus."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── WEAVE FLOW ──────────────────────────────────────────────────"
+          {
+            "section": "WEAVE FLOW"
+          }
         ],
-        "trailing": "// { resourceId; sequenceNumber }"
+        "trailing": "{ resourceId; sequenceNumber }"
       }
     },
     {
@@ -3067,20 +3152,17 @@
       "docs": {
         "lead": [
           "",
-          "  // Signal — the vector projection's per-resource decision report: emitted",
-          "  // by the Smelter after indexing a resource's content ('indexed') or after",
-          "  // deciding not to ('skipped', with a `reason` naming the decline:",
-          "  // 'no-extractor', 'empty', or one of the PDF decline classes). Keyed by the",
-          "  // checksum of the bytes inspected — \"settled at C\" is read-your-writes for",
-          "  // exactly that content. NEVER emitted on transient failures: an error is not",
-          "  // a decision. Consumed by the process-local `SmeltProgress` folds behind the",
-          "  // gather and anchored-text barriers. This is the Smelter's single outbound signal."
+          {
+            "comment": [
+              "Signal — the vector projection's per-resource decision report: emitted by the Smelter after indexing a resource's content ('indexed') or after deciding not to ('skipped', with a `reason` naming the decline: 'no-extractor', 'empty', or one of the PDF decline classes). Keyed by the checksum of the bytes inspected — \"settled at C\" is read-your-writes for exactly that content. NEVER emitted on transient failures: an error is not a decision. Consumed by the process-local `SmeltProgress` folds behind the gather and anchored-text barriers. This is the Smelter's single outbound signal."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// { resourceId; contentChecksum; outcome; reason? }"
+        "trailing": "{ resourceId; contentChecksum; outcome; reason? }"
       }
     },
     {
@@ -3091,11 +3173,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Command — rebuild the graph projection from the event log (full when",
-          "  // resourceId is absent, one resource when present). Served by the Weaver",
-          "  // over the bus: a direct `rebuildAll()`/`rebuildResource()` call cannot",
-          "  // reach a Weaver running in its own container. Correlated request/reply",
-          "  // via the BUS_OPERATIONS registry."
+          {
+            "comment": [
+              "Command — rebuild the graph projection from the event log (full when resourceId is absent, one resource when present). Served by the Weaver over the bus: a direct `rebuildAll()`/`rebuildResource()` call cannot reach a Weaver running in its own container. Correlated request/reply via the BUS_OPERATIONS registry."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -3114,7 +3196,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// no fields"
+        "trailing": "no fields"
       }
     },
     {
@@ -3128,7 +3210,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -3139,11 +3221,11 @@
       "docs": {
         "lead": [
           "",
-          "  // Command — rebuild anchored-text artifacts by re-running extraction",
-          "  // (every geometry-capable resource when resourceId is absent, one when",
-          "  // present). Served by the Smelter, serialized, never destructive, and",
-          "  // with ZERO embedding calls — only the derived map is re-made. Correlated",
-          "  // request/reply via BUS_OPERATIONS."
+          {
+            "comment": [
+              "Command — rebuild anchored-text artifacts by re-running extraction (every geometry-capable resource when resourceId is absent, one when present). Served by the Smelter, serialized, never destructive, and with ZERO embedding calls — only the derived map is re-made. Correlated request/reply via BUS_OPERATIONS."
+            ]
+          }
         ],
         "trailing": ""
       },
@@ -3162,7 +3244,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// no fields"
+        "trailing": "no fields"
       }
     },
     {
@@ -3176,7 +3258,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// CommandError"
+        "trailing": "CommandError"
       }
     },
     {
@@ -3187,9 +3269,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // SETTINGS (Browser-only)",
-          "  // ========================================================================",
+          {
+            "section": "SETTINGS (Browser-only)"
+          },
           ""
         ],
         "trailing": ""
@@ -3197,7 +3279,9 @@
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── SETTINGS (Browser-only) ────────────────────────────────────"
+          {
+            "section": "SETTINGS (Browser-only)"
+          }
         ],
         "trailing": ""
       }
@@ -3212,7 +3296,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "// void"
+        "trailing": "void"
       }
     },
     {
@@ -3251,24 +3335,24 @@
       "docs": {
         "lead": [
           "",
-          "  // ========================================================================",
-          "  // SSE infrastructure",
-          "  // ========================================================================",
+          {
+            "section": "SSE infrastructure"
+          },
           "",
-          "  /**",
-          "   * Written by the `/bus/subscribe` handler when a scoped entry's",
-          "   * `lastEventId` cannot be honoured — the watermark is unparseable or",
-          "   * names another scope, the record no longer holds the events after",
-          "   * it, or the record could not be read. The client falls back to",
-          "   * invalidating what it caches for that scope and re-reading it.",
-          "   */"
+          {
+            "doc": [
+              "Written by the `/bus/subscribe` handler when a scoped entry's `lastEventId` cannot be honoured — the watermark is unparseable or names another scope, the record no longer holds the events after it, or the record could not be read. The client falls back to invalidating what it caches for that scope and re-reading it."
+            ]
+          }
         ],
         "trailing": ""
       },
       "schemaDocs": {
         "lead": [
           "",
-          "  // ── SSE infrastructure ──────────────────────────────────────────"
+          {
+            "section": "SSE infrastructure"
+          }
         ],
         "trailing": ""
       }
@@ -3309,8 +3393,9 @@
       "failure": "bind:body-update-failed",
       "docs": {
         "lead": [
-          "",
-          "  // ── BIND ────────────────────────────────────────────────────────"
+          {
+            "section": "BIND"
+          }
         ],
         "trailing": ""
       }
@@ -3322,7 +3407,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ── BROWSE (reads) ──────────────────────────────────────────────"
+          {
+            "section": "BROWSE (reads)"
+          }
         ],
         "trailing": ""
       }
@@ -3424,7 +3511,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ── FRAME (KB schema writes) ────────────────────────────────────"
+          {
+            "section": "FRAME (KB schema writes)"
+          }
         ],
         "trailing": ""
       }
@@ -3445,7 +3534,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ── GATHER ──────────────────────────────────────────────────────"
+          {
+            "section": "GATHER"
+          }
         ],
         "trailing": ""
       }
@@ -3465,7 +3556,11 @@
       "failure": "gather:summary-failed",
       "docs": {
         "lead": [
-          "  // dormant — handler registered, no client caller (annotation summary)"
+          {
+            "comment": [
+              "dormant — handler registered, no client caller (annotation summary)"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3495,7 +3590,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ── JOB ─────────────────────────────────────────────────────────"
+          {
+            "section": "JOB"
+          }
         ],
         "trailing": ""
       }
@@ -3533,7 +3630,11 @@
       "failure": "job:claim-failed",
       "docs": {
         "lead": [
-          "  // worker-side: the worker claims a queued job (not an SDK call)"
+          {
+            "comment": [
+              "worker-side: the worker claims a queued job (not an SDK call)"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3545,7 +3646,9 @@
       "docs": {
         "lead": [
           "",
-          "  // ── MARK ────────────────────────────────────────────────────────"
+          {
+            "section": "MARK"
+          }
         ],
         "trailing": ""
       }
@@ -3602,8 +3705,14 @@
       "docs": {
         "lead": [
           "",
-          "  // ── MATCH ───────────────────────────────────────────────────────",
-          "  // take-1 dressed as an Observable in the SDK"
+          {
+            "section": "MATCH"
+          },
+          {
+            "comment": [
+              "take-1 dressed as an Observable in the SDK"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3633,8 +3742,14 @@
       "docs": {
         "lead": [
           "",
-          "  // ── WEAVE ───────────────────────────────────────────────────────",
-          "  // Graph-projection rebuild, served by the Weaver"
+          {
+            "section": "WEAVE"
+          },
+          {
+            "comment": [
+              "Graph-projection rebuild, served by the Weaver"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3646,8 +3761,14 @@
       "docs": {
         "lead": [
           "",
-          "  // ── SMELT ────────────────────────────────────────────",
-          "  // Anchored-text rebuild, served by the Smelter"
+          {
+            "section": "SMELT"
+          },
+          {
+            "comment": [
+              "Anchored-text rebuild, served by the Smelter"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3659,8 +3780,14 @@
       "docs": {
         "lead": [
           "",
-          "  // ── YIELD ───────────────────────────────────────────────────────",
-          "  // clients refresh on the persisted `yield:created`, never on the -ok reply"
+          {
+            "section": "YIELD"
+          },
+          {
+            "comment": [
+              "clients refresh on the persisted `yield:created`, never on the -ok reply"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3680,7 +3807,11 @@
       "failure": "yield:update-failed",
       "docs": {
         "lead": [
-          "  // dormant — handler in stower exists, no request emitter"
+          {
+            "comment": [
+              "dormant — handler in stower exists, no request emitter"
+            ]
+          }
         ],
         "trailing": ""
       }
@@ -3714,13 +3845,41 @@
     }
   ],
   "docs": {
-    "eventName": "/**\n * Any valid channel name on the EventBus — `keyof EventMap`, the root channel\n * type. Two subsets matter, and confusing them is a silent-failure trap:\n *\n * - `EmittableChannel` (below) — channels with a non-null `CHANNEL_SCHEMAS`\n *   entry; what you EMIT (the `/bus/emit` gateway validates the payload).\n * - `BridgedChannel` (`bridged-channels.ts`) — the transport fan-in set; the\n *   only channels a client can SUBSCRIBE to over a concrete transport.\n *\n * Request/reply (`Bus.request`) emits on an `EmittableChannel` and subscribes on\n * `BridgedChannel` replies. A reply channel that is a valid `EventName` but NOT\n * in `BRIDGED_CHANNELS` is never delivered → the request times out with no\n * compile or runtime error. `Bus.request` therefore takes no reply channels:\n * it looks them up in `BUS_OPERATIONS`, from which `BRIDGED_CHANNELS` derives.\n */",
-    "enrichedEvents": "/**\n * Channels whose published event carries the annotation as it stands in the\n * view — the registry's `enriched` flag, generated so the flag and the code\n * that acts on it cannot disagree.\n *\n * The enricher switches on THIS list: a flag with no case fails to compile\n * rather than silently never attaching, which consumers cannot detect because\n * `annotation` is optional and their absent-branch is indistinguishable from\n * a genuine decline.\n *\n * Typed `PersistedEventType`, not `EventName`: the validator already allows\n * the flag only on a stored event, so this makes enriched ⊆ persisted a\n * compile-time fact rather than a convention.\n */",
-    "channelSchemas": "/**\n * Authoritative map from bus channel to OpenAPI schema name.\n *\n * Every {@link EventName} must appear. The `satisfies` clause below\n * enforces completeness at compile time — adding a channel to\n * {@link EventMap} without adding an entry here is a build error.\n *\n * Values:\n *   - `<SchemaName>`: payload validates against `components['schemas'][SchemaName]`.\n *   - `null`: no single-schema validation. Used for branded\n *     `StoredEvent` wrappers, `void` UI signals, and inline wrapper\n *     types (e.g. `{ response: T }`). These are not validated by\n *     `/bus/emit`.\n *\n * The gateway's `/bus/emit` route validates against the same registry\n * entries. Consumers can use this map for client-side pre-flight\n * validation before emitting.\n */",
-    "emittableChannel": "/** Channels where `/bus/emit` validates the payload (non-null schema). */"
+    "eventName": [
+      "Any valid channel name on the EventBus — `keyof EventMap`, the root channel type. Two subsets matter, and confusing them is a silent-failure trap:",
+      {
+        "items": [
+          "`EmittableChannel` (below) — channels with a non-null `CHANNEL_SCHEMAS` entry; what you EMIT (the `/bus/emit` gateway validates the payload).",
+          "`BridgedChannel` (`bridged-channels.ts`) — the transport fan-in set; the only channels a client can SUBSCRIBE to over a concrete transport."
+        ]
+      },
+      "Request/reply (`Bus.request`) emits on an `EmittableChannel` and subscribes on `BridgedChannel` replies. A reply channel that is a valid `EventName` but NOT in `BRIDGED_CHANNELS` is never delivered → the request times out with no compile or runtime error. `Bus.request` therefore takes no reply channels: it looks them up in `BUS_OPERATIONS`, from which `BRIDGED_CHANNELS` derives."
+    ],
+    "enrichedEvents": [
+      "Channels whose published event carries the annotation as it stands in the view — the registry's `enriched` flag, generated so the flag and the code that acts on it cannot disagree.",
+      "The enricher switches on THIS list: a flag with no case fails to compile rather than silently never attaching, which consumers cannot detect because `annotation` is optional and their absent-branch is indistinguishable from a genuine decline.",
+      "Typed `PersistedEventType`, not `EventName`: the validator already allows the flag only on a stored event, so this makes enriched ⊆ persisted a compile-time fact rather than a convention."
+    ],
+    "channelSchemas": [
+      "Authoritative map from bus channel to OpenAPI schema name.",
+      "Every `EventName` must appear. The `satisfies` clause below enforces completeness at compile time — adding a channel to `EventMap` without adding an entry here is a build error.",
+      "Values:",
+      {
+        "items": [
+          "`<SchemaName>`: payload validates against `components['schemas'][SchemaName]`.",
+          "`null`: no single-schema validation. Used for branded `StoredEvent` wrappers, `void` UI signals, and inline wrapper types (e.g. `{ response: T }`). These are not validated by `/bus/emit`."
+        ]
+      },
+      "The gateway's `/bus/emit` route validates against the same registry entries. Consumers can use this map for client-side pre-flight validation before emitting."
+    ],
+    "emittableChannel": [
+      "Channels where `/bus/emit` validates the payload (non-null schema)."
+    ]
   },
   "inProcess": {
-    "doc": "/**\n * Explicitly LOCAL-ONLY: these channels never cross the signal plane — UI\n * signals, event-log appends, and single-process relays. Membership is a\n * DECISION, not a default: a channel absent from every class (operations,\n * outboundCommands, bridgedBroadcasts, here) refuses to generate. There is\n * no fallthrough: one would silently classify a wire channel such as\n * `job:queued` as in-process and starve every worker.\n */",
+    "doc": [
+      "Explicitly LOCAL-ONLY: these channels never cross the signal plane — UI signals, event-log appends, and single-process relays. Membership is a DECISION, not a default: a channel absent from every class (operations, outboundCommands, bridgedBroadcasts, here) refuses to generate. There is no fallthrough: one would silently classify a wire channel such as `job:queued` as in-process and starve every worker."
+    ],
     "channels": [
       "yield:clone",
       "mark:requested",
@@ -3748,7 +3907,16 @@
     ]
   },
   "kind": {
-    "doc": "/**\n * How a wire-crossing channel behaves. An OPERATION's channels are absent:\n * their kind follows from `operations`, and restating a derivable fact is a\n * mirror with nothing to gate it.\n *\n * `kind`, not `shape` — `channels[]` entries already use `shape` for the\n * PAYLOAD shape, and two facts under one key in one file is the disease this\n * taxonomy exists to cure.\n *\n *   command — no reply pair; a directive for whichever single handler owns it\n *   event   — a fact announced after it happened; consumers react, nobody replies\n */",
+    "doc": [
+      "How a wire-crossing channel behaves. An OPERATION's channels are absent: their kind follows from `operations`, and restating a derivable fact is a mirror with nothing to gate it.",
+      "`kind`, not `shape` — `channels[]` entries already use `shape` for the PAYLOAD shape, and two facts under one key in one file is the disease this taxonomy exists to cure.",
+      {
+        "items": [
+          "command — no reply pair; a directive for whichever single handler owns it",
+          "event — a fact announced after it happened; consumers react, nobody replies"
+        ]
+      }
+    ],
     "command": [
       "job:checkpoint",
       "job:cancel",
@@ -3796,7 +3964,16 @@
     ]
   },
   "audience": {
-    "doc": "/**\n * WHO receives a wire-crossing channel — independent of `kind` and of\n * `recorded`. An OPERATION's channels are absent: a request reaches the one\n * service that answers it, and a reply is correlated-addressed to its owner.\n *\n *   everyone — every full client subscribes, with every operation's reply channels (derives BRIDGED_CHANNELS)\n *   scoped   — delivered to clients that joined the frame's RESOURCE scope\n *              (derives RESOURCE_SCOPED_CHANNELS)\n *   declared — only clients whose manifest names it: workers, sidecars, and\n *              the gateway's own handlers\n */",
+    "doc": [
+      "WHO receives a wire-crossing channel — independent of `kind` and of `recorded`. An OPERATION's channels are absent: a request reaches the one service that answers it, and a reply is correlated-addressed to its owner.",
+      {
+        "items": [
+          "everyone — every full client subscribes, with every operation's reply channels (derives BRIDGED_CHANNELS)",
+          "scoped — delivered to clients that joined the frame's RESOURCE scope (derives RESOURCE_SCOPED_CHANNELS)",
+          "declared — only clients whose manifest names it: workers, sidecars, and the gateway's own handlers"
+        ]
+      }
+    ],
     "everyone": [
       "job:report-progress",
       "job:complete",
@@ -3846,7 +4023,12 @@
     ]
   },
   "effect": {
-    "doc": "/**\n * Does emitting this channel CHANGE the knowledge base, or only ask it\n * something?\n *\n * A WRITE is an act: it appends to the event log, or it enqueues or\n * transitions durable work the log will later cite. A READ answers from\n * state that already exists and leaves nothing behind — every `browse:*`\n * request, and the three lookups that merely resolve a token or a summary.\n *\n * The domain is exactly the EMITTABLE set: an operation's request, or a\n * `kind: command`. Inbound replies, broadcast events and in-process UI\n * signals are absent because nobody emits them at the gateway, so the\n * question does not arise. Every emittable channel names one side or the\n * other and the generator refuses — there is no default.\n *\n * The gateway reads this to decide when the record learns a principal's name:\n * a `_userId` stamp is NOT the test, because a read carries one too.\n * Someone who signs in and only browses is never named, and the profile\n * publish rate is the WRITE rate rather than the emit rate — orders of\n * magnitude apart.\n */",
+    "doc": [
+      "Does emitting this channel CHANGE the knowledge base, or only ask it something?",
+      "A WRITE is an act: it appends to the event log, or it enqueues or transitions durable work the log will later cite. A READ answers from state that already exists and leaves nothing behind — every `browse:*` request, and the three lookups that merely resolve a token or a summary.",
+      "The domain is exactly the EMITTABLE set: an operation's request, or a `kind: command`. Inbound replies, broadcast events and in-process UI signals are absent because nobody emits them at the gateway, so the question does not arise. Every emittable channel names one side or the other and the generator refuses — there is no default.",
+      "The gateway reads this to decide when the record learns a principal's name: a `_userId` stamp is NOT the test, because a read carries one too. Someone who signs in and only browses is never named, and the profile publish rate is the WRITE rate rather than the emit rate — orders of magnitude apart."
+    ],
     "writes": [
       "bind:update-body",
       "frame:add-entity-type",
