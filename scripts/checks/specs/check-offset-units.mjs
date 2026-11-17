@@ -12,8 +12,9 @@
 // It fails when:
 //   - a member listed below is gone, or its description does not say
 //     "code points". These are the members that carry an offset or a length of
-//     text on the wire, in the record or in a store;
-//   - any description of a component schema speaks of an offset, of
+//     text on the wire, in the record, in a store or in what a client hands
+//     its caller;
+//   - any description of a component schema or a client type speaks of an offset, of
 //     characters, or of code units, and does not say "code points". A member
 //     added beside the listed ones is held by this, whatever it is called.
 //
@@ -24,7 +25,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = resolve(fileURLToPath(import.meta.url), '../../../..');
-const SCHEMAS = 'specs/src/components/schemas';
+const DIRECTORIES = ['specs/src/components/schemas', 'specs/src/client/types'];
 
 /** The members that carry an offset into a text, or a length of one: schema, then the path to the member. */
 const MEMBERS = [
@@ -35,24 +36,32 @@ const MEMBERS = [
   ['AnchoredTextExtractedEntry', ['properties', 'lines', 'items', 'properties', 'words']],
   ['UnitCursor', ['properties', 'next']],
   ['GatherAnnotationOptions', ['properties', 'contextWindow']],
+  ['TextSpan', ['allOf', 0, 'properties', 'start']],
+  ['TextSpan', ['allOf', 0, 'properties', 'end']],
 ];
 
 const SAYS_THE_UNIT = /code points?/i;
 const SPEAKS_OF_A_COUNT_OF_TEXT = /\boffsets?\b|\bcharacters?\b|\bchars?\b|utf-16|\bcode units?\b/i;
 
 const failures = [];
+/** Every schema by its name, with the file it is in. */
 const schemas = new Map(
-  readdirSync(resolve(REPO, SCHEMAS))
-    .filter((name) => name.endsWith('.json'))
-    .map((name) => [name.slice(0, -'.json'.length), JSON.parse(readFileSync(resolve(REPO, SCHEMAS, name), 'utf8'))]),
+  DIRECTORIES.flatMap((directory) =>
+    readdirSync(resolve(REPO, directory))
+      .filter((name) => name.endsWith('.json'))
+      .map((name) => [
+        name.slice(0, -'.json'.length),
+        { file: `${directory}/${name}`, document: JSON.parse(readFileSync(resolve(REPO, directory, name), 'utf8')) },
+      ]),
+  ),
 );
 
 /** The listed members, as the sweep names a place: it leaves them to the check above. */
 const listed = new Set(MEMBERS.map(([schema, path]) => `${schema} #/${path.join('/')}`));
 
 for (const [schema, path] of MEMBERS) {
-  const at = `${SCHEMAS}/${schema}.json #/${path.join('/')}`;
-  const member = path.reduce((node, name) => node?.[name], schemas.get(schema));
+  const at = `${schemas.get(schema)?.file ?? schema} #/${path.join('/')}`;
+  const member = path.reduce((node, name) => node?.[name], schemas.get(schema)?.document);
   if (member === undefined) {
     failures.push(`${at} is listed as carrying an offset or a length of text, and is not there`);
   } else if (typeof member.description !== 'string' || !SAYS_THE_UNIT.test(member.description)) {
@@ -70,12 +79,12 @@ function sweep(node, pointer, schema) {
   const speaks = typeof description === 'string' && SPEAKS_OF_A_COUNT_OF_TEXT.test(description) && !SAYS_THE_UNIT.test(description);
   if (speaks && !listed.has(`${schema} ${pointer}`)) {
     failures.push(
-      `${SCHEMAS}/${schema}.json ${pointer} speaks of an offset or of characters and does not say "code points": ${JSON.stringify(description.slice(0, 90))}`,
+      `${schemas.get(schema).file} ${pointer} speaks of an offset or of characters and does not say "code points": ${JSON.stringify(description.slice(0, 90))}`,
     );
   }
   for (const [name, member] of Object.entries(node)) sweep(member, `${pointer}/${name}`, schema);
 }
-for (const [schema, document] of schemas) sweep(document, '#', schema);
+for (const [schema, { document }] of schemas) sweep(document, '#', schema);
 
 if (failures.length > 0) {
   for (const message of failures) console.error(`✗ ${message}`);

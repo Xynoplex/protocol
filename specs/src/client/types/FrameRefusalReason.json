@@ -1,0 +1,9 @@
+{
+  "title": "FrameRefusalReason",
+  "type": "string",
+  "description": "Why a reader refused a frame, for its first fault: `lacks`, a member it lacks; `malformed`, a member that is not of its shape. A reader's rule (specs/src/bus/frame-cases.json).",
+  "enum": [
+    "lacks",
+    "malformed"
+  ]
+}

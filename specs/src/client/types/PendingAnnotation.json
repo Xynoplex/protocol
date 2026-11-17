@@ -1,0 +1,17 @@
+{
+  "title": "PendingAnnotation",
+  "type": "object",
+  "description": "The annotation a mark state unit is composing, from the selection a request asked for, until it is submitted or cancelled.",
+  "properties": {
+    "selector": {
+      "$ref": "../../components/schemas/AnnotationSelector.json"
+    },
+    "motivation": {
+      "$ref": "../../components/schemas/Motivation.json"
+    }
+  },
+  "required": [
+    "selector",
+    "motivation"
+  ]
+}

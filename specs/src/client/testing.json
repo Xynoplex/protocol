@@ -1,0 +1,91 @@
+{
+  "$comment": "AUTHORITY for the testing kit every SDK ships (surface.json's testing module): what a faulty transport does to a request, how a liveness check draws a schedule of it and how much room it gives a case, the steps an exactly-once delivery check interleaves, and the members of the kit's records. A fault's `name` is its type's, `kind` the word that names it in a request log, and `holds` the whole numbers it carries; a record's members are named as surface.json names members, each SDK spelling them its language's way.",
+  "faultActions": [
+    {
+      "name": "Deliver",
+      "kind": "deliver",
+      "docs": "The request's reply is delivered.",
+      "holds": []
+    },
+    {
+      "name": "DropReply",
+      "kind": "drop-reply",
+      "docs": "The request's reply is lost.",
+      "holds": []
+    },
+    {
+      "name": "Delay",
+      "kind": "delay",
+      "docs": "The request's reply is delivered after `ms` milliseconds.",
+      "holds": [
+        "ms"
+      ]
+    },
+    {
+      "name": "DuplicateReply",
+      "kind": "duplicate-reply",
+      "docs": "The request's reply is delivered twice.",
+      "holds": []
+    },
+    {
+      "name": "RejectEmit",
+      "kind": "reject-emit",
+      "docs": "The emit itself is refused: the request never reaches the gateway.",
+      "holds": []
+    }
+  ],
+  "delayMs": {
+    "docs": "The delays a drawn fault is of, in milliseconds.",
+    "minimum": 0,
+    "maximum": 5
+  },
+  "scheduleLength": {
+    "docs": "How many faults a drawn schedule is of.",
+    "minimum": 1,
+    "maximum": 8
+  },
+  "slack": {
+    "docs": "How many times its reckoned bound a case is given: the room a scheduler's jitter takes.",
+    "times": 4
+  },
+  "deliveryOps": {
+    "docs": "One step of an interleaving: a write, or a client-initiated transition.",
+    "ops": [
+      "write",
+      "transition"
+    ]
+  },
+  "records": [
+    {
+      "name": "RequestLogEntry",
+      "docs": "One request the transport was sent.",
+      "members": [
+        "channel",
+        "action",
+        "correlationId",
+        "retryKey",
+        "payload"
+      ]
+    },
+    {
+      "name": "LivenessScenario",
+      "docs": "What one fresh run of a composition exposes to the axioms.",
+      "members": [
+        "outputs",
+        "settlements"
+      ]
+    },
+    {
+      "name": "LivenessSpec",
+      "docs": "A composition, and the schedules it is run under.",
+      "members": [
+        "setup",
+        "timeoutMs",
+        "retryBudget",
+        "cases",
+        "schedules",
+        "makeResponse"
+      ]
+    }
+  ]
+}

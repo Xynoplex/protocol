@@ -1,0 +1,23 @@
+{
+  "title": "ReconciledSpan",
+  "description": "Where a quoted selection was found in a text, and how it was found.",
+  "allOf": [
+    {
+      "$ref": "./TextSpan.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "anchorMethod": {
+          "$ref": "./AnchorMethod.json"
+        },
+        "matchQuality": {
+          "$ref": "./MatchQuality.json"
+        }
+      },
+      "required": [
+        "anchorMethod"
+      ]
+    }
+  ]
+}
