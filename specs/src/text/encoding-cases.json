@@ -18,7 +18,7 @@
       "sdk/python/sdk/tests/test_decode_cases.py"
     ],
     "go": [
-      "sdk/go/sdk/resources_test.go"
+      "sdk/go/resources_test.go"
     ],
     "kotlin": [
       "sdk/kotlin/sdk/src/test/kotlin/xynolog/resources/DecodeCasesTest.kt"

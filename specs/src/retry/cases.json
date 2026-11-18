@@ -7,7 +7,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/retry-agreement.test.ts"],
     "rust": ["sdk/rust/sdk/src/retry.rs", "sdk/rust/sdk/tests/retry_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_retry.py"],
-    "go": ["sdk/go/sdk/retry_test.go"],
+    "go": ["sdk/go/retry_test.go"],
     "worker": ["worker/tests/test_retry_job_rule.py"],
     "swift": ["sdk/swift/sdk/Tests/XynologTests/TransportTablesTests.swift"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/retry/RetryCasesTest.kt"]

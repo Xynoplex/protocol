@@ -6,7 +6,7 @@
     "typescript": ["sdk/typescript/http-transport/src/transport/__tests__/frame-cases.test.ts"],
     "rust": ["sdk/rust/http-transport/src/actor.rs"],
     "python": ["sdk/python/sdk/tests/test_frame_cases.py"],
-    "go": ["sdk/go/sdk/frame_cases_test.go"],
+    "go": ["sdk/go/frame_cases_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/http/FrameCasesTest.kt"],
     "swift": ["sdk/swift/sdk/Tests/XynologTests/FrameCasesTests.swift"],
     "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/FrameCasesTests.cs"]

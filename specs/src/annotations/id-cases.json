@@ -9,7 +9,7 @@
     "rust": ["sdk/rust/sdk/src/annotations/id.rs"],
     "python": ["sdk/python/sdk/tests/test_annotation_ids.py", "sdk/python/sdk/tests/test_readme.py"],
     "conformance": ["conformance/worker-service/yield.test.ts"],
-    "go": ["sdk/go/sdk/annotations/id_test.go"],
+    "go": ["sdk/go/annotations/id_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/annotations/AnnotationIdsTest.kt"]
   },
   "cases": [

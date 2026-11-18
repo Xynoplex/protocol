@@ -4,7 +4,7 @@
     "typescript": ["sdk/typescript/sdk/src/session/__tests__/xynolog-browser.test.ts"],
     "rust": ["sdk/rust/sdk/tests/browser.rs"],
     "python": ["sdk/python/sdk/tests/test_registry.py"],
-    "go": ["sdk/go/sdk/registry/browser_test.go"],
+    "go": ["sdk/go/registry/browser_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/registry/OpenResourcesTest.kt"],
     "swift": ["sdk/swift/sdk/Tests/XynologTests/RegistryTablesTests.swift"],
     "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RegistryTests.cs"],

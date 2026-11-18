@@ -6,7 +6,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/resource-reader-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/resources.rs", "sdk/rust/sdk/tests/resource_reader_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_resource_readers.py"],
-    "go": ["sdk/go/sdk/resources_test.go"],
+    "go": ["sdk/go/resources_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/resources/ResourceReadersTest.kt"],
     "swift": ["sdk/swift/sdk/Tests/XynologTests/ResourceReaderCasesTests.swift"],
     "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/ResourceReaderCasesTests.cs"]

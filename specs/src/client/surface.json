@@ -1099,7 +1099,7 @@
           "sdk/python/sdk/src/xynolog/annotations.py"
         ],
         "go": [
-          "sdk/go/sdk/annotations"
+          "sdk/go/annotations"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/annotations"
@@ -1326,7 +1326,7 @@
           "sdk/python/sdk/src/xynolog/job_filter.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/jobs"
@@ -1363,7 +1363,7 @@
           "sdk/python/sdk/src/xynolog/claims.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/jobs"
@@ -1406,7 +1406,7 @@
           "sdk/python/sdk/src/xynolog/retry.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/retry"
@@ -1436,7 +1436,7 @@
           "sdk/python/sdk/src/xynolog/http/endpoint.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http"
@@ -1472,7 +1472,7 @@
           "sdk/python/sdk/src/xynolog/session.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/session"
@@ -1536,7 +1536,7 @@
           "sdk/python/sdk/src/xynolog/storage.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/storage"
@@ -1578,8 +1578,8 @@
           "sdk/python/sdk/src/xynolog/channels.py"
         ],
         "go": [
-          "sdk/go/sdk",
-          "sdk/go/sdk/bus"
+          "sdk/go",
+          "sdk/go/bus"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/bus",
@@ -1644,7 +1644,7 @@
           "sdk/swift/sdk/Sources/Xynolog/Registry/XynologBrowser.swift",
           "sdk/swift/sdk/Sources/Xynolog/Registry/SessionFactory.swift",
           "sdk/swift/sdk/Sources/Xynolog/Registry/Stored.swift",
-          "sdk/swift/sdk/Sources/XynologCodegen/Tables.swift"
+          "sdk/swift/sdk/Sources/Xynolog/Generated/Models.swift"
         ],
         "typescript": [
           "sdk/typescript/sdk/src/session/xynolog-browser.ts",
@@ -1668,7 +1668,7 @@
           "sdk/python/sdk/src/xynolog/http/session.py"
         ],
         "go": [
-          "sdk/go/sdk/registry"
+          "sdk/go/registry"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/registry",
@@ -1871,7 +1871,7 @@
         "typescript": ["sdk/typescript/sdk/src/session/session-signals.ts"],
         "rust": ["sdk/rust/sdk/src/session/signals.rs"],
         "python": ["sdk/python/sdk/src/xynolog/session_signals.py"],
-        "go": ["sdk/go/sdk"],
+        "go": ["sdk/go"],
         "kotlin": ["sdk/kotlin/sdk/src/main/kotlin/xynolog/session"]
       },
       "members": [
@@ -1906,7 +1906,7 @@
           "sdk/python/sdk/src/xynolog/errors.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/registry",
@@ -1980,7 +1980,7 @@
           "sdk/python/sdk/src/xynolog/http/agent.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http"
@@ -2012,7 +2012,7 @@
           "sdk/python/sdk/src/xynolog/sign_in_store.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/signin"
@@ -2115,7 +2115,7 @@
           "sdk/python/sdk/src/xynolog/http/session.py",
           "sdk/python/sdk/src/xynolog/http/oauth.py"
         ],
-        "go": ["sdk/go/sdk"],
+        "go": ["sdk/go"],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/signin",
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http"
@@ -2196,7 +2196,7 @@
           "sdk/python/sdk/src/xynolog/http/discovery.py"
         ],
         "go": [
-          "sdk/go/sdk/discovery"
+          "sdk/go/discovery"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/discovery",
@@ -2316,7 +2316,7 @@
           "sdk/python/sdk/src/xynolog/testing/liveness.py"
         ],
         "go": [
-          "sdk/go/sdk/xynologtest"
+          "sdk/go/xynologtest"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/testing"
@@ -2449,7 +2449,7 @@
           "sdk/python/sdk/src/xynolog/bus.py"
         ],
         "go": [
-          "sdk/go/sdk"
+          "sdk/go"
         ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/bus"

@@ -7,7 +7,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/job-filter.test.ts"],
     "rust": ["sdk/rust/sdk/tests/job_filter.rs"],
     "python": ["sdk/python/sdk/tests/test_claims.py"],
-    "go": ["sdk/go/sdk/claims_test.go"],
+    "go": ["sdk/go/claims_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/jobs/JobTablesTest.kt"],
     "haskell": ["sdk/haskell/sdk/test/WorkerCases.hs"]
   },

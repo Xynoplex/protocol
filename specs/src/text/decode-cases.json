@@ -7,7 +7,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/decode-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/resources.rs", "sdk/rust/sdk/tests/decode_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_decode_cases.py"],
-    "go": ["sdk/go/sdk/resources_test.go"],
+    "go": ["sdk/go/resources_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/resources/DecodeCasesTest.kt"],
     "swift": ["sdk/swift/sdk/Tests/XynologTests/DecodeRepresentationTests.swift"]
   },
