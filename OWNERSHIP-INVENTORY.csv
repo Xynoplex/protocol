@@ -860,6 +860,7 @@ specs/src/discovery/DiscoveryDocument.json,Normative protocol source,xynolog/pro
 specs/src/discovery/README.md,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/errors/ErrorsCodes.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/errors/codes.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/follower/FollowerFollowCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/follower/follow-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/graph/codec-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/graph/database-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

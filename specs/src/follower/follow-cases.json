@@ -1,5 +1,5 @@
 {
-  "$comment": "How a follower of the record takes each log of the record it follows, as contract/TRANSPORT-CONTRACT.md § What repairs a passing frame states it: a cursor for each log that moves by one, a delivered event taken as a hint, and a sweep at the start and at each reopening of the stream. Every follower runs every case, in whatever language it is written; the Weaver and the Smelter follow the record with one. `record` is each log of the record and the type of each of its events, in order: the first is its event 1. A log is a resource's, named by the resource, or `__system__`. `fold` is what the projector does with an event: `uses` the types it applies (an event of any other type is taken as nothing), `refuses` the events it refuses as recorded, each `[log, sequence]` (taken as nothing, and counted), and `fails` the events whose taking fails for a passing reason, each `[log, sequence, times]`: the first `times` takings of it fail. `follows` is the logs followed: `resources`, every resource's, and `__system__` where it is named. `cursors` is each log's cursor at the start; a log with none has no cursor. `withNoCursor` is how the projector starts a log that has no cursor at the start: `from-the-first`, taking it from its first event, or `own-start`, the projector's own way, which goes on from the log's last event as it then is. The follower is made, with its stream open, before the first step. `steps` are done in order, each let settle before the next: `start` (the follower starts, and sweeps), `deliver` `[log, sequence]` (the record's event is delivered, live; one before `start` is delivered before the start's sweep reaches its log), `record` `[log, type]` (an event is added to the record, and not delivered), `drop` and `reopen` (the stream drops, and opens again). `taken` is, for each log, every event taken, in order, each `[sequence, how]`: `applied`, `nothing` or `refused`. A log nothing was taken of is not named. `cursorsAfter` is each log's cursor at the end, `stopped` the logs a failed taking has stopped, and `startedOwnWay` the logs started the projector's own way.",
+  "$comment": "How a follower of the record takes each log of the record it follows, as contract/TRANSPORT-CONTRACT.md § What repairs a passing frame states it: a cursor for each log that moves by one, a delivered event taken as a hint, and a sweep at the start and at each reopening of the stream. Every follower runs every case, in whatever language it is written; the Weaver and the Smelter follow the record with one. `record` is each log of the record and the type of each of its events, in order: the first is its event 1. A log is a resource's, named by the resource, or `__system__`. `fold` is what the projector does with an event: `uses` the types it applies (an event of any other type is taken as nothing), `refuses` the events it refuses as recorded, each by its `log` and `sequence` (taken as nothing, and counted), and `fails` the events whose taking fails for a passing reason, each by its `log` and `sequence`, with `times`: the first `times` takings of it fail. `follows` is the logs followed: `resources`, every resource's, and `__system__` where it is named. `cursors` is each log's cursor at the start; a log with none has no cursor. `withNoCursor` is how the projector starts a log that has no cursor at the start: `from-the-first`, taking it from its first event, or `own-start`, the projector's own way, which goes on from the log's last event as it then is. The follower is made, with its stream open, before the first step. `steps` are done in order, each let settle before the next: `start` (the follower starts, and sweeps), `deliver` a `log` and `sequence` (the record's event is delivered, live; one before `start` is delivered before the start's sweep reaches its log), `record` a `log` and `type` (an event is added to the record, and not delivered), `drop` and `reopen` (the stream drops, and opens again). `taken` is, for each log, every event taken, in order, each by its `sequence`, with `how`: `applied`, `nothing` or `refused`. A log nothing was taken of is not named. `cursorsAfter` is each log's cursor at the end, `stopped` the logs a failed taking has stopped, and `startedOwnWay` the logs started the projector's own way.",
   "runBy": {
     "service-python": ["images/shared/python/service/tests/test_follow_cases.py", "images/shared/python/service/tests/test_follower.py"]
   },
@@ -12,7 +12,7 @@
       "cursors": { "res-1": 1 },
       "withNoCursor": "from-the-first",
       "steps": [{ "start": true }],
-      "taken": { "res-1": [[2, "applied"], [3, "nothing"], [4, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 2, "how": "applied" }, { "sequence": 3, "how": "nothing" }, { "sequence": 4, "how": "applied" }] },
       "cursorsAfter": { "res-1": 4 },
       "stopped": [],
       "startedOwnWay": []
@@ -24,8 +24,8 @@
       "follows": ["resources"],
       "cursors": { "res-1": 2 },
       "withNoCursor": "from-the-first",
-      "steps": [{ "start": true }, { "record": ["res-1", "mark:added"] }, { "deliver": ["res-1", 3] }],
-      "taken": { "res-1": [[3, "applied"]] },
+      "steps": [{ "start": true }, { "record": { "log": "res-1", "type": "mark:added" } }, { "deliver": { "log": "res-1", "sequence": 3 } }],
+      "taken": { "res-1": [{ "sequence": 3, "how": "applied" }] },
       "cursorsAfter": { "res-1": 3 },
       "stopped": [],
       "startedOwnWay": []
@@ -39,12 +39,12 @@
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["res-1", "mark:removed"] },
-        { "deliver": ["res-1", 3] },
-        { "deliver": ["res-1", 3] },
-        { "deliver": ["res-1", 2] }
+        { "record": { "log": "res-1", "type": "mark:removed" } },
+        { "deliver": { "log": "res-1", "sequence": 3 } },
+        { "deliver": { "log": "res-1", "sequence": 3 } },
+        { "deliver": { "log": "res-1", "sequence": 2 } }
       ],
-      "taken": { "res-1": [[3, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 3, "how": "applied" }] },
       "cursorsAfter": { "res-1": 3 },
       "stopped": [],
       "startedOwnWay": []
@@ -56,8 +56,8 @@
       "follows": ["resources"],
       "cursors": { "res-1": 4 },
       "withNoCursor": "from-the-first",
-      "steps": [{ "deliver": ["res-1", 7] }, { "start": true }],
-      "taken": { "res-1": [[5, "applied"], [6, "nothing"], [7, "applied"]] },
+      "steps": [{ "deliver": { "log": "res-1", "sequence": 7 } }, { "start": true }],
+      "taken": { "res-1": [{ "sequence": 5, "how": "applied" }, { "sequence": 6, "how": "nothing" }, { "sequence": 7, "how": "applied" }] },
       "cursorsAfter": { "res-1": 7 },
       "stopped": [],
       "startedOwnWay": []
@@ -71,14 +71,14 @@
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["res-1", "mark:added"] },
-        { "record": ["res-1", "yield:updated"] },
-        { "record": ["res-1", "mark:added"] },
-        { "deliver": ["res-1", 4] },
-        { "deliver": ["res-1", 2] },
-        { "deliver": ["res-1", 3] }
+        { "record": { "log": "res-1", "type": "mark:added" } },
+        { "record": { "log": "res-1", "type": "yield:updated" } },
+        { "record": { "log": "res-1", "type": "mark:added" } },
+        { "deliver": { "log": "res-1", "sequence": 4 } },
+        { "deliver": { "log": "res-1", "sequence": 2 } },
+        { "deliver": { "log": "res-1", "sequence": 3 } }
       ],
-      "taken": { "res-1": [[2, "applied"], [3, "nothing"], [4, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 2, "how": "applied" }, { "sequence": 3, "how": "nothing" }, { "sequence": 4, "how": "applied" }] },
       "cursorsAfter": { "res-1": 4 },
       "stopped": [],
       "startedOwnWay": []
@@ -93,11 +93,11 @@
       "steps": [
         { "start": true },
         { "drop": true },
-        { "record": ["res-1", "mark:added"] },
-        { "record": ["res-2", "yield:updated"] },
+        { "record": { "log": "res-1", "type": "mark:added" } },
+        { "record": { "log": "res-2", "type": "yield:updated" } },
         { "reopen": true }
       ],
-      "taken": { "res-1": [[2, "applied"]], "res-2": [[2, "nothing"]] },
+      "taken": { "res-1": [{ "sequence": 2, "how": "applied" }], "res-2": [{ "sequence": 2, "how": "nothing" }] },
       "cursorsAfter": { "res-1": 2, "res-2": 2 },
       "stopped": [],
       "startedOwnWay": []
@@ -105,12 +105,12 @@
     {
       "why": "an event the fold refuses as recorded is taken as nothing and counted, and the log goes on",
       "record": { "res-1": ["yield:created", "mark:added", "mark:added"] },
-      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [["res-1", 2]], "fails": [] },
+      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [{ "log": "res-1", "sequence": 2 }], "fails": [] },
       "follows": ["resources"],
       "cursors": { "res-1": 1 },
       "withNoCursor": "from-the-first",
       "steps": [{ "start": true }],
-      "taken": { "res-1": [[2, "refused"], [3, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 2, "how": "refused" }, { "sequence": 3, "how": "applied" }] },
       "cursorsAfter": { "res-1": 3 },
       "stopped": [],
       "startedOwnWay": []
@@ -118,18 +118,18 @@
     {
       "why": "an event whose taking fails for a passing reason stops its log where it is: the events after it wait, a delivered one too, and the next sweep takes the log on from there",
       "record": { "res-1": ["yield:created", "mark:added", "mark:added"] },
-      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [], "fails": [["res-1", 2, 1]] },
+      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [], "fails": [{ "log": "res-1", "sequence": 2, "times": 1 }] },
       "follows": ["resources"],
       "cursors": { "res-1": 1 },
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["res-1", "mark:added"] },
-        { "deliver": ["res-1", 4] },
+        { "record": { "log": "res-1", "type": "mark:added" } },
+        { "deliver": { "log": "res-1", "sequence": 4 } },
         { "drop": true },
         { "reopen": true }
       ],
-      "taken": { "res-1": [[2, "applied"], [3, "applied"], [4, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 2, "how": "applied" }, { "sequence": 3, "how": "applied" }, { "sequence": 4, "how": "applied" }] },
       "cursorsAfter": { "res-1": 4 },
       "stopped": [],
       "startedOwnWay": []
@@ -137,18 +137,18 @@
     {
       "why": "a delivered event whose taking fails stops its log as one a sweep read does: the cursor stays, and the sweep at the reopening takes it",
       "record": { "res-1": ["yield:created"] },
-      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [], "fails": [["res-1", 2, 1]] },
+      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [], "fails": [{ "log": "res-1", "sequence": 2, "times": 1 }] },
       "follows": ["resources"],
       "cursors": { "res-1": 1 },
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["res-1", "mark:added"] },
-        { "deliver": ["res-1", 2] },
+        { "record": { "log": "res-1", "type": "mark:added" } },
+        { "deliver": { "log": "res-1", "sequence": 2 } },
         { "drop": true },
         { "reopen": true }
       ],
-      "taken": { "res-1": [[2, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 2, "how": "applied" }] },
       "cursorsAfter": { "res-1": 2 },
       "stopped": [],
       "startedOwnWay": []
@@ -156,18 +156,18 @@
     {
       "why": "a log a failed taking has stopped stays stopped until a sweep takes it on, and stops no other log",
       "record": { "res-1": ["yield:created", "mark:added"], "res-2": ["yield:created"] },
-      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [], "fails": [["res-1", 2, 99]] },
+      "fold": { "uses": ["yield:created", "mark:added", "mark:removed"], "refuses": [], "fails": [{ "log": "res-1", "sequence": 2, "times": 99 }] },
       "follows": ["resources"],
       "cursors": { "res-1": 1, "res-2": 1 },
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["res-1", "mark:added"] },
-        { "deliver": ["res-1", 3] },
-        { "record": ["res-2", "mark:added"] },
-        { "deliver": ["res-2", 2] }
+        { "record": { "log": "res-1", "type": "mark:added" } },
+        { "deliver": { "log": "res-1", "sequence": 3 } },
+        { "record": { "log": "res-2", "type": "mark:added" } },
+        { "deliver": { "log": "res-2", "sequence": 2 } }
       ],
-      "taken": { "res-2": [[2, "applied"]] },
+      "taken": { "res-2": [{ "sequence": 2, "how": "applied" }] },
       "cursorsAfter": { "res-1": 1, "res-2": 2 },
       "stopped": ["res-1"],
       "startedOwnWay": []
@@ -181,8 +181,8 @@
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["__system__", "frame:entity-type-added"] },
-        { "deliver": ["__system__", 2] }
+        { "record": { "log": "__system__", "type": "frame:entity-type-added" } },
+        { "deliver": { "log": "__system__", "sequence": 2 } }
       ],
       "taken": {},
       "cursorsAfter": { "res-1": 1 },
@@ -198,11 +198,11 @@
       "withNoCursor": "from-the-first",
       "steps": [
         { "start": true },
-        { "record": ["__system__", "principal:profiled"] },
-        { "record": ["__system__", "frame:entity-type-added"] },
-        { "deliver": ["__system__", 3] }
+        { "record": { "log": "__system__", "type": "principal:profiled" } },
+        { "record": { "log": "__system__", "type": "frame:entity-type-added" } },
+        { "deliver": { "log": "__system__", "sequence": 3 } }
       ],
-      "taken": { "__system__": [[2, "nothing"], [3, "applied"]] },
+      "taken": { "__system__": [{ "sequence": 2, "how": "nothing" }, { "sequence": 3, "how": "applied" }] },
       "cursorsAfter": { "res-1": 1, "__system__": 3 },
       "stopped": [],
       "startedOwnWay": []
@@ -215,7 +215,7 @@
       "cursors": {},
       "withNoCursor": "from-the-first",
       "steps": [{ "start": true }],
-      "taken": { "res-1": [[1, "applied"], [2, "applied"]] },
+      "taken": { "res-1": [{ "sequence": 1, "how": "applied" }, { "sequence": 2, "how": "applied" }] },
       "cursorsAfter": { "res-1": 2 },
       "stopped": [],
       "startedOwnWay": []
@@ -227,8 +227,8 @@
       "follows": ["resources"],
       "cursors": {},
       "withNoCursor": "own-start",
-      "steps": [{ "start": true }, { "record": ["res-1", "mark:added"] }, { "deliver": ["res-1", 3] }],
-      "taken": { "res-1": [[3, "applied"]] },
+      "steps": [{ "start": true }, { "record": { "log": "res-1", "type": "mark:added" } }, { "deliver": { "log": "res-1", "sequence": 3 } }],
+      "taken": { "res-1": [{ "sequence": 3, "how": "applied" }] },
       "cursorsAfter": { "res-1": 3 },
       "stopped": [],
       "startedOwnWay": ["res-1"]
@@ -242,11 +242,11 @@
       "withNoCursor": "own-start",
       "steps": [
         { "start": true },
-        { "record": ["res-2", "yield:created"] },
-        { "record": ["res-2", "mark:added"] },
-        { "deliver": ["res-2", 2] }
+        { "record": { "log": "res-2", "type": "yield:created" } },
+        { "record": { "log": "res-2", "type": "mark:added" } },
+        { "deliver": { "log": "res-2", "sequence": 2 } }
       ],
-      "taken": { "res-2": [[1, "applied"], [2, "applied"]] },
+      "taken": { "res-2": [{ "sequence": 1, "how": "applied" }, { "sequence": 2, "how": "applied" }] },
       "cursorsAfter": { "res-1": 1, "res-2": 2 },
       "stopped": [],
       "startedOwnWay": []
