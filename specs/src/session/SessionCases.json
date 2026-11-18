@@ -9,6 +9,7 @@
   "properties": {
     "$comment": true,
     "told": {
+      "$ref": "../JsonSchema.json",
       "$comment": "The reasons a session ends with, each SDK's `SessionEndReason`: a JSON Schema of a string, JSON, as it is given."
     },
     "refreshSchedule": {

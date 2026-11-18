@@ -2,13 +2,18 @@
    JSON file at the top of an area of specs/src, named in kebab case, but an
    area's openapi.json, which is its API document; components/ and paths/
    are the gateway document's, and hold none. A case table is a table whose
-   name ends "cases.json" (specs/README.md, "Case tables").
+   name ends "cases.json" (specs/README.md, "Case tables"). Both CaseTable.json
+   and JsonSchema.json are at specs/src's top.
 
    A table's schema is beside it, named by the area and the file's stem in
    PascalCase, so jobs/retry-cases.json's is jobs/JobsRetryCases.json. That
    name is its model's too: the module Jobs_retry_cases. *)
 
 let case_table = "CaseTable.json"
+
+(* What a table member that holds a JSON Schema names: such a member is one,
+   read as Schema reads any. *)
+let json_schema = "JsonSchema.json"
 let is_case_table table = String.ends_with ~suffix:"cases.json" table
 
 let is_kebab name =

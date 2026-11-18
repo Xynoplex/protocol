@@ -460,6 +460,7 @@ specs/README.md,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bu
 specs/redocly.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/src/CaseTable.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/HttpStatus.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/JsonSchema.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/KbDid.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/AnnotationsBuilderCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/AnnotationsIdCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

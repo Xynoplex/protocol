@@ -179,18 +179,22 @@
       "additionalProperties": false
     },
     "storedSession": {
+      "$ref": "../JsonSchema.json",
       "$comment": "A JSON Schema of what is kept of a sign-in, under `sessionKeyPrefix`: JSON, as it is given."
     },
     "pendingAuthorization": {
+      "$ref": "../JsonSchema.json",
       "$comment": "A JSON Schema of what a sign-in by a page redirect remembers, under `pendingAuthorizationKey`: JSON, as it is given."
     },
     "openResource": {
+      "$ref": "../JsonSchema.json",
       "$comment": "A JSON Schema of a resource open in a knowledge base, each entry of a list under `openResourcesByKbKey`: JSON, as it is given."
     },
     "cacheDocument": {
       "$comment": "A JSON Schema of what a client keeps of one query, under `cacheKeyPrefix`: JSON, as it is given."
     },
     "lastEventIds": {
+      "$ref": "../JsonSchema.json",
       "$comment": "A JSON Schema of where a knowledge base's stream was, under `lastEventIdKeyPrefix`: JSON, as it is given."
     }
   },

@@ -8,7 +8,8 @@
    A table's schema is read in the table dialect: every node of it is one a
    type is derived from, and any other is refused, so the dialect is what
    this derives. A node is:
-   - a [$ref] and nothing beside it: the type of what it names, once;
+   - a [$ref], with nothing but a [$comment] beside it: the type of what it
+     names, once; or, when it names JsonSchema.json, [Schema.t];
    - [{ "nullable": true, "allOf": [{ "$ref": … }] }]: that, or null;
    - [{ "$comment": … }] alone: JSON by nature, [Yojson.Safe.t];
    - a [oneOf] of closed objects, any two told apart, and at most one member
@@ -18,11 +19,15 @@
      [Object] and each other member its type; else by its [title];
    - a node of one [type], with only the keywords that type takes, and
      ["nullable": true] when it may be null. A string, an integer, a number
-     or a boolean is OCaml's; one [enum] value or a [const] is [unit], a
-     literal the decoder checks; a string [enum] is a variant. An object with
+     or a boolean is OCaml's; one [enum] value or a [const] is that value's
+     type, holding the value, which the decoder checks; a string [enum] is a
+     variant, with its values ([_value]) and its constructors in order
+     ([_all]). An object with
      [properties] is closed, a record; one without is a map, in its file's
      order, of its [additionalProperties]. An array states its [items].
-   A member a record does not require is an [option].
+   A member a record does not require is an [option]. A string enum that
+   states the values of another in the table's module is that one's type. A
+   member named [$ref] is a reference, which the reader resolves.
 
    What a [$ref] names outside the schema's own file (a component, or
    CaseTable's) is derived where it can be, by the same rules with its
@@ -196,6 +201,8 @@ type ty =
   | Float
   | Bool
   | Json
+  | Json_schema
+  | Reference
   | Constant of Yojson.Safe.t
   | List of ty
   | Map of ty
@@ -230,8 +237,13 @@ let taken : (string, string * string) Hashtbl.t = Hashtbl.create 64
 (* The name each place was given. *)
 let places : (string * string, string) Hashtbl.t = Hashtbl.create 64
 
+(* Each string enum's type, by its values: an enum that states the values of
+   another in the module is its type. *)
+let enums : (string list, string) Hashtbl.t = Hashtbl.create 16
+
 let reset () =
   decls := [];
+  Hashtbl.reset enums;
   Hashtbl.reset named;
   Hashtbl.reset deriving;
   Hashtbl.reset taken;
@@ -453,16 +465,20 @@ and node ~strict ~own file pointer s =
             else ty
       in
       match l with
-      | { ref_ = Some r; _ } ->
-          if strict && List.length present > 1 then
+      | { ref_ = Some r; _ } -> (
+          if
+            strict
+            && List.exists (fun k -> k <> "$ref" && k <> "$comment") present
+          then
             refuse file pointer
               "has keywords beside its $ref, which OpenAPI 3.0 does not read";
-          let tfile, tpointer = target r in
-          let s = schema_at tfile tpointer in
-          derive
-            ~strict:(strict && tfile = file)
-            ~own:(own && tfile = file)
-            tfile tpointer s
+          match target r with
+          | tfile, "" when tfile = Places.json_schema -> Json_schema
+          | tfile, tpointer ->
+              derive
+                ~strict:(strict && tfile = file)
+                ~own:(own && tfile = file)
+                tfile tpointer (schema_at tfile tpointer))
       | _ when present = [ "$comment" ] ->
           if strict && String.trim (Option.get l.comment) = "" then
             refuse file pointer
@@ -550,8 +566,7 @@ and scalar ~strict ~own file pointer t (l : Schema.schema) =
       | Schema.String, Some values when (not strict) && not (enum_names values)
         ->
           String
-      | Schema.String, Some values ->
-          let name = name_for (file, pointer) (candidates ~own file pointer) in
+      | Schema.String, Some values -> (
           let cases =
             List.map
               (function
@@ -574,8 +589,15 @@ and scalar ~strict ~own file pointer t (l : Schema.schema) =
           then
             refuse file (pointer / "enum")
               "holds two values that name one constructor";
-          declare (Enum (name, cases));
-          Named name
+          match Hashtbl.find_opt enums (List.map snd cases) with
+          | Some name -> Named name
+          | None ->
+              let name =
+                name_for (file, pointer) (candidates ~own file pointer)
+              in
+              Hashtbl.replace enums (List.map snd cases) name;
+              declare (Enum (name, cases));
+              Named name)
       | Schema.String, None -> String
       | Integer, _ -> Int
       | Number, _ -> Float
@@ -609,6 +631,10 @@ and record_of ~strict ~own file pointer ~required ~names properties =
           match s with
           | Schema.Boolean_schema true when strict && own && pointer = "" ->
               admitted key
+          | s when key = "$ref" -> (
+              match derive ~strict ~own file at s with
+              | String -> Reference
+              | _ -> refuse file at "is a $ref, and must be a string")
           | s -> derive ~strict ~own file at s
         in
         let label =
@@ -891,13 +917,41 @@ let table_schema table file =
 (* Printing. A type's decoder has its name, but a table's own, [decode]. *)
 let decoder_name = function "t" -> "decode" | name -> name
 
+(* A constant's type, which holds it. *)
+let constant_type : Yojson.Safe.t -> ty = function
+  | `String _ -> String
+  | `Int _ -> Int
+  | `Float _ -> Float
+  | `Bool _ -> Bool
+  | v ->
+      invalid_arg
+        ("a constant of no scalar type, which no table states: "
+       ^ Yojson.Safe.to_string v)
+
+(* A constant as an OCaml expression of its type. *)
+let constant_expr : Yojson.Safe.t -> string = function
+  | `String s -> Printf.sprintf "%S" s
+  | `Int n -> Printf.sprintf "(%d)" n
+  | `Float f -> Printf.sprintf "(%h)" f
+  | `Bool b -> string_of_bool b
+  | v -> invalid_arg (Yojson.Safe.to_string v)
+
+(* What checks that a value is the constant, as a decoder of unit. *)
+let check = function
+  | `String s -> Printf.sprintf "(Decode.literal %S)" s
+  | v ->
+      Printf.sprintf "(Decode.constant (Yojson.Safe.from_string %S))"
+        (Yojson.Safe.to_string v)
+
 let rec type_expr = function
   | String -> "string"
   | Int -> "int"
   | Float -> "float"
   | Bool -> "bool"
   | Json -> "Yojson.Safe.t"
-  | Constant _ -> "unit"
+  | Json_schema -> "Schema.t"
+  | Reference -> "Decode.reference"
+  | Constant v -> type_expr (constant_type v)
   | List t -> "(" ^ type_expr t ^ ") list"
   | Map t -> "(string * " ^ type_expr t ^ ") list"
   | Nullable t -> "(" ^ type_expr t ^ ") option"
@@ -909,10 +963,10 @@ let rec decoder = function
   | Float -> "Decode.number"
   | Bool -> "Decode.bool"
   | Json -> "Decode.json"
-  | Constant (`String s) -> Printf.sprintf "(Decode.literal %S)" s
+  | Json_schema -> "Schema.decode"
+  | Reference -> "Decode.reference"
   | Constant v ->
-      Printf.sprintf "(Decode.constant (Yojson.Safe.from_string %S))"
-        (Yojson.Safe.to_string v)
+      Printf.sprintf "(fun cursor -> %s cursor; %s)" (check v) (constant_expr v)
   | List t -> "(Decode.list " ^ decoder t ^ ")"
   | Map t -> "(Decode.map " ^ decoder t ^ ")"
   | Nullable t -> "(Decode.nullable " ^ decoder t ^ ")"
@@ -952,7 +1006,9 @@ let print_decl buffer = function
            (List.map (fun (c, v) -> Printf.sprintf "(%S, %s)" v c) cases));
       Printf.bprintf buffer "let %s_value = function %s\n\n" name
         (String.concat " | "
-           (List.map (fun (c, v) -> Printf.sprintf "%s -> %S" c v) cases))
+           (List.map (fun (c, v) -> Printf.sprintf "%s -> %S" c v) cases));
+      Printf.bprintf buffer "let %s_all = [ %s ]\n\n" name
+        (String.concat "; " (List.map fst cases))
   | Variant (name, cases) ->
       Printf.bprintf buffer "type %s =\n" name;
       List.iter
@@ -963,9 +1019,8 @@ let print_decl buffer = function
         cases;
       let build c =
         match c.payload with
-        | Constant _ ->
-            Printf.sprintf "(fun cursor -> %s cursor; %s)" (decoder c.payload)
-              c.name
+        | Constant v ->
+            Printf.sprintf "(fun cursor -> %s cursor; %s)" (check v) c.name
         | ty ->
             Printf.sprintf "(fun cursor -> %s (%s cursor))" c.name (decoder ty)
       in
