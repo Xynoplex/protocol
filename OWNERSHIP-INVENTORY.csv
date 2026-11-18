@@ -965,6 +965,7 @@ specs/src/text/offset-cases.json,Normative protocol source,xynolog/protocol,Comp
 specs/src/vectors/payload-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/vectors/store-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/vectors/token-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/weaver/WeaverFoldCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/weaver/fold-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/chunk-plan-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/citation-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
