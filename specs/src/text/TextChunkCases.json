@@ -1,0 +1,127 @@
+{
+  "description": "text/chunk-cases.json: how the worker cuts a text into chunks under a chunking, and the chunkings it refuses.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "defaults": {
+      "$ref": "../components/schemas/SmelterConfig.json#/properties/chunking"
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text."
+          },
+          "estimatedTokens": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Its length in code points divided by four, rounded up."
+          },
+          "chunking": {
+            "$ref": "../components/schemas/SmelterConfig.json#/properties/chunking"
+          },
+          "chunks": {
+            "type": "array",
+            "description": "The text's chunks under the chunking.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cuts": {
+            "type": "array",
+            "description": "The walk of cuts from 0.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "at": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "The offset the cut is made at, in code points."
+                },
+                "piece": {
+                  "type": "string",
+                  "description": "The text from `at` to the cut, trimmed."
+                },
+                "next": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Where the next cut starts, in code points."
+                }
+              },
+              "required": [
+                "at",
+                "piece",
+                "next"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "why",
+          "text",
+          "estimatedTokens",
+          "chunking",
+          "chunks",
+          "cuts"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "refused": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Chunkings refused when they are made.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "chunking": {
+            "description": "A chunking outside SmelterConfig's bounds, which is why it is refused: two numbers of tokens.",
+            "type": "object",
+            "properties": {
+              "chunkSize": {
+                "type": "integer"
+              },
+              "overlap": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "chunkSize",
+              "overlap"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "chunking"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "defaults",
+    "cases",
+    "refused"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,92 @@
+{
+  "description": "resources/reader-cases.json: what the readers of a resource's description answer of it, or the first fault a resource the schema does not allow is refused for.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A resource the readers read: its primary representation and media type, absent where it has no representation, and its entity types.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "resource": {
+                "$ref": "../components/schemas/ResourceDescriptor.json"
+              },
+              "primaryRepresentation": {
+                "$ref": "../components/schemas/Representation.json"
+              },
+              "primaryMediaType": {
+                "$ref": "../components/schemas/Representation.json#/properties/mediaType"
+              },
+              "entityTypes": {
+                "$ref": "../components/schemas/ResourceDescriptor.json#/properties/entityTypes"
+              }
+            },
+            "required": [
+              "why",
+              "resource",
+              "entityTypes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A resource refused for its first fault.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "resource": {
+                "$comment": "A resource the ResourceDescriptor schema does not allow: JSON, as it is given."
+              },
+              "refused": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "member": {
+                "type": "string",
+                "pattern": "^@?[A-Za-z]+(\\.@?[A-Za-z]+)*$",
+                "description": "The way to the first fault: the names of the members it is within, and its own, joined by dots."
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "lacks",
+                  "malformed"
+                ],
+                "description": "`lacks`: the resource does not carry the member, or it holds null where it may not; `malformed`: the member is not what its schema allows."
+              }
+            },
+            "required": [
+              "why",
+              "resource",
+              "refused",
+              "member",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}
