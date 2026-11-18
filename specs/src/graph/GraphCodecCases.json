@@ -119,6 +119,7 @@
             "description": "A row read back: the annotation it answers, or the field whose absence refuses it.",
             "oneOf": [
               {
+                "title": "Read",
                 "type": "object",
                 "properties": {
                   "properties": {
@@ -179,6 +180,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "Refused",
                 "type": "object",
                 "properties": {
                   "properties": {
@@ -206,6 +208,7 @@
             "description": "An annotation the graph holds, an update, and the annotation it leaves, or what refuses it.",
             "oneOf": [
               {
+                "title": "Updated",
                 "type": "object",
                 "properties": {
                   "current": {
@@ -247,6 +250,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "Refused",
                 "type": "object",
                 "properties": {
                   "current": {
@@ -293,6 +297,7 @@
             "description": "A resource as the record gives it, its row, and what reading it back answers, or the field whose absence refuses it.",
             "oneOf": [
               {
+                "title": "Stored",
                 "type": "object",
                 "properties": {
                   "resource": {
@@ -369,6 +374,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "Refused",
                 "type": "object",
                 "properties": {
                   "resource": {
@@ -390,6 +396,7 @@
             "description": "A row read back: the resource it answers, or the field whose absence refuses it.",
             "oneOf": [
               {
+                "title": "Read",
                 "type": "object",
                 "properties": {
                   "properties": {
@@ -441,6 +448,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "Refused",
                 "type": "object",
                 "properties": {
                   "properties": {

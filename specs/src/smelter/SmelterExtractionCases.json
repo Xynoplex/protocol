@@ -23,6 +23,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Read",
             "description": "A document whose text is read.",
             "type": "object",
             "properties": {
@@ -107,6 +108,7 @@
             "additionalProperties": false
           },
           {
+            "title": "FileDeclined",
             "description": "A file that is declined.",
             "type": "object",
             "properties": {
@@ -128,6 +130,7 @@
             "additionalProperties": false
           },
           {
+            "title": "BytesDeclined",
             "description": "A document that is no file, which is declined.",
             "type": "object",
             "properties": {
@@ -137,6 +140,7 @@
               "bytes": {
                 "oneOf": [
                   {
+                    "title": "Utf8",
                     "type": "object",
                     "properties": {
                       "utf8": {
@@ -150,6 +154,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Length",
                     "type": "object",
                     "properties": {
                       "length": {

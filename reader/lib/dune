@@ -1,0 +1,15 @@
+(library
+ (name xynolog_protocol)
+ (public_name xynolog-protocol)
+ (flags (:standard -open Xynolog_protocol_schema))
+ (libraries xynolog_protocol_schema yojson re))
+
+; Each table's model, derived from its schema whenever specs/src changes.
+(rule
+ (targets tables.ml)
+ (deps
+  (source_tree %{project_root}/specs/src))
+ (action
+  (with-stdout-to
+   tables.ml
+   (run %{exe:../derive/derive.exe} %{project_root}/specs/src))))

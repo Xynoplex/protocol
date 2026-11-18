@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Read",
             "description": "A reply that is read.",
             "type": "object",
             "properties": {
@@ -39,6 +40,7 @@
               "reply": {
                 "oneOf": [
                   {
+                    "title": "Elements",
                     "description": "A reply that is a JSON array.",
                     "type": "object",
                     "properties": {
@@ -60,6 +62,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Text",
                     "description": "A reply that is text.",
                     "type": "object",
                     "properties": {
@@ -88,6 +91,7 @@
                     "$ref": "#/properties/cases/items/oneOf/0/properties/reply/oneOf/1"
                   },
                   {
+                    "title": "Fails",
                     "description": "A count call that fails.",
                     "type": "object",
                     "properties": {
@@ -125,6 +129,7 @@
                     "items": {
                       "oneOf": [
                         {
+                          "title": "Passage",
                           "description": "A passage, anchored.",
                           "type": "object",
                           "properties": {
@@ -171,6 +176,7 @@
                           "additionalProperties": false
                         },
                         {
+                          "title": "Mention",
                           "description": "A mention, not yet anchored.",
                           "type": "object",
                           "properties": {
@@ -244,6 +250,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Refused",
             "description": "A reply that is refused.",
             "type": "object",
             "properties": {

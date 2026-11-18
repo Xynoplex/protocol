@@ -19,7 +19,7 @@
 //   - a path parameter is not a reference to a kind.
 //
 // What the file itself holds, each kind's cases on both sides among it, is
-// its schema's (identifiers/IdentifiersKinds.json), which check-tables.mjs
+// its schema's (identifiers/IdentifiersKinds.json), which the reader in reader/
 // holds it to.
 //
 // It reads the source files, so it cannot pass on a stale bundle.

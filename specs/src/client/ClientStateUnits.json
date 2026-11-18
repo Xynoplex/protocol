@@ -136,6 +136,7 @@
                   ]
                 },
                 {
+                  "title": "Say",
                   "description": "Publishes a frame on the client's own bus.",
                   "type": "object",
                   "properties": {
@@ -158,6 +159,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Deliver",
                   "description": "Gives the client a frame from the wire.",
                   "type": "object",
                   "properties": {
@@ -180,6 +182,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Answer",
                   "description": "Replies to a request the client sent, under its correlation id.",
                   "type": "object",
                   "properties": {
@@ -207,6 +210,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "QueueReply",
                   "description": "Queues the next response to an operation.",
                   "type": "object",
                   "properties": {
@@ -224,6 +228,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Invoke",
                   "description": "Calls a method of a unit.",
                   "type": "object",
                   "properties": {
@@ -253,6 +258,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Pass",
                   "description": "Settles, then moves the clock.",
                   "type": "object",
                   "properties": {
@@ -294,6 +300,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Dispose",
                   "description": "Disposes a unit.",
                   "type": "object",
                   "properties": {
@@ -309,6 +316,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "AnswerSearch",
                   "description": "Answers a query the case's search was asked.",
                   "type": "object",
                   "properties": {
@@ -333,6 +341,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Expect",
                   "description": "States what members hold now.",
                   "type": "object",
                   "properties": {
@@ -354,6 +363,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "SentPayloads",
                   "description": "Lists every request sent on a channel so far.",
                   "type": "object",
                   "properties": {
@@ -375,6 +385,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "SentCount",
                   "description": "Counts the requests sent on a channel so far.",
                   "type": "object",
                   "properties": {
@@ -394,6 +405,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "NothingSent",
                   "description": "Says no request was sent.",
                   "type": "object",
                   "properties": {
@@ -410,6 +422,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Heard",
                   "description": "Lists what the listened channels carried.",
                   "type": "object",
                   "properties": {
@@ -467,6 +480,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Ended",
                   "description": "Names members whose readers have ended.",
                   "type": "object",
                   "properties": {
@@ -490,6 +504,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "BusDestroyed",
                   "description": "Says whether the client's bus has ended.",
                   "type": "object",
                   "properties": {
@@ -504,6 +519,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Searched",
                   "description": "Lists the queries the case's search was asked.",
                   "type": "object",
                   "properties": {

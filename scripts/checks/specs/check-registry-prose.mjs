@@ -6,7 +6,7 @@
 // the registry states it in no language's shape, as plain text. Its shape (a
 // docs entry's `lead` of blocks and its `trailing` note, prose as paragraphs,
 // each a text or `{ "items": [text, ...] }`) is its schema's
-// (bus/BusRegistry.json), which check-tables.mjs holds it to. This holds what
+// (bus/BusRegistry.json), which the reader in reader/ holds it to. This holds what
 // no schema says of it:
 //
 //   - a text is one line of words: no line break, no tab, no space at either

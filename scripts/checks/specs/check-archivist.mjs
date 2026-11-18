@@ -13,7 +13,7 @@
 //     motivations not exactly Motivation;
 //   - the anchored-text entry's provenance is not ExtractedText's, or its
 //     decline classes are not ExtractionDeclined's;
-//   - the shard table is missing (check-tables.mjs holds it to its schema);
+//   - the shard table is missing (the reader in reader/ holds it to its schema);
 //   - the protocol's account of the Archivist is missing, or does not name a
 //     schema, a table, a persisted event or a route of its HTTP surface.
 //

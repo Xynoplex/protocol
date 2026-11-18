@@ -1,0 +1,65 @@
+(* Where Protocol's tables are, and where each one's schema is. A table is a
+   JSON file at the top of an area of specs/src, named in kebab case, but an
+   area's openapi.json, which is its API document; components/ and paths/
+   are the gateway document's, and hold none. A case table is a table whose
+   name ends "cases.json" (specs/README.md, "Case tables").
+
+   A table's schema is beside it, named by the area and the file's stem in
+   PascalCase, so jobs/retry-cases.json's is jobs/JobsRetryCases.json. That
+   name is its model's too: the module Jobs_retry_cases. *)
+
+let case_table = "CaseTable.json"
+let is_case_table table = String.ends_with ~suffix:"cases.json" table
+
+let is_kebab name =
+  name <> ""
+  && (match name.[0] with 'a' .. 'z' -> true | _ -> false)
+  && String.for_all
+       (function 'a' .. 'z' | '0' .. '9' | '-' -> true | _ -> false)
+       name
+
+let stem name = Filename.remove_extension name
+
+let is_table name =
+  Filename.check_suffix name ".json"
+  && name <> "openapi.json"
+  && is_kebab (stem name)
+
+let sorted_entries directory =
+  Sys.readdir directory |> Array.to_list |> List.sort compare
+
+let areas root =
+  sorted_entries root
+  |> List.filter (fun area ->
+      area <> "components" && area <> "paths"
+      && Sys.is_directory (Filename.concat root area))
+
+(* Every table of specs/src at [root], as a path from it, in order. *)
+let tables root =
+  List.concat_map
+    (fun area ->
+      sorted_entries (Filename.concat root area)
+      |> List.filter is_table
+      |> List.map (fun name -> area ^ "/" ^ name))
+    (areas root)
+
+let area_and_stem table =
+  match String.split_on_char '/' table with
+  | [ area; name ] when is_kebab area && is_table name -> (area, stem name)
+  | _ -> invalid_arg (table ^ " is not <area>/<stem>.json, where a table is")
+
+let pascal words =
+  String.split_on_char '-' words
+  |> List.map String.capitalize_ascii
+  |> String.concat ""
+
+(* The schema of [table], from specs/src. *)
+let schema_of table =
+  let area, stem = area_and_stem table in
+  area ^ "/" ^ pascal area ^ pascal stem ^ ".json"
+
+(* The name of [table]'s model, as a value: jobs_retry_cases. Its module is
+   that name capitalized. *)
+let model_of table =
+  let area, stem = area_and_stem table in
+  String.map (function '-' -> '_' | c -> c) (area ^ "_" ^ stem)

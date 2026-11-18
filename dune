@@ -1,0 +1,4 @@
+; The reader, its lock, and the specs it reads as data. Nothing else here is
+; dune's.
+(dirs reader specs dune.lock)
+(data_only_dirs specs)

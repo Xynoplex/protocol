@@ -1,0 +1,3 @@
+(executable
+ (name derive)
+ (libraries xynolog_protocol_schema yojson))

@@ -178,6 +178,7 @@
                   "description": "What the method does first: one key of `via`.",
                   "oneOf": [
                     {
+                      "title": "Request",
                       "type": "object",
                       "properties": {
                         "request": {
@@ -190,6 +191,7 @@
                       "additionalProperties": false
                     },
                     {
+                      "title": "Emit",
                       "type": "object",
                       "properties": {
                         "emit": {
@@ -202,6 +204,7 @@
                       "additionalProperties": false
                     },
                     {
+                      "title": "Local",
                       "type": "object",
                       "properties": {
                         "local": {
@@ -214,6 +217,7 @@
                       "additionalProperties": false
                     },
                     {
+                      "title": "Content",
                       "type": "object",
                       "properties": {
                         "content": {
@@ -228,6 +232,7 @@
                       "additionalProperties": false
                     },
                     {
+                      "title": "Gateway",
                       "type": "object",
                       "properties": {
                         "gateway": {
@@ -242,6 +247,7 @@
                       "additionalProperties": false
                     },
                     {
+                      "title": "Observes",
                       "type": "object",
                       "properties": {
                         "observes": {
@@ -281,6 +287,7 @@
                         "items": {
                           "oneOf": [
                             {
+                              "title": "Request",
                               "type": "object",
                               "properties": {
                                 "request": {
@@ -297,6 +304,7 @@
                               "additionalProperties": false
                             },
                             {
+                              "title": "Content",
                               "type": "object",
                               "properties": {
                                 "content": {

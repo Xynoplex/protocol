@@ -27,6 +27,7 @@
             "items": {
               "oneOf": [
                 {
+                  "title": "Fields",
                   "description": "An operand that becomes params fields.",
                   "type": "object",
                   "properties": {
@@ -46,6 +47,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "CliOnly",
                   "description": "An operand the API has no place for.",
                   "type": "object",
                   "properties": {
@@ -71,6 +73,7 @@
             "additionalProperties": {
               "oneOf": [
                 {
+                  "title": "Fields",
                   "description": "An option that becomes params fields.",
                   "type": "object",
                   "properties": {
@@ -96,6 +99,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Method",
                   "description": "An option that selects a method.",
                   "type": "object",
                   "properties": {
@@ -109,6 +113,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "CliOnly",
                   "description": "An option the API has no place for.",
                   "type": "object",
                   "properties": {

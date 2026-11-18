@@ -64,6 +64,7 @@
           "items": {
             "oneOf": [
               {
+                "title": "Status",
                 "description": "A code read from one HTTP status.",
                 "type": "object",
                 "properties": {
@@ -85,6 +86,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "StatusFrom",
                 "description": "A code read from every HTTP status at or above one.",
                 "type": "object",
                 "properties": {
@@ -106,6 +108,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "NoStatus",
                 "description": "A code no HTTP status is read as.",
                 "type": "object",
                 "properties": {

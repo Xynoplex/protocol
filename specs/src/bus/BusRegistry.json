@@ -83,6 +83,7 @@
                           "description": "A break in the listing."
                         },
                         {
+                          "title": "Section",
                           "description": "A heading of a part of the listing.",
                           "type": "object",
                           "properties": {
@@ -96,6 +97,7 @@
                           "additionalProperties": false
                         },
                         {
+                          "title": "Comment",
                           "description": "A comment on what follows.",
                           "type": "object",
                           "properties": {
@@ -109,6 +111,7 @@
                           "additionalProperties": false
                         },
                         {
+                          "title": "Doc",
                           "description": "A doc of the entry itself.",
                           "type": "object",
                           "properties": {

@@ -47,6 +47,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "TextBuilt",
             "description": "A span of a text, built.",
             "type": "object",
             "properties": {
@@ -88,6 +89,7 @@
             "additionalProperties": false
           },
           {
+            "title": "TextRefused",
             "description": "A span of a text, refused: the refusal is a span-refusal code of errors/codes.json.",
             "type": "object",
             "properties": {
@@ -154,6 +156,7 @@
             "additionalProperties": false
           },
           {
+            "title": "PdfBuilt",
             "description": "A span of a PDF, built.",
             "type": "object",
             "properties": {
@@ -194,6 +197,7 @@
             "additionalProperties": false
           },
           {
+            "title": "PdfRefused",
             "description": "A span of a PDF, refused.",
             "type": "object",
             "properties": {

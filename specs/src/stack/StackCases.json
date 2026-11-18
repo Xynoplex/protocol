@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "PatchAccepted",
             "description": "A fixture, patched, that is accepted.",
             "type": "object",
             "properties": {
@@ -58,6 +59,7 @@
             "additionalProperties": false
           },
           {
+            "title": "PatchRefused",
             "description": "A fixture, patched, that is refused.",
             "type": "object",
             "properties": {
@@ -108,6 +110,7 @@
             "additionalProperties": false
           },
           {
+            "title": "DocumentAccepted",
             "description": "A document that is accepted.",
             "type": "object",
             "properties": {
@@ -138,6 +141,7 @@
             "additionalProperties": false
           },
           {
+            "title": "DocumentRefused",
             "description": "A document that is refused.",
             "type": "object",
             "properties": {

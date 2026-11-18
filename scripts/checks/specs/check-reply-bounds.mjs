@@ -16,7 +16,7 @@
 //
 // What the file itself holds, each entry `by` a member or one that `grows`
 // with something, is its schema's (bus/BusReplyBounds.json), which
-// check-tables.mjs holds it to.
+// the reader in reader/ holds it to.
 //
 // The lists inside a resource's descriptor or an annotation are the record's,
 // bounded by the write that made them, and are not walked.

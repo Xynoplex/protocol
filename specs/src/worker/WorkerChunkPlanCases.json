@@ -42,6 +42,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Budget",
             "description": "A budget a unit opens with.",
             "type": "object",
             "properties": {
@@ -136,6 +137,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Refused",
             "description": "A window too small for a unit: the job fails rather than run.",
             "type": "object",
             "properties": {
@@ -172,6 +174,7 @@
             "additionalProperties": false
           },
           {
+            "title": "NextSize",
             "description": "The size of the next piece.",
             "type": "object",
             "properties": {
@@ -257,6 +260,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Pieces",
             "description": "The pieces a unit is cut into.",
             "type": "object",
             "properties": {
@@ -356,6 +360,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Result",
             "description": "A descent that answers.",
             "type": "object",
             "properties": {
@@ -439,6 +444,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Raises",
             "description": "A descent that raises.",
             "type": "object",
             "properties": {
@@ -464,6 +470,7 @@
                 "items": {
                   "oneOf": [
                     {
+                      "title": "Items",
                       "description": "A reply with items.",
                       "type": "object",
                       "properties": {
@@ -491,6 +498,7 @@
                       "additionalProperties": false
                     },
                     {
+                      "title": "Fails",
                       "description": "A reply that fails.",
                       "type": "object",
                       "properties": {

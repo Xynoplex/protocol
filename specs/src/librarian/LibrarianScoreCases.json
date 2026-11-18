@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Results",
             "description": "A search answered on `match:search-results`.",
             "type": "object",
             "properties": {
@@ -89,6 +90,7 @@
                 "description": "What the vector index answers.",
                 "oneOf": [
                   {
+                    "title": "Hits",
                     "type": "object",
                     "properties": {
                       "hits": {
@@ -118,6 +120,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Fails",
                     "type": "object",
                     "properties": {
                       "fails": {
@@ -154,6 +157,7 @@
                 "description": "What the model is shown and answers.",
                 "oneOf": [
                   {
+                    "title": "Answers",
                     "description": "The model answers.",
                     "type": "object",
                     "properties": {
@@ -179,6 +183,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Fails",
                     "description": "The model fails.",
                     "type": "object",
                     "properties": {
@@ -238,6 +243,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Failed",
             "description": "A search answered on `match:search-failed`.",
             "type": "object",
             "properties": {

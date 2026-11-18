@@ -10,7 +10,7 @@
 //   - a reconciled span of annotations/reconcile-cases.json names a search
 //     when its method is not `fuzzy-match`, or names none when it is. That
 //     its method is an AnchorMethod and its search a MatchQuality is its
-//     schema's, through ReconciledSpan, which check-tables.mjs holds it to;
+//     schema's, through ReconciledSpan, which the reader in reader/ holds it to;
 //   - FrameRefusalReason names a reason no case of bus/frame-cases.json is
 //     refused for. That each case is refused for one it names is the
 //     table's schema's;

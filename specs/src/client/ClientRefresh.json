@@ -12,6 +12,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Asks",
             "description": "A live query that asks an operation of the registry, by its request's channel.",
             "type": "object",
             "properties": {
@@ -69,6 +70,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Reads",
             "description": "A live query that reads a GET of the gateway's API.",
             "type": "object",
             "properties": {
@@ -137,6 +139,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "On",
             "description": "A row for a channel's events.",
             "type": "object",
             "properties": {
@@ -228,6 +231,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Stream",
             "description": "A row for what befalls the stream itself.",
             "type": "object",
             "properties": {

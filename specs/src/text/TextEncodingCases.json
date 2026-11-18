@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "EveryByte",
             "description": "A single-byte encoding, read byte by byte.",
             "type": "object",
             "properties": {
@@ -46,6 +47,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Bytes",
             "description": "An encoding read in it, by some bytes and the text they are.",
             "type": "object",
             "properties": {
@@ -72,6 +74,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Refused",
             "description": "An encoding whose every label a reader refuses, whatever the bytes are.",
             "type": "object",
             "properties": {

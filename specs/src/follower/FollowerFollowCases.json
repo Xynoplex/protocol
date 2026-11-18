@@ -131,6 +131,7 @@
             "items": {
               "oneOf": [
                 {
+                  "title": "Start",
                   "description": "The follower starts, and sweeps.",
                   "type": "object",
                   "properties": {
@@ -147,6 +148,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Record",
                   "description": "An event is added to the record, and not delivered.",
                   "type": "object",
                   "properties": {
@@ -174,6 +176,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Deliver",
                   "description": "The record's event is delivered, live.",
                   "type": "object",
                   "properties": {
@@ -187,6 +190,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Drop",
                   "description": "The stream drops.",
                   "type": "object",
                   "properties": {
@@ -203,6 +207,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Reopen",
                   "description": "The stream opens again.",
                   "type": "object",
                   "properties": {

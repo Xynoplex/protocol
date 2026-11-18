@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Text",
             "description": "Bytes read as text.",
             "type": "object",
             "properties": {
@@ -42,6 +43,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Refused",
             "description": "Bytes refused.",
             "type": "object",
             "properties": {
