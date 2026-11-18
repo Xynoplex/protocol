@@ -1,0 +1,1138 @@
+{
+  "description": "session/cache-cases.json: what a client keeps of its queries and of its stream in a SessionStorage, and what it keeps of what another client wrote there.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A load of `resource`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "resource"
+                ]
+              },
+              "stored": {
+                "$comment": "The document kept under the query's key, as stored.json's `cacheDocument` would have it or as no such document: JSON, as it is given."
+              },
+              "storedText": {
+                "type": "string",
+                "description": "The text kept under the query's key, as it is. Absent when the row gives `stored`."
+              },
+              "kept": {
+                "type": "array",
+                "description": "Every entry the load keeps, compared as a map.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "kept"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A load of `annotations`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "annotations"
+                ]
+              },
+              "stored": {
+                "$comment": "The document kept under the query's key, as stored.json's `cacheDocument` would have it or as no such document: JSON, as it is given."
+              },
+              "storedText": {
+                "type": "string",
+                "description": "The text kept under the query's key, as it is. Absent when the row gives `stored`."
+              },
+              "kept": {
+                "type": "array",
+                "description": "Every entry the load keeps, compared as a map.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "kept"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A load of `annotation`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "annotation"
+                ]
+              },
+              "stored": {
+                "$comment": "The document kept under the query's key, as stored.json's `cacheDocument` would have it or as no such document: JSON, as it is given."
+              },
+              "storedText": {
+                "type": "string",
+                "description": "The text kept under the query's key, as it is. Absent when the row gives `stored`."
+              },
+              "kept": {
+                "type": "array",
+                "description": "Every entry the load keeps, compared as a map.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/Annotation.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "kept"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A load of `entityTypes`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "entityTypes"
+                ]
+              },
+              "stored": {
+                "$comment": "The document kept under the query's key, as stored.json's `cacheDocument` would have it or as no such document: JSON, as it is given."
+              },
+              "storedText": {
+                "type": "string",
+                "description": "The text kept under the query's key, as it is. Absent when the row gives `stored`."
+              },
+              "kept": {
+                "type": "array",
+                "description": "Every entry the load keeps, compared as a map.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "stored.json's `wholeKey`."
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "kept"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A load of `tagSchemas`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "tagSchemas"
+                ]
+              },
+              "stored": {
+                "$comment": "The document kept under the query's key, as stored.json's `cacheDocument` would have it or as no such document: JSON, as it is given."
+              },
+              "storedText": {
+                "type": "string",
+                "description": "The text kept under the query's key, as it is. Absent when the row gives `stored`."
+              },
+              "kept": {
+                "type": "array",
+                "description": "Every entry the load keeps, compared as a map.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "stored.json's `wholeKey`."
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "kept"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "writes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Saves.",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A save of `resource`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "resource"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `annotations`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "annotations"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `annotation`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "annotation"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/Annotation.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "../components/schemas/AnnotationId.json"
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/Annotation.json"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `entityTypes`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "entityTypes"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "stored.json's `wholeKey`."
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "stored.json's `wholeKey`."
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `tagSchemas`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "tagSchemas"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "stored.json's `wholeKey`."
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "stored.json's `wholeKey`."
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "refusedWrites": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Saves over a storage that refuses the first write of the query's document.",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A save of `resource`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "resource"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `annotations`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "annotations"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `annotation`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "annotation"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/Annotation.json"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "../components/schemas/AnnotationId.json"
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/Annotation.json"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `entityTypes`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "entityTypes"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "stored.json's `wholeKey`."
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "stored.json's `wholeKey`."
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A save of `tagSchemas`'s document.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the case shows."
+              },
+              "query": {
+                "type": "string",
+                "enum": [
+                  "tagSchemas"
+                ]
+              },
+              "held": {
+                "type": "array",
+                "description": "What the query's cache holds once its answers came.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "stored.json's `wholeKey`."
+                    },
+                    "value": {
+                      "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "written": {
+                "description": "The document the save writes.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "description": "The document's version, stored.json's `cacheDocument`'s."
+                  },
+                  "entries": {
+                    "type": "array",
+                    "description": "The document's entries, each without its stamp, compared as a map.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "stored.json's `wholeKey`."
+                        },
+                        "value": {
+                          "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "version",
+                  "entries"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "query",
+              "held",
+              "written"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "places": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Loads of the stream's places.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What the case shows."
+          },
+          "stored": {
+            "$comment": "The places kept under the stream's key, as stored.json's `lastEventIds` would have them or as no such value: JSON, as it is given."
+          },
+          "storedText": {
+            "type": "string",
+            "description": "The text kept under the stream's key, as it is. Absent when the row gives `stored`."
+          },
+          "kept": {
+            "description": "The places the load keeps: each scope's id, and its place.",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "../components/schemas/PersistedEventId.json"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "kept"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases",
+    "writes",
+    "refusedWrites",
+    "places"
+  ],
+  "additionalProperties": false
+}

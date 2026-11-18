@@ -23,15 +23,18 @@ interface Query {
   reads?: string;
 }
 
-interface Row {
-  on: string;
+/** A row for a channel's events (`on`), or for what befalls the stream itself (`stream`). */
+type Row = ({ on: string; stream?: never } | { stream: 'reopened' | 'unreadable'; on?: never }) & {
   when?: 'enriched' | 'unenriched';
   reach?: 'subject' | 'held';
   refetches?: string[];
   writes?: string[];
   removes?: string[];
   docs: string;
-}
+};
+
+/** What a row is for: its channel, or what befalls the stream. */
+const trigger = (row: Row): string => (row.stream === undefined ? row.on : row.stream);
 
 type FetchStep = Extract<Step, { fetch: string }>;
 
@@ -162,7 +165,8 @@ function refetched(row: Row, holding: Held[]): Ask[] {
 
 /** How each trigger is caused. The steps leave the client having heard it, and nothing else. */
 function cause(row: Row, all: Row[], holding: Held[]): Step[] {
-  switch (row.on) {
+  const on = trigger(row);
+  switch (on) {
     case 'reopened':
       return [{ backend: 'cut' }, { state: 'reconnecting' }, { state: 'open' }];
     case 'unreadable':
@@ -202,9 +206,9 @@ function cause(row: Row, all: Row[], holding: Held[]): Step[] {
         { settles: 'deleted' },
       ];
     case 'mark:removed':
-      return [record(row.on, { payload: { annotationId: V('a1') } })];
+      return [record(on, { payload: { annotationId: V('a1') } })];
     case 'mark:body-updated':
-      return [record(row.on, { payload: { annotationId: V('a1'), operations: [] }, ...(row.when === 'enriched' ? { enriched: { annotation: UPDATED } } : {}) })];
+      return [record(on, { payload: { annotationId: V('a1'), operations: [] }, ...(row.when === 'enriched' ? { enriched: { annotation: UPDATED } } : {}) })];
     case 'mark:added':
     case 'mark:entity-tag-added':
     case 'mark:entity-tag-removed':
@@ -216,9 +220,9 @@ function cause(row: Row, all: Row[], holding: Held[]): Step[] {
     case 'yield:moved':
     case 'frame:entity-type-added':
     case 'frame:tag-schema-added':
-      return [record(row.on)];
+      return [record(on)];
     default:
-      throw new Error(`specs/src/client/refresh.json has a row for ${row.on}, which refresh-cases.ts cannot cause`);
+      throw new Error(`specs/src/client/refresh.json has a row for ${on}, which refresh-cases.ts cannot cause`);
   }
 }
 
@@ -254,7 +258,7 @@ function built(row: Row, all: Row[], queries: Query[]): Case {
     ...cause(row, all, holding),
     ...asked(refetched(row, holding), 'again'),
     ...acted(row.writes).map((key): Step => {
-      if (!(key.query in written)) throw new Error(`${row.on} writes ${key.query}, which refresh-cases.ts has no written value for`);
+      if (!(key.query in written)) throw new Error(`${trigger(row)} writes ${key.query}, which refresh-cases.ts has no written value for`);
       return { reaches: holder(key), state: { status: 'ready', value: written[key.query] } };
     }),
     ...acted(row.removes).map((key): Step => ({ reaches: holder(key), state: { status: 'failed', error: { code: 'bus.not-found' } } })),
@@ -262,8 +266,8 @@ function built(row: Row, all: Row[], queries: Query[]): Case {
     { quiet: 400 },
   ];
 
-  const label = row.when === undefined ? row.on : `${row.on}, ${row.when}`;
-  return caseOf(`refresh-${row.on.replaceAll(':', '-')}${row.when === undefined ? '' : `-${row.when}`}`, {
+  const label = row.when === undefined ? trigger(row) : `${trigger(row)}, ${row.when}`;
+  return caseOf(`refresh-${trigger(row).replaceAll(':', '-')}${row.when === undefined ? '' : `-${row.when}`}`, {
     about: `${label}: ${row.docs.charAt(0).toLowerCase()}${row.docs.slice(1)}`,
     source: 'specs/src/client/refresh.json',
     tier: 'parity',

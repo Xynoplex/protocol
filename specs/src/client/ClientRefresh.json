@@ -1,0 +1,268 @@
+{
+  "description": "client/refresh.json: what a Xynolog client asks again for, and when.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The live queries.",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A live query that asks an operation of the registry, by its request's channel.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z][A-Za-z]*$",
+                "description": "A query, by its name."
+              },
+              "per": {
+                "type": "string",
+                "enum": [
+                  "resource",
+                  "annotation",
+                  "filters"
+                ],
+                "description": "What one is kept per; absent, the knowledge base has one."
+              },
+              "asks": {
+                "$ref": "../bus/BusRegistry.json#/properties/operations/items/properties/request"
+              },
+              "persisted": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ],
+                "description": "Its answers are kept across a client's lives."
+              },
+              "value": {
+                "description": "A reference to the schema of its value.",
+                "type": "object",
+                "properties": {
+                  "$ref": {
+                    "type": "string",
+                    "pattern": "^\\.\\./components/schemas/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
+                    "description": "The schema of what its cache holds for a key: a component, or a member within one."
+                  }
+                },
+                "required": [
+                  "$ref"
+                ],
+                "additionalProperties": false
+              },
+              "docs": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What it is, in prose."
+              }
+            },
+            "required": [
+              "name",
+              "asks",
+              "value",
+              "docs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A live query that reads a GET of the gateway's API.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z][A-Za-z]*$",
+                "description": "A query, by its name."
+              },
+              "per": {
+                "type": "string",
+                "enum": [
+                  "resource",
+                  "annotation",
+                  "filters"
+                ],
+                "description": "What one is kept per; absent, the knowledge base has one."
+              },
+              "reads": {
+                "type": "string",
+                "pattern": "^GET /[^ ]+$",
+                "description": "The GET of the gateway's API it reads."
+              },
+              "persisted": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ],
+                "description": "Its answers are kept across a client's lives."
+              },
+              "value": {
+                "description": "A reference to the schema of its value.",
+                "type": "object",
+                "properties": {
+                  "$ref": {
+                    "type": "string",
+                    "pattern": "^\\.\\./components/schemas/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
+                    "description": "The schema of what its cache holds for a key: a component, or a member within one."
+                  }
+                },
+                "required": [
+                  "$ref"
+                ],
+                "additionalProperties": false
+              },
+              "docs": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What it is, in prose."
+              }
+            },
+            "required": [
+              "name",
+              "reads",
+              "value",
+              "docs"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "refresh": {
+      "type": "array",
+      "minItems": 1,
+      "description": "A row per trigger.",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A row for a channel's events.",
+            "type": "object",
+            "properties": {
+              "on": {
+                "$ref": "../bus/BusRegistry.json#/properties/channels/items/oneOf/0/properties/channel"
+              },
+              "when": {
+                "type": "string",
+                "enum": [
+                  "enriched",
+                  "unenriched"
+                ],
+                "description": "Which of a channel's two ways of event the row is for."
+              },
+              "reach": {
+                "type": "string",
+                "enum": [
+                  "subject",
+                  "held"
+                ],
+                "description": "Which keys the row reaches: the event's subject, or every key held."
+              },
+              "names": {
+                "description": "Where in the event a subject row finds the resource and the annotation it names.",
+                "type": "object",
+                "properties": {
+                  "resource": {
+                    "type": "string",
+                    "pattern": "^[a-z][A-Za-z]*(\\.[a-z][A-Za-z]*)*$",
+                    "description": "A way into the event's payload: the names of the members it passes through and of its own, joined by dots."
+                  },
+                  "annotation": {
+                    "type": "string",
+                    "pattern": "^[a-z][A-Za-z]*(\\.[a-z][A-Za-z]*)*$",
+                    "description": "A way into the event's payload: the names of the members it passes through and of its own, joined by dots."
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              },
+              "carries": {
+                "type": "string",
+                "pattern": "^[a-z][A-Za-z]*(\\.[a-z][A-Za-z]*)*$",
+                "description": "A way into the event's payload: the names of the members it passes through and of its own, joined by dots."
+              },
+              "refetches": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "The queries asked again.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][A-Za-z]*$",
+                  "description": "A query, by its name."
+                }
+              },
+              "writes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "The queries whose new value the event carries.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][A-Za-z]*$",
+                  "description": "A query, by its name."
+                }
+              },
+              "removes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "The queries whose entity the event says is gone.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][A-Za-z]*$",
+                  "description": "A query, by its name."
+                }
+              },
+              "docs": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What it is, in prose."
+              }
+            },
+            "required": [
+              "on",
+              "docs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A row for what befalls the stream itself.",
+            "type": "object",
+            "properties": {
+              "stream": {
+                "type": "string",
+                "enum": [
+                  "reopened",
+                  "unreadable"
+                ],
+                "description": "`reopened`, the stream open again after a drop; or `unreadable`, an event that cannot be read."
+              },
+              "reach": {
+                "$ref": "#/properties/refresh/items/oneOf/0/properties/reach"
+              },
+              "refetches": {
+                "$ref": "#/properties/refresh/items/oneOf/0/properties/refetches"
+              },
+              "docs": {
+                "$ref": "#/properties/refresh/items/oneOf/0/properties/docs"
+              }
+            },
+            "required": [
+              "stream",
+              "docs"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "queries",
+    "refresh"
+  ],
+  "additionalProperties": false
+}

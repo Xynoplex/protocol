@@ -12,7 +12,7 @@
       "docs": "A process with no browser of its own, and the launcher: the device authorization grant (RFC 8628)."
     }
   ],
-  "scope": {
+  "scopes": {
     "value": "openid email profile offline_access",
     "docs": "What every sign-in asks for. `offline_access` asks for a refresh token that outlives the issuer's own browser session: a session with a knowledge base is renewed for weeks, not minutes."
   }
