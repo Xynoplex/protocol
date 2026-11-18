@@ -8,7 +8,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/annotation-of-span.test.ts", "sdk/typescript/core/src/__tests__/builder-cases.test.ts", "sdk/typescript/sdk/src/__tests__/annotation-builders.test.ts", "sdk/typescript/sdk/src/__tests__/worker-skill.test.ts"],
     "rust": ["sdk/rust/sdk/tests/builder_cases.rs", "sdk/rust/sdk/tests/readme.rs"],
     "python": ["sdk/python/sdk/tests/test_annotation_builders.py"],
-    "go": ["sdk/go/sdk/annotations/builders_test.go"],
+    "go": ["sdk/go/annotations/builders_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/annotations/AnnotationBuildersTest.kt"]
   },
   "unstated": {

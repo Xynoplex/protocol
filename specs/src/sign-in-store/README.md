@@ -89,7 +89,7 @@ whole.
 
 Every writer takes the lock:
 
-- the Go SDK (`xynolog/sdk/go/sdk`, `SignInStore`), through which the launcher
+- the Go SDK (`xynolog/sdk/go`, `SignInStore`), through which the launcher
   keeps its sign-ins;
 - the Rust SDK (`xynolog::sign_in_store`);
 - the Python SDK (`xynolog.sign_in_store`);

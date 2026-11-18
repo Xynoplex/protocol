@@ -63,7 +63,7 @@ carries a `scope` that is not a resource's id. It is told to the error
 stream: as `error`, with no status, saying "the stream carried what is not
 a frame: " and then its first fault, in the words a request's refusal says
 it in.
-*Held by `specs/src/bus/frame-cases.json`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/go/sdk/stream_test.go`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/StreamTest.kt`, `sdk/swift/sdk/Tests/XynologTests/FrameCasesTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/FrameCasesTests.cs`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
+*Held by `specs/src/bus/frame-cases.json`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/go/stream_test.go`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/StreamTest.kt`, `sdk/swift/sdk/Tests/XynologTests/FrameCasesTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/FrameCasesTests.cs`, `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`.*
 
 The **registry** ([`specs/src/bus/registry.json`](../specs/src/bus/registry.json))
 is the authority for channels. It classifies each on independent axes:
@@ -246,7 +246,7 @@ repairs a drop by asking:
 A row of the refresh table whose trigger is a passing channel may only
 refetch, and `reopened` refetches whatever it does: the table's generator
 refuses anything else.
-*Held by `sdk/typescript/core/src/__tests__/cache-refresh.test.ts`.*
+*Held by `sdk/codegen/test/cache_refresh.ml`.*
 
 ### Order
 
@@ -352,7 +352,7 @@ that can renew its token does the same:
   renewal already answered an earlier refusal of the token refused, gives
   the token it holds and renews nothing: a refusal that arrives after the
   renewal costs no second one.
-  *Held by `specs/src/session/cases.json`, its refusal rows, and by `sdk/typescript/http-transport/src/transport/__tests__/http-transport.hooks.test.ts`, `sdk/python/sdk/tests/test_refused_token.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/upload.rs`.*
+  *Held by `specs/src/session/cases.json`, its refusal rows, and by `sdk/typescript/http-transport/src/transport/__tests__/http-transport.hooks.test.ts`, `sdk/python/sdk/tests/test_refused_token.py`, `sdk/go/stream_test.go`, `sdk/rust/http-transport/tests/upload.rs`.*
 
 A refused credential is renewed, never retried: no retry rule is asked
 about it, and it never waits out a `Retry-After`. A client that cannot renew
@@ -440,14 +440,14 @@ result and failure channels are the registry's.
 - **A result with a fault** is no result, wherever the fault is: the
   request fails as `error`, saying the payload is not its channel's and
   naming its first fault, as § Identity says a fault is named.
-  *Held by `specs/src/resources/reader-cases.json`, `sdk/go/sdk/replies_test.go`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`.*
+  *Held by `specs/src/resources/reader-cases.json`, `sdk/go/replies_test.go`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`.*
 - **A failure with a fault** is held to its channel's schema as a result
   is: the request fails as `error`, naming its first fault, and a failure
   without words is never given any. A peer sends a code the wire lists,
   and a reader reads a code the wire does not list as absent: the failure
   settles the request as `bus.rejected`, in its own words, and is read
   with no code wherever it is read, by its channel's typed reader too.
-  *Held by `specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`, `sdk/go/sdk/replies_test.go`, `sdk/rust/sdk/tests/bus.rs`, `sdk/python/sdk/tests/test_transport.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/HTTPTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/haskell/sdk/test/BusCases.hs`.*
+  *Held by `specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`, `sdk/go/replies_test.go`, `sdk/rust/sdk/tests/bus.rs`, `sdk/python/sdk/tests/test_transport.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/HTTPTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/haskell/sdk/test/BusCases.hs`.*
 - **A request nobody is there to answer** fails as `peer-unavailable` when
   the gateway can tell, and as a timeout when it cannot.
   *Held by `sdk/wire/request-unanswerable`, `gateway/emit.test.ts`.*
@@ -529,7 +529,7 @@ this emit, never provenance.
   channel's: under `error`, saying "a frame on `<channel>` is not that
   channel's: " and then the fault. Only a reply whose correlation id cannot
   be read, which carries none, leaves its request to wait out its timeout.
-  *Held by `specs/src/bus/frame-cases.json`, `sdk/typescript/core/src/__tests__/bus.test.ts`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_bus.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/ClientTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/rust/sdk/tests/typed.rs`, `sdk/go/sdk/internal/required/required_test.go`.*
+  *Held by `specs/src/bus/frame-cases.json`, `sdk/typescript/core/src/__tests__/bus.test.ts`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_bus.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/ClientTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/rust/sdk/tests/typed.rs`, `sdk/go/internal/required/required_test.go`.*
 
 ## Content and the gateway's own operations
 
@@ -565,7 +565,7 @@ Bytes do not ride the bus.
 - An answer with a fault fails as `error`, with the answer's status,
   saying it is not its declared body and naming its first fault, as
   § Identity says a fault is named; it is reported on the error stream too.
-  *Held by `sdk/go/sdk/replies_test.go`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_withheld.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`, `sdk/rust/http-transport/tests/answers.rs`.*
+  *Held by `sdk/go/replies_test.go`, `sdk/typescript/http-transport/src/transport/__tests__/http-transport.http-paths.test.ts`, `sdk/python/sdk/tests/test_withheld.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`, `sdk/rust/http-transport/tests/answers.rs`.*
 - A read or one of the gateway's own operations whose credential is refused
   is renewed, as § A refused credential says.
   *Held by `sdk/wire/request-credential-renewed`, `sdk/wire/request-credential-limit-refused-twice`.*

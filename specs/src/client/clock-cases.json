@@ -8,7 +8,7 @@
     "swift": ["sdk/swift/sdk/Tests/XynologTests/ClockCasesTests.swift"],
     "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/ClockCasesTests.cs"],
     "typescript": ["sdk/typescript/sdk/src/__tests__/clock-cases.test.ts"],
-    "go": ["sdk/go/sdk/clock_cases_test.go"],
+    "go": ["sdk/go/clock_cases_test.go"],
     "ocaml": ["sdk/ocaml/sdk/test/registry_behavior.ml"]
   },
   "cases": [

@@ -10,7 +10,7 @@
       "sdk/typescript/core/src/__tests__/key-credential.test.ts"
     ],
     "rust": ["sdk/rust/http-transport/tests/client_assertion_cases.rs"],
-    "go": ["sdk/go/sdk/clientassertion_test.go"],
+    "go": ["sdk/go/clientassertion_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/http/ClientAssertionCasesTest.kt"],
     "ocaml": ["sdk/ocaml/sdk/test/sign_in.ml"]
   },

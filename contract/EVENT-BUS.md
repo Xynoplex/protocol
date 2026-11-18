@@ -244,7 +244,7 @@ Three layers, deliberately, because each catches what the others structurally ca
 |---|---|---|
 | **Source** | [bus generator ownership](https://github.com/xynolog/protocol/blob/main/OWNERSHIP.md#generator-ownership), used before generated SDK outputs are emitted | undeclared operation channels, a reply owned by two operations, a non-emittable request, and a reply channel also given an `audience` (the double-delivery shape) — reported against the registry line you typed |
 | **Compile time** | `satisfies` clauses in the generated TypeScript | an unknown channel, a missing payload binding, a schema name that isn't in the OpenAPI types |
-| **Test time** | [bus-invariants.test.ts](https://github.com/xynolog/sdk/tree/main/typescript/core/src/__tests__/bus-invariants.test.ts) and [bridged_test.go](https://github.com/xynolog/sdk/tree/main/go/sdk/bus/bridged_test.go) | duplicates in the bridged set, the frozen-snapshot equality, bridged ∩ persisted, and — in Go, which has no `satisfies` — the reply-is-bridged and request-is-emittable properties |
+| **Test time** | [bus-invariants.test.ts](https://github.com/xynolog/sdk/tree/main/typescript/core/src/__tests__/bus-invariants.test.ts) and [bridged_test.go](https://github.com/xynolog/sdk/tree/main/go/bus/bridged_test.go) | duplicates in the bridged set, the frozen-snapshot equality, bridged ∩ persisted, and — in Go, which has no `satisfies` — the reply-is-bridged and request-is-emittable properties |
 
 The Go tests overlap the TypeScript ones on purpose. Both languages generate from one registry, so they are a second opinion rather than the only guard; that redundancy is the point, because an artifact checked only against the thing that generated it can agree with a mistake indefinitely.
 
@@ -276,7 +276,7 @@ Five implementations write the log. Each is switched on for a whole process, and
 | TypeScript, in a browser | `window.__XYNOLOG_BUS_LOG__ = true` | the console, with `console.debug` |
 | Rust: the gateway, and a client of the Rust SDK ([`bus_log.rs`](https://github.com/xynolog/sdk/tree/main/rust/sdk/src/bus_log.rs)) | `XYNOLOG_BUS_LOG` set to any value that is not empty | stderr |
 | Python: a client of the Python SDK, the Worker among them ([`_bus_log.py`](https://github.com/xynolog/sdk/tree/main/python/sdk/src/xynolog/_bus_log.py)) | `XYNOLOG_BUS_LOG` set to any value that is not empty | stdout |
-| Go: a client of the Go SDK, the launcher's verbs among them ([`buslog.go`](https://github.com/xynolog/sdk/tree/main/go/sdk/buslog.go)) | `XYNOLOG_BUS_LOG` set to any value that is not empty | stderr |
+| Go: a client of the Go SDK, the launcher's verbs among them ([`buslog.go`](https://github.com/xynolog/sdk/tree/main/go/buslog.go)) | `XYNOLOG_BUS_LOG` set to any value that is not empty | stderr |
 | Kotlin: a client of the Kotlin SDK, in Kotlin or Java ([`BusLog.kt`](https://github.com/xynolog/sdk/tree/main/kotlin/sdk/src/main/kotlin/xynolog/bus/BusLog.kt)) | `XYNOLOG_BUS_LOG` set to any value that is not empty | stdout |
 
 Five operations, all logged at transport-contract choke points (not in the SDK's namespace methods or the `ActorStateUnit` SSE machinery — those ride on the transport). The Rust, Python, Go and Kotlin transports log at the same points as the TypeScript one this table names:
@@ -324,7 +324,9 @@ before it writes any SDK's file:
 | `sdk/go/bus/{channels,operations,bridged}_gen.go` | [`codegen/lib/bus/go.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/go.ml) |
 | `sdk/python/sdk/src/xynolog/channels.py`, `operations.py` | [`codegen/lib/bus/python.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/python.ml) |
 | `sdk/ocaml/sdk/lib/bus_registry.ml` | [`codegen/lib/ocaml_sdk/bus_modules.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/ocaml_sdk/bus_modules.ml) |
-| The Rust SDK's channel and operation tables | its build script, [`sdk/rust/sdk/build.rs`](https://github.com/xynolog/sdk/tree/main/rust/sdk/build.rs), on every build |
+| `sdk/rust/sdk/src/generated/channels.rs`, `operations.rs` | [`codegen/lib/bus/rust.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/rust.ml) |
+| `sdk/kotlin/sdk/src/generated/kotlin/xynolog/channels/Channels.kt`, `xynolog/bus/Operations.kt` | [`codegen/lib/bus/kotlin.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/kotlin.ml) |
+| `sdk/csharp/sdk/src/Xynolog/Generated/BusDescriptors.g.cs` | [`codegen/lib/bus/csharp.ml`](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/csharp.ml) |
 
 ```sh
 make generate          # in sdk: regenerate every generated file
@@ -457,7 +459,7 @@ Skipping any step is caught at build time — `CHANNEL_SCHEMAS`'s `satisfies` cl
 - **[TRANSPORT-HTTP.md](./TRANSPORT-HTTP.md)** — HTTP+SSE wire format; the `/bus/emit` and `/bus/subscribe` contract.
 - **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)** — the authority: channels, payloads, operations.
 - **[`sdk/typescript/core/src/bus-protocol.ts`](https://github.com/xynolog/sdk/tree/main/typescript/core/src/bus-protocol.ts)** — GENERATED `EventMap` and `CHANNEL_SCHEMAS`.
-- **`sdk/go/sdk/bus/`** — GENERATED Go channels, each a value typed by its payload, the operations with their replies, and the bridged and scoped lists; `typed.go` holds the types they are values of.
+- **`sdk/go/bus/`** — GENERATED Go channels, each a value typed by its payload, the operations with their replies, and the bridged and scoped lists; `typed.go` holds the types they are values of.
 - **[`sdk/typescript/core/src/event-bus.ts`](https://github.com/xynolog/sdk/tree/main/typescript/core/src/event-bus.ts)** — the in-process `EventBus` and `ScopedEventBus` implementation.
 - **[../../images/e2e/docs/bus-logging.md](https://github.com/xynolog/images/tree/main/e2e/docs/bus-logging.md)** — the bus log format and capture API.
 - **[../../docs/builder/Usage.md](../../docs/builder/Usage.md)** — the namespace tour with worked examples per verb.

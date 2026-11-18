@@ -6,7 +6,7 @@
     "typescript": ["sdk/typescript/sdk/src/session/__tests__/registry-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/session/browser.rs"],
     "python": ["sdk/python/sdk/tests/test_registry_cases.py"],
-    "go": ["sdk/go/sdk/registry/same_place_test.go"],
+    "go": ["sdk/go/registry/same_place_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/registry/RegistryCasesTest.kt"],
     "haskell": ["sdk/haskell/sdk/test/RegistryCases.hs"],
     "ocaml": ["sdk/ocaml/sdk/test/registry_behavior.ml"]
