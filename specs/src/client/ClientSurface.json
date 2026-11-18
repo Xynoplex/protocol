@@ -1,0 +1,848 @@
+{
+  "description": "client/surface.json: the surface of a Xynolog client: its namespaces and methods, what a worker is handed, its state units, its bus, its storage, its modules and its clock.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "shapes": {
+      "description": "Each shape a method returns, with what it is.",
+      "type": "object",
+      "properties": {
+        "promise": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `promise` method returns."
+        },
+        "stream": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `stream` method returns."
+        },
+        "delegation": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `delegation` method returns."
+        },
+        "upload": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `upload` method returns."
+        },
+        "cache": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `cache` method returns."
+        },
+        "signal": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `signal` method returns."
+        },
+        "count": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `count` method returns."
+        },
+        "events": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `events` method returns."
+        },
+        "claims": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `claims` method returns."
+        }
+      },
+      "required": [
+        "promise",
+        "stream",
+        "delegation",
+        "upload",
+        "cache",
+        "signal",
+        "count",
+        "events",
+        "claims"
+      ],
+      "additionalProperties": false
+    },
+    "via": {
+      "description": "Each way a method reaches what it does, with what it is.",
+      "type": "object",
+      "properties": {
+        "request": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `request` method does first."
+        },
+        "emit": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `emit` method does first."
+        },
+        "local": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `local` method does first."
+        },
+        "content": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `content` method does first."
+        },
+        "gateway": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `gateway` method does first."
+        },
+        "observes": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What a `observes` method does first."
+        }
+      },
+      "required": [
+        "request",
+        "emit",
+        "local",
+        "content",
+        "gateway",
+        "observes"
+      ],
+      "additionalProperties": false
+    },
+    "fixtures": {
+      "description": "The values a case names by `{\"$fixture\": name}`.",
+      "type": "object",
+      "properties": {
+        "context": {
+          "$ref": "../components/schemas/GatheredContext.json"
+        },
+        "selector": {
+          "$ref": "../components/schemas/TextQuoteSelector.json"
+        }
+      },
+      "required": [
+        "context",
+        "selector"
+      ],
+      "additionalProperties": false
+    },
+    "namespaces": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every namespace of a client.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The namespace, in camelCase."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the namespace is."
+          },
+          "methods": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The namespace's methods.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The method, in camelCase."
+                },
+                "shape": {
+                  "type": "string",
+                  "enum": [
+                    "promise",
+                    "stream",
+                    "delegation",
+                    "upload",
+                    "cache",
+                    "signal",
+                    "count",
+                    "events",
+                    "claims"
+                  ],
+                  "description": "What the method returns: a key of `shapes`."
+                },
+                "via": {
+                  "description": "What the method does first: one key of `via`.",
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                        }
+                      },
+                      "required": [
+                        "request"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "emit": {
+                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                        }
+                      },
+                      "required": [
+                        "emit"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "local": {
+                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                        }
+                      },
+                      "required": [
+                        "local"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "content": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "An operation of the content transport."
+                        }
+                      },
+                      "required": [
+                        "content"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "gateway": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "One of the gateway's own operations."
+                        }
+                      },
+                      "required": [
+                        "gateway"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "observes": {
+                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                        }
+                      },
+                      "required": [
+                        "observes"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "cases": {
+                  "type": "array",
+                  "minItems": 1,
+                  "description": "What calling the method does.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "why": {
+                        "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                      },
+                      "args": {
+                        "$comment": "The method's arguments, by its parameters' names, as the wire writes them, with `{\"$fixture\": name}`: JSON, as it is given."
+                      },
+                      "sends": {
+                        "$comment": "What the call sends first: JSON, as it is given."
+                      },
+                      "answers": {
+                        "$comment": "What what it sent is answered with, or null: JSON, as it is given."
+                      },
+                      "then": {
+                        "type": "array",
+                        "minItems": 1,
+                        "description": "What the call sends next, in order.",
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "request": {
+                                  "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                                },
+                                "sends": {
+                                  "$comment": "What it sends: JSON, as it is given."
+                                }
+                              },
+                              "required": [
+                                "request",
+                                "sends"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "content": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "description": "An operation of the content transport."
+                                },
+                                "sends": {
+                                  "$comment": "What it sends: JSON, as it is given."
+                                }
+                              },
+                              "required": [
+                                "content",
+                                "sends"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      },
+                      "correlationId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "The correlation id the call carries."
+                      }
+                    },
+                    "required": [
+                      "args",
+                      "sends"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "method",
+                "shape",
+                "via",
+                "cases"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "namespace",
+          "docs",
+          "methods"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "worker": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What a worker is handed.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "handed": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What a worker is handed."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What it is."
+          },
+          "members": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Its members.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The member, by its name."
+                },
+                "named": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "description": "Each SDK whose ecosystem names the member, with its name and why.",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "The SDK's name for the member."
+                      },
+                      "why": {
+                        "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "why"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "takes": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "description": "Each verb whose job the member settles, with the schema of what it takes.",
+                  "additionalProperties": {
+                    "$ref": "../bus/BusRegistry.json#/properties/channels/items/oneOf/0/properties/schema"
+                  }
+                }
+              },
+              "required": [
+                "member"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "handed",
+          "docs",
+          "members"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "stateUnits": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each state unit.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The unit."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the unit is."
+          },
+          "made": {
+            "type": "object",
+            "minProperties": 1,
+            "description": "What each SDK makes it as.",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "madeBy": {
+            "type": "object",
+            "minProperties": 1,
+            "description": "Each SDK whose public function makes the unit, where its constructor does not.",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "members": {
+            "type": "array",
+            "description": "Its members.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The member, by its name."
+                }
+              },
+              "required": [
+                "member"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "unit",
+          "docs",
+          "made",
+          "madeBy",
+          "members"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "wire": {
+      "description": "The typed bus over a client's transport.",
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What the bus is."
+        },
+        "made": {
+          "type": "object",
+          "minProperties": 1,
+          "description": "What each SDK makes it as.",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Its members.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "member": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The member, by its name."
+              }
+            },
+            "required": [
+              "member"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "docs",
+        "made",
+        "members"
+      ],
+      "additionalProperties": false
+    },
+    "storage": {
+      "description": "Where a client keeps text under a key.",
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What the storage is."
+        },
+        "made": {
+          "type": "object",
+          "minProperties": 1,
+          "description": "What each SDK makes it as.",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Its members.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "member": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The member, by its name."
+              }
+            },
+            "required": [
+              "member"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "docs",
+        "made",
+        "members"
+      ],
+      "additionalProperties": false
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What each SDK has beside its namespaces.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The module."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the module is."
+          },
+          "where": {
+            "type": "object",
+            "minProperties": 1,
+            "description": "Each SDK, with the files it keeps the module in.",
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "whole": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Each SDK whose files are the module alone, every public member of them listed.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "members": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The module's members.",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "member": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The member, as the table spells it."
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "reader"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "member",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "member": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The member, as the table spells it."
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "function"
+                      ]
+                    },
+                    "named": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "description": "Each SDK, with its own name for it.",
+                      "additionalProperties": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "member",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "member": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The member, as the table spells it."
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "type"
+                      ]
+                    },
+                    "named": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "description": "Each SDK, with its own name for it.",
+                      "additionalProperties": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "fieldsNamed": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "description": "Each SDK, with its own name for some fields.",
+                      "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    "fields": {
+                      "type": "array",
+                      "minItems": 1,
+                      "description": "The type's fields.",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "member",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "member": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The member, as the table spells it."
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "constant"
+                      ]
+                    },
+                    "named": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "description": "Each SDK, with its own name for it.",
+                      "additionalProperties": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "member",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "module",
+          "docs",
+          "where",
+          "members"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "clock": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What a caller controls of an SDK's time and chance.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The source."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the source is."
+          },
+          "typeWords": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The words a type of the source is named by.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "outside": {
+            "type": "object",
+            "description": "Each SDK whose caller controls the source from outside it, with how.",
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "\\S",
+              "description": "How."
+            }
+          },
+          "takes": {
+            "type": "object",
+            "description": "Each SDK, with each public maker that takes the source and the types it takes it as.",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "source",
+          "docs",
+          "typeWords",
+          "outside",
+          "takes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "shapes",
+    "via",
+    "fixtures",
+    "namespaces",
+    "worker",
+    "stateUnits",
+    "wire",
+    "storage",
+    "modules",
+    "clock"
+  ],
+  "additionalProperties": false
+}

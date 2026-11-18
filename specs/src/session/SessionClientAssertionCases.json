@@ -1,0 +1,199 @@
+{
+  "description": "session/client-assertion-cases.json: the client assertion a service account that holds a key signs in with.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "form": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The form's fields, in order.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "grantType": {
+      "$ref": "ClientSecretForm.json#/properties/grant_type"
+    },
+    "assertionType": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The assertion's type, the form's `client_assertion_type`."
+    },
+    "lifetimeSeconds": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How long an assertion is good for, in seconds."
+    },
+    "thumbprints": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Keys and their thumbprints.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "jwk": {
+            "description": "A public key, as a JWK (RFC 7517).",
+            "type": "object",
+            "properties": {
+              "kty": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The key's type."
+              },
+              "n": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The modulus, as base64url."
+              },
+              "e": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The exponent, as base64url."
+              }
+            },
+            "required": [
+              "kty",
+              "n",
+              "e"
+            ],
+            "additionalProperties": false
+          },
+          "thumbprint": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The key's thumbprint (RFC 7638), as base64url."
+          }
+        },
+        "required": [
+          "why",
+          "jwk",
+          "thumbprint"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "jwk": {
+            "$ref": "#/properties/thumbprints/items/properties/jwk"
+          },
+          "clientId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The service account's client id."
+          },
+          "tokenEndpoint": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The issuer's token endpoint."
+          },
+          "issuedAt": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "When the assertion is made, in seconds since the Unix epoch."
+          },
+          "jti": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A value never sent twice."
+          },
+          "header": {
+            "description": "The assertion's JOSE header.",
+            "type": "object",
+            "properties": {
+              "alg": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The signature's algorithm."
+              },
+              "kid": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The key's id: its thumbprint."
+              }
+            },
+            "required": [
+              "alg",
+              "kid"
+            ],
+            "additionalProperties": false
+          },
+          "claims": {
+            "description": "The assertion's claims.",
+            "type": "object",
+            "properties": {
+              "iss": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sub": {
+                "type": "string",
+                "minLength": 1
+              },
+              "aud": {
+                "type": "string",
+                "minLength": 1
+              },
+              "jti": {
+                "type": "string",
+                "minLength": 1
+              },
+              "iat": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "exp": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "iss",
+              "sub",
+              "aud",
+              "jti",
+              "iat",
+              "exp"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "jwk",
+          "clientId",
+          "tokenEndpoint",
+          "issuedAt",
+          "jti",
+          "header",
+          "claims"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "form",
+    "grantType",
+    "assertionType",
+    "lifetimeSeconds",
+    "thumbprints",
+    "cases"
+  ],
+  "additionalProperties": false
+}

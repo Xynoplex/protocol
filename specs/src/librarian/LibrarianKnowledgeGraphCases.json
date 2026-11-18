@@ -1,0 +1,206 @@
+{
+  "description": "librarian/knowledge-graph-cases.json: what the graph store and the views answer, and the knowledge graph a Librarian builds for one resource, or the failure.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A build that answers a graph.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "resource": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "depth": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "description": "How many links out from the resource the graph is built; 1 where a case states none."
+              },
+              "graph": {
+                "description": "What the graph store answers.",
+                "type": "object",
+                "properties": {
+                  "resource": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "What the store answers each time it is asked for the resource, in order: its description, or null where it does not hold it yet.",
+                    "items": {
+                      "nullable": true,
+                      "allOf": [
+                        {
+                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                        }
+                      ]
+                    }
+                  },
+                  "connections": {
+                    "type": "array",
+                    "description": "The resource's connections, in the order the store gives them.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "resource": {
+                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                        },
+                        "bidirectional": {
+                          "type": "boolean",
+                          "description": "Whether the connection goes both ways."
+                        }
+                      },
+                      "required": [
+                        "resource",
+                        "bidirectional"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "referencedBy": {
+                    "type": "array",
+                    "description": "The annotations that refer to the resource, in the order the store gives them.",
+                    "items": {
+                      "$ref": "../components/schemas/Annotation.json"
+                    }
+                  },
+                  "annotations": {
+                    "type": "array",
+                    "description": "The annotations on the resource, in the order the store gives them.",
+                    "items": {
+                      "$ref": "../components/schemas/Annotation.json"
+                    }
+                  },
+                  "further": {
+                    "type": "object",
+                    "description": "What the store answers of each resource beyond the one asked for, by that resource's id.",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "connections": {
+                          "$ref": "#/properties/cases/items/oneOf/0/properties/graph/properties/connections"
+                        },
+                        "referencedBy": {
+                          "$ref": "#/properties/cases/items/oneOf/0/properties/graph/properties/referencedBy"
+                        }
+                      },
+                      "required": [
+                        "connections",
+                        "referencedBy"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "resource",
+                  "connections",
+                  "referencedBy",
+                  "annotations"
+                ],
+                "additionalProperties": false
+              },
+              "views": {
+                "type": "object",
+                "description": "The resource views that exist, by resource id.",
+                "additionalProperties": {
+                  "$ref": "../components/schemas/ResourceView.json"
+                }
+              },
+              "applied": {
+                "type": "boolean",
+                "description": "Whether the Weaver's applied signal for the resource, at the sequence its view states, has arrived."
+              },
+              "waited": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How many milliseconds passed in waiting before the answer."
+              },
+              "knowledgeGraph": {
+                "$ref": "../components/schemas/KnowledgeGraph.json"
+              }
+            },
+            "required": [
+              "why",
+              "resource",
+              "graph",
+              "views",
+              "applied",
+              "waited",
+              "knowledgeGraph"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A build that fails.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "resource": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "depth": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "description": "How many links out from the resource the graph is built; 1 where a case states none."
+              },
+              "graph": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/graph"
+              },
+              "views": {
+                "type": "object",
+                "description": "The resource views that exist, by resource id.",
+                "additionalProperties": {
+                  "$ref": "../components/schemas/ResourceView.json"
+                }
+              },
+              "applied": {
+                "type": "boolean",
+                "description": "Whether the Weaver's applied signal for the resource, at the sequence its view states, has arrived."
+              },
+              "waited": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How many milliseconds passed in waiting before the answer."
+              },
+              "fails": {
+                "type": "string",
+                "enum": [
+                  "unknown",
+                  "behind"
+                ],
+                "description": "Why nothing is built: `unknown` where neither the store nor the views hold the resource, `behind` where the views hold it and the store never comes to."
+              }
+            },
+            "required": [
+              "why",
+              "resource",
+              "graph",
+              "views",
+              "applied",
+              "waited",
+              "fails"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

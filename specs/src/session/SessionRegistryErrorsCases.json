@@ -1,0 +1,124 @@
+{
+  "description": "session/registry-errors-cases.json: what a registry says of the errors its active session says, and of those owed when it closes.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "while": {
+            "type": "string",
+            "enum": [
+              "opening",
+              "active"
+            ],
+            "description": "When the session says them: `opening`, as the factory builds it; `active`, once the session is active."
+          },
+          "said": {
+            "type": "array",
+            "minItems": 1,
+            "description": "What the session says, in order.",
+            "items": {
+              "oneOf": [
+                {
+                  "description": "A session's own error, by its code of errors/codes.json's `session`.",
+                  "type": "object",
+                  "properties": {
+                    "own": {
+                      "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                    }
+                  },
+                  "required": [
+                    "own"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "A transport's error, by its code of errors/codes.json's `transport`, and its message.",
+                  "type": "object",
+                  "properties": {
+                    "transport": {
+                      "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "What the transport's error says."
+                    }
+                  },
+                  "required": [
+                    "transport",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "registryErrors": {
+            "type": "array",
+            "description": "The codes said on the registry's errors up to the case's last effect, in order.",
+            "items": {
+              "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+            }
+          },
+          "permissionDenied": {
+            "type": "string",
+            "description": "The detail said through the session's signals as a refusal for lack of permission. Absent when no such refusal is said."
+          }
+        },
+        "required": [
+          "why",
+          "while",
+          "said",
+          "registryErrors"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "closing": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What a registry's close says.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "owed": {
+            "type": "boolean",
+            "description": "Whether the active session's client owes a save as the close begins."
+          },
+          "registryErrors": {
+            "type": "array",
+            "description": "Every code the registry says from its close until its errors end, in order.",
+            "items": {
+              "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+            }
+          }
+        },
+        "required": [
+          "why",
+          "owed",
+          "registryErrors"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases",
+    "closing"
+  ],
+  "additionalProperties": false
+}

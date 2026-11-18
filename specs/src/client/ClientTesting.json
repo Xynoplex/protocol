@@ -1,0 +1,193 @@
+{
+  "description": "client/testing.json: the testing kit every SDK ships.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "faultActions": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What a faulty transport does to a request.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Za-z]*$",
+            "description": "The fault's type's name."
+          },
+          "kind": {
+            "type": "string",
+            "pattern": "^[a-z]+(-[a-z]+)*$",
+            "description": "The word that names the fault in a request log."
+          },
+          "docs": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What it is, in prose."
+          },
+          "holds": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "The whole numbers the fault carries, by name.",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][A-Za-z]*$"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "docs",
+          "holds"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "delayMs": {
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What it is, in prose."
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The fewest milliseconds a drawn delay is."
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The most milliseconds a drawn delay is."
+        }
+      },
+      "required": [
+        "docs",
+        "minimum",
+        "maximum"
+      ],
+      "additionalProperties": false
+    },
+    "scheduleLength": {
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What it is, in prose."
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The fewest faults a drawn schedule is of."
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The most faults a drawn schedule is of."
+        }
+      },
+      "required": [
+        "docs",
+        "minimum",
+        "maximum"
+      ],
+      "additionalProperties": false
+    },
+    "slack": {
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What it is, in prose."
+        },
+        "times": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many times its reckoned bound a case is given."
+        }
+      },
+      "required": [
+        "docs",
+        "times"
+      ],
+      "additionalProperties": false
+    },
+    "deliveryOps": {
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What it is, in prose."
+        },
+        "ops": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The steps an interleaving is of.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]+$"
+          }
+        }
+      },
+      "required": [
+        "docs",
+        "ops"
+      ],
+      "additionalProperties": false
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The kit's records.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Za-z]*$",
+            "description": "The record's type's name."
+          },
+          "docs": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What it is, in prose."
+          },
+          "members": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "The record's members, named as surface.json names members.",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][A-Za-z]*$"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "docs",
+          "members"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "faultActions",
+    "delayMs",
+    "scheduleLength",
+    "slack",
+    "deliveryOps",
+    "records"
+  ],
+  "additionalProperties": false
+}

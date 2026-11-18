@@ -1,0 +1,84 @@
+{
+  "description": "sdk-telemetry/telemetry.json: the telemetry a Xynolog SDK's transports export over OTLP: its spans and metrics, the transport each comes from, and the attributes each carries.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "spans": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/name"
+          },
+          "transport": {
+            "type": "string",
+            "enum": [
+              "bus",
+              "content"
+            ],
+            "description": "The transport the row comes from: `bus`, the stream and emits; `content`, uploads and reads."
+          },
+          "kind": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/kind"
+          },
+          "meaning": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/meaning"
+          },
+          "attributes": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/attributes"
+          }
+        },
+        "required": [
+          "name",
+          "transport",
+          "kind",
+          "meaning",
+          "attributes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/name"
+          },
+          "transport": {
+            "$ref": "#/properties/spans/items/properties/transport"
+          },
+          "instrument": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/metrics/items/properties/instrument"
+          },
+          "meaning": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/meaning"
+          },
+          "attributes": {
+            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/attributes"
+          }
+        },
+        "required": [
+          "name",
+          "transport",
+          "instrument",
+          "meaning",
+          "attributes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "spans",
+    "metrics"
+  ],
+  "additionalProperties": false
+}

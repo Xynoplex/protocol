@@ -1,0 +1,22 @@
+{
+  "description": "client/registry.json: each record a registry of knowledge bases hands its caller, or is handed, as a JSON Schema.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "types": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Each record, by its type name.",
+      "additionalProperties": {
+        "$comment": "The record's JSON Schema, by the type name surface.json's `registry` module gives it: JSON, as it is given."
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "types"
+  ],
+  "additionalProperties": false
+}

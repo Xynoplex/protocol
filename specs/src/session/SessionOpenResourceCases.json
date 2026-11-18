@@ -1,0 +1,77 @@
+{
+  "description": "session/open-resource-cases.json: which of a knowledge base's open resources a registry asks after, and which stay open.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "kb": {
+            "type": "string",
+            "enum": [
+              "itself",
+              "unanswered"
+            ],
+            "description": "What the knowledge base answers when asked to describe itself: `itself`, the did of the entry it was asked as; `unanswered`, nothing."
+          },
+          "open": {
+            "type": "array",
+            "description": "The ids of the resources open in it before the session is active.",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          },
+          "resources": {
+            "description": "What the knowledge base answers when asked for each resource, by its id: `ready`, its description; `gone`, `bus.not-found`; `unanswered`, nothing.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "gone",
+                "unanswered"
+              ]
+            }
+          },
+          "asked": {
+            "type": "array",
+            "description": "The ids of the resources the registry asks for, compared as a set.",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          },
+          "stillOpen": {
+            "type": "array",
+            "description": "The ids of the resources open once the checks are done, compared as a set.",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          }
+        },
+        "required": [
+          "why",
+          "kb",
+          "open",
+          "resources",
+          "asked",
+          "stillOpen"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

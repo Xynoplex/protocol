@@ -1,0 +1,544 @@
+{
+  "description": "librarian/search-cases.json: what a search of resources by text is given, what each store answers, and the page; and what a lexical page's previews are.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "search": {
+                "description": "A search.",
+                "oneOf": [
+                  {
+                    "description": "A search that answers a page.",
+                    "type": "object",
+                    "properties": {
+                      "filters": {
+                        "$ref": "../components/schemas/MatchResourcesRequest.json"
+                      },
+                      "semanticFloor": {
+                        "$ref": "../components/schemas/LibrarianConfig.json#/properties/search/properties/semanticFloor"
+                      },
+                      "page": {
+                        "description": "The answer.",
+                        "type": "object",
+                        "properties": {
+                          "resources": {
+                            "type": "array",
+                            "description": "The resources of the page.",
+                            "items": {
+                              "$ref": "../components/schemas/ResourceDescriptor.json"
+                            }
+                          },
+                          "total": {
+                            "$ref": "../components/schemas/MatchResourcesResponse.json#/properties/total"
+                          },
+                          "matchKind": {
+                            "$ref": "../components/schemas/MatchResourcesResponse.json#/properties/matchKind"
+                          }
+                        },
+                        "required": [
+                          "resources",
+                          "total",
+                          "matchKind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "graph": {
+                        "description": "The graph's listing of resources.",
+                        "oneOf": [
+                          {
+                            "description": "The store answers.",
+                            "type": "object",
+                            "properties": {
+                              "asked": {
+                                "description": "What the graph is asked.",
+                                "type": "object",
+                                "properties": {
+                                  "search": {
+                                    "type": "string",
+                                    "description": "The text, without the spaces before and after it."
+                                  },
+                                  "offset": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "How many matching resources are passed over."
+                                  },
+                                  "limit": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "description": "The most resources the page has."
+                                  },
+                                  "archived": {
+                                    "type": "boolean",
+                                    "description": "Whether the resources are archived."
+                                  },
+                                  "entityTypes": {
+                                    "type": "array",
+                                    "description": "The entity types the resources are to be of.",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "search",
+                                  "offset",
+                                  "limit"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "answers": {
+                                "description": "One page of resources, and the total of all that match.",
+                                "type": "object",
+                                "properties": {
+                                  "resources": {
+                                    "type": "array",
+                                    "description": "One page of the resources that match.",
+                                    "items": {
+                                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                                    }
+                                  },
+                                  "total": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "How many resources match in all."
+                                  }
+                                },
+                                "required": [
+                                  "resources",
+                                  "total"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "asked",
+                              "answers"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "description": "The store fails.",
+                            "type": "object",
+                            "properties": {
+                              "asked": {
+                                "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/graph/oneOf/0/properties/asked"
+                              },
+                              "fails": {
+                                "type": "boolean",
+                                "enum": [
+                                  true
+                                ],
+                                "description": "The store fails."
+                              }
+                            },
+                            "required": [
+                              "asked",
+                              "fails"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "embedding": {
+                        "description": "The embedding of the text.",
+                        "oneOf": [
+                          {
+                            "description": "The store answers.",
+                            "type": "object",
+                            "properties": {
+                              "asked": {
+                                "type": "string",
+                                "description": "The text embedded."
+                              },
+                              "answers": {
+                                "type": "array",
+                                "minItems": 1,
+                                "description": "The vector.",
+                                "items": {
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "required": [
+                              "asked",
+                              "answers"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "description": "The store fails.",
+                            "type": "object",
+                            "properties": {
+                              "asked": {
+                                "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/embedding/oneOf/0/properties/asked"
+                              },
+                              "fails": {
+                                "type": "boolean",
+                                "enum": [
+                                  true
+                                ],
+                                "description": "The store fails."
+                              }
+                            },
+                            "required": [
+                              "asked",
+                              "fails"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "index": {
+                        "description": "The vector index's search of the chunks of resources.",
+                        "oneOf": [
+                          {
+                            "description": "The store answers.",
+                            "type": "object",
+                            "properties": {
+                              "asked": {
+                                "description": "What the index is asked.",
+                                "type": "object",
+                                "properties": {
+                                  "embedding": {
+                                    "type": "array",
+                                    "minItems": 1,
+                                    "description": "The vector searched by.",
+                                    "items": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "limit": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "description": "The most hits answered."
+                                  },
+                                  "entityTypes": {
+                                    "type": "array",
+                                    "description": "The entity types the chunks' resources are to be of.",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "embedding",
+                                  "limit"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "answers": {
+                                "type": "array",
+                                "description": "The hits, one for a chunk.",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "description": "The chunk's id."
+                                    },
+                                    "resourceId": {
+                                      "$ref": "../components/schemas/ResourceId.json"
+                                    },
+                                    "score": {
+                                      "$ref": "../vectors/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
+                                    },
+                                    "text": {
+                                      "$ref": "../vectors/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/text"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "resourceId",
+                                    "score",
+                                    "text"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "asked",
+                              "answers"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "description": "The store fails.",
+                            "type": "object",
+                            "properties": {
+                              "asked": {
+                                "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/index/oneOf/0/properties/asked"
+                              },
+                              "fails": {
+                                "type": "boolean",
+                                "enum": [
+                                  true
+                                ],
+                                "description": "The store fails."
+                              }
+                            },
+                            "required": [
+                              "asked",
+                              "fails"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "hydrated": {
+                        "type": "array",
+                        "description": "The hits read back as resources, one for each resource read, in the order they are read.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "resource": {
+                              "$ref": "../components/schemas/ResourceId.json"
+                            },
+                            "graph": {
+                              "description": "What the graph answers for the resource: a description, or null.",
+                              "oneOf": [
+                                {
+                                  "description": "What the store answers.",
+                                  "type": "object",
+                                  "properties": {
+                                    "answers": {
+                                      "nullable": true,
+                                      "allOf": [
+                                        {
+                                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "answers"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "description": "The read fails.",
+                                  "type": "object",
+                                  "properties": {
+                                    "fails": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        true
+                                      ],
+                                      "description": "The read fails."
+                                    }
+                                  },
+                                  "required": [
+                                    "fails"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "view": {
+                              "description": "What the views answer for the resource: a view, or null.",
+                              "oneOf": [
+                                {
+                                  "description": "What the store answers.",
+                                  "type": "object",
+                                  "properties": {
+                                    "answers": {
+                                      "nullable": true,
+                                      "allOf": [
+                                        {
+                                          "$ref": "../components/schemas/ResourceView.json"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "answers"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "description": "The read fails.",
+                                  "type": "object",
+                                  "properties": {
+                                    "fails": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        true
+                                      ],
+                                      "description": "The read fails."
+                                    }
+                                  },
+                                  "required": [
+                                    "fails"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "resource",
+                            "graph"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "filters",
+                      "semanticFloor",
+                      "page"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "description": "A search that fails.",
+                    "type": "object",
+                    "properties": {
+                      "filters": {
+                        "$ref": "../components/schemas/MatchResourcesRequest.json"
+                      },
+                      "semanticFloor": {
+                        "$ref": "../components/schemas/LibrarianConfig.json#/properties/search/properties/semanticFloor"
+                      },
+                      "graph": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/graph"
+                      },
+                      "embedding": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/embedding"
+                      },
+                      "index": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/index"
+                      },
+                      "hydrated": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/hydrated"
+                      },
+                      "fails": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ],
+                        "description": "The search fails."
+                      }
+                    },
+                    "required": [
+                      "filters",
+                      "semanticFloor",
+                      "fails"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "why",
+              "search"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "preview": {
+                "description": "The previews of a lexical page's resources.",
+                "type": "object",
+                "properties": {
+                  "resources": {
+                    "type": "array",
+                    "description": "The resources.",
+                    "items": {
+                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                    }
+                  },
+                  "served": {
+                    "type": "object",
+                    "description": "What a read of a resource's bytes answers, by the resource's id.",
+                    "additionalProperties": {
+                      "oneOf": [
+                        {
+                          "description": "A read that answers.",
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string",
+                              "description": "The text the bytes are, in UTF-8."
+                            },
+                            "contentType": {
+                              "type": "string",
+                              "description": "The content type the bytes are served with."
+                            }
+                          },
+                          "required": [
+                            "text",
+                            "contentType"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "description": "A read that fails.",
+                          "type": "object",
+                          "properties": {
+                            "fails": {
+                              "type": "boolean",
+                              "enum": [
+                                true
+                              ],
+                              "description": "The read fails."
+                            }
+                          },
+                          "required": [
+                            "fails"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "previews": {
+                    "type": "array",
+                    "description": "The `content` each resource is given, in the order of `resources`.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "resources",
+                  "served",
+                  "previews"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "preview"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

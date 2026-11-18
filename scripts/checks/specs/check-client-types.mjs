@@ -1,9 +1,9 @@
 // The client types' spec gate.
 //
 // `specs/src/client/types/` states the shapes every SDK hands its callers,
-// and `specs/src/session/ClientSecretForm.json` the form a service account
-// posts with a client secret. Each restates facts the spec states elsewhere,
-// and the check fails when a restatement disagrees:
+// and the client and session tables' schemas what an SDK reads from them.
+// Each restates facts the spec states elsewhere, and the check fails when a
+// restatement disagrees:
 //
 //   - telemetry's `anchor.method` values (service-telemetry/telemetry.json)
 //     are anything but AnchorMethod's words;
@@ -22,7 +22,8 @@
 //     module's other functions;
 //   - DeviceCode is anything but what control/UserAction.json carries less its
 //     `requestId`, its `expiresInSeconds` named `expiresIn`;
-//   - ClientSecretForm's grant is not client-assertion-cases.json's grant.
+//   - a method's `shape` in client/ClientSurface.json is not, in order, the
+//     shapes `shapes` states.
 //
 // It reads the source files, so it cannot pass on a stale bundle.
 
@@ -108,16 +109,15 @@ if (!same([...deviceCode.required].sort(), carriedRequired)) {
   fail(`DeviceCode requires ${JSON.stringify(deviceCode.required)}, and UserAction, less requestId, requires ${JSON.stringify(carriedRequired)}`);
 }
 
-const form = read('specs/src/session/ClientSecretForm.json');
-const assertion = read('specs/src/session/client-assertion-cases.json');
-if (!same(form.properties.grant_type.enum, [assertion.grantType])) {
-  fail(`ClientSecretForm's grant_type is ${JSON.stringify(form.properties.grant_type.enum)}, not client-assertion-cases.json's ${JSON.stringify(assertion.grantType)}`);
-}
+const surfaceSchema = read('specs/src/client/ClientSurface.json').properties;
+const shapes = Object.keys(surfaceSchema.shapes.properties);
+const methodShapes = surfaceSchema.namespaces.items.properties.methods.items.properties.shape.enum;
+if (!same(methodShapes, shapes)) fail(`ClientSurface.json's method shapes ${JSON.stringify(methodShapes)} are not, in order, the shapes it states ${JSON.stringify(shapes)}`);
 
 if (failures.length > 0) {
   for (const message of failures) console.error(`✗ ${message}`);
   process.exit(1);
 }
 console.log(
-  `✓ the client types agree with what restates them (${anchorMethods.length} anchor methods, ${reconcile.cases.length} reconcile cases, ${refusalReasons.length} refusal reasons, ${reads.length} readers, ${builders.length} builders, DeviceCode, the client secret form)`,
+  `✓ the client types agree with what restates them (${anchorMethods.length} anchor methods, ${reconcile.cases.length} reconcile cases, ${refusalReasons.length} refusal reasons, ${reads.length} readers, ${builders.length} builders, DeviceCode, ${shapes.length} shapes)`,
 );

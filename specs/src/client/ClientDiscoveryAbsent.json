@@ -1,0 +1,39 @@
+{
+  "description": "client/discovery-absent.json: why a client that read a launcher's discovery document found no launcher.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each reason, and what it means.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^[a-z]+(-[a-z]+)*$",
+            "description": "The reason, as every SDK spells it."
+          },
+          "docs": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What it is, in prose."
+          }
+        },
+        "required": [
+          "reason",
+          "docs"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "reasons"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,122 @@
+{
+  "description": "librarian/reply-cases.json: what the Librarian reads from a model's reply to a prompt asked for elements.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "reader": {
+                "type": "string",
+                "enum": [
+                  "scores"
+                ]
+              },
+              "elements": {
+                "type": "array",
+                "description": "The array the model answered.",
+                "items": {
+                  "$comment": "An element the model answered: any JSON value, since an element that is not what was asked for is read too."
+                }
+              },
+              "candidates": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "How many candidates the score prompt listed, numbered from 1."
+              },
+              "scores": {
+                "type": "array",
+                "description": "The scores read, one for each candidate given one.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "candidate": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "The candidate's number."
+                    },
+                    "score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1,
+                      "description": "The score read for it."
+                    }
+                  },
+                  "required": [
+                    "candidate",
+                    "score"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "why",
+              "reader",
+              "elements",
+              "candidates",
+              "scores"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "reader": {
+                "type": "string",
+                "enum": [
+                  "suggestions"
+                ]
+              },
+              "elements": {
+                "type": "array",
+                "description": "The array the model answered.",
+                "items": {
+                  "$comment": "An element the model answered: any JSON value, since an element that is not what was asked for is read too."
+                }
+              },
+              "suggestions": {
+                "type": "array",
+                "nullable": true,
+                "description": "The suggestions read, or null where none is read.",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A suggestion, without the white space at its two ends."
+                }
+              }
+            },
+            "required": [
+              "why",
+              "reader",
+              "elements",
+              "suggestions"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,76 @@
+{
+  "description": "client/timing.json: the timings every Xynolog client keeps.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "timing": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each timing.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][A-Za-z]*(Ms|Retry|Count)$",
+            "description": "The timing's name: a duration's ends in Ms, a retry budget's in Retry, a count's in Count."
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "description": "A duration in milliseconds, or a count."
+              },
+              {
+                "description": "A retry budget.",
+                "type": "object",
+                "properties": {
+                  "attempts": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "How many attempts the budget allows."
+                  },
+                  "initialDelayMs": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "The delay before the second attempt, in milliseconds."
+                  },
+                  "maxDelayMs": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "The longest delay between attempts, in milliseconds."
+                  }
+                },
+                "required": [
+                  "attempts",
+                  "initialDelayMs",
+                  "maxDelayMs"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "docs": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What it is, in prose."
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "docs"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "timing"
+  ],
+  "additionalProperties": false
+}
