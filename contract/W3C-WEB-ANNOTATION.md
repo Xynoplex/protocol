@@ -4,7 +4,7 @@ Xynolog implements the [W3C Web Annotation Data Model](https://www.w3.org/TR/ann
 
 **Related Documentation:**
 - [W3C Selectors](./W3C-SELECTORS.md) - Which selectors apply to text, PDFs and images
-- [Knowledge System](../../docs/architecture/KNOWLEDGE-SYSTEM.md) - How annotations flow through the event store, materialized views, and graph
+- [Knowledge System](https://github.com/xynolog/docs/blob/main/architecture/KNOWLEDGE-SYSTEM.md) - How annotations flow through the event store, materialized views, and graph
 - [Xynolog Protocol](./README.md) - The eight verbs and the bus these annotations travel on
 - [OpenAPI Specification](../specs/src/openapi.json) - Machine-readable API contract
 
