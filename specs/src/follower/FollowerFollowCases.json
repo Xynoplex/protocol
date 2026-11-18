@@ -1,0 +1,298 @@
+{
+  "description": "follower/follow-cases.json: how a follower of the record takes each log it follows.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "record": {
+            "type": "object",
+            "description": "Each log of the record, by the resource it is of or `__system__`, and the type of each of its events, in order: the first is its event 1.",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "description": "An event's type."
+              }
+            }
+          },
+          "fold": {
+            "description": "What the projector does with an event.",
+            "type": "object",
+            "properties": {
+              "uses": {
+                "description": "The types the projector applies.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/cases/items/properties/record/additionalProperties/items"
+                }
+              },
+              "refuses": {
+                "description": "The events the projector refuses as recorded.",
+                "type": "array",
+                "items": {
+                  "description": "An event of the record.",
+                  "type": "object",
+                  "properties": {
+                    "log": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "sequence": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "The event's place in its log, from 1."
+                    }
+                  },
+                  "required": [
+                    "log",
+                    "sequence"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "fails": {
+                "description": "The events whose taking fails for a passing reason.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "log": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "sequence": {
+                      "$ref": "#/properties/cases/items/properties/fold/properties/refuses/items/properties/sequence"
+                    },
+                    "times": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "How many takings of it fail before one succeeds."
+                    }
+                  },
+                  "required": [
+                    "log",
+                    "sequence",
+                    "times"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "uses",
+              "refuses",
+              "fails"
+            ],
+            "additionalProperties": false
+          },
+          "follows": {
+            "description": "The logs followed: every resource's, and the system's where it is named.",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "resources",
+                "__system__"
+              ]
+            }
+          },
+          "cursors": {
+            "type": "object",
+            "description": "Each log's cursor at the start.",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "The sequence of the last event taken of the log."
+            }
+          },
+          "withNoCursor": {
+            "type": "string",
+            "enum": [
+              "from-the-first",
+              "own-start"
+            ],
+            "description": "How the projector starts a log that has no cursor at the start."
+          },
+          "steps": {
+            "description": "What is done, in order, each let settle before the next.",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "description": "The follower starts, and sweeps.",
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "start"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "An event is added to the record, and not delivered.",
+                  "type": "object",
+                  "properties": {
+                    "record": {
+                      "description": "The event added.",
+                      "type": "object",
+                      "properties": {
+                        "log": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "type": {
+                          "$ref": "#/properties/cases/items/properties/record/additionalProperties/items"
+                        }
+                      },
+                      "required": [
+                        "log",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "record"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "The record's event is delivered, live.",
+                  "type": "object",
+                  "properties": {
+                    "deliver": {
+                      "$ref": "#/properties/cases/items/properties/fold/properties/refuses/items"
+                    }
+                  },
+                  "required": [
+                    "deliver"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "The stream drops.",
+                  "type": "object",
+                  "properties": {
+                    "drop": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "drop"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "The stream opens again.",
+                  "type": "object",
+                  "properties": {
+                    "reopen": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "reopen"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "taken": {
+            "type": "object",
+            "description": "For each log something was taken of, every event taken, in order.",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sequence": {
+                    "$ref": "#/properties/cases/items/properties/fold/properties/refuses/items/properties/sequence"
+                  },
+                  "how": {
+                    "type": "string",
+                    "enum": [
+                      "applied",
+                      "nothing",
+                      "refused"
+                    ]
+                  }
+                },
+                "required": [
+                  "sequence",
+                  "how"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "cursorsAfter": {
+            "type": "object",
+            "description": "Each log's cursor at the end.",
+            "additionalProperties": {
+              "$ref": "#/properties/cases/items/properties/cursors/additionalProperties"
+            }
+          },
+          "stopped": {
+            "description": "The logs a failed taking has stopped.",
+            "type": "array",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          },
+          "startedOwnWay": {
+            "description": "The logs started the projector's own way.",
+            "type": "array",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          }
+        },
+        "required": [
+          "why",
+          "record",
+          "fold",
+          "follows",
+          "cursors",
+          "withNoCursor",
+          "steps",
+          "taken",
+          "cursorsAfter",
+          "stopped",
+          "startedOwnWay"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}
