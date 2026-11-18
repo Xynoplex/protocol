@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Read",
             "description": "A resource the readers read: its primary representation and media type, absent where it has no representation, and its entity types.",
             "type": "object",
             "properties": {
@@ -40,6 +41,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Refused",
             "description": "A resource refused for its first fault.",
             "type": "object",
             "properties": {

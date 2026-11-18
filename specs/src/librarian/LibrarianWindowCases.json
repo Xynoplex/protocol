@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Around",
             "type": "object",
             "properties": {
               "why": {
@@ -22,6 +23,7 @@
                 "description": "The cut the Librarian makes where it summarizes an annotation.",
                 "oneOf": [
                   {
+                    "title": "Context",
                     "description": "A cut that answers.",
                     "type": "object",
                     "properties": {
@@ -86,6 +88,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Refused",
                     "description": "A cut that is refused.",
                     "type": "object",
                     "properties": {
@@ -124,6 +127,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Gathered",
             "type": "object",
             "properties": {
               "why": {
@@ -133,6 +137,7 @@
                 "description": "The cut in a gathered context.",
                 "oneOf": [
                   {
+                    "title": "Context",
                     "description": "A cut that answers: the text around the selection, or null where nothing places one.",
                     "type": "object",
                     "properties": {
@@ -164,6 +169,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Refused",
                     "description": "A cut that is refused.",
                     "type": "object",
                     "properties": {

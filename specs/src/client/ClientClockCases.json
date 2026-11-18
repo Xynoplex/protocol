@@ -60,6 +60,7 @@
                   "description": "`settle` lets what is ready run, moving no time; `act` does the subject's action, then settles."
                 },
                 {
+                  "title": "Counted",
                   "type": "object",
                   "properties": {
                     "counted": {
@@ -74,6 +75,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "title": "Pass",
                   "type": "object",
                   "properties": {
                     "pass": {

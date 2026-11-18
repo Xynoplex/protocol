@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Search",
             "type": "object",
             "properties": {
               "why": {
@@ -22,6 +23,7 @@
                 "description": "A search.",
                 "oneOf": [
                   {
+                    "title": "Page",
                     "description": "A search that answers a page.",
                     "type": "object",
                     "properties": {
@@ -60,6 +62,7 @@
                         "description": "The graph's listing of resources.",
                         "oneOf": [
                           {
+                            "title": "Answers",
                             "description": "The store answers.",
                             "type": "object",
                             "properties": {
@@ -131,6 +134,7 @@
                             "additionalProperties": false
                           },
                           {
+                            "title": "Fails",
                             "description": "The store fails.",
                             "type": "object",
                             "properties": {
@@ -157,6 +161,7 @@
                         "description": "The embedding of the text.",
                         "oneOf": [
                           {
+                            "title": "Answers",
                             "description": "The store answers.",
                             "type": "object",
                             "properties": {
@@ -180,6 +185,7 @@
                             "additionalProperties": false
                           },
                           {
+                            "title": "Fails",
                             "description": "The store fails.",
                             "type": "object",
                             "properties": {
@@ -206,6 +212,7 @@
                         "description": "The vector index's search of the chunks of resources.",
                         "oneOf": [
                           {
+                            "title": "Answers",
                             "description": "The store answers.",
                             "type": "object",
                             "properties": {
@@ -277,6 +284,7 @@
                             "additionalProperties": false
                           },
                           {
+                            "title": "Fails",
                             "description": "The store fails.",
                             "type": "object",
                             "properties": {
@@ -312,6 +320,7 @@
                               "description": "What the graph answers for the resource: a description, or null.",
                               "oneOf": [
                                 {
+                                  "title": "Answers",
                                   "description": "What the store answers.",
                                   "type": "object",
                                   "properties": {
@@ -330,6 +339,7 @@
                                   "additionalProperties": false
                                 },
                                 {
+                                  "title": "Fails",
                                   "description": "The read fails.",
                                   "type": "object",
                                   "properties": {
@@ -352,6 +362,7 @@
                               "description": "What the views answer for the resource: a view, or null.",
                               "oneOf": [
                                 {
+                                  "title": "Answers",
                                   "description": "What the store answers.",
                                   "type": "object",
                                   "properties": {
@@ -370,6 +381,7 @@
                                   "additionalProperties": false
                                 },
                                 {
+                                  "title": "Fails",
                                   "description": "The read fails.",
                                   "type": "object",
                                   "properties": {
@@ -405,6 +417,7 @@
                     "additionalProperties": false
                   },
                   {
+                    "title": "Fails",
                     "description": "A search that fails.",
                     "type": "object",
                     "properties": {
@@ -451,6 +464,7 @@
             "additionalProperties": false
           },
           {
+            "title": "Preview",
             "type": "object",
             "properties": {
               "why": {
@@ -473,6 +487,7 @@
                     "additionalProperties": {
                       "oneOf": [
                         {
+                          "title": "Answers",
                           "description": "A read that answers.",
                           "type": "object",
                           "properties": {
@@ -492,6 +507,7 @@
                           "additionalProperties": false
                         },
                         {
+                          "title": "Fails",
                           "description": "A read that fails.",
                           "type": "object",
                           "properties": {

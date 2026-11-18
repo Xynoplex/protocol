@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := validate
 
-.PHONY: help install conformance-install bundle lint check conformance-typecheck conformance-fixtures validate
+.PHONY: help install conformance-install bundle lint check conformance-typecheck conformance-fixtures reader validate
 
 # `make help` prints the `##` lines below, in order (build-tools/make-help.awk).
 # Every target runs its npm task in a Node container (scripts/make-target.sh).
@@ -12,7 +12,7 @@ help:
 	@awk -f build-tools/make-help.awk Makefile Makefile
 
 ##@ Validate
-## validate: Install, bundle, lint, check, type-check the conformance harness and run its fixtures
+## validate: Read the specifications with the reader, then install, bundle, lint, check, type-check the conformance harness and run its fixtures
 validate:
 	bash scripts/make-target.sh validate
 
@@ -44,3 +44,7 @@ conformance-typecheck:
 ## conformance-fixtures: Bundle, then run the conformance fixtures
 conformance-fixtures:
 	bash scripts/make-target.sh conformance-fixtures
+
+## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives
+reader:
+	bash scripts/make-target.sh reader

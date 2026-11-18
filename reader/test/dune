@@ -1,0 +1,25 @@
+(test
+ (name strict)
+ (modules strict)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol yojson alcotest))
+
+(test
+ (name schema)
+ (modules schema)
+ (flags
+  (:standard -open Xynolog_protocol_schema))
+ (libraries xynolog_protocol_schema alcotest))
+
+; The model reads every file of specs/src, and refuses copies of it changed.
+(test
+ (name census)
+ (modules census)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol yojson)
+ (deps
+  (source_tree %{project_root}/specs/src))
+ (action
+  (run %{test} %{project_root}/specs/src)))

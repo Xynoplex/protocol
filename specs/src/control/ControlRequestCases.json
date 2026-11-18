@@ -28,6 +28,7 @@
             "nullable": true,
             "oneOf": [
               {
+                "title": "Result",
                 "description": "A result, which holds to the method's result schema.",
                 "type": "object",
                 "properties": {
@@ -48,6 +49,7 @@
                 "additionalProperties": false
               },
               {
+                "title": "Error",
                 "description": "An error, under the request's id, or null where the line names no request.",
                 "type": "object",
                 "properties": {

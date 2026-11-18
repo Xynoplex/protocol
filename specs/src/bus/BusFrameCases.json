@@ -13,6 +13,7 @@
       "items": {
         "oneOf": [
           {
+            "title": "Delivered",
             "description": "A frame that is delivered.",
             "type": "object",
             "properties": {
@@ -33,6 +34,7 @@
             "additionalProperties": false
           },
           {
+            "title": "FrameRefused",
             "description": "A frame that is refused, with the correlationId its refusal carries when it carries one.",
             "type": "object",
             "properties": {
@@ -87,6 +89,7 @@
             "additionalProperties": false
           },
           {
+            "title": "LineRefused",
             "description": "A line that is no JSON, which is refused.",
             "type": "object",
             "properties": {

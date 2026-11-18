@@ -14,6 +14,7 @@
         "additionalProperties": {
           "oneOf": [
             {
+              "title": "By",
               "description": "A list or map bounded by a member of the request.",
               "type": "object",
               "properties": {
@@ -29,6 +30,7 @@
               "additionalProperties": false
             },
             {
+              "title": "Grows",
               "description": "A list or map not yet bounded, which grows.",
               "type": "object",
               "properties": {

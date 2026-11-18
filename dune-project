@@ -1,0 +1,18 @@
+(lang dune 3.24)
+(name xynolog-protocol)
+(formatting (enabled_for ocaml))
+(generate_opam_files true)
+(source (github xynolog/protocol))
+(license Apache-2.0)
+(authors "Xynolog")
+(maintainers "Xynolog maintainers")
+(package
+ (name xynolog-protocol)
+ (synopsis "Protocol's one reader of itself: its specs, read strictly, and the rules they are held to")
+ (description "Reads specs/src into a model that refuses what it does not know, with each table decoded through the model its schema gives.")
+ (depends
+  (ocaml (= 5.5.2))
+  (yojson (>= 3.0.0))
+  (re (>= 1.14.0))
+  (alcotest :with-test)
+  (ocamlformat (and :with-test (= 0.29.0)))))
