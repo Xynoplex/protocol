@@ -406,6 +406,7 @@ specs/src/annotations/id-cases.json,Normative protocol source,xynolog/protocol,C
 specs/src/annotations/pdf-locate-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/reader-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/reconcile-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/ArchivistShardCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/README.md,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/openapi.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/paths/anchored-text_entries.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -899,6 +900,7 @@ specs/src/principals/cases.json,Normative protocol source,xynolog/protocol,Compa
 specs/src/principals/kind-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/principals/naming-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/resources/reader-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/retry/RetryCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/retry/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/sdk-telemetry/telemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/service-environment/variables.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
