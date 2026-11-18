@@ -8,9 +8,6 @@
   "type": "object",
   "properties": {
     "$comment": true,
-    "runBy": true,
-    "absent": true,
-    "notYetReached": true,
     "sizing": {
       "description": "The four numbers of the step.",
       "type": "object",

@@ -8,9 +8,6 @@
   "type": "object",
   "properties": {
     "$comment": true,
-    "runBy": true,
-    "absent": true,
-    "notYetReached": true,
     "collections": {
       "description": "Each of a knowledge base's three collections, under the word that names it, as Qdrant is asked to make it.",
       "type": "object",

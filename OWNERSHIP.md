@@ -5,7 +5,7 @@ This repository owns compatibility contracts shared by independently released SD
 ## Boundaries
 
 - `contract/` and `specs/src/` are normative. Changing them can affect interoperability and follows the protocol versioning rules in the root README.
-- `conformance/` contains language-neutral behavior cases and a black-box harness. It may describe consumer-owned runner locations, but does not build consumer code or require a monorepo checkout.
+- `conformance/` contains language-neutral behavior cases and a black-box harness. It does not build consumer code or require a monorepo checkout.
 - `specs/*.json` bundles are generated from `specs/src/`; generated outputs are never the source of truth.
 - `scripts/checks/specs/` validates protocol-owned sources only.
 - SDK, image, CLI, and Desktop implementation code, package generators, launch commands, and deployment configuration stay with those repositories.

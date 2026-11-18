@@ -1,40 +1,11 @@
 {
-  "description": "What every case table carries beside its cases (specs/README.md, \"Case tables\"): the rule it states, the consumers that run it, and why an implementation does not yet. A case table's schema extends this one through `allOf` and admits each of its properties.",
+  "description": "What every case table carries beside its cases (specs/README.md, \"Case tables\"): the rule it states. A case table's schema extends this one through `allOf` and admits each of its properties.",
   "type": "object",
   "properties": {
     "$comment": {
       "type": "string",
       "pattern": "\\S",
       "description": "The rule the table states, in prose."
-    },
-    "runBy": {
-      "type": "object",
-      "minProperties": 1,
-      "additionalProperties": {
-        "type": "array",
-        "minItems": 1,
-        "items": {
-          "type": "string",
-          "pattern": "\\S"
-        }
-      },
-      "description": "Each consumer that runs the table, with the consumer-owned test locations that run it."
-    },
-    "absent": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string",
-        "pattern": "\\S"
-      },
-      "description": "Each implementation that has no counterpart of what the table states, with why."
-    },
-    "notYetReached": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string",
-        "pattern": "\\S"
-      },
-      "description": "Each implementation that does not run the table yet, with why."
     },
     "cases": {
       "type": "array",
@@ -53,7 +24,6 @@
     }
   },
   "required": [
-    "$comment",
-    "runBy"
+    "$comment"
   ]
 }

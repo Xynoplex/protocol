@@ -1,16 +1,5 @@
 {
   "$comment": "AUTHORITY for how a registry of knowledge bases reads the errors of each session it activates (client/surface.json's registry module): it is their one reader, from the first thing the session said, and a factory reads none of them. Every SDK runs every case against its own registry, over a factory that builds a scripted session and reads none of its errors, and fails on a difference. READING A CASE. `said` is what the active knowledge base's session says on its errors, in order: `{\"own\": code}` one of the session's own errors, by its code in errors/codes.json's session group; `{\"transport\": code, \"message\": text}` a failure of its transport, by its code in errors/codes.json's transport group, with that message. `while` is when the session says them: `opening`, as the factory builds it, before the registry has read anything; `active`, once the session is active. Every case's last `said` has an effect a runner can wait for: one of the session's own errors, said on the registry's errors; or a refusal for lack of permission, said through the session's signals. A runner waits for that effect, and then holds the case: the registry reads the session's errors in order, so by then it has read everything before. `registryErrors` is the codes said on the registry's errors up to then, in order. A registry renews no session: a refusal for want of a valid token is renewed by the transport that met it, which knows the token it sent (contract/TRANSPORT-CONTRACT.md § A refused credential), so a runner fails if the registry renews the session in any case. `permissionDenied` is the detail said through the session's signals as a refusal for lack of permission; when it is absent, no such refusal is said through them. A refusal for want of a valid token, and a failure of the transport for any other reason, the registry does nothing with. `closing` holds what a registry's close reads: the registry closes while its active session's client does or does not owe a save (`owed`) to a storage that refuses every write the client makes, and `registryErrors` is every code the registry says from its close until its errors end, in order: what the session's closing flush meets is said before they end. A save owed is one still waiting out its debounce as the close begins, never yet tried: the close makes it once, so its refusal is said once. The close waits for that write without limit: a storage's write returns or throws (contract/CACHE-SEMANTICS.md, B17).",
-  "runBy": {
-    "typescript": ["sdk/typescript/sdk/src/session/__tests__/registry-errors-cases.test.ts"],
-    "rust": ["sdk/rust/sdk/tests/browser.rs"],
-    "python": ["sdk/python/sdk/tests/test_registry_errors_cases.py"],
-    "go": ["sdk/go/registry/registry_errors_cases_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/registry/RegistryErrorsCasesTest.kt"],
-    "swift": ["sdk/swift/sdk/Tests/XynologTests/RegistryErrorsCasesTests.swift"],
-    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RegistryErrorsCasesTests.cs"],
-    "haskell": ["sdk/haskell/sdk/test/RegistryErrorsCases.hs"],
-    "ocaml": ["sdk/ocaml/sdk/test/registry_behavior.ml"]
-  },
   "cases": [
     {
       "why": "a session's own error said while its factory builds it, before the registry has read anything, is said on the registry's errors",

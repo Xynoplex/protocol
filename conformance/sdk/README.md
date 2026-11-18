@@ -212,16 +212,12 @@ format and runs them with this runner, adding four steps of its own.
   "source": "where the protocol or the spec states it",
   "planes": ["in-process"],
   "telemetry": true,
-  "needs": "bus/frame-cases.json",
   "steps": [ ... ]
 }
 ```
 
 `planes` is given only when the case holds on one signal plane; absent, it
-runs on both. `needs` names the case table of
-[`specs/src/`](../../specs/src/) whose behaviour the case needs, by
-its path there: the case is not run for an SDK that table names under
-`notYetReached`, and is run for it once the table no longer does.
+runs on both.
 `telemetry` runs the client exporting to a receiver, and once the driver has
 exited holds what it exported to
 [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json):
