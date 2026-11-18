@@ -31,10 +31,7 @@
                 ]
               },
               "status": {
-                "type": "integer",
-                "minimum": 100,
-                "maximum": 599,
-                "description": "The response's status."
+                "$ref": "../HttpStatus.json"
               },
               "retries": {
                 "type": "boolean"
@@ -62,7 +59,7 @@
                 ]
               },
               "status": {
-                "$ref": "#/properties/rules/items/oneOf/0/properties/status"
+                "$ref": "../HttpStatus.json"
               },
               "retries": {
                 "type": "boolean"
@@ -90,7 +87,7 @@
                 ]
               },
               "status": {
-                "$ref": "#/properties/rules/items/oneOf/0/properties/status"
+                "$ref": "../HttpStatus.json"
               },
               "method": {
                 "type": "string",
@@ -126,7 +123,7 @@
                 ]
               },
               "status": {
-                "$ref": "#/properties/rules/items/oneOf/0/properties/status"
+                "$ref": "../HttpStatus.json"
               },
               "retries": {
                 "type": "boolean"

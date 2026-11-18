@@ -9,11 +9,14 @@
 //     components write it, which 2020-12 writes as a `type` that lists
 //     "null". A node is one of:
 //       - a `$ref` and nothing beside it, which OpenAPI 3.0 would not read;
+//       - `{ "nullable": true, "allOf": [{ "$ref": … }] }`: what the `$ref`
+//         names, or null, as the components write one;
 //       - `{ "$comment": … }` alone: a value that is JSON by nature, such as an
 //         expected annotation, whose comment says what it is;
-//       - a `oneOf` of closed objects, told apart by a property every member
-//         requires and gives a different `const`, or by a required property
-//         only one member has;
+//       - a `oneOf` of closed objects, any two of them told apart: by a
+//         property both require and fix to different values (a `const` or a
+//         one-member `enum`), or by a property one requires and the other
+//         does not state;
 //       - a node of one `type`, with only the keywords that type takes, and
 //         `"nullable": true` when its value may be null. An
 //         object with `properties` is closed (`additionalProperties: false`);
@@ -26,11 +29,10 @@
 // A case table's schema extends CaseTable.json: its `allOf` is that and only
 // that, and it admits each of CaseTable's properties with `true`, except
 // `cases`, which it states as an array of its own cases, or leaves out when
-// it has none. A row's `why`, in `cases` or in any other list the table
-// states, is CaseTable's.
-// `additionalProperties` does not see through `allOf`, so the admissions are
-// what keeps the closed table open to what CaseTable states. Any other table's schema requires `$comment`, stated
-// as CaseTable's.
+// it has none. `additionalProperties` does not see through `allOf`, so the
+// admissions are what keeps the closed table open to what CaseTable states.
+// Any other table's schema requires `$comment`, stated as CaseTable's. A
+// `why`, wherever a table's schema states one, is CaseTable's.
 //
 // A case table also names no implementation in more than one of `runBy`,
 // `absent` and `notYetReached`, which no schema can say.
@@ -113,6 +115,16 @@ function objectOf(file, node) {
 /** The value `node` fixes for a property, by `const` or a one-member `enum`. */
 const fixed = (node) => (!isObject(node) ? undefined : 'const' in node ? node.const : node.enum?.length === 1 ? node.enum[0] : undefined);
 
+/** Whether no value is both of two closed objects: one property both require and fix to different values, or one requires and the other does not state. */
+function apart(one, other) {
+  const requires = (member, name) => (member.required ?? []).includes(name);
+  return [...new Set([...Object.keys(one.properties), ...Object.keys(other.properties)])].some((name) =>
+    (requires(one, name) && !(name in other.properties)) ||
+    (requires(other, name) && !(name in one.properties)) ||
+    (requires(one, name) && requires(other, name) && fixed(one.properties[name]) !== undefined &&
+      fixed(other.properties[name]) !== undefined && !equal(fixed(one.properties[name]), fixed(other.properties[name]))));
+}
+
 function derivable(file, pointer, node) {
   if (!isObject(node)) return fail(file, pointer, 'is no schema a type can be derived from: a boolean schema is only an admission of CaseTable\'s');
   const keys = Object.keys(node);
@@ -125,6 +137,14 @@ function derivable(file, pointer, node) {
     if (typeof node.$comment !== 'string' || !/\S/.test(node.$comment)) fail(file, pointer, 'is JSON by nature, and must say what it is in $comment');
     return;
   }
+  if ('allOf' in node) {
+    for (const key of keys) if (!['allOf', 'nullable', ...ANNOTATIONS].includes(key)) fail(file, `${pointer}/${escape(key)}`, 'is beside a nullable $ref, which is what the $ref names or null');
+    if (node.nullable !== true || !Array.isArray(node.allOf) || node.allOf.length !== 1 || !isObject(node.allOf[0]) || !('$ref' in node.allOf[0])) {
+      return fail(file, pointer, 'must be { "nullable": true, "allOf": [{ "$ref": … }] }: an allOf in a table\'s schema is a $ref that may be null');
+    }
+    derivable(file, `${pointer}/allOf/0`, node.allOf[0]);
+    return;
+  }
   if ('oneOf' in node) {
     for (const key of keys) if (key !== 'oneOf' && !ANNOTATIONS.includes(key)) fail(file, `${pointer}/${escape(key)}`, 'is beside a oneOf, which says what each member is');
     if (!Array.isArray(node.oneOf) || node.oneOf.length < 2) return fail(file, `${pointer}/oneOf`, 'must name two members or more');
@@ -133,13 +153,9 @@ function derivable(file, pointer, node) {
     if (members.some((member) => member === undefined || member.additionalProperties !== false)) {
       return fail(file, `${pointer}/oneOf`, 'must be of closed objects, so a value is one member or none');
     }
-    const tagged = Object.keys(members[0].properties).some((tag) => {
-      const values = members.map((member) => (member.required ?? []).includes(tag) ? fixed(member.properties[tag]) : undefined);
-      return values.every((value) => value !== undefined) && new Set(values.map((value) => JSON.stringify(value))).size === values.length;
-    });
-    const keyed = members.every((member, index) => (member.required ?? []).some((name) =>
-      members.every((other, otherIndex) => otherIndex === index || !(name in other.properties))));
-    if (!tagged && !keyed) fail(file, `${pointer}/oneOf`, 'has members no tag and no required property tells apart');
+    members.forEach((member, index) => members.slice(index + 1).forEach((other, offset) => {
+      if (!apart(member, other)) fail(file, `${pointer}/oneOf`, `has members ${index} and ${index + 1 + offset}, which no property tells apart`);
+    }));
     return;
   }
   if (typeof node.type !== 'string' || !(node.type in TAKES)) {
@@ -190,24 +206,29 @@ function tableSchema(table, file, schema) {
       else delete properties[name];
     }
     own.properties = properties;
-    const why = { $ref: toCaseTable + '#/properties/cases/items/properties/why' };
-    for (const [name, list] of Object.entries(properties)) {
-      const items = isObject(list) && list.type === 'array' ? list.items : undefined;
-      const at = `/properties/${escape(name)}/items`;
-      const rows = isObject(items) && Array.isArray(items.oneOf) ? items.oneOf.map((member, index) => [`${at}/oneOf/${index}`, member]) : [[at, items]];
-      for (const [pointer, row] of rows) {
-        if (isObject(row) && isObject(row.properties) && 'why' in row.properties && !equal(row.properties.why, why)) {
-          fail(file, `${pointer}/properties/why`, `is CaseTable's, and must be { "$ref": "${why.$ref}" }`);
-        }
-      }
-    }
   } else {
     if ('allOf' in schema) fail(file, '/allOf', 'extends nothing: only a case table\'s schema extends CaseTable');
     if (!equal(schema.properties.$comment, { $ref: toCaseTable + '#/properties/$comment' }) || !(schema.required ?? []).includes('$comment')) {
       fail(file, '/properties/$comment', `must be required, and be { "$ref": "${toCaseTable}#/properties/$comment" }`);
     }
   }
+  const why = { $ref: toCaseTable + '#/properties/cases/items/properties/why' };
+  for (const [pointer, node] of nodes('', own)) {
+    if (isObject(node.properties) && 'why' in node.properties && !equal(node.properties.why, why)) {
+      fail(file, `${pointer}/properties/why`, `is CaseTable's, and must be { "$ref": "${why.$ref}" }`);
+    }
+  }
   derivable(file, '', own);
+}
+
+/** Each node a schema states in itself, with its pointer: itself, its properties, its items, its map's values and its members. */
+function* nodes(pointer, node) {
+  if (!isObject(node)) return;
+  yield [pointer, node];
+  for (const [name, property] of Object.entries(isObject(node.properties) ? node.properties : {})) yield* nodes(`${pointer}/properties/${escape(name)}`, property);
+  yield* nodes(`${pointer}/items`, node.items);
+  yield* nodes(`${pointer}/additionalProperties`, node.additionalProperties);
+  for (const key of ['oneOf', 'allOf']) for (const [index, member] of (Array.isArray(node[key]) ? node[key] : []).entries()) yield* nodes(`${pointer}/${key}/${index}`, member);
 }
 
 // Validation, in OpenAPI 3.0's reading of the keywords the components use.

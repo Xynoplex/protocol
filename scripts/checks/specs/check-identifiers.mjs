@@ -18,6 +18,10 @@
 //     that refers to a kind;
 //   - a path parameter is not a reference to a kind.
 //
+// What the file itself holds, each kind's cases on both sides among it, is
+// its schema's (identifiers/IdentifiersKinds.json), which check-tables.mjs
+// holds it to.
+//
 // It reads the source files, so it cannot pass on a stale bundle.
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -61,7 +65,6 @@ for (const kind of kinds) {
   for (const { id, why } of kind.refuses) {
     if (rule.test(id)) fail(`${kind.schema} refuses ${JSON.stringify(id)} (${why}), and its pattern ${schema.pattern} accepts it`);
   }
-  if (kind.accepts.length === 0 || kind.refuses.length === 0) fail(`${kind.schema} has no case on one side: a rule nothing is refused by, or nothing passes, is not held`);
 }
 
 // ── every property that carries an id refers to its kind ──────────────────
@@ -76,7 +79,6 @@ for (const kind of kinds) {
 const otherProperties = new Map(others.map((other) => [other.property, other]));
 for (const other of others) {
   if (kindOfProperty.has(other.property)) fail(`${other.property} is among \`others\` and is named for ${kindOfProperty.get(other.property)}`);
-  if (typeof other.docs !== 'string' || other.docs.trim() === '') fail(`${other.property} is among \`others\` and does not say what it carries`);
 }
 
 /**

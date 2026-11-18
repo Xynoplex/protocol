@@ -401,6 +401,7 @@ specs/.redocly.lint-ignore.yaml,Protocol authoring tooling,xynolog/protocol,"Bui
 specs/README.md,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/redocly.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/src/CaseTable.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/HttpStatus.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/builder-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/id-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/pdf-locate-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -857,10 +858,12 @@ specs/src/control/request-cases.json,Normative protocol source,xynolog/protocol,
 specs/src/discovery/DiscoveredKB.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/discovery/DiscoveryDocument.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/discovery/README.md,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/errors/ErrorsCodes.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/errors/codes.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/follower/follow-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/graph/codec-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/graph/database-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/identifiers/IdentifiersKinds.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/identifiers/kinds.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/JobsFilterCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/JobsRetryCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -868,6 +871,7 @@ specs/src/jobs/JobsStorage.json,Normative protocol source,xynolog/protocol,Compa
 specs/src/jobs/filter-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/retry-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/storage.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/kb-identity/KbIdentityCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/kb-identity/ProjectConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/kb-identity/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/derive-views-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -877,6 +881,7 @@ specs/src/librarian/reply-cases.json,Normative protocol source,xynolog/protocol,
 specs/src/librarian/score-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/search-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/window-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/locales/LocalesRegistry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/locales/registry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/media-types/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/media-types/registry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

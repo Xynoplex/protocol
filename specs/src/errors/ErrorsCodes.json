@@ -1,0 +1,202 @@
+{
+  "description": "errors/codes.json: the error codes a Xynolog client reports, in one vocabulary for each kind of failure.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "busRequest": {
+      "description": "Why a bus request did not resolve.",
+      "type": "object",
+      "properties": {
+        "docs": {
+          "$ref": "#/properties/job/properties/docs"
+        },
+        "unrecognizedFailure": {
+          "$ref": "#/properties/job/properties/codes/items/properties/code"
+        },
+        "codes": {
+          "description": "Each code, and the wire's `CommandError.code` it restates, where it restates one.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "$ref": "#/properties/job/properties/codes/items/properties/code"
+              },
+              "docs": {
+                "$ref": "#/properties/job/properties/docs"
+              },
+              "wire": {
+                "$ref": "../components/schemas/CommandError.json#/properties/code"
+              }
+            },
+            "required": [
+              "code",
+              "docs"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "docs",
+        "unrecognizedFailure",
+        "codes"
+      ],
+      "additionalProperties": false
+    },
+    "transport": {
+      "description": "The transport-neutral failure vocabulary.",
+      "type": "object",
+      "properties": {
+        "docs": {
+          "$ref": "#/properties/job/properties/docs"
+        },
+        "unclassified": {
+          "$ref": "#/properties/job/properties/codes/items/properties/code"
+        },
+        "codes": {
+          "description": "Each code, and the HTTP statuses it is read from.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "description": "A code read from one HTTP status.",
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "$ref": "#/properties/job/properties/codes/items/properties/code"
+                  },
+                  "docs": {
+                    "$ref": "#/properties/job/properties/docs"
+                  },
+                  "status": {
+                    "$ref": "../HttpStatus.json"
+                  }
+                },
+                "required": [
+                  "code",
+                  "docs",
+                  "status"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "description": "A code read from every HTTP status at or above one.",
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "$ref": "#/properties/job/properties/codes/items/properties/code"
+                  },
+                  "docs": {
+                    "$ref": "#/properties/job/properties/docs"
+                  },
+                  "statusFrom": {
+                    "$ref": "../HttpStatus.json"
+                  }
+                },
+                "required": [
+                  "code",
+                  "docs",
+                  "statusFrom"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "description": "A code no HTTP status is read as.",
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "$ref": "#/properties/job/properties/codes/items/properties/code"
+                  },
+                  "docs": {
+                    "$ref": "#/properties/job/properties/docs"
+                  }
+                },
+                "required": [
+                  "code",
+                  "docs"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "docs",
+        "unclassified",
+        "codes"
+      ],
+      "additionalProperties": false
+    },
+    "job": {
+      "description": "A vocabulary that states nothing of its codes but each one's docs: here, why a job its client follows ended without a result.",
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Its documentation, in prose: what a generated type or member says of it."
+        },
+        "codes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^[a-z]+([.-][a-z]+)*$",
+                "description": "The code, as every SDK names it."
+              },
+              "docs": {
+                "$ref": "#/properties/job/properties/docs"
+              }
+            },
+            "required": [
+              "code",
+              "docs"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "docs",
+        "codes"
+      ],
+      "additionalProperties": false
+    },
+    "session": {
+      "$ref": "#/properties/job"
+    },
+    "signIn": {
+      "$ref": "#/properties/job"
+    },
+    "kbIdentity": {
+      "$ref": "#/properties/job"
+    },
+    "spanRefusal": {
+      "$ref": "#/properties/job"
+    },
+    "control": {
+      "$ref": "#/properties/job"
+    }
+  },
+  "required": [
+    "$comment",
+    "busRequest",
+    "transport",
+    "job",
+    "session",
+    "signIn",
+    "kbIdentity",
+    "spanRefusal",
+    "control"
+  ],
+  "additionalProperties": false
+}
