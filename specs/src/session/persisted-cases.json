@@ -23,7 +23,7 @@
       "sdk/csharp/sdk/tests/Xynolog.Tests/PersistedCasesTests.cs"
     ],
     "go": [
-      "sdk/go/sdk/registry/persisted_cases_test.go"
+      "sdk/go/registry/persisted_cases_test.go"
     ],
     "haskell": [
       "sdk/haskell/sdk/test/PersistedCases.hs"

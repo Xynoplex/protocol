@@ -12,7 +12,7 @@
       "sdk/python/sdk/tests/test_cache_cases.py"
     ],
     "go": [
-      "sdk/go/sdk/cache_cases_test.go"
+      "sdk/go/cache_cases_test.go"
     ],
     "kotlin": [
       "sdk/kotlin/sdk/src/test/kotlin/xynolog/storage/CacheCasesTest.kt"

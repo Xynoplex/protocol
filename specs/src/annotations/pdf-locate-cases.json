@@ -8,7 +8,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/pdf-locate-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/annotations/locate.rs"],
     "python": ["sdk/python/sdk/tests/test_pdf_locate.py"],
-    "go": ["sdk/go/sdk/annotations/locate_test.go"],
+    "go": ["sdk/go/annotations/locate_test.go"],
     "worker": ["worker/tests/test_claim_cases.py"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/annotations/PdfLocateTest.kt"]
   },

@@ -347,7 +347,7 @@ sent.
 - A connect the gateway has not answered within `streamOpenTimeoutMs` has
   failed. The answer is its status and headers: once the stream is open, it
   may carry nothing for as long as nothing happens.
-  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`.*
 - The client opens its stream again on an equal-jitter exponential
   backoff: a wait in [cap/2, cap], where cap is `reconnectMs` doubled per
   failure up to `maxReconnectMs`, and a successful open resets it. A
@@ -363,7 +363,7 @@ sent.
   status. Its body is read within `httpRequestTimeoutMs`, as any refusal's
   is: a body not read by then is the refusal with none of the gateway's
   words.
-  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/sdk/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`.*
+  *Held by `sdk/typescript/http-transport/src/transport/__tests__/actor-state-unit.test.ts`, `sdk/python/sdk/tests/test_http_transport.py`, `sdk/go/stream_test.go`, `sdk/rust/http-transport/tests/stream.rs`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/http/HttpTransportTest.kt`.*
 - **A refused credential is not retried**: a 401, or a 429 whose `code` is
   `refusal-rate`. The refused token is remembered and never sent again; the
   client is `unauthenticated` and checks, every `reconnectMs` and with no

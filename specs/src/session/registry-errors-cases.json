@@ -4,7 +4,7 @@
     "typescript": ["sdk/typescript/sdk/src/session/__tests__/registry-errors-cases.test.ts"],
     "rust": ["sdk/rust/sdk/tests/browser.rs"],
     "python": ["sdk/python/sdk/tests/test_registry_errors_cases.py"],
-    "go": ["sdk/go/sdk/registry/registry_errors_cases_test.go"],
+    "go": ["sdk/go/registry/registry_errors_cases_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/registry/RegistryErrorsCasesTest.kt"],
     "swift": ["sdk/swift/sdk/Tests/XynologTests/RegistryErrorsCasesTests.swift"],
     "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/RegistryErrorsCasesTests.cs"],

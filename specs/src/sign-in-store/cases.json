@@ -6,7 +6,7 @@
     "swift": ["sdk/swift/sdk/Tests/XynologTests/SignInStoreTests.swift"],
     "rust": ["sdk/rust/http-transport/src/oauth/tests.rs", "sdk/rust/sdk/tests/sign_in_store.rs"],
     "python": ["sdk/python/sdk/tests/test_sign_in_store.py", "sdk/python/sdk/tests/test_state_dir.py"],
-    "go": ["sdk/go/sdk/signinstore_test.go", "sdk/go/sdk/statedir_test.go"],
+    "go": ["sdk/go/signinstore_test.go", "sdk/go/statedir_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/signin/SignInStoreTest.kt"],
     "typescript": ["sdk/typescript/sdk/src/session/__tests__/sign-in-store.test.ts"],
     "ocaml": ["sdk/ocaml/sdk/test/sign_in.ml"]

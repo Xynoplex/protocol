@@ -7,7 +7,7 @@
     "typescript": ["sdk/typescript/sdk/src/session/__tests__/gateway-url-cases.test.ts"],
     "rust": ["sdk/rust/sdk/src/session/knowledge_base.rs"],
     "python": ["sdk/python/sdk/tests/test_gateway_url.py"],
-    "go": ["sdk/go/sdk/endpoint_test.go"],
+    "go": ["sdk/go/endpoint_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/http/GatewayUrlTest.kt"],
     "haskell": ["sdk/haskell/sdk/test/GatewayCases.hs"]
   },

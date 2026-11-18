@@ -8,7 +8,7 @@
     "typescript": ["sdk/typescript/core/src/__tests__/annotation-reader-cases.test.ts", "sdk/typescript/sdk/src/__tests__/annotation-readers.test.ts"],
     "rust": ["sdk/rust/sdk/tests/annotation_reader_cases.rs", "sdk/rust/sdk/tests/builder_cases.rs"],
     "python": ["sdk/python/sdk/tests/test_annotation_builders.py", "sdk/python/sdk/tests/test_annotations.py"],
-    "go": ["sdk/go/sdk/annotations/readers_test.go"],
+    "go": ["sdk/go/annotations/readers_test.go"],
     "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/annotations/AnnotationReadersTest.kt"]
   },
   "readers": [

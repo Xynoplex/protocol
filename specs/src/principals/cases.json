@@ -12,7 +12,7 @@
       "sdk/python/sdk/tests/test_identity.py"
     ],
     "go": [
-      "sdk/go/sdk/identity_test.go"
+      "sdk/go/identity_test.go"
     ],
     "conformance": [
       "conformance/gateway/tokens.test.ts"
