@@ -23,9 +23,9 @@
 // A case table's schema extends CaseTable.json: its `allOf` is that and only
 // that, and it admits each of CaseTable's properties with `true`, except
 // `cases`, which it states as an array of its own cases, or leaves out when
-// it has none. `additionalProperties` does not see
-// through `allOf`, so the admissions are what keeps the closed table open to
-// what CaseTable states. Any other table's schema requires `$comment`, stated
+// it has none. A case's `why`, where it has one, is CaseTable's.
+// `additionalProperties` does not see through `allOf`, so the admissions are
+// what keeps the closed table open to what CaseTable states. Any other table's schema requires `$comment`, stated
 // as CaseTable's.
 //
 // A case table also names no implementation in more than one of `runBy`,
@@ -185,6 +185,14 @@ function tableSchema(table, file, schema) {
       else delete properties[name];
     }
     own.properties = properties;
+    const why = { $ref: toCaseTable + '#/properties/cases/items/properties/why' };
+    const items = properties.cases?.items;
+    const cases = isObject(items) && Array.isArray(items.oneOf) ? items.oneOf.map((member, index) => [`/properties/cases/items/oneOf/${index}`, member]) : [['/properties/cases/items', items]];
+    for (const [pointer, kind] of cases) {
+      if (isObject(kind) && isObject(kind.properties) && 'why' in kind.properties && !equal(kind.properties.why, why)) {
+        fail(file, `${pointer}/properties/why`, `is CaseTable's, and must be { "$ref": "${why.$ref}" }`);
+      }
+    }
   } else {
     if ('allOf' in schema) fail(file, '/allOf', 'extends nothing: only a case table\'s schema extends CaseTable');
     if (!equal(schema.properties.$comment, { $ref: toCaseTable + '#/properties/$comment' }) || !(schema.required ?? []).includes('$comment')) {
@@ -268,10 +276,11 @@ const tables = readdirSync(SPECS)
   .sort();
 
 // CaseTable is open, for the tables that extend it to close, and leaves what
-// a case is to each of them.
+// a case is to each of them, but for its `why`.
 for (const [name, property] of Object.entries(load(CASE_TABLE).properties)) {
   if (name !== 'cases') derivable(CASE_TABLE, `/properties/${escape(name)}`, property);
 }
+derivable(CASE_TABLE, '/properties/cases/items/properties/why', load(CASE_TABLE).properties.cases.items.properties.why);
 for (const table of tables) {
   const file = schemaOf(table);
   const schema = load(file);

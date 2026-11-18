@@ -19,7 +19,7 @@ A file under `src/` whose name ends in `cases.json` states behavior case by case
 
 ## Table schemas
 
-A table's schema sits beside it, named by the table's area and its file's stem in PascalCase: `jobs/retry-cases.json`'s schema is `jobs/JobsRetryCases.json`. A case table's schema extends `CaseTable.json` through `allOf`, admits each of its properties, and states what a case is. `scripts/checks/specs/check-tables.mjs` validates each table against its schema, and holds each schema to a form a reader can derive a typed model from: every object closed, every union told apart by a tag or a required property, and a value that is JSON by nature marked so in its `$comment`. The case tables that have no schema yet are held to what `CaseTable.json` states by `scripts/checks/specs/check-case-tables.mjs`.
+A table's schema sits beside it, named by the table's area and its file's stem in PascalCase: `jobs/retry-cases.json`'s schema is `jobs/JobsRetryCases.json`. A case table's schema extends `CaseTable.json` through `allOf`, admits each of its properties, and states what a case is; a case's `why` is `CaseTable.json`'s. `scripts/checks/specs/check-tables.mjs` validates each table against its schema, and holds each schema to a form a reader can derive a typed model from: every object closed, every union told apart by a tag or a required property, and a value that is JSON by nature marked so in its `$comment`. The case tables that have no schema yet are held to what `CaseTable.json` states by `scripts/checks/specs/check-case-tables.mjs`.
 
 Cases that require live processes belong in [`../conformance/`](../conformance/README.md). The conformance suites are black-box and obtain build and launch commands from a consumer-provided manifest.
 
