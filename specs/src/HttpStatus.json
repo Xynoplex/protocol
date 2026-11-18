@@ -1,0 +1,6 @@
+{
+  "type": "integer",
+  "minimum": 100,
+  "maximum": 599,
+  "description": "An HTTP response's status code, as the tables state one. No API states it, so it is no component."
+}

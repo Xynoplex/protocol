@@ -1,0 +1,85 @@
+{
+  "description": "kb-identity/cases.json: the identity a reader computes from a knowledge base's project file.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "dir": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The knowledge base's directory, whose name stands for a name no file gives."
+          },
+          "config": {
+            "type": "string",
+            "nullable": true,
+            "description": "The text of <dir>/.xynolog/config.yaml, or null when there is none."
+          },
+          "refused": {
+            "type": "boolean",
+            "description": "Whether the file does not hold to ProjectConfig.json, and every reader refuses it."
+          },
+          "name": {
+            "description": "The name read, or null when the file is refused.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "./ProjectConfig.json#/properties/project/properties/name"
+              }
+            ]
+          },
+          "domain": {
+            "description": "The domain read, or null when no identity is declared.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "./ProjectConfig.json#/properties/site/properties/domain"
+              }
+            ]
+          },
+          "did": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^did:web:\\S+$",
+            "description": "The DID the domain names, or null when no identity is declared."
+          },
+          "resource": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^https://\\S+$",
+            "description": "The resource derived from the domain, the audience the gateway's tokens must carry, or null when no identity is declared."
+          }
+        },
+        "required": [
+          "why",
+          "dir",
+          "config",
+          "refused",
+          "name",
+          "domain",
+          "did",
+          "resource"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

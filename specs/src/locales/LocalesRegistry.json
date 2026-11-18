@@ -1,0 +1,44 @@
+{
+  "description": "locales/registry.json: the languages Xynolog supports.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "locales": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[a-z]+(-[a-z0-9]+)*$",
+            "description": "The language's code, which names its translation files and its place in a URL."
+          },
+          "nativeName": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the language calls itself."
+          },
+          "englishName": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What a model is told a text is written in."
+          }
+        },
+        "required": [
+          "code",
+          "nativeName",
+          "englishName"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "locales"
+  ],
+  "additionalProperties": false
+}

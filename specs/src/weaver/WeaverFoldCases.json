@@ -1,0 +1,82 @@
+{
+  "description": "weaver/fold-cases.json: what the Weaver's fold leaves in the graph, from a history of recorded events.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "history": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The events as the Weaver is given them, in the order they are delivered.",
+            "items": {
+              "$ref": "../components/schemas/StoredEventResponse.json"
+            }
+          },
+          "graph": {
+            "type": "object",
+            "description": "What the graph then holds, as a store answers it.",
+            "properties": {
+              "resources": {
+                "type": "array",
+                "items": {
+                  "$ref": "../components/schemas/ResourceDescriptor.json"
+                }
+              },
+              "annotations": {
+                "type": "array",
+                "description": "Each as the graph's annotation codec says the graph holds it.",
+                "items": {
+                  "$ref": "../components/schemas/Annotation.json"
+                }
+              }
+            },
+            "required": [
+              "resources",
+              "annotations"
+            ],
+            "additionalProperties": false
+          },
+          "applied": {
+            "type": "object",
+            "description": "For each resource, the sequence of the last event of its log the Weaver has taken.",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "refused": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "How many events the graph could not take as recorded, where there are any."
+          }
+        },
+        "required": [
+          "why",
+          "history",
+          "graph",
+          "applied"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,100 @@
+{
+  "description": "identifiers/kinds.json: the kinds of id the protocol names, the properties that carry each, and the properties named like an id that carry something else.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "kinds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Za-z0-9]*$",
+            "description": "The component under components/schemas that states the kind, by name."
+          },
+          "properties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "The property names that always carry the kind.",
+            "items": {
+              "type": "string",
+              "pattern": "^_?[a-z][A-Za-z0-9]*$"
+            }
+          },
+          "accepts": {
+            "description": "Strings the kind's rule takes.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "A string the kind's rule is asked about."
+                },
+                "why": {
+                  "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                }
+              },
+              "required": [
+                "id",
+                "why"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "refuses": {
+            "description": "Strings the kind's rule does not take.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/properties/kinds/items/properties/accepts/items"
+            }
+          }
+        },
+        "required": [
+          "schema",
+          "properties",
+          "accepts",
+          "refuses"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "others": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "property": {
+            "type": "string",
+            "pattern": "^[a-z][A-Za-z0-9]*$",
+            "description": "A property named like an id."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What it carries instead."
+          }
+        },
+        "required": [
+          "property",
+          "docs"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "kinds",
+    "others"
+  ],
+  "additionalProperties": false
+}
