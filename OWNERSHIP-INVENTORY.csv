@@ -1001,6 +1001,7 @@ specs/src/vectors/store-cases.json,Normative protocol source,xynolog/protocol,Co
 specs/src/vectors/token-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/weaver/WeaverFoldCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/weaver/fold-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/worker/WorkerChunkPlanCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/WorkerCitationCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/WorkerFailureClassCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/worker/WorkerParserCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
