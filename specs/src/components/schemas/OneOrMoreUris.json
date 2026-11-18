@@ -1,0 +1,17 @@
+{
+  "oneOf": [
+    {
+      "type": "string",
+      "format": "uri"
+    },
+    {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 1
+    }
+  ],
+  "description": "One URI, or a non-empty list of them: a JSON-LD term that may name one resource or several."
+}

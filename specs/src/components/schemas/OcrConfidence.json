@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "description": "How well an OCR engine read the pixels.",
+  "properties": {
+    "mean": {
+      "type": "number",
+      "description": "Mean per-word confidence, 0-100."
+    },
+    "lowConfidenceWords": {
+      "type": "integer",
+      "description": "Words the engine was unsure of."
+    },
+    "totalWords": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "mean",
+    "lowConfidenceWords",
+    "totalWords"
+  ]
+}

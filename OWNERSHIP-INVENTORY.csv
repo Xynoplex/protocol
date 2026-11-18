@@ -487,6 +487,7 @@ specs/src/components/schemas/BindBodyOperation.json,Normative protocol source,xy
 specs/src/components/schemas/BindBodyUpdated.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/BindInitiateCommand.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/BindUpdateBodyCommand.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/BodyOperation.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/BodyOperationAdd.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/BodyOperationRemove.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/BodyOperationReplace.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -561,6 +562,8 @@ specs/src/components/schemas/ErrorResponse.json,Normative protocol source,xynolo
 specs/src/components/schemas/EventMetadata.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/ExtractedText.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/ExtractionDeclined.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/ExtractionDeclinedReason.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/ExtractionMethod.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/ExtractionOutcome.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/FailureClass.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/FileEntry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -702,7 +705,12 @@ specs/src/components/schemas/Motivation.json,Normative protocol source,xynolog/p
 specs/src/components/schemas/Neo4jGraphConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/NeptuneGraphConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/NewKnowledgeBase.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/OcrConfidence.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/OllamaEmbeddingConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/OneOrMoreAgents.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/OneOrMoreStrings.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/OneOrMoreUris.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/PdfClass.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/PdfTextItem.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/PersistedEventId.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/PrincipalProfileCommand.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -731,6 +739,8 @@ specs/src/components/schemas/ResourceView.json,Normative protocol source,xynolog
 specs/src/components/schemas/ScoredResource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/Selector.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/SemanticMatch.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/ServiceAddress.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/ServiceIdentity.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/SessionJoinedEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/SessionLeftEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/SettingsHoverDelayChangedEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -784,6 +794,7 @@ specs/src/components/schemas/YieldJobQueuedEvent.json,Normative protocol source,
 specs/src/components/schemas/YieldJobResult.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/YieldUpdateCommand.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/YieldUpdateOk.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/YieldedResource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/AboutParams.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/AboutResult.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/ApiVersion.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

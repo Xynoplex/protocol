@@ -5,13 +5,7 @@
     "annotationId": { "$ref": "./AnnotationId.json" },
     "operations": {
       "type": "array",
-      "items": {
-        "oneOf": [
-          { "$ref": "BodyOperationAdd.json" },
-          { "$ref": "BodyOperationRemove.json" },
-          { "$ref": "BodyOperationReplace.json" }
-        ]
-      }
+      "items": { "$ref": "./BodyOperation.json" }
     }
   },
   "required": ["annotationId", "operations"]

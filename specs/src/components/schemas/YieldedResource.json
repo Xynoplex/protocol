@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "description": "The resource a yield command wrote, by its id.",
+  "properties": {
+    "resourceId": {
+      "$ref": "./ResourceId.json"
+    }
+  },
+  "required": [
+    "resourceId"
+  ]
+}

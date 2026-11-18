@@ -46,19 +46,12 @@
       "description": "The id of the resource being described."
     },
     "@type": {
-      "description": "Type(s) of the resource (IRIs/CURIEs via @context).",
-      "oneOf": [
+      "allOf": [
         {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1
+          "$ref": "./OneOrMoreStrings.json"
         }
-      ]
+      ],
+      "description": "Type(s) of the resource (IRIs/CURIEs via @context)."
     },
     "name": {
       "type": "string"
@@ -98,19 +91,12 @@
       ]
     },
     "about": {
-      "description": "Topics (IRIs or strings).",
-      "oneOf": [
+      "allOf": [
         {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1
+          "$ref": "./OneOrMoreStrings.json"
         }
-      ]
+      ],
+      "description": "Topics (IRIs or strings)."
     },
     "sameAs": {
       "description": "Equivalent/authoritative references.",
@@ -164,48 +150,28 @@
       "description": "W3C PROV: the resource, or resources, this one was derived from, each by its id"
     },
     "wasAttributedTo": {
-      "description": "W3C PROV — every party responsible for this resource, derived by the knowledge base at creation from verified identities: `[requester, generator]` for a resource a job produced, collapsed to the one agent when the requester produced it. Never accepted from an emitter.",
-      "oneOf": [
+      "allOf": [
         {
-          "$ref": "./Agent.json"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "./Agent.json"
-          }
+          "$ref": "./OneOrMoreAgents.json"
         }
-      ]
+      ],
+      "description": "W3C PROV — every party responsible for this resource, derived by the knowledge base at creation from verified identities: `[requester, generator]` for a resource a job produced, collapsed to the one agent when the requester produced it. Never accepted from an emitter."
     },
     "generator": {
-      "description": "Software peer that produced this resource (W3C Web Annotation model). Its identity is the verified emitter of the create; the parameters are the producer's to state.",
-      "oneOf": [
+      "allOf": [
         {
-          "$ref": "./Agent.json"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "./Agent.json"
-          }
+          "$ref": "./OneOrMoreAgents.json"
         }
-      ]
+      ],
+      "description": "Software peer that produced this resource (W3C Web Annotation model). Its identity is the verified emitter of the create; the parameters are the producer's to state."
     },
     "conformsTo": {
-      "description": "Profile/shape URI this resource description conforms to.",
-      "oneOf": [
+      "allOf": [
         {
-          "type": "string",
-          "format": "uri"
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          }
+          "$ref": "./OneOrMoreUris.json"
         }
-      ]
+      ],
+      "description": "Profile/shape URI this resource description conforms to."
     },
     "availableFormats": {
       "description": "Convenience set summarizing media types across representations.",

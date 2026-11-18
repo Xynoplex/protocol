@@ -19,17 +19,7 @@
     "operations": {
       "type": "array",
       "items": {
-        "oneOf": [
-          {
-            "$ref": "./BodyOperationAdd.json"
-          },
-          {
-            "$ref": "./BodyOperationRemove.json"
-          },
-          {
-            "$ref": "./BodyOperationReplace.json"
-          }
-        ]
+        "$ref": "./BodyOperation.json"
       }
     }
   },

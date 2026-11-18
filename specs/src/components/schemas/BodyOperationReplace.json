@@ -6,24 +6,10 @@
       "enum": ["replace"]
     },
     "oldItem": {
-      "oneOf": [
-        {
-          "$ref": "./TextualBody.json"
-        },
-        {
-          "$ref": "./SpecificResource.json"
-        }
-      ]
+      "$ref": "./AnnotationBody.json"
     },
     "newItem": {
-      "oneOf": [
-        {
-          "$ref": "./TextualBody.json"
-        },
-        {
-          "$ref": "./SpecificResource.json"
-        }
-      ]
+      "$ref": "./AnnotationBody.json"
     }
   },
   "required": [

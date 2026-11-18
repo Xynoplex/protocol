@@ -11,39 +11,20 @@
       "description": "The URL the Smelter reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "type": "object",
-      "description": "The issuer the Smelter's service account signs in at.",
-      "properties": {
-        "issuer": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The issuer URL, exactly as tokens carry it in `iss`."
+      "allOf": [
+        {
+          "$ref": "./ServiceIdentity.json"
         }
-      },
-      "required": [
-        "issuer"
       ],
-      "additionalProperties": false
+      "description": "The issuer the Smelter's service account signs in at."
     },
     "archivist": {
-      "type": "object",
-      "description": "Where the Archivist listens. The Smelter reads a resource's bytes from it, and keeps the anchored-text store there, as its service account.",
-      "properties": {
-        "host": {
-          "type": "string",
-          "minLength": 1
-        },
-        "port": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 65535
+      "allOf": [
+        {
+          "$ref": "./ServiceAddress.json"
         }
-      },
-      "required": [
-        "host",
-        "port"
       ],
-      "additionalProperties": false
+      "description": "Where the Archivist listens. The Smelter reads a resource's bytes from it, and keeps the anchored-text store there, as its service account."
     },
     "embedding": {
       "$ref": "./EmbeddingConfig.json"

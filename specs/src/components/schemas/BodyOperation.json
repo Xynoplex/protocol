@@ -1,0 +1,14 @@
+{
+  "oneOf": [
+    {
+      "$ref": "./BodyOperationAdd.json"
+    },
+    {
+      "$ref": "./BodyOperationRemove.json"
+    },
+    {
+      "$ref": "./BodyOperationReplace.json"
+    }
+  ],
+  "description": "One change to an annotation's bodies: a body added, a body removed, or one body replaced by another."
+}

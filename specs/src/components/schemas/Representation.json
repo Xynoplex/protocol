@@ -13,16 +13,9 @@
     },
     "@type": {
       "description": "Type(s), e.g., schema:MediaObject.",
-      "oneOf": [
+      "allOf": [
         {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1
+          "$ref": "./OneOrMoreStrings.json"
         }
       ]
     },
@@ -79,17 +72,9 @@
     },
     "conformsTo": {
       "description": "Profile/shape the bytes conform to (e.g., a JSON profile or SVG profile).",
-      "oneOf": [
+      "allOf": [
         {
-          "type": "string",
-          "format": "uri"
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          }
+          "$ref": "./OneOrMoreUris.json"
         }
       ]
     },

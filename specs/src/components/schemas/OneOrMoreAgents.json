@@ -1,0 +1,15 @@
+{
+  "oneOf": [
+    {
+      "$ref": "./Agent.json"
+    },
+    {
+      "type": "array",
+      "items": {
+        "$ref": "./Agent.json"
+      },
+      "minItems": 1
+    }
+  ],
+  "description": "One Agent, or a non-empty list of them: the parties PROV-O and the Web Annotation model let a resource or an annotation name in one place, as one agent or several."
+}
