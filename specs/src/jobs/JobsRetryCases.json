@@ -1,0 +1,53 @@
+{
+  "description": "jobs/retry-cases.json: whether a failed attempt is retried.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "retryCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The record's retry count before the failure is applied."
+          },
+          "maxRetries": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "failureClass": {
+            "$ref": "../components/schemas/FailureClass.json"
+          },
+          "retries": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "why",
+          "retryCount",
+          "maxRetries",
+          "retries"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

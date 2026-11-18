@@ -393,11 +393,14 @@ scripts/checks/specs/check-reference-forms.mjs,Protocol validation tooling,xynol
 scripts/checks/specs/check-registry-form.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-registry-prose.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-reply-bounds.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
+scripts/checks/specs/check-tables.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
+scripts/checks/specs/tables.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/make-target.sh,Repository build tooling,xynolog/protocol,"Runs protocol Node and npm tasks inside the detected container runtime."
 specs/.gitignore,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/.redocly.lint-ignore.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/README.md,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/redocly.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
+specs/src/CaseTable.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/builder-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/id-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/annotations/pdf-locate-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -858,6 +861,9 @@ specs/src/follower/follow-cases.json,Normative protocol source,xynolog/protocol,
 specs/src/graph/codec-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/graph/database-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/identifiers/kinds.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/jobs/JobsFilterCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/jobs/JobsRetryCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/jobs/JobsStorage.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/filter-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/retry-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/jobs/storage.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

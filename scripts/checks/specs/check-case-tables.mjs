@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // Validate protocol case-table structure without assuming consumer repositories
-// share a checkout or directory layout.
+// share a checkout or directory layout. A case table that has its schema is
+// check-tables.mjs's, which holds it to the schema; this holds the others.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hasSchema, restated } from './tables.mjs';
 
 const REPO = resolve(fileURLToPath(import.meta.url), '../../../..');
 const SPECS = resolve(REPO, 'specs/src');
@@ -15,6 +17,7 @@ const COUNTED_OFFSETS = new Set([
 ]);
 const failures = [];
 const files = [];
+let held = 0;
 function walk(directory) {
   for (const name of readdirSync(directory)) {
     if (name.startsWith('.') || ['node_modules', 'target', 'build', 'bin', '_build'].includes(name)) continue;
@@ -26,6 +29,8 @@ function walk(directory) {
 if (existsSync(SPECS)) walk(SPECS);
 for (const file of files) {
   const relativePath = relative(SPECS, file).split('\\').join('/');
+  if (hasSchema(relativePath)) continue;
+  held++;
   let table;
   try { table = JSON.parse(readFileSync(file, 'utf8')); }
   catch (error) { failures.push(`${relativePath} is not valid JSON: ${error.message}`); continue; }
@@ -50,11 +55,7 @@ for (const file of files) {
       if (typeof explanation !== 'string' || !explanation.trim()) failures.push(`${relativePath}: ${field}.${implementation} must explain its status`);
     }
   }
-  const stated = new Set(Object.keys(table.runBy ?? {}));
-  for (const field of ['absent', 'notYetReached']) for (const implementation of Object.keys(table[field] ?? {})) {
-    if (stated.has(implementation)) failures.push(`${relativePath}: ${implementation} cannot be both runBy and ${field}`);
-    stated.add(implementation);
-  }
+  for (const [field, implementation, first] of restated(table)) failures.push(`${relativePath}: ${implementation} cannot be both ${first} and ${field}`);
   if (COUNTED_OFFSETS.has(relativePath) && !/[\u{10000}-\u{10FFFF}]/u.test(readFileSync(file, 'utf8'))) {
     failures.push(`${relativePath} states an offset/count rule but has no non-BMP example to distinguish code points from UTF-16 units or bytes`);
   }
@@ -63,4 +64,4 @@ if (failures.length) {
   for (const failure of failures) console.error(`✗ ${failure}`);
   process.exit(1);
 }
-console.log(`✓ ${files.length} protocol case tables have descriptions, cases, and portable runner declarations`);
+console.log(`✓ ${held} protocol case tables without a schema have descriptions, cases, and portable runner declarations`);

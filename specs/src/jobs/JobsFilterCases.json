@@ -1,0 +1,100 @@
+{
+  "description": "jobs/filter-cases.json: whether a job matches a filter.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "filter": {
+            "$ref": "../components/schemas/JobFilter.json"
+          },
+          "job": {
+            "type": "object",
+            "description": "The job description as it is announced or held. It may be partial, as a description a filter is compared with can be, so it requires nothing of its parameters.",
+            "properties": {
+              "jobType": {
+                "$ref": "../components/schemas/JobType.json"
+              },
+              "params": {
+                "type": "object",
+                "properties": {
+                  "motivation": {
+                    "$ref": "../components/schemas/Motivation.json"
+                  },
+                  "schemaId": {
+                    "type": "string"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "storageUri": {
+                    "type": "string"
+                  },
+                  "outputMediaType": {
+                    "$ref": "../components/schemas/SupportedMediaType.json"
+                  },
+                  "tone": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "entityTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "resourceId": {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "jobType",
+              "params"
+            ],
+            "additionalProperties": false
+          },
+          "matches": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "why",
+          "filter",
+          "job",
+          "matches"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}
