@@ -1,6 +1,6 @@
 # Roles
 
-What a caller's role decides in Xynolog, which is very little. For how callers are authenticated, and how tokens are issued, verified and revoked, see the operator's [Authentication](../../docs/operator/administration/AUTHENTICATION.md).
+What a caller's role decides in Xynolog, which is very little. For how callers are authenticated, and how tokens are issued, verified and revoked, see the operator's [Authentication](https://github.com/xynolog/docs/blob/main/operator/administration/AUTHENTICATION.md).
 
 ## One decision: authenticated, or not
 

@@ -91,8 +91,8 @@ await xynolog.bind.body(resourceId, annotationId, [                             
 
 Three surfaces speak these verbs:
 
-- **The SDKs**, in [TypeScript](https://github.com/xynolog/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/xynolog/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/xynolog/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/xynolog/sdk/tree/main/go/README.md) and [Kotlin](https://github.com/xynolog/sdk/tree/main/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](../../docs/builder/README.md)**.
-- **[Agent skills](../../docs/builder/skills/)** are ready-made skill definitions that agentic coding assistants use to work in a knowledge base without writing integration code.
+- **The SDKs**, in [TypeScript](https://github.com/xynolog/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/xynolog/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/xynolog/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/xynolog/sdk/tree/main/go/README.md) and [Kotlin](https://github.com/xynolog/sdk/tree/main/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](https://github.com/xynolog/docs/blob/main/builder/README.md)**.
+- **[Agent skills](https://github.com/xynolog/docs/tree/main/builder/skills)** are ready-made skill definitions that agentic coding assistants use to work in a knowledge base without writing integration code.
 - **[The launcher](https://github.com/xynolog/cli/tree/main/README.md)**, the `xynolog` binary, exposes the verbs as terminal commands against a running stack; `xynolog <verb> --help` for each.
 
 For product framing and getting a knowledge base running, see the **[project README](../../README.md)**.

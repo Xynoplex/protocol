@@ -14,7 +14,7 @@ A resource is anything a knowledge base holds: a document, an image, a PDF, any 
 | `yield.fromToken` | the resource a token names | `yield:clone-resource-requested` | the archivist |
 | `yield.createFromToken` | the id of the new copy | `POST /resources`, an upload carrying the token | the archivist, through the gateway |
 
-The return shapes are the SDK's, the same in every language: see [the reactive model](../../../docs/builder/REACTIVE-MODEL.md).
+The return shapes are the SDK's, the same in every language: see [the reactive model](https://github.com/xynolog/docs/blob/main/builder/REACTIVE-MODEL.md).
 
 ## What it records
 
@@ -49,7 +49,7 @@ Each of these is appended to the event log and delivered to clients:
 
 ## Media types
 
-What can be uploaded, authored and generated is declared per media type in [`specs/src/media-types/registry.json`](../../specs/src/media-types/registry.json). Any listed type can be uploaded. Generation targets the types the registry marks `generatable`. See [Media Types](../../../docs/architecture/MEDIA-TYPES.md).
+What can be uploaded, authored and generated is declared per media type in [`specs/src/media-types/registry.json`](../../specs/src/media-types/registry.json). Any listed type can be uploaded. Generation targets the types the registry marks `generatable`. See [Media Types](https://github.com/xynolog/docs/blob/main/architecture/MEDIA-TYPES.md).
 
 ## Example
 

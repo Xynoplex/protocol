@@ -5,7 +5,7 @@ What a worker promises the dispatcher and everyone who follows a job. A
 Worker service, or one written on an SDK by somebody else, in any language.
 What the dispatcher does with a worker's messages is [JOBS.md](./JOBS.md).
 How to write a worker is the
-[`xynolog-worker` skill](../../docs/builder/skills/xynolog-worker/SKILL.md).
+[`xynolog-worker` skill](https://github.com/xynolog/docs/blob/main/builder/skills/xynolog-worker/SKILL.md).
 
 If the code deviates from what is written here, the code is wrong, or this
 document is wrong and is corrected deliberately. There is no third option.

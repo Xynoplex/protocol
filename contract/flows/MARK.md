@@ -118,7 +118,7 @@ From the launcher: `xynolog mark --delegate <resourceId> --motivation linking --
 
 ## Local signals
 
-`mark.request`, `mark.submit` and `mark.reportDeleteError` publish on the client's own bus and nowhere else. They coordinate one viewer's annotation interface and are not part of the wire protocol; a request and a submission name their resource, so only that resource's mark unit acts on them. A delegation, a cancel and a dismissal are asked of the resource's mark unit itself: `requestDelegate(params)`, `cancelPending()` and `dismissProgress()`. See [react-ui's events](../../../docs/builder/react-ui/EVENTS.md).
+`mark.request`, `mark.submit` and `mark.reportDeleteError` publish on the client's own bus and nowhere else. They coordinate one viewer's annotation interface and are not part of the wire protocol; a request and a submission name their resource, so only that resource's mark unit acts on them. A delegation, a cancel and a dismissal are asked of the resource's mark unit itself: `requestDelegate(params)`, `cancelPending()` and `dismissProgress()`. See [react-ui's events](https://github.com/xynolog/docs/blob/main/builder/react-ui/EVENTS.md).
 
 ## Where it is implemented
 

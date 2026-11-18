@@ -75,7 +75,7 @@ From the launcher: `xynolog bind <resourceId> <annotationId> <targetResourceId>`
 
 ## Local signals
 
-`bind.initiate` and `bind.reportBodyError` publish on the client's own bus and nowhere else. `bind:initiate` is how one viewer's interface says a binding should begin; it is not the write. See [react-ui's events](../../../docs/builder/react-ui/EVENTS.md).
+`bind.initiate` and `bind.reportBodyError` publish on the client's own bus and nowhere else. `bind:initiate` is how one viewer's interface says a binding should begin; it is not the write. See [react-ui's events](https://github.com/xynolog/docs/blob/main/builder/react-ui/EVENTS.md).
 
 ## Where it is implemented
 

@@ -57,9 +57,9 @@ graph LR
 
 ## Who the participants are
 
-People and AI agents are the same kind of participant. They use the same verbs, emit the same frames, and produce the same annotations, and the record attributes each act to whoever did it. The roles in the tables above are the actor model's: see [the actor model](../../../docs/architecture/ACTOR-MODEL.md).
+People and AI agents are the same kind of participant. They use the same verbs, emit the same frames, and produce the same annotations, and the record attributes each act to whoever did it. The roles in the tables above are the actor model's: see [the actor model](https://github.com/xynolog/docs/blob/main/architecture/ACTOR-MODEL.md).
 
-Behind the bus, the knowledge base's own services answer: the archivist records writes and answers reads of the record, the librarian answers Gather and Match, and the dispatcher hands delegated work to workers. See [the knowledge system](../../../docs/architecture/KNOWLEDGE-SYSTEM.md).
+Behind the bus, the knowledge base's own services answer: the archivist records writes and answers reads of the record, the librarian answers Gather and Match, and the dispatcher hands delegated work to workers. See [the knowledge system](https://github.com/xynolog/docs/blob/main/architecture/KNOWLEDGE-SYSTEM.md).
 
 ## What every verb shares
 
