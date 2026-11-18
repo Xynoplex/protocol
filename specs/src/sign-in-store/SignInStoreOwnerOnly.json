@@ -1,0 +1,63 @@
+{
+  "description": "sign-in-store/owner-only.json: how a writer keeps a directory and a file to its owner.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "directoryMode": {
+      "description": "A mode, on a system that has modes.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^0[0-7]{3}$",
+          "description": "The mode, in octal."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "value",
+        "docs"
+      ],
+      "additionalProperties": false
+    },
+    "fileMode": {
+      "$ref": "#/properties/directoryMode"
+    },
+    "directoryAccessList": {
+      "description": "An access list, on Windows.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^D:\\S+$",
+          "description": "The access list in SDDL, with `{owner}` where the owner's SID goes."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "value",
+        "docs"
+      ],
+      "additionalProperties": false
+    },
+    "fileAccessList": {
+      "$ref": "#/properties/directoryAccessList"
+    }
+  },
+  "required": [
+    "$comment",
+    "directoryMode",
+    "fileMode",
+    "directoryAccessList",
+    "fileAccessList"
+  ],
+  "additionalProperties": false
+}

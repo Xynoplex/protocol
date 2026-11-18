@@ -1,0 +1,476 @@
+{
+  "description": "graph/codec-cases.json: what the graph holds of an annotation and of a resource, as its two codecs say it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "A case: its why and one of six parts.",
+        "minProperties": 2,
+        "maxProperties": 2,
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "annotationStored": {
+            "description": "An annotation as the record gives it, its row, and what reading the row back answers.",
+            "type": "object",
+            "properties": {
+              "annotation": {
+                "$ref": "../components/schemas/Annotation.json"
+              },
+              "properties": {
+                "description": "The properties of the annotation's row that are plain strings.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "../components/schemas/AnnotationId.json"
+                  },
+                  "resourceId": {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The row's type."
+                  },
+                  "motivation": {
+                    "$ref": "../components/schemas/Motivation.json"
+                  },
+                  "created": {
+                    "$ref": "../components/schemas/Annotation.json#/properties/created"
+                  },
+                  "modified": {
+                    "$ref": "../components/schemas/Annotation.json#/properties/modified"
+                  },
+                  "exact": {
+                    "$ref": "../components/schemas/TextQuoteSelector.json#/properties/exact"
+                  },
+                  "source": {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  }
+                },
+                "required": [
+                  "id",
+                  "resourceId",
+                  "type",
+                  "motivation",
+                  "created"
+                ],
+                "additionalProperties": false
+              },
+              "json": {
+                "description": "The properties of the row that are JSON, each as the value its stored string parses to.",
+                "type": "object",
+                "properties": {
+                  "creator": {
+                    "$ref": "../components/schemas/Agent.json"
+                  },
+                  "selector": {
+                    "$ref": "../components/schemas/AnnotationSelector.json"
+                  },
+                  "generator": {
+                    "$ref": "../components/schemas/OneOrMoreAgents.json"
+                  }
+                },
+                "required": [
+                  "creator"
+                ],
+                "additionalProperties": false
+              },
+              "tags": {
+                "type": "array",
+                "uniqueItems": true,
+                "description": "The annotation's tags, which are edges and not properties: a set.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linksTo": {
+                "description": "The resource the reference edge goes to, or null when there is none.",
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  }
+                ]
+              },
+              "holds": {
+                "$ref": "../components/schemas/Annotation.json"
+              }
+            },
+            "required": [
+              "annotation",
+              "properties",
+              "json",
+              "tags",
+              "linksTo",
+              "holds"
+            ],
+            "additionalProperties": false
+          },
+          "annotationRead": {
+            "description": "A row read back: the annotation it answers, or the field whose absence refuses it.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "description": "A row's properties as a store holds them.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/id"
+                      },
+                      "resourceId": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "type": {
+                        "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/type"
+                      },
+                      "motivation": {
+                        "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/motivation"
+                      },
+                      "created": {
+                        "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/created"
+                      },
+                      "source": {
+                        "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/source"
+                      },
+                      "exact": {
+                        "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/exact"
+                      },
+                      "selector": {
+                        "type": "string",
+                        "description": "The target's selector, as the JSON string a store holds."
+                      },
+                      "creator": {
+                        "type": "string",
+                        "description": "Who the annotation is by, as the JSON string a store holds."
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "The row's tags, in whatever order a store answers them.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "annotation": {
+                    "$ref": "../components/schemas/Annotation.json"
+                  }
+                },
+                "required": [
+                  "properties",
+                  "tags",
+                  "annotation"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "$ref": "#/properties/cases/items/properties/annotationRead/oneOf/0/properties/properties"
+                  },
+                  "tags": {
+                    "$ref": "#/properties/cases/items/properties/annotationRead/oneOf/0/properties/tags"
+                  },
+                  "refused": {
+                    "type": "string",
+                    "pattern": "^\\S+$",
+                    "description": "The word the refusal names: the missing field, or the resource an update tried to move to."
+                  }
+                },
+                "required": [
+                  "properties",
+                  "tags",
+                  "refused"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "annotationUpdated": {
+            "description": "An annotation the graph holds, an update, and the annotation it leaves, or what refuses it.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "current": {
+                    "$ref": "../components/schemas/Annotation.json"
+                  },
+                  "updates": {
+                    "description": "What the update states.",
+                    "type": "object",
+                    "properties": {
+                      "body": {
+                        "type": "array",
+                        "description": "The bodies the annotation then has; an empty list leaves it none.",
+                        "items": {
+                          "$ref": "../components/schemas/AnnotationBody.json"
+                        }
+                      },
+                      "modified": {
+                        "$ref": "../components/schemas/Annotation.json#/properties/modified"
+                      },
+                      "target": {
+                        "$ref": "../components/schemas/Annotation.json#/properties/target"
+                      },
+                      "id": {
+                        "$ref": "../components/schemas/AnnotationId.json"
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  },
+                  "annotation": {
+                    "$ref": "../components/schemas/Annotation.json"
+                  }
+                },
+                "required": [
+                  "current",
+                  "updates",
+                  "annotation"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "current": {
+                    "$ref": "../components/schemas/Annotation.json"
+                  },
+                  "updates": {
+                    "$ref": "#/properties/cases/items/properties/annotationUpdated/oneOf/0/properties/updates"
+                  },
+                  "refused": {
+                    "$ref": "#/properties/cases/items/properties/annotationRead/oneOf/1/properties/refused"
+                  }
+                },
+                "required": [
+                  "current",
+                  "updates",
+                  "refused"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "referenceResolved": {
+            "description": "An annotation, the resource its reference is resolved to, and the body it then has.",
+            "type": "object",
+            "properties": {
+              "current": {
+                "$ref": "../components/schemas/Annotation.json"
+              },
+              "source": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "body": {
+                "$ref": "../components/schemas/AnnotationBodies.json"
+              }
+            },
+            "required": [
+              "current",
+              "source",
+              "body"
+            ],
+            "additionalProperties": false
+          },
+          "resourceStored": {
+            "description": "A resource as the record gives it, its row, and what reading it back answers, or the field whose absence refuses it.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "resource": {
+                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                  },
+                  "properties": {
+                    "description": "The properties of the resource's row that are not JSON.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "name": {
+                        "$ref": "../components/schemas/ResourceDescriptor.json#/properties/name"
+                      },
+                      "entityTypes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "format": {
+                        "$ref": "../components/schemas/SupportedMediaType.json"
+                      },
+                      "archived": {
+                        "type": "boolean"
+                      },
+                      "created": {
+                        "$ref": "../components/schemas/ResourceDescriptor.json#/properties/dateCreated"
+                      },
+                      "contentChecksum": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "storageUri": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "entityTypes",
+                      "format",
+                      "archived",
+                      "created",
+                      "contentChecksum"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "json": {
+                    "description": "The properties of the row that are JSON, each as the value its stored string parses to.",
+                    "type": "object",
+                    "properties": {
+                      "creator": {
+                        "$ref": "../components/schemas/OneOrMoreAgents.json"
+                      }
+                    },
+                    "required": [
+                      "creator"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "holds": {
+                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                  }
+                },
+                "required": [
+                  "resource",
+                  "properties",
+                  "json",
+                  "holds"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "resource": {
+                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                  },
+                  "refused": {
+                    "$ref": "#/properties/cases/items/properties/annotationRead/oneOf/1/properties/refused"
+                  }
+                },
+                "required": [
+                  "resource",
+                  "refused"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "resourceRead": {
+            "description": "A row read back: the resource it answers, or the field whose absence refuses it.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "description": "A row's properties as a store holds them.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/id"
+                      },
+                      "name": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/name"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/entityTypes"
+                      },
+                      "format": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/format"
+                      },
+                      "archived": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/archived"
+                      },
+                      "created": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/created"
+                      },
+                      "contentChecksum": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/contentChecksum"
+                      },
+                      "storageUri": {
+                        "$ref": "#/properties/cases/items/properties/resourceStored/oneOf/0/properties/properties/properties/storageUri"
+                      },
+                      "creator": {
+                        "type": "string",
+                        "description": "Who the resource is attributed to, as the JSON string a store holds."
+                      }
+                    },
+                    "required": [
+                      "storageUri"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "resource": {
+                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                  }
+                },
+                "required": [
+                  "properties",
+                  "resource"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "$ref": "#/properties/cases/items/properties/resourceRead/oneOf/0/properties/properties"
+                  },
+                  "refused": {
+                    "$ref": "#/properties/cases/items/properties/annotationRead/oneOf/1/properties/refused"
+                  }
+                },
+                "required": [
+                  "properties",
+                  "refused"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "why"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

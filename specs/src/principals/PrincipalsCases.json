@@ -1,0 +1,71 @@
+{
+  "description": "principals/cases.json: the DID the gateway names a person and an agent by.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "person": {
+      "type": "string",
+      "pattern": "\\S",
+      "description": "How a person is named, with `{domain}` and `{subject}` where each goes."
+    },
+    "people": {
+      "description": "How a person is named, case by case.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "domain": {
+            "$ref": "../kb-identity/ProjectConfig.json#/properties/site/properties/domain"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The subject the principal's issuer asserted."
+          },
+          "did": {
+            "$ref": "../components/schemas/UserId.json"
+          }
+        },
+        "required": [
+          "why",
+          "domain",
+          "subject",
+          "did"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "agent": {
+      "type": "string",
+      "pattern": "\\S",
+      "description": "How an agent is named, with `{domain}` and `{subject}` where each goes."
+    },
+    "agents": {
+      "description": "How an agent is named, case by case.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/properties/people/items"
+      }
+    }
+  },
+  "required": [
+    "person",
+    "people",
+    "agent",
+    "agents"
+  ],
+  "additionalProperties": false
+}

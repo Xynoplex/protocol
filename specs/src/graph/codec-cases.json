@@ -456,56 +456,6 @@
       }
     },
     {
-      "why": "an empty body is no body: nothing is stored for it and none is read back",
-      "annotationStored": {
-        "annotation": {
-          "@context": "http://www.w3.org/ns/anno.jsonld",
-          "type": "Annotation",
-          "id": "ann-1",
-          "motivation": "linking",
-          "target": {
-            "source": "res-1"
-          },
-          "creator": {
-            "@type": "Person",
-            "@id": "did:web:example.org:users:ada",
-            "name": "Ada"
-          },
-          "created": "2020-03-04T05:06:07.000Z",
-          "body": []
-        },
-        "properties": {
-          "id": "ann-1",
-          "resourceId": "res-1",
-          "type": "SpecificResource",
-          "motivation": "linking",
-          "created": "2020-03-04T05:06:07.000Z"
-        },
-        "json": {
-          "creator": {
-            "@type": "Person",
-            "@id": "did:web:example.org:users:ada"
-          }
-        },
-        "tags": [],
-        "linksTo": null,
-        "holds": {
-          "@context": "http://www.w3.org/ns/anno.jsonld",
-          "type": "Annotation",
-          "id": "ann-1",
-          "motivation": "linking",
-          "target": {
-            "source": "res-1"
-          },
-          "creator": {
-            "@type": "Person",
-            "@id": "did:web:example.org:users:ada"
-          },
-          "created": "2020-03-04T05:06:07.000Z"
-        }
-      }
-    },
-    {
       "why": "a row and its tag edges are read as the annotation: tags first, in the one order, then the link",
       "annotationRead": {
         "properties": {

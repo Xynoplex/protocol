@@ -1,0 +1,103 @@
+{
+  "description": "vectors/token-cases.json: the claims of the tokens a Qdrant is presented.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "kb": {
+            "$ref": "../KbDid.json"
+          },
+          "claims": {
+            "description": "Each service's token's claims, by the service.",
+            "type": "object",
+            "properties": {
+              "smelter": {
+                "description": "The Smelter's token's claims.",
+                "type": "object",
+                "properties": {
+                  "access": {
+                    "type": "string",
+                    "enum": [
+                      "m"
+                    ],
+                    "description": "Global manage."
+                  }
+                },
+                "required": [
+                  "access"
+                ],
+                "additionalProperties": false
+              },
+              "librarian": {
+                "description": "The Librarian's token's claims.",
+                "type": "object",
+                "properties": {
+                  "access": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}-(resources|annotations|declined)$",
+                          "description": "A collection of the knowledge base's vector index."
+                        },
+                        "access": {
+                          "type": "string",
+                          "enum": [
+                            "r"
+                          ],
+                          "description": "Read."
+                        }
+                      },
+                      "required": [
+                        "collection",
+                        "access"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "access"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "smelter",
+              "librarian"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "kb",
+          "claims"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

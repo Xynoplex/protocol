@@ -1,0 +1,809 @@
+{
+  "description": "vectors/payload-cases.json: what a point of the vector index is, as every implementation of the index writes it and reads it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "collections": {
+      "description": "Each of a knowledge base's three collections, under the word that names it, as Qdrant is asked to make it.",
+      "type": "object",
+      "properties": {
+        "resources": {
+          "description": "A collection that is searched, as Qdrant is asked to make it: as wide as the embedding model's vectors, which no number here states.",
+          "type": "object",
+          "properties": {
+            "distance": {
+              "type": "string",
+              "enum": [
+                "Cosine"
+              ],
+              "description": "The distance its vectors are compared by, in Qdrant's word: the cosine of the angle between them."
+            },
+            "indexes": {
+              "type": "object",
+              "description": "The payload members Qdrant is asked to index, and as what, in Qdrant's word.",
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "distance",
+            "indexes"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "$ref": "#/properties/collections/properties/resources"
+        },
+        "declined": {
+          "description": "The declined, never searched, as Qdrant is asked to make it.",
+          "type": "object",
+          "properties": {
+            "distance": {
+              "type": "string",
+              "enum": [
+                "Dot"
+              ],
+              "description": "The dot product, since a vector of 0 has no length to keep."
+            },
+            "size": {
+              "type": "integer",
+              "enum": [
+                1
+              ],
+              "description": "How wide its vectors are: one number, 0, which says nothing."
+            },
+            "indexes": {
+              "$ref": "#/properties/collections/properties/resources/properties/indexes"
+            }
+          },
+          "required": [
+            "distance",
+            "size",
+            "indexes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "resources",
+        "annotations",
+        "declined"
+      ],
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "resourceStored": {
+                "description": "A resource's chunks stored, and the points they become.",
+                "type": "object",
+                "properties": {
+                  "resourceId": {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  },
+                  "chunks": {
+                    "description": "The chunks the resource's text was cut into.",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "index": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "The chunk's place among the resource's chunks, from 0."
+                        },
+                        "text": {
+                          "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                        },
+                        "embedding": {
+                          "type": "array",
+                          "minItems": 1,
+                          "description": "The vector a model made of the text.",
+                          "items": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "required": [
+                        "index",
+                        "text",
+                        "embedding"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "contentChecksum": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The checksum of the bytes the text came from, as it is given."
+                  },
+                  "mediaType": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The media type the bytes were read as, with whatever parameters it states, as it is given."
+                  },
+                  "entityTypes": {
+                    "description": "The entity types, in the order given.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "machineRead": {
+                    "type": "boolean",
+                    "description": "Whether the caller says the text was read from pixels."
+                  },
+                  "points": {
+                    "description": "The points the chunks become, in the chunks' order.",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "qdrantId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                          "description": "The id Qdrant keys the point by: the MD5 of its key, in a UUID's groups."
+                        },
+                        "payload": {
+                          "description": "A point of the resources' payload, whole.",
+                          "type": "object",
+                          "properties": {
+                            "resourceId": {
+                              "$ref": "../components/schemas/ResourceId.json"
+                            },
+                            "chunkIndex": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/index"
+                            },
+                            "text": {
+                              "type": "string",
+                              "description": "The text, carried and never counted."
+                            },
+                            "contentChecksum": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                            },
+                            "mediaType": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                            },
+                            "entityTypes": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                            },
+                            "machineRead": {
+                              "type": "boolean",
+                              "enum": [
+                                true
+                              ],
+                              "description": "Present, and true, where the point's text was read from pixels: never false."
+                            }
+                          },
+                          "required": [
+                            "resourceId",
+                            "chunkIndex",
+                            "text",
+                            "contentChecksum",
+                            "mediaType",
+                            "entityTypes"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "result": {
+                          "description": "What a search by the point's own embedding answers of it.",
+                          "type": "object",
+                          "properties": {
+                            "score": {
+                              "type": "number",
+                              "minimum": -1,
+                              "maximum": 1,
+                              "description": "The cosine of the angle between the two vectors, to six decimal places."
+                            },
+                            "resourceId": {
+                              "$ref": "../components/schemas/ResourceId.json"
+                            },
+                            "text": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                            },
+                            "entityTypes": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                            },
+                            "machineRead": {
+                              "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                            }
+                          },
+                          "required": [
+                            "score",
+                            "resourceId",
+                            "text",
+                            "entityTypes"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "qdrantId",
+                        "payload",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "stamp": {
+                    "description": "What the resource's points then say of it as a whole.",
+                    "type": "object",
+                    "properties": {
+                      "contentChecksum": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                      },
+                      "mediaType": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      },
+                      "machineRead": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                      }
+                    },
+                    "required": [
+                      "contentChecksum",
+                      "mediaType",
+                      "entityTypes"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "resourceId",
+                  "chunks",
+                  "contentChecksum",
+                  "mediaType",
+                  "entityTypes",
+                  "points",
+                  "stamp"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "resourceStored"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "annotationStored": {
+                "description": "An annotation stored, and the point it becomes.",
+                "type": "object",
+                "properties": {
+                  "annotationId": {
+                    "$ref": "../components/schemas/AnnotationId.json"
+                  },
+                  "resourceId": {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  },
+                  "motivation": {
+                    "$ref": "../components/schemas/Motivation.json"
+                  },
+                  "entityTypes": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                  },
+                  "text": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                  },
+                  "embedding": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/embedding"
+                  },
+                  "machineRead": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/machineRead"
+                  },
+                  "point": {
+                    "description": "The one point the annotation becomes.",
+                    "type": "object",
+                    "properties": {
+                      "qdrantId": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/qdrantId"
+                      },
+                      "payload": {
+                        "description": "A point of the annotations' payload, whole.",
+                        "type": "object",
+                        "properties": {
+                          "annotationId": {
+                            "$ref": "../components/schemas/AnnotationId.json"
+                          },
+                          "resourceId": {
+                            "$ref": "../components/schemas/ResourceId.json"
+                          },
+                          "motivation": {
+                            "$ref": "../components/schemas/Motivation.json"
+                          },
+                          "entityTypes": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                          },
+                          "text": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                          },
+                          "machineRead": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                          }
+                        },
+                        "required": [
+                          "annotationId",
+                          "resourceId",
+                          "motivation",
+                          "entityTypes",
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "result": {
+                        "type": "object",
+                        "properties": {
+                          "score": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
+                          },
+                          "resourceId": {
+                            "$ref": "../components/schemas/ResourceId.json"
+                          },
+                          "annotationId": {
+                            "$ref": "../components/schemas/AnnotationId.json"
+                          },
+                          "text": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                          },
+                          "entityTypes": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                          },
+                          "machineRead": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                          }
+                        },
+                        "required": [
+                          "score",
+                          "resourceId",
+                          "annotationId",
+                          "text",
+                          "entityTypes"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "qdrantId",
+                      "payload",
+                      "result"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "annotationId",
+                  "resourceId",
+                  "motivation",
+                  "entityTypes",
+                  "text",
+                  "embedding",
+                  "point"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "annotationStored"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "declineStored": {
+                "description": "A declined resource remembered, and the point it becomes.",
+                "type": "object",
+                "properties": {
+                  "resourceId": {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  },
+                  "contentChecksum": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                  },
+                  "mediaType": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Why the bytes gave no text, as it is given."
+                  },
+                  "point": {
+                    "description": "The one point of the declined it becomes; nothing searches it.",
+                    "type": "object",
+                    "properties": {
+                      "qdrantId": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/qdrantId"
+                      },
+                      "payload": {
+                        "description": "A point of the declined's payload, whole.",
+                        "type": "object",
+                        "properties": {
+                          "resourceId": {
+                            "$ref": "../components/schemas/ResourceId.json"
+                          },
+                          "contentChecksum": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                          },
+                          "mediaType": {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                          },
+                          "reason": {
+                            "$ref": "#/properties/cases/items/oneOf/2/properties/declineStored/properties/reason"
+                          }
+                        },
+                        "required": [
+                          "resourceId",
+                          "contentChecksum",
+                          "mediaType",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "qdrantId",
+                      "payload"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "resourceId",
+                  "contentChecksum",
+                  "mediaType",
+                  "reason",
+                  "point"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "declineStored"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "stampRead": {
+                "description": "A point's payload, and the stamp read from it.",
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "description": "A point's payload, which may name no resource.",
+                    "type": "object",
+                    "properties": {
+                      "resourceId": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "chunkIndex": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/index"
+                      },
+                      "text": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                      },
+                      "contentChecksum": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                      },
+                      "mediaType": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      },
+                      "machineRead": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                      }
+                    },
+                    "required": [
+                      "chunkIndex",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "stamp": {
+                    "description": "The stamp read from it. A payload that names no resource has none.",
+                    "type": "object",
+                    "properties": {
+                      "contentChecksum": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                      },
+                      "mediaType": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      },
+                      "machineRead": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                      }
+                    },
+                    "required": [
+                      "entityTypes"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "payload"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "stampRead"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "annotationStampRead": {
+                "description": "The payload of a point of the annotations, and the stamp read from it.",
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "description": "The payload of a point of the annotations, which may name no annotation or no resource.",
+                    "type": "object",
+                    "properties": {
+                      "annotationId": {
+                        "$ref": "../components/schemas/AnnotationId.json"
+                      },
+                      "resourceId": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "motivation": {
+                        "$ref": "../components/schemas/Motivation.json"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      },
+                      "text": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                      },
+                      "machineRead": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                      }
+                    },
+                    "required": [
+                      "motivation",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "stamp": {
+                    "description": "The stamp read from it: what the point says of its annotation without its text. A payload that names no annotation has none.",
+                    "type": "object",
+                    "properties": {
+                      "resourceId": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      }
+                    },
+                    "required": [
+                      "entityTypes"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "payload"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "annotationStampRead"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "resultRead": {
+                "description": "A point's payload and the score a search gave it, and the result read from them.",
+                "type": "object",
+                "properties": {
+                  "collection": {
+                    "type": "string",
+                    "enum": [
+                      "resources",
+                      "annotations"
+                    ],
+                    "description": "The word of the collection the point is in."
+                  },
+                  "payload": {
+                    "description": "The point's payload.",
+                    "type": "object",
+                    "properties": {
+                      "resourceId": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "chunkIndex": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/index"
+                      },
+                      "text": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                      },
+                      "contentChecksum": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                      },
+                      "mediaType": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      },
+                      "annotationId": {
+                        "$ref": "../components/schemas/AnnotationId.json"
+                      },
+                      "motivation": {
+                        "$ref": "../components/schemas/Motivation.json"
+                      },
+                      "machineRead": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                      }
+                    },
+                    "required": [
+                      "resourceId",
+                      "text",
+                      "entityTypes"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "score": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
+                  },
+                  "result": {
+                    "description": "The result read from them.",
+                    "type": "object",
+                    "properties": {
+                      "score": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
+                      },
+                      "resourceId": {
+                        "$ref": "../components/schemas/ResourceId.json"
+                      },
+                      "text": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                      },
+                      "annotationId": {
+                        "$ref": "../components/schemas/AnnotationId.json"
+                      },
+                      "machineRead": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                      }
+                    },
+                    "required": [
+                      "score",
+                      "resourceId",
+                      "text",
+                      "entityTypes"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "collection",
+                  "payload",
+                  "score",
+                  "result"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "resultRead"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "collectionsNamed": {
+                "description": "A knowledge base's DID, and the names of its collections.",
+                "type": "object",
+                "properties": {
+                  "kb": {
+                    "$ref": "../KbDid.json"
+                  },
+                  "names": {
+                    "description": "Its collections' names, under their words: the SHA-256 of the DID's UTF-8 bytes, in lower-case hexadecimal, a hyphen and the word.",
+                    "type": "object",
+                    "properties": {
+                      "resources": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}-resources$"
+                      },
+                      "annotations": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}-annotations$"
+                      },
+                      "declined": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}-declined$"
+                      }
+                    },
+                    "required": [
+                      "resources",
+                      "annotations",
+                      "declined"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "kb",
+                  "names"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "collectionsNamed"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "collections",
+    "cases"
+  ],
+  "additionalProperties": false
+}

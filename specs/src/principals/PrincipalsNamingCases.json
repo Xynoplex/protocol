@@ -1,0 +1,46 @@
+{
+  "description": "principals/naming-cases.json: how the principals a reply mentions are named.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "reply": {
+            "$comment": "A reply, which is any JSON."
+          },
+          "profiles": {
+            "$ref": "../components/schemas/ProfilesProjection.json#/properties/profiles"
+          },
+          "named": {
+            "$comment": "The reply with its principals named, which is any JSON."
+          }
+        },
+        "required": [
+          "why",
+          "reply",
+          "profiles",
+          "named"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

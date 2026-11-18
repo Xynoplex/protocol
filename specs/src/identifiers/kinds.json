@@ -9,7 +9,8 @@
         "sourceResourceId",
         "resultResourceId",
         "scope",
-        "wasDerivedFrom"
+        "wasDerivedFrom",
+        "excludeResourceId"
       ],
       "accepts": [
         {
@@ -335,6 +336,10 @@
     {
       "property": "lastSeenId",
       "docs": "The same, as the gateway reports the gap it could not fill."
+    },
+    {
+      "property": "qdrantId",
+      "docs": "The id Qdrant keys a point of the vector index by: the MD5 of the point's key, in a UUID's groups (vectors/payload-cases.json)."
     },
     {
       "property": "requestId",

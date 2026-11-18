@@ -1,0 +1,116 @@
+{
+  "description": "media-types/cases.json: the rules every SDK reads from the media-type registry.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cloneFormat": {
+      "description": "The format a clone of a resource takes.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "source": {
+            "type": "string",
+            "nullable": true,
+            "description": "The source's media type as given, or null for none."
+          },
+          "format": {
+            "$ref": "../components/schemas/SupportedMediaType.json"
+          }
+        },
+        "required": [
+          "why",
+          "source",
+          "format"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "storageFileName": {
+      "description": "The name a resource's content is stored under.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "name": {
+            "type": "string",
+            "description": "The resource's title."
+          },
+          "format": {
+            "$ref": "../components/schemas/SupportedMediaType.json"
+          },
+          "fileName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The name its content is stored under."
+          }
+        },
+        "required": [
+          "why",
+          "name",
+          "format",
+          "fileName"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "textSource": {
+      "description": "Where the text of a resource of a format comes from.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "format": {
+            "type": "string",
+            "description": "A format as given, with any parameters and in any case."
+          },
+          "textSource": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "Where the format's text comes from, as the registry names it."
+          },
+          "yieldsGeometry": {
+            "type": "boolean"
+          },
+          "derivesText": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "why",
+          "format",
+          "textSource",
+          "yieldsGeometry",
+          "derivesText"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cloneFormat",
+    "storageFileName",
+    "textSource"
+  ],
+  "additionalProperties": false
+}
