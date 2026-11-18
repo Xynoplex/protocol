@@ -39,7 +39,17 @@
     "cases": {
       "type": "array",
       "minItems": 1,
-      "description": "The cases, when the table states its rule case by case. The table's own schema states what a case is."
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the case shows, in prose."
+          }
+        }
+      },
+      "description": "The cases, when the table states its rule case by case. The table's own schema states what a case is, and states a case's `why` as this one."
     }
   },
   "required": [

@@ -17,8 +17,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "type": "string",
-            "pattern": "\\S"
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
           },
           "retryCount": {
             "type": "integer",
