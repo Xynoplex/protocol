@@ -1,0 +1,67 @@
+{
+  "description": "session/oauth.json: the clients a Xynolog client signs in to the issuer as, and the scope every sign-in asks for.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "clients": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The clients the realm registers.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What the client is named by in every SDK."
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The client id the realm registers."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "Its documentation, in prose."
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "docs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "scopes": {
+      "description": "What every sign-in asks for.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The scopes, separated by a space."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Its documentation, in prose."
+        }
+      },
+      "required": [
+        "value",
+        "docs"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "clients",
+    "scopes"
+  ],
+  "additionalProperties": false
+}

@@ -23,7 +23,9 @@
 //   - DeviceCode is anything but what control/UserAction.json carries less its
 //     `requestId`, its `expiresInSeconds` named `expiresIn`;
 //   - a method's `shape` in client/ClientSurface.json is not, in order, the
-//     shapes `shapes` states.
+//     shapes `shapes` states;
+//   - session/SessionCacheCases.json's loads are not, in order, of
+//     client/refresh.json's persisted queries, each keeping its query's value.
 //
 // It reads the source files, so it cannot pass on a stale bundle.
 
@@ -114,10 +116,20 @@ const shapes = Object.keys(surfaceSchema.shapes.properties);
 const methodShapes = surfaceSchema.namespaces.items.properties.methods.items.properties.shape.enum;
 if (!same(methodShapes, shapes)) fail(`ClientSurface.json's method shapes ${JSON.stringify(methodShapes)} are not, in order, the shapes it states ${JSON.stringify(shapes)}`);
 
+const persisted = read('specs/src/client/refresh.json').queries.filter((query) => query.persisted);
+const loads = read('specs/src/session/SessionCacheCases.json').properties.cases.items.oneOf
+  .map((load) => ({ query: load.properties.query.enum, value: load.properties.kept.items.properties.value }));
+if (!same(loads.map((load) => load.query), persisted.map((query) => [query.name]))) {
+  fail(`SessionCacheCases.json loads ${JSON.stringify(loads.map((load) => load.query))}, not, in order, refresh.json's persisted queries ${JSON.stringify(persisted.map((query) => query.name))}`);
+}
+for (const [index, query] of persisted.entries()) {
+  if (loads[index] && !same(loads[index].value, query.value)) fail(`SessionCacheCases.json keeps ${JSON.stringify(loads[index].value)} for ${query.name}, and refresh.json's value is ${JSON.stringify(query.value)}`);
+}
+
 if (failures.length > 0) {
   for (const message of failures) console.error(`✗ ${message}`);
   process.exit(1);
 }
 console.log(
-  `✓ the client types agree with what restates them (${anchorMethods.length} anchor methods, ${reconcile.cases.length} reconcile cases, ${refusalReasons.length} refusal reasons, ${reads.length} readers, ${builders.length} builders, DeviceCode, ${shapes.length} shapes)`,
+  `✓ the client types agree with what restates them (${anchorMethods.length} anchor methods, ${reconcile.cases.length} reconcile cases, ${refusalReasons.length} refusal reasons, ${reads.length} readers, ${builders.length} builders, DeviceCode, ${shapes.length} shapes, ${persisted.length} persisted queries)`,
 );

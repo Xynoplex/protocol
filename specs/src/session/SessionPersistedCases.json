@@ -1,0 +1,372 @@
+{
+  "description": "session/persisted-cases.json: what a client keeps of one person in a SessionStorage, and when it is read, written and deleted.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "people": {
+      "description": "The people the parts name, by name.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "did": {
+            "$ref": "../components/schemas/UserId.json"
+          },
+          "personKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$",
+            "description": "The key the did makes: the unpadded base64url SHA-256 of its UTF-8."
+          }
+        },
+        "required": [
+          "did",
+          "personKey"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The keys a knowledge base and a person make.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "kbId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The knowledge base's id."
+          },
+          "did": {
+            "$ref": "../components/schemas/UserId.json"
+          },
+          "personKey": {
+            "$ref": "#/properties/people/additionalProperties/properties/personKey"
+          },
+          "lastEventIdKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The key of the stream's places."
+          },
+          "cacheKeys": {
+            "description": "The key of each persisted query, by its name, in the order specs/src/client/refresh.json lists them.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "why",
+          "kbId",
+          "did",
+          "personKey",
+          "lastEventIdKey",
+          "cacheKeys"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "forgetStorage": {
+      "description": "What storage holds: each key, and the text kept under it.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "forget": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What forgetting kb-a's stored sign-in deletes.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "by": {
+            "type": "string",
+            "enum": [
+              "signOut",
+              "removal",
+              "signIn",
+              "expiry",
+              "refusal"
+            ],
+            "description": "The way kb-a's stored sign-in is forgotten."
+          },
+          "stored": {
+            "type": "string",
+            "enum": [
+              "expired",
+              "unexpired"
+            ],
+            "description": "The token the session found, for `expiry` and `refusal`. Absent for any other way."
+          },
+          "signedIn": {
+            "type": "string",
+            "enum": [
+              "named",
+              "unnamed",
+              "none"
+            ],
+            "description": "What kb-a's stored sign-in is: one whose personKey is jo's, one with none, or nothing stored."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Whether kb-a is active when its sign-in is forgotten."
+          },
+          "removes": {
+            "type": "string",
+            "enum": [
+              "person",
+              "nothing"
+            ],
+            "description": "What forgetting deletes: every key of the person the sign-in named on kb-a, or none."
+          }
+        },
+        "required": [
+          "why",
+          "by",
+          "signedIn",
+          "open",
+          "removes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "whoAmI": {
+      "$ref": "../components/schemas/UserResponse.json"
+    },
+    "startupStorage": {
+      "description": "What storage holds: each key, and the text kept under it.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "startup": {
+      "type": "array",
+      "minItems": 1,
+      "description": "A session of kb-a made over `startupStorage`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "signedIn": {
+            "type": "string",
+            "enum": [
+              "named",
+              "unnamed",
+              "none"
+            ],
+            "description": "What kb-a's stored sign-in is: one whose personKey is jo's, one with none, or nothing stored."
+          },
+          "gateway": {
+            "type": "string",
+            "enum": [
+              "names",
+              "unreachable"
+            ],
+            "description": "How the gateway answers who the token is: jo, with `whoAmI`, or not at all."
+          },
+          "first": {
+            "type": "string",
+            "enum": [
+              "kept",
+              "fresh"
+            ],
+            "description": "What the client gives for res-2 before the gateway has answered."
+          },
+          "then": {
+            "type": "string",
+            "enum": [
+              "kept",
+              "fresh"
+            ],
+            "description": "What the client gives for res-1 after."
+          },
+          "recorded": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/properties/people/additionalProperties/properties/personKey"
+              }
+            ],
+            "description": "The personKey the stored sign-in holds once the gateway has answered, or null for none."
+          },
+          "place": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../components/schemas/PersistedEventId.json"
+              }
+            ],
+            "description": "The event id the stream resumes res-1's scope from, or null for none."
+          },
+          "untouched": {
+            "type": "boolean",
+            "description": "Whether, once the client has closed, storage holds what `startupStorage` held and nothing else under either prefix. Absent where the row does not state it."
+          }
+        },
+        "required": [
+          "why",
+          "signedIn",
+          "gateway",
+          "first",
+          "then",
+          "recorded",
+          "place"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "crossTab": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Another context writing kb-a's stored sign-in.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "stored": {
+            "nullable": true,
+            "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
+            "type": "object",
+            "properties": {
+              "personKey": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/properties/people/additionalProperties/properties/personKey"
+                  }
+                ],
+                "description": "The personKey the sign-in holds, or null for none."
+              }
+            },
+            "required": [
+              "personKey"
+            ],
+            "additionalProperties": false
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "Whether jo's `resource` key then holds the value the client held."
+          }
+        },
+        "required": [
+          "why",
+          "stored",
+          "saved"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "inProcess": {
+      "type": "array",
+      "minItems": 1,
+      "description": "This process changing the session's sign-in through what holds it.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "stored": {
+            "nullable": true,
+            "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
+            "type": "object",
+            "properties": {
+              "personKey": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/properties/people/additionalProperties/properties/personKey"
+                  }
+                ],
+                "description": "The personKey the sign-in holds, or null for none."
+              }
+            },
+            "required": [
+              "personKey"
+            ],
+            "additionalProperties": false
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "Whether jo's `resource` key then holds the value the client held."
+          }
+        },
+        "required": [
+          "why",
+          "stored",
+          "saved"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "resumeFrom": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Where the stream resumes from.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "frames": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The ids of the events the stream delivers on res-1's scope, in order.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "resumes": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../components/schemas/PersistedEventId.json"
+              }
+            ],
+            "description": "The event id the stream resumes res-1's scope from, or null for none."
+          }
+        },
+        "required": [
+          "why",
+          "frames",
+          "resumes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "people",
+    "keys",
+    "forgetStorage",
+    "forget",
+    "whoAmI",
+    "startupStorage",
+    "startup",
+    "crossTab",
+    "inProcess",
+    "resumeFrom"
+  ],
+  "additionalProperties": false
+}

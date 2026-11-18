@@ -439,6 +439,7 @@ specs/src/bus/registry.json,Normative protocol source,xynolog/protocol,Compatibi
 specs/src/bus/reply-bounds.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientClockCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientDiscoveryAbsent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/ClientRefresh.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientRegistry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientStateUnits.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientSurface.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -950,10 +951,13 @@ specs/src/service-environment/variables.json,Normative protocol source,xynolog/p
 specs/src/service-telemetry/ServiceTelemetryTelemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/service-telemetry/telemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/ClientSecretForm.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/SessionCacheCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionClientAssertionCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionGatewayUrlCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/SessionOauth.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionOpenResourceCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/SessionPersistedCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionRegistryCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionRegistryErrorsCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionStored.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

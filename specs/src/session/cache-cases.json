@@ -1,5 +1,5 @@
 {
-  "$comment": "AUTHORITY for what a client keeps of its queries and of its stream in a SessionStorage, and what it keeps of what another client wrote there: the queries specs/src/client/refresh.json marks `persisted`, and specs/src/session/stored.json's `wholeKey`, `cacheDocument` and `lastEventIds`, case by case. Every SDK runs every case through its own persister for the case's query, under the key stored.json gives it for a knowledge base and a person of the runner's choosing (`cacheKeyPrefix`, the knowledge base's id, `.`, the person's key, `.`, the query's name; `lastEventIdKeyPrefix`, the knowledge base's id, `.` and the person's key), and fails on a difference. `cases` are loads: `stored` is kept under the query's key as its JSON text, or `storedText` as it is; `kept` is every entry the load keeps, a key as the document writes it and a value, compared as a map, as the entries' order is no part of the rule. `writes`: `held` is what the query's cache holds once its answers came; `written` is the document the save writes, its entries compared as a map, and each entry's third item, its stamp, an integer of at least 0 (which one is the clock's, no part of the rule). `refusedWrites` are writes as `writes` are, over a storage that refuses the first write of the query's document: the cache still owes its save after it, and disposal's flush, which the storage takes, writes `written`. `places` are loads of `lastEventIds`: `stored` or `storedText` as for `cases`, and `kept` the places the load keeps. Every value is a wire value its query's `value` in refresh.json holds, except where a case's name says it is not the query's.",
+  "$comment": "AUTHORITY for what a client keeps of its queries and of its stream in a SessionStorage, and what it keeps of what another client wrote there: the queries specs/src/client/refresh.json marks `persisted`, and specs/src/session/stored.json's `wholeKey`, `cacheDocument` and `lastEventIds`, case by case. Every SDK runs every case through its own persister for the case's query, under the key stored.json gives it for a knowledge base and a person of the runner's choosing (`cacheKeyPrefix`, the knowledge base's id, `.`, the person's key, `.`, the query's name; `lastEventIdKeyPrefix`, the knowledge base's id, `.` and the person's key), and fails on a difference. `cases` are loads: `stored` is kept under the query's key as its JSON text, or `storedText` as it is; `kept` is every entry the load keeps, each its `key` as the document writes it and its `value`, compared as a map, as the entries' order is no part of the rule. `writes`: `held` is what the query's cache holds once its answers came, each entry its `key` and its `value`; `written` is the document the save writes, its `version` and its `entries`, each entry stated by its `key` and its `value` and compared as a map, and each entry the save writes ends with its stamp, an integer of at least 0 (which one is the clock's, no part of the rule). `refusedWrites` are writes as `writes` are, over a storage that refuses the first write of the query's document: the cache still owes its save after it, and disposal's flush, which the storage takes, writes `written`. `places` are loads of `lastEventIds`: `stored` or `storedText` as for `cases`, and `kept` the places the load keeps. Every value is a wire value its query's `value` in refresh.json holds, except where a case's name says it is not the query's.",
   "cases": [
     {
       "name": "a resource's document",
@@ -30,24 +30,24 @@
         ]
       },
       "kept": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-1",
             "name": "One",
             "representations": []
           }
-        ],
-        [
-          "res-2",
-          {
+        },
+        {
+          "key": "res-2",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-2",
             "name": "Two",
             "representations": []
           }
-        ]
+        }
       ]
     },
     {
@@ -78,9 +78,9 @@
         ]
       },
       "kept": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "annotations": [
               {
                 "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -95,7 +95,7 @@
             ],
             "total": 1
           }
-        ]
+        }
       ]
     },
     {
@@ -135,9 +135,9 @@
         ]
       },
       "kept": [
-        [
-          "ann-1",
-          {
+        {
+          "key": "ann-1",
+          "value": {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "type": "Annotation",
             "id": "ann-1",
@@ -147,10 +147,10 @@
             },
             "created": "2026-01-01T00:00:00.000Z"
           }
-        ],
-        [
-          "ann-2",
-          {
+        },
+        {
+          "key": "ann-2",
+          "value": {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "type": "Annotation",
             "id": "ann-2",
@@ -160,7 +160,7 @@
             },
             "created": "2026-01-01T00:00:00.000Z"
           }
-        ]
+        }
       ]
     },
     {
@@ -180,13 +180,13 @@
         ]
       },
       "kept": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             "Person",
             "Place"
           ]
-        ]
+        }
       ]
     },
     {
@@ -219,9 +219,9 @@
         ]
       },
       "kept": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             {
               "id": "kinds",
               "name": "Kinds",
@@ -238,7 +238,7 @@
               ]
             }
           ]
-        ]
+        }
       ]
     },
     {
@@ -270,15 +270,15 @@
         ]
       },
       "kept": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-1",
             "name": "One",
             "representations": []
           }
-        ]
+        }
       ]
     },
     {
@@ -585,15 +585,15 @@
         ]
       },
       "kept": [
-        [
-          "res-2",
-          {
+        {
+          "key": "res-2",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-2",
             "name": "Two",
             "representations": []
           }
-        ]
+        }
       ]
     },
     {
@@ -620,15 +620,15 @@
         ]
       },
       "kept": [
-        [
-          "res-2",
-          {
+        {
+          "key": "res-2",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-2",
             "name": "Two",
             "representations": []
           }
-        ]
+        }
       ]
     },
     {
@@ -660,15 +660,15 @@
         ]
       },
       "kept": [
-        [
-          "res-2",
-          {
+        {
+          "key": "res-2",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-2",
             "name": "Two",
             "representations": []
           }
-        ]
+        }
       ]
     },
     {
@@ -711,9 +711,9 @@
         ]
       },
       "kept": [
-        [
-          "ann-2",
-          {
+        {
+          "key": "ann-2",
+          "value": {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "type": "Annotation",
             "id": "ann-2",
@@ -723,7 +723,7 @@
             },
             "created": "2026-01-01T00:00:00.000Z"
           }
-        ]
+        }
       ]
     },
     {
@@ -794,13 +794,13 @@
         ]
       },
       "kept": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             "Person",
             "Place"
           ]
-        ]
+        }
       ]
     },
     {
@@ -808,13 +808,13 @@
       "query": "entityTypes",
       "storedText": "{\"version\":1.0,\"entries\":[[\"_\",[\"Person\",\"Place\"],1e3]]}",
       "kept": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             "Person",
             "Place"
           ]
-        ]
+        }
       ]
     },
     {
@@ -822,15 +822,15 @@
       "query": "resource",
       "storedText": "{\"version\": 1, \"entries\": [[\"res-1\", {\"@context\": \"https://schema.org/\", \"@id\": \"res-1\", \"name\": \"One\", \"representations\": []}, 1000.0]]}",
       "kept": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-1",
             "name": "One",
             "representations": []
           }
-        ]
+        }
       ]
     },
     {
@@ -858,46 +858,46 @@
       "name": "a resource",
       "query": "resource",
       "held": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-1",
             "name": "One",
             "representations": []
           }
-        ],
-        [
-          "res-2",
-          {
+        },
+        {
+          "key": "res-2",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-2",
             "name": "Two",
             "representations": []
           }
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "res-1",
-            {
+          {
+            "key": "res-1",
+            "value": {
               "@context": "https://schema.org/",
               "@id": "res-1",
               "name": "One",
               "representations": []
             }
-          ],
-          [
-            "res-2",
-            {
+          },
+          {
+            "key": "res-2",
+            "value": {
               "@context": "https://schema.org/",
               "@id": "res-2",
               "name": "Two",
               "representations": []
             }
-          ]
+          }
         ]
       }
     },
@@ -905,9 +905,9 @@
       "name": "a resource's annotations",
       "query": "annotations",
       "held": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "annotations": [
               {
                 "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -922,14 +922,14 @@
             ],
             "total": 1
           }
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "res-1",
-            {
+          {
+            "key": "res-1",
+            "value": {
               "annotations": [
                 {
                   "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -944,7 +944,7 @@
               ],
               "total": 1
             }
-          ]
+          }
         ]
       }
     },
@@ -952,9 +952,9 @@
       "name": "an annotation",
       "query": "annotation",
       "held": [
-        [
-          "ann-1",
-          {
+        {
+          "key": "ann-1",
+          "value": {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "type": "Annotation",
             "id": "ann-1",
@@ -964,14 +964,14 @@
             },
             "created": "2026-01-01T00:00:00.000Z"
           }
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "ann-1",
-            {
+          {
+            "key": "ann-1",
+            "value": {
               "@context": "http://www.w3.org/ns/anno.jsonld",
               "type": "Annotation",
               "id": "ann-1",
@@ -981,7 +981,7 @@
               },
               "created": "2026-01-01T00:00:00.000Z"
             }
-          ]
+          }
         ]
       }
     },
@@ -989,24 +989,24 @@
       "name": "the entity types",
       "query": "entityTypes",
       "held": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             "Person",
             "Place"
           ]
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "_",
-            [
+          {
+            "key": "_",
+            "value": [
               "Person",
               "Place"
             ]
-          ]
+          }
         ]
       }
     },
@@ -1014,9 +1014,9 @@
       "name": "the tag schemas",
       "query": "tagSchemas",
       "held": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             {
               "id": "kinds",
               "name": "Kinds",
@@ -1033,14 +1033,14 @@
               ]
             }
           ]
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "_",
-            [
+          {
+            "key": "_",
+            "value": [
               {
                 "id": "kinds",
                 "name": "Kinds",
@@ -1057,7 +1057,7 @@
                 ]
               }
             ]
-          ]
+          }
         ]
       }
     }
@@ -1067,24 +1067,24 @@
       "name": "the entity types, whose first write the storage refuses",
       "query": "entityTypes",
       "held": [
-        [
-          "_",
-          [
+        {
+          "key": "_",
+          "value": [
             "Person",
             "Place"
           ]
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "_",
-            [
+          {
+            "key": "_",
+            "value": [
               "Person",
               "Place"
             ]
-          ]
+          }
         ]
       }
     },
@@ -1092,28 +1092,28 @@
       "name": "a resource, whose first write the storage refuses",
       "query": "resource",
       "held": [
-        [
-          "res-1",
-          {
+        {
+          "key": "res-1",
+          "value": {
             "@context": "https://schema.org/",
             "@id": "res-1",
             "name": "One",
             "representations": []
           }
-        ]
+        }
       ],
       "written": {
         "version": 1,
         "entries": [
-          [
-            "res-1",
-            {
+          {
+            "key": "res-1",
+            "value": {
               "@context": "https://schema.org/",
               "@id": "res-1",
               "name": "One",
               "representations": []
             }
-          ]
+          }
         ]
       }
     }
