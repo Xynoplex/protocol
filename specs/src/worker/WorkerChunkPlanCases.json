@@ -1,0 +1,564 @@
+{
+  "description": "worker/chunk-plan-cases.json: the budget a unit opens with, the step that sizes the next piece, the walk over a text, and the descent into a piece whose reply failed.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "sizing": {
+      "description": "The four numbers of the step.",
+      "type": "object",
+      "properties": {
+        "growBelow": {
+          "type": "number",
+          "description": "A share of the output budget under which the next piece grows."
+        },
+        "shrinkAbove": {
+          "type": "number",
+          "description": "A share of the output budget over which the next piece shrinks."
+        },
+        "growFactor": {
+          "type": "number",
+          "description": "What a piece that grows is multiplied by."
+        },
+        "shrinkFactor": {
+          "type": "number",
+          "description": "What a piece that shrinks is multiplied by."
+        }
+      },
+      "required": [
+        "growBelow",
+        "shrinkAbove",
+        "growFactor",
+        "shrinkFactor"
+      ],
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A budget a unit opens with.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "budget"
+                ]
+              },
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "limits": {
+                "description": "The provider's limits.",
+                "type": "object",
+                "properties": {
+                  "contextTokens": {
+                    "$ref": "../components/schemas/InferenceLimits.json#/properties/contextTokens"
+                  },
+                  "maxOutputTokens": {
+                    "$ref": "../components/schemas/InferenceLimits.json#/properties/maxOutputTokens"
+                  },
+                  "outputTokensPerHour": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "How many output tokens the provider answers in an hour."
+                  }
+                },
+                "required": [
+                  "contextTokens",
+                  "maxOutputTokens"
+                ],
+                "additionalProperties": false
+              },
+              "scaffoldTokens": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The tokens of the prompt around the text."
+              },
+              "typesPerCall": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "How many families of span one call asks for."
+              },
+              "budget": {
+                "description": "What a unit opens with.",
+                "type": "object",
+                "properties": {
+                  "size": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "The size the first piece is cut at, in tokens."
+                  },
+                  "overlap": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "What each cut keeps of the piece before, in tokens."
+                  },
+                  "floor": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "The least a piece is cut at."
+                  },
+                  "ceiling": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "The most a piece is cut at."
+                  },
+                  "outputBudget": {
+                    "type": "integer",
+                    "description": "The most one call may answer."
+                  }
+                },
+                "required": [
+                  "size",
+                  "overlap",
+                  "floor",
+                  "ceiling",
+                  "outputBudget"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "why",
+              "limits",
+              "scaffoldTokens",
+              "typesPerCall",
+              "budget"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A window too small for a unit: the job fails rather than run.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "budget"
+                ]
+              },
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "limits": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/limits"
+              },
+              "scaffoldTokens": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/scaffoldTokens"
+              },
+              "typesPerCall": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/typesPerCall"
+              },
+              "refused": {
+                "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
+              }
+            },
+            "required": [
+              "kind",
+              "why",
+              "limits",
+              "scaffoldTokens",
+              "typesPerCall",
+              "refused"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The size of the next piece.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "step"
+                ]
+              },
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "The size the last piece was cut at."
+              },
+              "outcome": {
+                "description": "What the last piece cost.",
+                "type": "object",
+                "properties": {
+                  "recovered": {
+                    "description": "What the piece's descent recovered it at: a size, or `uncut`.",
+                    "oneOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The size the descent recovered the piece at."
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "uncut"
+                        ],
+                        "description": "The descent accepted the piece itself."
+                      }
+                    ]
+                  },
+                  "outputTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "What the provider counted over the piece's calls."
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              },
+              "bounds": {
+                "description": "What the next size is brought inside.",
+                "type": "object",
+                "properties": {
+                  "floor": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/budget/properties/floor"
+                  },
+                  "ceiling": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/budget/properties/ceiling"
+                  },
+                  "outputBudget": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/budget/properties/outputBudget"
+                  }
+                },
+                "required": [
+                  "floor",
+                  "ceiling",
+                  "outputBudget"
+                ],
+                "additionalProperties": false
+              },
+              "nextSize": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The size of the next piece."
+              }
+            },
+            "required": [
+              "kind",
+              "why",
+              "size",
+              "outcome",
+              "bounds",
+              "nextSize"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The pieces a unit is cut into.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "walk"
+                ]
+              },
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "text": {
+                "type": "string",
+                "description": "The text."
+              },
+              "budget": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/budget"
+              },
+              "outcomes": {
+                "type": "array",
+                "description": "What the runner answers for each piece in turn.",
+                "items": {
+                  "description": "What the runner answers for a piece.",
+                  "type": "object",
+                  "properties": {
+                    "recovered": {
+                      "$ref": "#/properties/cases/items/oneOf/2/properties/outcome/properties/recovered"
+                    },
+                    "outputTokens": {
+                      "$ref": "#/properties/cases/items/oneOf/2/properties/outcome/properties/outputTokens"
+                    },
+                    "fails": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [],
+                  "additionalProperties": false
+                }
+              },
+              "pieces": {
+                "type": "array",
+                "description": "The pieces the walk hands out.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "at": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Where the piece was cut, in code points."
+                    },
+                    "to": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Where it ran to, in code points."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "The size it was cut at."
+                    },
+                    "next": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Where the next piece is cut, in code points."
+                    }
+                  },
+                  "required": [
+                    "at",
+                    "to",
+                    "size",
+                    "next"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "completes": {
+                "type": "boolean",
+                "description": "Whether the walk reached the end of the text."
+              },
+              "resume": {
+                "$ref": "../components/schemas/UnitCursor.json"
+              }
+            },
+            "required": [
+              "kind",
+              "why",
+              "text",
+              "budget",
+              "outcomes",
+              "pieces",
+              "completes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A descent that answers.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "descent"
+                ]
+              },
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "piece": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The piece."
+              },
+              "overlap": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The overlap the piece was cut with, in tokens."
+              },
+              "replies": {
+                "$ref": "#/properties/cases/items/oneOf/5/properties/replies"
+              },
+              "asked": {
+                "$ref": "#/properties/cases/items/oneOf/5/properties/asked"
+              },
+              "result": {
+                "description": "What the descent answers.",
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "The items of every accepted piece, in order.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "recovered": {
+                    "$ref": "#/properties/cases/items/oneOf/2/properties/outcome/properties/recovered"
+                  },
+                  "outputTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "The sum over the calls that answered."
+                  },
+                  "counted": {
+                    "type": "array",
+                    "description": "The count of each accepted piece that had one.",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "underReported": {
+                    "type": "array",
+                    "description": "The verdict of each collapse accepted.",
+                    "items": {
+                      "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/verdict"
+                    }
+                  }
+                },
+                "required": [
+                  "items",
+                  "counted",
+                  "underReported"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "why",
+              "piece",
+              "overlap",
+              "replies",
+              "asked",
+              "result"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A descent that raises.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "descent"
+                ]
+              },
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "piece": {
+                "$ref": "#/properties/cases/items/oneOf/4/properties/piece"
+              },
+              "overlap": {
+                "$ref": "#/properties/cases/items/oneOf/4/properties/overlap"
+              },
+              "replies": {
+                "type": "array",
+                "minItems": 1,
+                "description": "What the runner answers to each call in turn.",
+                "items": {
+                  "oneOf": [
+                    {
+                      "description": "A reply with items.",
+                      "type": "object",
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "description": "What the reply found.",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "outputTokens": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "What the provider counted."
+                        },
+                        "counted": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "The mentions the call priced."
+                        }
+                      },
+                      "required": [
+                        "items"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "description": "A reply that fails.",
+                      "type": "object",
+                      "properties": {
+                        "fails": {
+                          "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
+                        }
+                      },
+                      "required": [
+                        "fails"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "asked": {
+                "type": "array",
+                "minItems": 1,
+                "description": "The calls that must have been made.",
+                "items": {
+                  "description": "The span of the piece a call asked about.",
+                  "type": "object",
+                  "properties": {
+                    "from": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Where the span starts, in code points."
+                    },
+                    "to": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Where it ends, in code points."
+                    }
+                  },
+                  "required": [
+                    "from",
+                    "to"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "raises": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The index in `replies` of the failure the descent ends with."
+              }
+            },
+            "required": [
+              "kind",
+              "why",
+              "piece",
+              "overlap",
+              "replies",
+              "asked",
+              "raises"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "sizing",
+    "cases"
+  ],
+  "additionalProperties": false
+}
