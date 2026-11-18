@@ -382,7 +382,6 @@ contract/flows/YIELD.md,Normative protocol prose,xynolog/protocol,Compatibility 
 package-lock.json,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 package.json,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 scripts/checks/specs/check-archivist.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
-scripts/checks/specs/check-case-tables.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-client-types.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-identifiers.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-jobs.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."

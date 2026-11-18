@@ -2,7 +2,6 @@
 // its file's stem in PascalCase, so `jobs/retry-cases.json`'s schema is
 // `jobs/JobsRetryCases.json`. The name is the type a reader derives from the
 // schema, and differs from the table's file by more than case.
-import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,6 +21,3 @@ export function schemaOf(table) {
   if (!match) throw new Error(`${table} is not <area>/<stem>.json, where a table is`);
   return `${match[1]}/${pascal(match[1])}${pascal(match[2])}.json`;
 }
-
-/** Whether `table` has its schema yet. */
-export const hasSchema = (table) => existsSync(resolve(SPECS, schemaOf(table)));

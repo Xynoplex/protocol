@@ -1,8 +1,17 @@
 #!/usr/bin/env node
-// lint:spec-tables — every table that has its schema is what its schema says,
-// and its schema is one a reader can derive a typed model from.
+// lint:spec-tables — every table has its schema, every table is what its
+// schema says, and its schema is one a reader can derive a typed model from.
 //
-// A table's schema is found by its place (tables.mjs). Each one is read twice:
+// A table is a JSON file at the top of an area of specs/src, named in kebab
+// case, but an area's openapi.json, which is its API document. A case table
+// is a table, so a `*cases.json` anywhere else is refused.
+//
+// A table's schema is found by its place (tables.mjs), and the census holds
+// both ways: a table without its schema is refused, and so is a schema that
+// is a table's, by extending CaseTable or stating CaseTable's `$comment`, with
+// no table of its name beside it.
+//
+// Each schema is read twice:
 //   - as a schema of the table dialect, written so a reader can derive a type
 //     from every node of it. Its keywords mean the same in OpenAPI 3.0 and in
 //     JSON Schema 2020-12 but one: `nullable`, OpenAPI 3.0's, as the
@@ -39,9 +48,9 @@
 // `format` and `discriminator` are read as annotations: the type and the
 // `oneOf` decide.
 
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
-import { CASE_TABLE, SPECS, hasSchema, isCaseTable, schemaOf } from './tables.mjs';
+import { CASE_TABLE, SPECS, isCaseTable, schemaOf } from './tables.mjs';
 
 const failures = [];
 const fail = (file, pointer, message) => failures.push(`${file}#${pointer} ${message}`);
@@ -305,12 +314,32 @@ function errors(file, node, value, path) {
   return found;
 }
 
-// The tables: each <area>/<stem>.json in specs/src that has its schema.
-const tables = readdirSync(SPECS)
-  .filter((area) => !['components', 'paths'].includes(area) && statSync(join(SPECS, area)).isDirectory())
-  .flatMap((area) => readdirSync(join(SPECS, area)).filter((name) => /^[a-z][a-z0-9-]*\.json$/.test(name)).map((name) => `${area}/${name}`))
-  .filter(hasSchema)
-  .sort();
+const areas = readdirSync(SPECS).filter((area) => !['components', 'paths'].includes(area) && statSync(join(SPECS, area)).isDirectory());
+const isTable = (name) => /^[a-z][a-z0-9-]*\.json$/.test(name) && name !== 'openapi.json';
+const tables = areas.flatMap((area) => readdirSync(join(SPECS, area)).filter(isTable).map((name) => `${area}/${name}`)).sort();
+
+// The census.
+function* everyFile(directory) {
+  for (const entry of readdirSync(resolve(SPECS, directory), { withFileTypes: true })) {
+    const path = directory ? `${directory}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) yield* everyFile(path);
+    else yield path;
+  }
+}
+for (const file of everyFile('')) {
+  if (isCaseTable(file) && !tables.includes(file)) fail(file, '', 'is a case table, and a table is at the top of an area');
+}
+const named = new Map(tables.map((table) => [schemaOf(table), table]));
+for (const [file, table] of named) if (!existsSync(resolve(SPECS, file))) fail(table, '', `has no schema, which would be ${file}`);
+const toCaseTable = (file, node) => isObject(node) && typeof node.$ref === 'string' && resolve(dirname(resolve(SPECS, file)), node.$ref.split('#')[0]) === resolve(SPECS, CASE_TABLE);
+for (const area of areas) {
+  for (const name of readdirSync(join(SPECS, area)).filter((name) => /^[A-Z].*\.json$/.test(name))) {
+    const file = `${area}/${name}`;
+    const schema = load(file);
+    const top = [...(Array.isArray(schema.allOf) ? schema.allOf : []), isObject(schema.properties) ? schema.properties.$comment : undefined];
+    if (!named.has(file) && top.some((node) => toCaseTable(file, node))) fail(file, '', 'is a table\'s schema, and no table beside it is named for it');
+  }
+}
 
 // CaseTable is open, for the tables that extend it to close, and leaves what
 // a case is to each of them, but for its `why`.
@@ -318,7 +347,7 @@ for (const [name, property] of Object.entries(load(CASE_TABLE).properties)) {
   if (name !== 'cases') derivable(CASE_TABLE, `/properties/${escape(name)}`, property);
 }
 derivable(CASE_TABLE, '/properties/cases/items/properties/why', load(CASE_TABLE).properties.cases.items.properties.why);
-for (const table of tables) {
+for (const table of tables.filter((table) => existsSync(resolve(SPECS, schemaOf(table))))) {
   const file = schemaOf(table);
   const schema = load(file);
   tableSchema(table, file, schema);
@@ -330,4 +359,4 @@ if (failures.length) {
   for (const failure of failures) console.error(`✗ ${failure}`);
   process.exit(1);
 }
-console.log(`✓ ${tables.length} tables are what their schemas say, and each schema is one a type can be derived from`);
+console.log(`✓ ${tables.length} tables, each with its schema, are what their schemas say, and each schema is one a type can be derived from`);
