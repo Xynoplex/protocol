@@ -9,12 +9,6 @@ import { hasSchema, restated } from './tables.mjs';
 
 const REPO = resolve(fileURLToPath(import.meta.url), '../../../..');
 const SPECS = resolve(REPO, 'specs/src');
-const COUNTED_OFFSETS = new Set([
-  'text/offset-cases.json', 'text/chunk-cases.json', 'annotations/reconcile-cases.json',
-  'annotations/pdf-locate-cases.json', 'annotations/builder-cases.json', 'annotations/id-cases.json',
-  'worker/chunk-plan-cases.json', 'worker/parser-cases.json', 'worker/citation-cases.json',
-  'librarian/window-cases.json',
-]);
 const failures = [];
 const files = [];
 let held = 0;
@@ -56,9 +50,6 @@ for (const file of files) {
     }
   }
   for (const [field, implementation, first] of restated(table)) failures.push(`${relativePath}: ${implementation} cannot be both ${first} and ${field}`);
-  if (COUNTED_OFFSETS.has(relativePath) && !/[\u{10000}-\u{10FFFF}]/u.test(readFileSync(file, 'utf8'))) {
-    failures.push(`${relativePath} states an offset/count rule but has no non-BMP example to distinguish code points from UTF-16 units or bytes`);
-  }
 }
 if (failures.length) {
   for (const failure of failures) console.error(`✗ ${failure}`);

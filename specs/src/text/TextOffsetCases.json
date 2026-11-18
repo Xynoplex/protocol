@@ -1,0 +1,83 @@
+{
+  "description": "text/offset-cases.json: a text, how many code points it is, and the offsets of some spans of it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text."
+          },
+          "codePoints": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many code points the text is."
+          },
+          "spans": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Some spans of the text.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "exact": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The span's words."
+                },
+                "occurrence": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Which occurrence of the words the span is, 1 for the first."
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "The code points before the span's first."
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "The code points before the one after the span's last."
+                }
+              },
+              "required": [
+                "exact",
+                "occurrence",
+                "start",
+                "end"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "why",
+          "text",
+          "codePoints",
+          "spans"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

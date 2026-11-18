@@ -1,0 +1,187 @@
+{
+  "description": "stack/cases.json: a launcher document, read against the schema each case names, and whether it is accepted or where and why it is refused.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A fixture, patched, that is accepted.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "Browser",
+                  "Inference",
+                  "Issuer",
+                  "KnowledgeBase",
+                  "KnowledgeIndex",
+                  "ProjectConfig",
+                  "VectorStore",
+                  "WorkerPool"
+                ],
+                "description": "The schema the document is read against."
+              },
+              "base": {
+                "type": "string",
+                "pattern": "^\\S+\\.yaml$",
+                "description": "A file of the launcher's fixtures."
+              },
+              "patch": {
+                "$comment": "A JSON merge patch (RFC 7396) applied to the base: JSON, as it is given."
+              },
+              "verdict": {
+                "type": "string",
+                "enum": [
+                  "accepted"
+                ]
+              }
+            },
+            "required": [
+              "why",
+              "schema",
+              "base",
+              "patch",
+              "verdict"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A fixture, patched, that is refused.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "schema": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/schema"
+              },
+              "base": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/base"
+              },
+              "patch": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/patch"
+              },
+              "verdict": {
+                "type": "string",
+                "enum": [
+                  "refused"
+                ]
+              },
+              "at": {
+                "type": "string",
+                "pattern": "^(/([^~/]|~[01])*)+$",
+                "description": "The JSON pointer of the value refused."
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "unknown-field",
+                  "missing-required",
+                  "wrong-type",
+                  "not-allowed",
+                  "exactly-one"
+                ],
+                "description": "Why the value is refused."
+              }
+            },
+            "required": [
+              "why",
+              "schema",
+              "base",
+              "patch",
+              "verdict",
+              "at",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A document that is accepted.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "schema": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/schema"
+              },
+              "document": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The document, as YAML text."
+              },
+              "verdict": {
+                "type": "string",
+                "enum": [
+                  "accepted"
+                ]
+              }
+            },
+            "required": [
+              "why",
+              "schema",
+              "document",
+              "verdict"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A document that is refused.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "schema": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/schema"
+              },
+              "document": {
+                "$ref": "#/properties/cases/items/oneOf/2/properties/document"
+              },
+              "verdict": {
+                "type": "string",
+                "enum": [
+                  "refused"
+                ]
+              },
+              "at": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/at"
+              },
+              "reason": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/reason"
+              }
+            },
+            "required": [
+              "why",
+              "schema",
+              "document",
+              "verdict",
+              "at",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

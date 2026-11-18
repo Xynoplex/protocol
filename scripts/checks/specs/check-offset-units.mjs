@@ -16,7 +16,11 @@
 //     its caller;
 //   - any description of a component schema or a client type speaks of an offset, of
 //     characters, or of code units, and does not say "code points". A member
-//     added beside the listed ones is held by this, whatever it is called.
+//     added beside the listed ones is held by this, whatever it is called;
+//   - a case table listed below, whose cases count offsets or lengths of text,
+//     has no character outside the Basic Multilingual Plane: only such a
+//     character tells a count of code points from one of UTF-16 code units or
+//     of bytes.
 //
 // It reads the source files, so it cannot pass on a stale bundle.
 
@@ -38,6 +42,14 @@ const MEMBERS = [
   ['GatherAnnotationOptions', ['properties', 'contextWindow']],
   ['TextSpan', ['allOf', 0, 'properties', 'start']],
   ['TextSpan', ['allOf', 0, 'properties', 'end']],
+];
+
+/** The case tables that count offsets or lengths of text, from specs/src. */
+const COUNTING_TABLES = [
+  'text/offset-cases.json', 'text/chunk-cases.json', 'annotations/reconcile-cases.json',
+  'annotations/pdf-locate-cases.json', 'annotations/builder-cases.json', 'annotations/id-cases.json',
+  'worker/chunk-plan-cases.json', 'worker/parser-cases.json', 'worker/citation-cases.json',
+  'librarian/window-cases.json',
 ];
 
 const SAYS_THE_UNIT = /code points?/i;
@@ -86,8 +98,14 @@ function sweep(node, pointer, schema) {
 }
 for (const [schema, { document }] of schemas) sweep(document, '#', schema);
 
+for (const table of COUNTING_TABLES) {
+  if (!/[\u{10000}-\u{10FFFF}]/u.test(readFileSync(resolve(REPO, 'specs/src', table), 'utf8'))) {
+    failures.push(`specs/src/${table} counts offsets or lengths of text and has no character outside the Basic Multilingual Plane to tell code points from UTF-16 code units or bytes`);
+  }
+}
+
 if (failures.length > 0) {
   for (const message of failures) console.error(`✗ ${message}`);
   process.exit(1);
 }
-console.log(`✓ ${MEMBERS.length} members that carry an offset or a length of text say that they count code points, and no description of ${schemas.size} schemas leaves the unit out`);
+console.log(`✓ ${MEMBERS.length} members that carry an offset or a length of text say that they count code points, no description of ${schemas.size} schemas leaves the unit out, and ${COUNTING_TABLES.length} tables that count text have a character outside the Basic Multilingual Plane`);

@@ -16,7 +16,8 @@
 //       - a `oneOf` of closed objects, any two of them told apart: by a
 //         property both require and fix to different values (a `const` or a
 //         one-member `enum`), or by a property one requires and the other
-//         does not state;
+//         does not state; and `"nullable": true` beside it when its value
+//         may be null;
 //       - a node of one `type`, with only the keywords that type takes, and
 //         `"nullable": true` when its value may be null. An
 //         object with `properties` is closed (`additionalProperties: false`);
@@ -146,7 +147,8 @@ function derivable(file, pointer, node) {
     return;
   }
   if ('oneOf' in node) {
-    for (const key of keys) if (key !== 'oneOf' && !ANNOTATIONS.includes(key)) fail(file, `${pointer}/${escape(key)}`, 'is beside a oneOf, which says what each member is');
+    for (const key of keys) if (!['oneOf', 'nullable', ...ANNOTATIONS].includes(key)) fail(file, `${pointer}/${escape(key)}`, 'is beside a oneOf, which says what each member is');
+    if ('nullable' in node && node.nullable !== true) fail(file, `${pointer}/nullable`, 'must be true, or be left out of a oneOf whose value is never null');
     if (!Array.isArray(node.oneOf) || node.oneOf.length < 2) return fail(file, `${pointer}/oneOf`, 'must name two members or more');
     node.oneOf.forEach((member, index) => derivable(file, `${pointer}/oneOf/${index}`, member));
     const members = node.oneOf.map((member) => objectOf(file, member));

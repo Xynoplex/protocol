@@ -1,0 +1,81 @@
+{
+  "description": "text/decode-cases.json: the text a resource's bytes are, read by its content type, or what a reader refuses them for.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "Bytes read as text.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "contentType": {
+                "type": "string",
+                "description": "The content type the bytes came with, as it came."
+              },
+              "bytes": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{2}( [0-9a-f]{2})*$",
+                "description": "Bytes in hexadecimal: two digits to a byte, in lower case, and a space between bytes."
+              },
+              "text": {
+                "type": "string",
+                "description": "The text the bytes are."
+              }
+            },
+            "required": [
+              "why",
+              "contentType",
+              "bytes",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Bytes refused.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "contentType": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/contentType"
+              },
+              "bytes": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/bytes"
+              },
+              "refused": {
+                "type": "string",
+                "description": "What the refusal names: the label of a charset that is refused, or a media type whose bytes are not its text."
+              }
+            },
+            "required": [
+              "why",
+              "contentType",
+              "bytes",
+              "refused"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

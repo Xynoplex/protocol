@@ -1,0 +1,144 @@
+{
+  "description": "control/cli.json: every option of the launcher commands the control API covers, and what it is in the API.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "commands": {
+      "type": "object",
+      "description": "Each command, by its name.",
+      "additionalProperties": {
+        "description": "A command.",
+        "type": "object",
+        "properties": {
+          "parser": {
+            "type": "string",
+            "pattern": "^[A-Za-z]+$",
+            "description": "The Go function in cli/internal/launcher whose switch reads the command's options."
+          },
+          "method": {
+            "$ref": "./ControlMethods.json#/properties/methods/items/properties/name"
+          },
+          "positionals": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The command's operands, which no switch reads by name.",
+            "items": {
+              "oneOf": [
+                {
+                  "description": "An operand that becomes params fields.",
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The operand, as its usage writes it."
+                    },
+                    "fields": {
+                      "$ref": "#/properties/commands/additionalProperties/properties/flags/additionalProperties/oneOf/0/properties/fields"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "fields"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "An operand the API has no place for.",
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "$ref": "#/properties/commands/additionalProperties/properties/positionals/items/oneOf/0/properties/name"
+                    },
+                    "cliOnly": {
+                      "$ref": "#/properties/commands/additionalProperties/properties/flags/additionalProperties/oneOf/2/properties/cliOnly"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "cliOnly"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "flags": {
+            "type": "object",
+            "description": "Each option, by its flag.",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "description": "An option that becomes params fields.",
+                  "type": "object",
+                  "properties": {
+                    "fields": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "description": "The params fields it becomes, each `<method>.<field path>`.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[a-z][A-Za-z]*(\\.[a-z][A-Za-z]*)+$"
+                      }
+                    },
+                    "notes": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "What else a reader of the row must know."
+                    }
+                  },
+                  "required": [
+                    "fields"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "An option that selects a method.",
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "$ref": "./ControlMethods.json#/properties/methods/items/properties/name"
+                    }
+                  },
+                  "required": [
+                    "method"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "An option the API has no place for.",
+                  "type": "object",
+                  "properties": {
+                    "cliOnly": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Why it has no place in the API."
+                    }
+                  },
+                  "required": [
+                    "cliOnly"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "parser",
+          "method",
+          "flags"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "commands"
+  ],
+  "additionalProperties": false
+}

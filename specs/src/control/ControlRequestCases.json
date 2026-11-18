@@ -1,0 +1,129 @@
+{
+  "description": "control/request-cases.json: a line a client sends the control API, and the answer it gets before any operation runs.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What the case is."
+          },
+          "line": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The line the client sends."
+          },
+          "answer": {
+            "description": "The answer: a result, or an error; null for a notification, which is never answered.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "description": "A result, which holds to the method's result schema.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "./RequestId.json"
+                  },
+                  "result": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "result"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "description": "An error, under the request's id, or null where the line names no request.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "nullable": true,
+                    "allOf": [
+                      {
+                        "$ref": "./RequestId.json"
+                      }
+                    ]
+                  },
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "description": "The JSON-RPC error code."
+                      },
+                      "data": {
+                        "description": "What the error's data says, of the members a case states: its faults by their pointers alone.",
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "$ref": "./ErrorData.json#/properties/code"
+                          },
+                          "retryable": {
+                            "$ref": "./ErrorData.json#/properties/retryable"
+                          },
+                          "fields": {
+                            "type": "array",
+                            "minItems": 1,
+                            "description": "The JSON pointers of the faults the data names, in any order.",
+                            "items": {
+                              "$ref": "./FieldFault.json#/properties/field"
+                            }
+                          },
+                          "supported": {
+                            "$ref": "./ErrorData.json#/properties/supported"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "retryable"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "code"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "error"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "line",
+          "answer"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}
