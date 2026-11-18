@@ -1,0 +1,140 @@
+{
+  "description": "bus/frame-cases.json: what a stream's reader takes for a frame, and who it tells of one it refuses.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A frame that is delivered.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "frame": {
+                "$ref": "../components/schemas/BusFrame.json"
+              },
+              "read": {
+                "$comment": "What the channel's typed reader reads of the payload, where that is not the payload as the frame states it: its channel's payload, JSON as it is given."
+              }
+            },
+            "required": [
+              "why",
+              "frame"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A frame that is refused, with the correlationId its refusal carries when it carries one.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "frame": {
+                "$comment": "A frame that is refused, by BusFrame or by its channel's typed reader: JSON, as it is given."
+              },
+              "refused": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "member": {
+                "type": "string",
+                "pattern": "^([A-Za-z]+(\\.[A-Za-z]+)*)?$",
+                "description": "The first fault's way from the frame: the names of the members it is within, and its own, joined by dots; empty for the frame itself."
+              },
+              "reason": {
+                "$ref": "../client/types/FrameRefusalReason.json"
+              },
+              "told": {
+                "type": "string",
+                "enum": [
+                  "readers",
+                  "failure-report"
+                ],
+                "description": "Who is told of the refusal: the frame's channel's readers, or the transport's failure report."
+              },
+              "correlationId": {
+                "$ref": "../components/schemas/BusFrame.json#/properties/correlationId"
+              },
+              "request": {
+                "type": "string",
+                "enum": [
+                  "fails",
+                  "waits"
+                ],
+                "description": "What becomes of a request awaiting the reply `c-1` on the frame's channel: it fails with the refusal, or goes on awaiting."
+              }
+            },
+            "required": [
+              "why",
+              "frame",
+              "refused",
+              "member",
+              "reason",
+              "told"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A line that is no JSON, which is refused.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "data": {
+                "type": "string",
+                "description": "A `data` line that is no JSON."
+              },
+              "refused": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "member": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/member"
+              },
+              "reason": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/reason"
+              },
+              "told": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/told"
+              },
+              "request": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/request"
+              }
+            },
+            "required": [
+              "why",
+              "data",
+              "refused",
+              "member",
+              "reason",
+              "told"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

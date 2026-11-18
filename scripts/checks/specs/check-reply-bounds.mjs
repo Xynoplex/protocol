@@ -11,9 +11,12 @@
 //     the table does not name: a new answer that can outgrow the bus;
 //   - the table names a list a reply no longer carries, or one its schema now
 //     bounds, or an operation the registry does not have;
-//   - an entry says neither `by` nor `grows`, or both; a `by` names no member
-//     of the request, or one that is neither an array nor an integer with a
-//     `maximum`; a `grows` says with nothing.
+//   - a `by` names no member of the request, or one that is neither an array
+//     nor an integer with a `maximum`.
+//
+// What the file itself holds, each entry `by` a member or one that `grows`
+// with something, is its schema's (bus/BusReplyBounds.json), which
+// check-tables.mjs holds it to.
 //
 // The lists inside a resource's descriptor or an annotation are the record's,
 // bounded by the write that made them, and are not walked.
@@ -81,10 +84,7 @@ for (const { request, result } of registry.operations) {
   for (const [path, entry] of Object.entries(entries)) {
     if (!found.has(path)) fail(`reply-bounds.json names ${path} of ${result}, which it does not carry`);
     else if (found.get(path)) fail(`reply-bounds.json names ${path} of ${result}, which its schema bounds`);
-    const by = entry.by;
-    const grows = entry.grows;
-    if ((by === undefined) === (grows === undefined)) fail(`${request} ${path}: an entry says \`by\` or \`grows\`, one of them`);
-    if (grows !== undefined && (typeof grows !== 'string' || !grows.startsWith('with '))) fail(`${request} ${path}: \`grows\` says with what`);
+    const { by } = entry;
     if (by !== undefined) {
       const asked = member(channels.get(request).schema, by);
       if (asked === undefined) fail(`${request} ${path} is bounded by ${by}, which is no member of its request`);

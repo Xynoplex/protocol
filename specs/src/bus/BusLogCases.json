@@ -1,0 +1,61 @@
+{
+  "description": "bus/log-cases.json: what a bus log shows of a payload: the value of every member named for a credential withheld.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "names": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "The names a credential goes by.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "description": "A payload and what a log shows of it; a payload that is a channel's own names the channel.",
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "channel": {
+            "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+          },
+          "payload": {
+            "type": "object",
+            "description": "A payload, which is an object.",
+            "additionalProperties": {
+              "$comment": "A member's value: JSON, as it is given."
+            }
+          },
+          "shown": {
+            "$ref": "#/properties/cases/items/properties/payload"
+          }
+        },
+        "required": [
+          "why",
+          "payload",
+          "shown"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "names",
+    "cases"
+  ],
+  "additionalProperties": false
+}

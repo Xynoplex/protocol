@@ -1,0 +1,551 @@
+{
+  "description": "bus/registry.json: the event bus's channels, their payloads, and its request/reply operations.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "channelOrder": {
+      "description": "The two orders every SDK lists the channels in.",
+      "type": "object",
+      "properties": {
+        "eventMap": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Every channel, in the order the event map lists them.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        },
+        "schemas": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Every channel, in the order the channel schemas list them.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        }
+      },
+      "required": [
+        "eventMap",
+        "schemas"
+      ],
+      "additionalProperties": false
+    },
+    "channels": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every channel.",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A channel that carries a schema, and the one it is validated against on the wire, or none.",
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "pattern": "^[a-z]+:[a-z]+(-[a-z]+)*$",
+                "description": "The channel's name."
+              },
+              "shape": {
+                "type": "string",
+                "enum": [
+                  "schema"
+                ]
+              },
+              "schema": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Za-z0-9]*$",
+                "description": "A component schema, by its name."
+              },
+              "validate": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/properties/channels/items/oneOf/0/properties/schema"
+                  }
+                ]
+              },
+              "docs": {
+                "description": "Prose written about an entry: the blocks before it, and a note after it.",
+                "type": "object",
+                "properties": {
+                  "lead": {
+                    "type": "array",
+                    "description": "The blocks written before the entry.",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            ""
+                          ],
+                          "description": "A break in the listing."
+                        },
+                        {
+                          "description": "A heading of a part of the listing.",
+                          "type": "object",
+                          "properties": {
+                            "section": {
+                              "$ref": "#/properties/docs/properties/eventName/items/oneOf/0"
+                            }
+                          },
+                          "required": [
+                            "section"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "description": "A comment on what follows.",
+                          "type": "object",
+                          "properties": {
+                            "comment": {
+                              "$ref": "#/properties/docs/properties/eventName"
+                            }
+                          },
+                          "required": [
+                            "comment"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "description": "A doc of the entry itself.",
+                          "type": "object",
+                          "properties": {
+                            "doc": {
+                              "$ref": "#/properties/docs/properties/eventName"
+                            }
+                          },
+                          "required": [
+                            "doc"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "trailing": {
+                    "type": "string",
+                    "description": "A note after the entry on its line, or \"\" for none."
+                  }
+                },
+                "required": [
+                  "lead",
+                  "trailing"
+                ],
+                "additionalProperties": false
+              },
+              "schemaDocs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              }
+            },
+            "required": [
+              "channel",
+              "shape",
+              "schema",
+              "validate",
+              "docs",
+              "schemaDocs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A channel that carries an envelope, which it is not validated against.",
+            "type": "object",
+            "properties": {
+              "channel": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+              },
+              "shape": {
+                "type": "string",
+                "enum": [
+                  "envelope"
+                ]
+              },
+              "schema": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/schema"
+              },
+              "validate": {
+                "type": "string",
+                "nullable": true,
+                "description": "None: only a channel that carries a schema is validated against one."
+              },
+              "docs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              },
+              "schemaDocs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              }
+            },
+            "required": [
+              "channel",
+              "shape",
+              "schema",
+              "validate",
+              "docs",
+              "schemaDocs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A channel that carries a stored event of the record, and the event's payload; its flags are true or absent.",
+            "type": "object",
+            "properties": {
+              "channel": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+              },
+              "shape": {
+                "type": "string",
+                "enum": [
+                  "storedEvent"
+                ]
+              },
+              "event": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+              },
+              "payload": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/schema"
+              },
+              "enriched": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "system": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "validate": {
+                "type": "string",
+                "nullable": true,
+                "description": "None: only a channel that carries a schema is validated against one."
+              },
+              "docs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              },
+              "schemaDocs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              }
+            },
+            "required": [
+              "channel",
+              "shape",
+              "event",
+              "payload",
+              "validate",
+              "docs",
+              "schemaDocs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A channel that carries nothing.",
+            "type": "object",
+            "properties": {
+              "channel": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+              },
+              "shape": {
+                "type": "string",
+                "enum": [
+                  "void"
+                ]
+              },
+              "validate": {
+                "type": "string",
+                "nullable": true,
+                "description": "None: only a channel that carries a schema is validated against one."
+              },
+              "docs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              },
+              "schemaDocs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              }
+            },
+            "required": [
+              "channel",
+              "shape",
+              "validate",
+              "docs",
+              "schemaDocs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A channel that carries an empty object.",
+            "type": "object",
+            "properties": {
+              "channel": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+              },
+              "shape": {
+                "type": "string",
+                "enum": [
+                  "empty"
+                ]
+              },
+              "validate": {
+                "type": "string",
+                "nullable": true,
+                "description": "None: only a channel that carries a schema is validated against one."
+              },
+              "docs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              },
+              "schemaDocs": {
+                "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+              }
+            },
+            "required": [
+              "channel",
+              "shape",
+              "validate",
+              "docs",
+              "schemaDocs"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every operation.",
+      "items": {
+        "description": "A request/reply operation: the request's channel, its result's and its failure's.",
+        "type": "object",
+        "properties": {
+          "request": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          },
+          "result": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          },
+          "failure": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          },
+          "docs": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
+          }
+        },
+        "required": [
+          "request",
+          "result",
+          "failure",
+          "docs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "docs": {
+      "description": "The docs of the types every SDK derives from the registry.",
+      "type": "object",
+      "properties": {
+        "eventName": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Prose: a list of paragraphs, each a text or a list of items.",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "description": "One line of words."
+              },
+              {
+                "description": "A list of items.",
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/properties/docs/properties/eventName/items/oneOf/0"
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "enrichedEvents": {
+          "$ref": "#/properties/docs/properties/eventName"
+        },
+        "channelSchemas": {
+          "$ref": "#/properties/docs/properties/eventName"
+        },
+        "emittableChannel": {
+          "$ref": "#/properties/docs/properties/eventName"
+        }
+      },
+      "required": [
+        "eventName",
+        "enrichedEvents",
+        "channelSchemas",
+        "emittableChannel"
+      ],
+      "additionalProperties": false
+    },
+    "inProcess": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "$ref": "#/properties/docs/properties/eventName"
+        },
+        "channels": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The channels that never leave a process.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        }
+      },
+      "required": [
+        "doc",
+        "channels"
+      ],
+      "additionalProperties": false
+    },
+    "kind": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "$ref": "#/properties/docs/properties/eventName"
+        },
+        "command": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The command channels.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        },
+        "event": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The event channels.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        }
+      },
+      "required": [
+        "doc",
+        "command",
+        "event"
+      ],
+      "additionalProperties": false
+    },
+    "audience": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "$ref": "#/properties/docs/properties/eventName"
+        },
+        "everyone": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The channels every subscriber hears.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        },
+        "scoped": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The channels heard within a resource's scope.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        },
+        "declared": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The channels a subscriber declares.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        }
+      },
+      "required": [
+        "doc",
+        "everyone",
+        "scoped",
+        "declared"
+      ],
+      "additionalProperties": false
+    },
+    "effect": {
+      "type": "object",
+      "properties": {
+        "doc": {
+          "$ref": "#/properties/docs/properties/eventName"
+        },
+        "writes": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The channels that write.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        },
+        "reads": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The channels that read.",
+          "items": {
+            "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
+          }
+        }
+      },
+      "required": [
+        "doc",
+        "writes",
+        "reads"
+      ],
+      "additionalProperties": false
+    },
+    "trace": {
+      "description": "The field of a relayed frame's payload that carries its trace.",
+      "type": "object",
+      "properties": {
+        "meaning": {
+          "$ref": "#/properties/docs/properties/eventName/items/oneOf/0"
+        },
+        "field": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The payload's field."
+        }
+      },
+      "required": [
+        "meaning",
+        "field"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "channelOrder",
+    "channels",
+    "operations",
+    "docs",
+    "inProcess",
+    "kind",
+    "audience",
+    "effect",
+    "trace"
+  ],
+  "additionalProperties": false
+}

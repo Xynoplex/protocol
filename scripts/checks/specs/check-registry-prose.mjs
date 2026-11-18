@@ -3,23 +3,17 @@
 //
 // The registry's prose is read by every SDK's generator, and each lays it out
 // for its own language: its comment markers, its indentation, its width. So
-// the registry states it in no language's shape, as plain text:
+// the registry states it in no language's shape, as plain text. Its shape (a
+// docs entry's `lead` of blocks and its `trailing` note, prose as paragraphs,
+// each a text or `{ "items": [text, ...] }`) is its schema's
+// (bus/BusRegistry.json), which check-tables.mjs holds it to. This holds what
+// no schema says of it:
 //
-//   - a docs entry (a channel's `docs` and `schemaDocs`, an operation's
-//     `docs`) is `lead`, what is written before the entry, and `trailing`, a
-//     note after it on its line or "" for none;
-//   - a lead is a list of blocks: "" where the listing breaks, a `section`
-//     that heads a part of it, a `comment` on what follows, or a `doc` that
-//     documents the entry itself;
-//   - a comment, a doc, and each of `docs.*`, `audience.doc`, `effect.doc`,
-//     `kind.doc` and `inProcess.doc`, is a list of paragraphs, each a text or
-//     `{ "items": [text, ...] }`;
 //   - a text is one line of words: no line break, no tab, no space at either
 //     end or two together (no indent, no alignment), no comment marker
-//     (`//`, `/*`, `*/`, `*`, `#`, `--`), no list marker, no `{@link}`.
-//
-// It fails, too, on a break that leads a listing (the first channel of each
-// of `channelOrder`'s lists, the first operation) or follows another.
+//     (`//`, `/*`, `*/`, `*`, `#`, `--`), no list marker, no `{@link}`;
+//   - a break does not lead a listing (the first channel of each of
+//     `channelOrder`'s lists, the first operation), nor follow another.
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -30,29 +24,18 @@ const registry = JSON.parse(readFileSync(resolve(REPO, 'specs/src/bus/registry.j
 
 const failures = [];
 const fail = (at, message) => failures.push(`${at}: ${message}`);
-const isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
-const keys = (value, at, allowed) => {
-  for (const key of Object.keys(value)) if (!allowed.includes(key)) fail(at, `has \`${key}\`, which is no member here`);
-  for (const key of allowed) if (!(key in value)) fail(at, `lacks \`${key}\``);
-};
-
 const MARKUP = /^(\/\/|\/\*|\*|#|--|- |\d+\. )|\*\/|\{@link/;
 
 function text(value, at) {
-  if (typeof value !== 'string' || value === '') return fail(at, 'is no text: a string of words');
   if (/[\n\r\t]/.test(value)) fail(at, 'breaks a line or holds a tab; a writer lays the text out');
   if (value !== value.trim() || value.includes('  ')) fail(at, 'has a space at an end or two together: an indent or an alignment');
   if (MARKUP.test(value)) fail(at, 'holds comment or list markup; a writer writes its own');
 }
 
 function prose(value, at) {
-  if (!Array.isArray(value) || value.length === 0) return fail(at, 'is no prose: a list of paragraphs');
   value.forEach((paragraph, i) => {
     const where = `${at}/${i}`;
     if (typeof paragraph === 'string') return text(paragraph, where);
-    if (!isObject(paragraph)) return fail(where, 'is neither a text nor a list of items');
-    keys(paragraph, where, ['items']);
-    if (!Array.isArray(paragraph.items) || paragraph.items.length === 0) return fail(`${where}/items`, 'is no list of texts');
     paragraph.items.forEach((item, j) => text(item, `${where}/items/${j}`));
   });
 }
@@ -60,10 +43,7 @@ function prose(value, at) {
 const BLOCKS = { section: text, comment: prose, doc: prose };
 
 function docs(value, at, first) {
-  if (!isObject(value)) return fail(at, 'is no docs entry');
-  keys(value, at, ['lead', 'trailing']);
   if (value.trailing !== '') text(value.trailing, `${at}/trailing`);
-  if (!Array.isArray(value.lead)) return fail(`${at}/lead`, 'is no list of blocks');
   value.lead.forEach((block, i) => {
     const where = `${at}/lead/${i}`;
     if (block === '') {
@@ -71,9 +51,8 @@ function docs(value, at, first) {
       if (value.lead[i - 1] === '') fail(where, 'breaks the listing where it is already broken');
       return;
     }
-    const kinds = isObject(block) ? Object.keys(block) : [];
-    if (kinds.length !== 1 || !(kinds[0] in BLOCKS)) return fail(where, 'is neither "" nor one of `section`, `comment` and `doc`');
-    BLOCKS[kinds[0]](block[kinds[0]], `${where}/${kinds[0]}`);
+    const [kind] = Object.keys(block);
+    BLOCKS[kind](block[kind], `${where}/${kind}`);
   });
 }
 

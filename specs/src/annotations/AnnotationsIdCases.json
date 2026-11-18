@@ -1,0 +1,54 @@
+{
+  "description": "annotations/id-cases.json: what an annotation a worker makes is, and the id derived from it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "resourceId": {
+            "$ref": "../components/schemas/ResourceId.json"
+          },
+          "motivation": {
+            "$ref": "../components/schemas/Motivation.json"
+          },
+          "anchor": {
+            "type": "string",
+            "description": "Where on the resource the annotation is, as a builder makes it; the empty string for the resource as a whole."
+          },
+          "body": {
+            "$comment": "The annotation's body or bodies, as JSON: every member goes into the id, those no body schema states among them."
+          },
+          "id": {
+            "$ref": "../components/schemas/AnnotationId.json"
+          }
+        },
+        "required": [
+          "why",
+          "resourceId",
+          "motivation",
+          "anchor",
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

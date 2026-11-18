@@ -1,0 +1,184 @@
+{
+  "description": "annotations/pdf-locate-cases.json: where a span of a PDF's anchored text is on its pages, where a claim is in a text, and which place a citation lands on.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "anchored": {
+            "$ref": "../components/schemas/AnchoredText.json"
+          },
+          "span": {
+            "description": "A span, by its offsets alone.",
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The offset the span starts at, in code points."
+              },
+              "end": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The offset just past it, in code points."
+              }
+            },
+            "required": [
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          },
+          "overlapping": {
+            "type": "array",
+            "description": "The items the span overlaps, in the order the anchored text has them.",
+            "items": {
+              "$ref": "../components/schemas/PdfTextItem.json"
+            }
+          },
+          "rects": {
+            "type": "array",
+            "description": "One rectangle for each line of each page the span touches.",
+            "items": {
+              "$ref": "../client/types/PdfCoordinate.json"
+            }
+          },
+          "fragments": {
+            "type": "array",
+            "description": "The fragment of each rectangle, in the same order.",
+            "items": {
+              "$ref": "../components/schemas/FragmentSelector.json#/properties/value"
+            }
+          }
+        },
+        "required": [
+          "why",
+          "anchored",
+          "span",
+          "overlapping",
+          "rects",
+          "fragments"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text."
+          },
+          "claim": {
+            "type": "string",
+            "description": "The claim looked for."
+          },
+          "spans": {
+            "type": "array",
+            "description": "Every place the text has the claim, in the text's order.",
+            "items": {
+              "$ref": "#/properties/cases/items/properties/span"
+            }
+          }
+        },
+        "required": [
+          "why",
+          "text",
+          "claim",
+          "spans"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "landing": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "text": {
+            "$ref": "#/properties/claims/items/properties/text"
+          },
+          "items": {
+            "type": "array",
+            "description": "The text's items.",
+            "items": {
+              "$ref": "../components/schemas/PdfTextItem.json"
+            }
+          },
+          "claim": {
+            "$ref": "#/properties/claims/items/properties/claim"
+          },
+          "landed": {
+            "description": "Where the renderer says the cited span ended: a page, and a point on the baseline of the line it ends on.",
+            "type": "object",
+            "properties": {
+              "page": {
+                "$ref": "../client/types/PdfCoordinate.json#/properties/page"
+              },
+              "x": {
+                "$ref": "../client/types/PdfCoordinate.json#/properties/x"
+              },
+              "y": {
+                "$ref": "../client/types/PdfCoordinate.json#/properties/y"
+              }
+            },
+            "required": [
+              "page",
+              "x",
+              "y"
+            ],
+            "additionalProperties": false
+          },
+          "span": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/properties/cases/items/properties/span"
+              }
+            ]
+          }
+        },
+        "required": [
+          "why",
+          "text",
+          "items",
+          "claim",
+          "landed",
+          "span"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases",
+    "claims",
+    "landing"
+  ],
+  "additionalProperties": false
+}
