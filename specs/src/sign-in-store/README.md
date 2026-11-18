@@ -53,12 +53,13 @@ Every writer keeps `<stateDir>` to its owner, as the launcher keeps its state
 home, once it holds the lock (below) and before it reads, so the file and the
 temporary file are its owner's alone from the moment each is made, and the
 lock from then on: with the directory mode, and on Windows, where a mode
-keeps nobody out, the access list, that [`owner-only.json`](owner-only.json)
-states. The list allows full access to the user the writer runs as (its
-process token's user), to the system and to the administrators, and to
-nobody else; it is handed down to everything made in the directory, and it
-is protected, so nothing is inherited from above. Every writer, and the
-launcher, generates the modes and the list from that file.
+keeps nobody out, the directory's access list, that
+[`owner-only.json`](owner-only.json) states. The list allows full access to
+the user the writer runs as (its process token's user), to the system and to
+the administrators, and to nobody else; it is handed down to everything made
+in the directory, and it is protected, so nothing is inherited from above.
+Every writer, and the launcher, generates the modes and the list from that
+file.
 
 A directory that has the list already is left as it is: setting a list hands
 it down to everything beneath, and is done under the lock because a file
@@ -67,6 +68,11 @@ one are compared as Windows writes each out, which names some users by an
 abbreviation (the built-in administrator's SID is written `LA`), and with
 their entries in any order: entries that each allow mean the same in any
 order.
+
+The launcher keeps each file of its own there to its owner the same way:
+with the file mode, and on Windows the file's access list that
+[`owner-only.json`](owner-only.json) states, which is the directory's with
+nothing handed down, since a file has nothing beneath it.
 
 ## Writing it
 
@@ -96,8 +102,8 @@ Every writer takes the lock:
 
 The TypeScript SDK reaches no file itself. It takes the lock, reads, and
 renames through the files its caller gives it (`SignInFiles`), and hands
-them the names, the modes, the access list and the Windows offset this
-contract fixes.
+them the names, the modes, the directory's access list and the Windows offset
+this contract fixes.
 
 On Windows the lock is on one byte of the lock file, far past anything the
 file holds (`OffsetHigh: 0x40000000`), and a writer that locks the whole file
