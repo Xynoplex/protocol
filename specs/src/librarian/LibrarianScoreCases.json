@@ -1,0 +1,290 @@
+{
+  "description": "librarian/score-cases.json: a reference search's request, what each source it reads answers, and the candidates in order with their scores and reasons; or its failure.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A search answered on `match:search-results`.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "now": {
+                "type": "string",
+                "description": "The moment the search is made, which recency is counted from."
+              },
+              "request": {
+                "$ref": "../components/schemas/MatchSearchRequest.json"
+              },
+              "resources": {
+                "type": "array",
+                "description": "The description of each resource the case names.",
+                "items": {
+                  "$ref": "../components/schemas/ResourceDescriptor.json"
+                }
+              },
+              "graph": {
+                "description": "What the graph answers.",
+                "type": "object",
+                "properties": {
+                  "byName": {
+                    "description": "What the graph's listing by name answers.",
+                    "oneOf": [
+                      {
+                        "type": "array",
+                        "description": "The ids it answers, in order.",
+                        "items": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        }
+                      },
+                      {
+                        "description": "The listing fails.",
+                        "type": "object",
+                        "properties": {
+                          "fails": {
+                            "type": "string",
+                            "description": "The failure's message."
+                          }
+                        },
+                        "required": [
+                          "fails"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "byEntityType": {
+                    "type": "array",
+                    "description": "What the graph's listing by entity type answers, in order.",
+                    "items": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "byId": {
+                    "type": "object",
+                    "description": "For each id the graph is asked to describe, whether the description is held or absent, or that the read fails.",
+                    "additionalProperties": {
+                      "type": "string",
+                      "enum": [
+                        "held",
+                        "absent",
+                        "fails"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "vectors": {
+                "description": "What the vector index answers.",
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "hits": {
+                        "type": "array",
+                        "description": "The hits, in the order the index answers them.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "resourceId": {
+                              "$ref": "../components/schemas/ResourceId.json"
+                            },
+                            "score": {
+                              "$ref": "../vectors/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
+                            }
+                          },
+                          "required": [
+                            "resourceId",
+                            "score"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "hits"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "fails": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ],
+                        "description": "The index fails."
+                      }
+                    },
+                    "required": [
+                      "fails"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "term": {
+                "type": "string",
+                "description": "The search term the sources are asked with."
+              },
+              "views": {
+                "type": "object",
+                "description": "For each id the view store is asked for, whether the view is held or absent.",
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": [
+                    "held",
+                    "absent"
+                  ]
+                }
+              },
+              "model": {
+                "description": "What the model is shown and answers.",
+                "oneOf": [
+                  {
+                    "description": "The model answers.",
+                    "type": "object",
+                    "properties": {
+                      "shown": {
+                        "type": "array",
+                        "description": "The ids of the candidates it is asked to score, in the order they are numbered from 1.",
+                        "items": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        }
+                      },
+                      "answers": {
+                        "type": "array",
+                        "description": "The elements it answers.",
+                        "items": {
+                          "$ref": "./prompt-cases.json#/elements/score"
+                        }
+                      }
+                    },
+                    "required": [
+                      "shown",
+                      "answers"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "description": "The model fails.",
+                    "type": "object",
+                    "properties": {
+                      "shown": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/model/oneOf/0/properties/shown"
+                      },
+                      "fails": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ],
+                        "description": "The model does not answer."
+                      }
+                    },
+                    "required": [
+                      "shown",
+                      "fails"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "results": {
+                "type": "array",
+                "description": "The candidates of `match:search-results`, in order: each its id, score and reason.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "score": {
+                      "$ref": "../components/schemas/ScoredResource.json#/allOf/1/properties/score"
+                    },
+                    "matchReason": {
+                      "$ref": "../components/schemas/ScoredResource.json#/allOf/1/properties/matchReason"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "score",
+                    "matchReason"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "why",
+              "now",
+              "request",
+              "resources",
+              "graph",
+              "term",
+              "results"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A search answered on `match:search-failed`.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "now": {
+                "type": "string",
+                "description": "The moment the search is made, which recency is counted from."
+              },
+              "request": {
+                "$ref": "../components/schemas/MatchSearchRequest.json"
+              },
+              "resources": {
+                "type": "array",
+                "description": "The description of each resource the case names.",
+                "items": {
+                  "$ref": "../components/schemas/ResourceDescriptor.json"
+                }
+              },
+              "graph": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/graph"
+              },
+              "vectors": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/vectors"
+              },
+              "failed": {
+                "type": "string",
+                "description": "The message of `match:search-failed`."
+              }
+            },
+            "required": [
+              "why",
+              "now",
+              "request",
+              "resources",
+              "graph",
+              "failed"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

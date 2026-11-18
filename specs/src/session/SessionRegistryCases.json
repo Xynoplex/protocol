@@ -1,0 +1,78 @@
+{
+  "description": "session/registry-cases.json: whether two endpoints are one place, and the order a registry shows a knowledge base's open resources in.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "one": {
+            "$ref": "../components/schemas/KbEndpoint.json"
+          },
+          "other": {
+            "$ref": "../components/schemas/KbEndpoint.json"
+          },
+          "samePlace": {
+            "type": "boolean",
+            "description": "Whether the two are one place."
+          }
+        },
+        "required": [
+          "why",
+          "one",
+          "other",
+          "samePlace"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "openResourceOrder": {
+      "type": "array",
+      "minItems": 1,
+      "description": "How a registry orders a knowledge base's open resources.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "open": {
+            "type": "array",
+            "description": "The resources open in the knowledge base, each as stored.json's `openResource` keeps it.",
+            "items": {
+              "$ref": "stored.json#/openResource"
+            }
+          },
+          "shown": {
+            "type": "array",
+            "description": "The resources' ids, in the order the registry shows them.",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          }
+        },
+        "required": [
+          "why",
+          "open",
+          "shown"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases",
+    "openResourceOrder"
+  ],
+  "additionalProperties": false
+}

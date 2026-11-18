@@ -1,0 +1,72 @@
+{
+  "description": "service-environment/variables.json: every environment variable a Xynolog service written in Rust reads, beside its configuration document.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "variables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z_][A-Z0-9_]*$",
+            "description": "The variable's name."
+          },
+          "services": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "The services that read it.",
+            "items": {
+              "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/services/items"
+            }
+          },
+          "readBy": {
+            "type": "string",
+            "enum": [
+              "service",
+              "opentelemetry"
+            ],
+            "description": "What reads it: the service's own code, or the OpenTelemetry SDK."
+          },
+          "providedBy": {
+            "type": "string",
+            "enum": [
+              "launcher",
+              "image",
+              "operator"
+            ],
+            "description": "What sets it where the launcher runs the service."
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether the service refuses to start without it."
+          },
+          "effect": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What it does."
+          }
+        },
+        "required": [
+          "name",
+          "services",
+          "readBy",
+          "providedBy",
+          "required",
+          "effect"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "variables"
+  ],
+  "additionalProperties": false
+}

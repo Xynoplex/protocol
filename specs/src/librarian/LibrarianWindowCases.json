@@ -1,0 +1,212 @@
+{
+  "description": "librarian/window-cases.json: a text, what an annotation's target selects of it, a window, and the text before the selection, the selection and the text after it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "around": {
+                "description": "The cut the Librarian makes where it summarizes an annotation.",
+                "oneOf": [
+                  {
+                    "description": "A cut that answers.",
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "The text."
+                      },
+                      "selector": {
+                        "$ref": "../components/schemas/AnnotationSelector.json"
+                      },
+                      "window": {
+                        "description": "How much text to take on each side, each its own count.",
+                        "type": "object",
+                        "properties": {
+                          "before": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "How much text to take before the selection, in code points."
+                          },
+                          "after": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "How much text to take after the selection, in code points."
+                          }
+                        },
+                        "required": [
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "context": {
+                        "description": "The text around the selection.",
+                        "type": "object",
+                        "properties": {
+                          "before": {
+                            "type": "string",
+                            "description": "The text from the selection's start less the window, or from the text's start where that is nearer, up to the selection's start."
+                          },
+                          "selected": {
+                            "type": "string",
+                            "description": "The text from the selection's start to its end."
+                          },
+                          "after": {
+                            "type": "string",
+                            "description": "The text from the selection's end to its end and the window, or to the text's end where that is nearer."
+                          }
+                        },
+                        "required": [
+                          "before",
+                          "selected",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "window",
+                      "context"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "description": "A cut that is refused.",
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "The text."
+                      },
+                      "selector": {
+                        "$ref": "../components/schemas/AnnotationSelector.json"
+                      },
+                      "window": {
+                        "$ref": "#/properties/cases/items/oneOf/0/properties/around/oneOf/0/properties/window"
+                      },
+                      "refused": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ],
+                        "description": "The cut fails: nothing places a selection."
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "window",
+                      "refused"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "why",
+              "around"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "gathered": {
+                "description": "The cut in a gathered context.",
+                "oneOf": [
+                  {
+                    "description": "A cut that answers: the text around the selection, or null where nothing places one.",
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "The text."
+                      },
+                      "selector": {
+                        "$ref": "../components/schemas/AnnotationSelector.json"
+                      },
+                      "window": {
+                        "type": "integer",
+                        "description": "How much text to take on each side of the selection, one count, in code points."
+                      },
+                      "context": {
+                        "nullable": true,
+                        "allOf": [
+                          {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/around/oneOf/0/properties/context"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "window",
+                      "context"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "description": "A cut that is refused.",
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "The text."
+                      },
+                      "selector": {
+                        "$ref": "../components/schemas/AnnotationSelector.json"
+                      },
+                      "window": {
+                        "$ref": "#/properties/cases/items/oneOf/1/properties/gathered/oneOf/0/properties/window"
+                      },
+                      "refused": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ],
+                        "description": "The window is less than 100 or more than 5000, and nothing is cut."
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "window",
+                      "refused"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "why",
+              "gathered"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

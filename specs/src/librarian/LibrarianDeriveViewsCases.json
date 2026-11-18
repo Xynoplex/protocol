@@ -1,0 +1,123 @@
+{
+  "description": "librarian/derive-views-cases.json: a knowledge graph, its main resource, and the flat views read off it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "graph": {
+            "$ref": "../components/schemas/KnowledgeGraph.json"
+          },
+          "resource": {
+            "$ref": "../components/schemas/ResourceId.json"
+          },
+          "annotation": {
+            "$ref": "../components/schemas/AnnotationId.json"
+          },
+          "views": {
+            "description": "The views read off the graph.",
+            "type": "object",
+            "properties": {
+              "connections": {
+                "type": "array",
+                "description": "One for each edge from the main resource that is no citation, in the order of the edges.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "resourceName": {
+                      "type": "string",
+                      "description": "The name of the edge's target: its node's label, or its id where the graph has no node for it."
+                    },
+                    "entityTypes": {
+                      "type": "array",
+                      "description": "The entity types of the target's node, none where it has no node or its node states none.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "bidirectional": {
+                      "type": "boolean",
+                      "description": "The edge's flag, false where it states none."
+                    }
+                  },
+                  "required": [
+                    "resourceId",
+                    "resourceName",
+                    "entityTypes",
+                    "bidirectional"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "citedBy": {
+                "type": "array",
+                "description": "One for each resource that cites the main resource, in the order of its first citation.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "resourceName": {
+                      "type": "string",
+                      "description": "Its node's label, or its id where the graph has no node for it."
+                    }
+                  },
+                  "required": [
+                    "resourceId",
+                    "resourceName"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "citedByCount": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How many resources cite the main resource."
+              },
+              "siblingEntityTypes": {
+                "type": "array",
+                "description": "The entity types of the annotations on the main resource but the focal one, each once, in the order they are first stated.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "connections",
+              "citedBy",
+              "citedByCount",
+              "siblingEntityTypes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "graph",
+          "resource",
+          "views"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

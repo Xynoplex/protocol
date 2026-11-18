@@ -1,0 +1,453 @@
+{
+  "description": "librarian/prompt-cases.json: the five prompts the Librarian sends a model: what each is made from, its text, and what it is sent with.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "elements": {
+      "description": "The schema of each element asked for, by the name of the prompt that asks for elements.",
+      "type": "object",
+      "properties": {
+        "score": {
+          "$comment": "The JSON Schema a provider holds each element of the reply to a score prompt to."
+        },
+        "reference-suggestions": {
+          "$comment": "The JSON Schema a provider holds each element of the reply to a reference-suggestions prompt to."
+        }
+      },
+      "required": [
+        "score",
+        "reference-suggestions"
+      ],
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "prompt": {
+                "type": "string",
+                "enum": [
+                  "score"
+                ]
+              },
+              "from": {
+                "description": "What a score prompt is made from: one or both of `selected` and `hint`.",
+                "type": "object",
+                "properties": {
+                  "selected": {
+                    "type": "string",
+                    "description": "The text the annotation selects."
+                  },
+                  "hint": {
+                    "type": "string",
+                    "description": "What the annotation's author typed to say what is meant."
+                  },
+                  "motivation": {
+                    "$ref": "../components/schemas/Motivation.json"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "The name of the resource the annotation is on."
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "The text of the annotation's body."
+                  },
+                  "entityTypes": {
+                    "type": "array",
+                    "description": "The annotation's entity types.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "connected": {
+                    "type": "array",
+                    "description": "The names of the resources the annotation's resource is connected to, in the gathered graph's order.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "relationship": {
+                    "type": "string",
+                    "description": "The relationship sentence gathered for the annotation."
+                  },
+                  "candidates": {
+                    "type": "array",
+                    "description": "The candidates, in an order no rule of ranking changes.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The candidate's name."
+                        },
+                        "entityTypes": {
+                          "type": "array",
+                          "description": "The candidate's entity types.",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "entityTypes"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "motivation",
+                  "source",
+                  "entityTypes",
+                  "connected",
+                  "candidates"
+                ],
+                "additionalProperties": false
+              },
+              "text": {
+                "description": "A text: a string, or a list of pieces where it is long enough to be hard to count.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "description": "The text whole."
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "The text in pieces, one after another.",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "description": "A piece written as it is."
+                        },
+                        {
+                          "description": "A piece that is a text written many times.",
+                          "type": "object",
+                          "properties": {
+                            "repeat": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "What is written."
+                            },
+                            "times": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "description": "How many times it is written."
+                            }
+                          },
+                          "required": [
+                            "repeat",
+                            "times"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "maxTokens": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "The token limit the prompt is sent with."
+              },
+              "temperature": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The temperature the prompt is sent with."
+              }
+            },
+            "required": [
+              "why",
+              "prompt",
+              "from",
+              "text",
+              "maxTokens",
+              "temperature"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "prompt": {
+                "type": "string",
+                "enum": [
+                  "relationship"
+                ]
+              },
+              "from": {
+                "description": "What a relationship prompt is made from.",
+                "type": "object",
+                "properties": {
+                  "passage": {
+                    "type": "string",
+                    "description": "The text the annotation selects."
+                  },
+                  "connected": {
+                    "type": "array",
+                    "description": "The names of the resources the annotation's resource is connected to.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "citedBy": {
+                    "type": "array",
+                    "description": "The names of the resources that cite the annotation's resource, each once.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "siblingEntityTypes": {
+                    "type": "array",
+                    "description": "The entity types of the other annotations on the annotation's resource, each once.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "entityTypes": {
+                    "type": "array",
+                    "description": "The annotation's own entity types.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "passage",
+                  "connected",
+                  "citedBy",
+                  "siblingEntityTypes",
+                  "entityTypes"
+                ],
+                "additionalProperties": false
+              },
+              "text": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+              },
+              "maxTokens": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/maxTokens"
+              },
+              "temperature": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/temperature"
+              }
+            },
+            "required": [
+              "why",
+              "prompt",
+              "from",
+              "text",
+              "maxTokens",
+              "temperature"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "prompt": {
+                "type": "string",
+                "enum": [
+                  "resource-summary"
+                ]
+              },
+              "from": {
+                "description": "What a resource-summary prompt is made from.",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The resource's name."
+                  },
+                  "content": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+                  },
+                  "entityTypes": {
+                    "type": "array",
+                    "description": "The resource's entity types.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "content",
+                  "entityTypes"
+                ],
+                "additionalProperties": false
+              },
+              "text": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+              },
+              "maxTokens": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/maxTokens"
+              },
+              "temperature": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/temperature"
+              }
+            },
+            "required": [
+              "why",
+              "prompt",
+              "from",
+              "text",
+              "maxTokens",
+              "temperature"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "prompt": {
+                "type": "string",
+                "enum": [
+                  "reference-suggestions"
+                ]
+              },
+              "from": {
+                "description": "What a reference-suggestions prompt is made from.",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The reference's title."
+                  },
+                  "entityType": {
+                    "type": "string",
+                    "description": "One entity type of the reference."
+                  },
+                  "stub": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+                  }
+                },
+                "required": [
+                  "title"
+                ],
+                "additionalProperties": false
+              },
+              "text": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+              },
+              "maxTokens": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/maxTokens"
+              },
+              "temperature": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/temperature"
+              }
+            },
+            "required": [
+              "why",
+              "prompt",
+              "from",
+              "text",
+              "maxTokens",
+              "temperature"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "prompt": {
+                "type": "string",
+                "enum": [
+                  "annotation-summary"
+                ]
+              },
+              "from": {
+                "description": "What an annotation-summary prompt is made from.",
+                "type": "object",
+                "properties": {
+                  "resource": {
+                    "type": "string",
+                    "description": "The resource's name."
+                  },
+                  "before": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+                  },
+                  "selected": {
+                    "type": "string",
+                    "description": "The passage."
+                  },
+                  "after": {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+                  },
+                  "entityTypes": {
+                    "type": "array",
+                    "description": "The annotation's entity types.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "resource",
+                  "before",
+                  "selected",
+                  "after",
+                  "entityTypes"
+                ],
+                "additionalProperties": false
+              },
+              "text": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+              },
+              "maxTokens": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/maxTokens"
+              },
+              "temperature": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/temperature"
+              }
+            },
+            "required": [
+              "why",
+              "prompt",
+              "from",
+              "text",
+              "maxTokens",
+              "temperature"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "elements",
+    "cases"
+  ],
+  "additionalProperties": false
+}

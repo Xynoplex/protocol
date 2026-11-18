@@ -1,0 +1,369 @@
+{
+  "description": "session/cases.json: how a client holds a session: when it renews its token, what it reads of one, and what it does at its start and when the gateway refuses its token.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "told": {
+      "$comment": "The reasons a session ends with, each SDK's `SessionEndReason`: a JSON Schema of a string, JSON, as it is given."
+    },
+    "refreshSchedule": {
+      "type": "array",
+      "minItems": 1,
+      "description": "How long to wait before renewing a token.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "claims": {
+            "description": "The token's claims, which a runner puts in any JWT. Absent when the row gives a `token`.",
+            "type": "object",
+            "properties": {
+              "iat": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "When the token was issued, in seconds."
+              },
+              "exp": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "When it expires, in seconds."
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "token": {
+            "type": "string",
+            "description": "A literal token. Absent when the row gives `claims`."
+          },
+          "now": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The time, in seconds."
+          },
+          "delay": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "description": "How long to wait before renewing, in seconds; null for no renewal."
+          }
+        },
+        "required": [
+          "why",
+          "now",
+          "delay"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tokenExpiry": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Reading `exp` out of a token.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "token": {
+            "type": "string",
+            "description": "The token."
+          },
+          "exp": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Its `exp`, or null when none can be read."
+          }
+        },
+        "required": [
+          "why",
+          "token",
+          "exp"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "startup": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What a session does with the credential it finds stored.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "stored": {
+            "type": "string",
+            "enum": [
+              "unexpired",
+              "expired",
+              "none"
+            ],
+            "description": "The access token found stored."
+          },
+          "gateway": {
+            "type": "array",
+            "minItems": 1,
+            "description": "What the gateway answers each time it is asked; the last repeats.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "accepts",
+                "refuses",
+                "unreachable"
+              ]
+            }
+          },
+          "issuer": {
+            "type": "array",
+            "minItems": 1,
+            "description": "What the issuer answers each renewal; the last repeats.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "renews",
+                "refuses",
+                "unreachable"
+              ]
+            }
+          },
+          "asks": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many times the gateway is asked."
+          },
+          "renewals": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many times the issuer is asked to renew."
+          },
+          "ends": {
+            "type": "string",
+            "enum": [
+              "signed-in",
+              "signed-out",
+              "unconfirmed"
+            ],
+            "description": "How the session ends."
+          },
+          "told": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "cases.json#/told"
+              }
+            ],
+            "description": "The reason the session gives `onAuthFailed`, one of the table's `told`; null for none."
+          },
+          "error": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              }
+            ],
+            "description": "The code the session reports, of errors/codes.json's `session`; null for none."
+          },
+          "kept": {
+            "type": "boolean",
+            "description": "Whether a session is still stored."
+          },
+          "then": {
+            "description": "What a session that ends signed out and kept what is stored comes to once it has renewed once more on its own. Absent for any other.",
+            "type": "object",
+            "properties": {
+              "asks": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "renewals": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "ends": {
+                "type": "string",
+                "enum": [
+                  "signed-in",
+                  "signed-out",
+                  "unconfirmed"
+                ],
+                "description": "How the session ends."
+              }
+            },
+            "required": [
+              "asks",
+              "renewals",
+              "ends"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "stored",
+          "gateway",
+          "issuer",
+          "asks",
+          "renewals",
+          "ends",
+          "told",
+          "error",
+          "kept"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "refusal": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What a running session does when the gateway refuses a token.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "refused": {
+            "type": "string",
+            "enum": [
+              "held",
+              "replaced"
+            ],
+            "description": "Which token the gateway refused."
+          },
+          "issuer": {
+            "type": "array",
+            "minItems": 1,
+            "description": "What the issuer answers each renewal; the last repeats.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "renews",
+                "refuses",
+                "unreachable"
+              ]
+            }
+          },
+          "gateway": {
+            "type": "array",
+            "minItems": 1,
+            "description": "What the gateway answers each time it is asked; the last repeats.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "accepts",
+                "refuses",
+                "unreachable"
+              ]
+            }
+          },
+          "asks": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many times the gateway is asked, from the refusal on."
+          },
+          "renewals": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many times the issuer is asked to renew, from the refusal on."
+          },
+          "given": {
+            "type": "boolean",
+            "description": "Whether `refresh` gives a token."
+          },
+          "ends": {
+            "type": "string",
+            "enum": [
+              "signed-in",
+              "signed-out",
+              "unconfirmed"
+            ],
+            "description": "How the session ends."
+          },
+          "told": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "cases.json#/told"
+              }
+            ],
+            "description": "The reason the session gives `onAuthFailed`, one of the table's `told`; null for none."
+          },
+          "error": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              }
+            ],
+            "description": "The code the session reports, of errors/codes.json's `session`; null for none."
+          },
+          "kept": {
+            "type": "boolean",
+            "description": "Whether a session is still stored."
+          },
+          "then": {
+            "description": "What a session that ends signed out and kept what is stored comes to once it has renewed once more on its own. Absent for any other.",
+            "type": "object",
+            "properties": {
+              "asks": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "renewals": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "ends": {
+                "type": "string",
+                "enum": [
+                  "signed-in",
+                  "signed-out",
+                  "unconfirmed"
+                ],
+                "description": "How the session ends."
+              }
+            },
+            "required": [
+              "asks",
+              "renewals",
+              "ends"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "refused",
+          "issuer",
+          "gateway",
+          "asks",
+          "renewals",
+          "given",
+          "ends",
+          "told",
+          "error",
+          "kept"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "told",
+    "refreshSchedule",
+    "tokenExpiry",
+    "startup",
+    "refusal"
+  ],
+  "additionalProperties": false
+}

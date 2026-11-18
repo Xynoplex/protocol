@@ -315,6 +315,10 @@
   ],
   "others": [
     {
+      "property": "byId",
+      "docs": "What a graph answers to a read of each resource's description, keyed by the resource's id (librarian/score-cases.json): a map, not an id."
+    },
+    {
       "property": "clientId",
       "docs": "A connection's own name for itself: a UUID the client makes, which its emits and its stream both carry so the gateway can pair them."
     },
@@ -341,6 +345,10 @@
     {
       "property": "lastEventId",
       "docs": "The id of the last event a stream delivered, a PersistedEventId: where a resumed stream begins."
+    },
+    {
+      "property": "lastEventIds",
+      "docs": "The JSON Schema of where a knowledge base's stream was, as a session stores it under `lastEventIdKeyPrefix` (session/stored.json): a schema, and no id."
     },
     {
       "property": "lastSeenId",

@@ -1,0 +1,545 @@
+{
+  "description": "client/state-units.json: what a client's state units do, case by case, over a scripted transport; and the notices the session's signals raise.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "notices": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Each notice, by its name.",
+      "additionalProperties": {
+        "$comment": "The notice's JSON Schema: JSON, as it is given."
+      }
+    },
+    "fixtures": {
+      "description": "The values a case names by `{\"$fixture\": name}`.",
+      "type": "object",
+      "properties": {
+        "context": {
+          "$ref": "../components/schemas/GatheredContext.json"
+        },
+        "generation": {
+          "$comment": "A generation's parameters. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+        }
+      },
+      "required": [
+        "context",
+        "generation"
+      ],
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The cases.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The unit the case is of: a row of client/surface.json's `stateUnits`."
+          },
+          "case": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "What the case is."
+          },
+          "transport": {
+            "description": "What answers the client's requests.",
+            "type": "object",
+            "properties": {
+              "answers": {
+                "type": "string",
+                "enum": [
+                  "refuses",
+                  "never",
+                  "jobs"
+                ],
+                "description": "What answers a request no `replies` entry answers."
+              },
+              "replies": {
+                "type": "object",
+                "minProperties": 1,
+                "description": "Responses queued by operation, each given before `answers`' rule.",
+                "additionalProperties": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$comment": "A response. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                  }
+                }
+              },
+              "delayMs": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How long every reply is held, in milliseconds."
+              }
+            },
+            "required": [
+              "answers"
+            ],
+            "additionalProperties": false
+          },
+          "made": {
+            "type": "object",
+            "minProperties": 1,
+            "description": "Each unit the case builds, by the name its steps give it, with what it is built from.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "resourceId": {
+                  "$ref": "../components/schemas/ResourceId.json"
+                },
+                "locale": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A yield unit's locale."
+                },
+                "delayMs": {
+                  "$ref": "#/properties/cases/items/properties/steps/items/oneOf/6/properties/pass"
+                },
+                "debounceMs": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "A search pipeline's debounce, in milliseconds."
+                },
+                "initialQuery": {
+                  "type": "string",
+                  "description": "A search pipeline's first query."
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            }
+          },
+          "listen": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The channels of the client's bus read from the moment the units are made.",
+            "items": {
+              "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+            }
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The steps, run in order.",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "settle"
+                  ]
+                },
+                {
+                  "description": "Publishes a frame on the client's own bus.",
+                  "type": "object",
+                  "properties": {
+                    "say": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "correlationId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The correlation id the frame carries."
+                    },
+                    "payload": {
+                      "$comment": "The frame's payload. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                    }
+                  },
+                  "required": [
+                    "say",
+                    "payload"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Gives the client a frame from the wire.",
+                  "type": "object",
+                  "properties": {
+                    "deliver": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "correlationId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The correlation id the frame carries."
+                    },
+                    "payload": {
+                      "$comment": "The frame's payload. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                    }
+                  },
+                  "required": [
+                    "deliver",
+                    "payload"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Replies to a request the client sent, under its correlation id.",
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "nth": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Which request sent on `answer` is replied to, 0 for the first."
+                    },
+                    "reply": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "payload": {
+                      "$comment": "The reply's payload. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                    }
+                  },
+                  "required": [
+                    "answer",
+                    "nth",
+                    "reply",
+                    "payload"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Queues the next response to an operation.",
+                  "type": "object",
+                  "properties": {
+                    "queueReply": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "response": {
+                      "$comment": "The response. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                    }
+                  },
+                  "required": [
+                    "queueReply",
+                    "response"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Calls a method of a unit.",
+                  "type": "object",
+                  "properties": {
+                    "invoke": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The method's name."
+                    },
+                    "of": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The unit, by its name in `made`."
+                    },
+                    "args": {
+                      "type": "object",
+                      "description": "The method's arguments, by its parameters' names.",
+                      "additionalProperties": {
+                        "$comment": "An argument. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                      }
+                    }
+                  },
+                  "required": [
+                    "invoke",
+                    "of",
+                    "args"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Settles, then moves the clock.",
+                  "type": "object",
+                  "properties": {
+                    "pass": {
+                      "description": "A duration: milliseconds, or a duration of client/timing.json scaled and moved.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "description": "Milliseconds."
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "timing": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "A name of client/timing.json's `timing`."
+                            },
+                            "times": {
+                              "type": "number",
+                              "description": "What the duration is multiplied by."
+                            },
+                            "plusMs": {
+                              "type": "integer",
+                              "description": "The milliseconds added to it, after `times`."
+                            }
+                          },
+                          "required": [
+                            "timing"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "pass"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Disposes a unit.",
+                  "type": "object",
+                  "properties": {
+                    "dispose": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The unit, by its name in `made`."
+                    }
+                  },
+                  "required": [
+                    "dispose"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Answers a query the case's search was asked.",
+                  "type": "object",
+                  "properties": {
+                    "answerSearch": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Which query the case's search was asked is answered, 0 for the first."
+                    },
+                    "results": {
+                      "type": "array",
+                      "nullable": true,
+                      "description": "The answer's results, or null for one still on its way.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "answerSearch",
+                    "results"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "States what members hold now.",
+                  "type": "object",
+                  "properties": {
+                    "expect": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "description": "Each unit, by its name in `made`, with what some of its members hold.",
+                      "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "$comment": "What the member holds. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "expect"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Lists every request sent on a channel so far.",
+                  "type": "object",
+                  "properties": {
+                    "sent": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "payloads": {
+                      "type": "array",
+                      "description": "Every request sent on the channel so far, in order.",
+                      "items": {
+                        "$comment": "A request's payload. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                      }
+                    }
+                  },
+                  "required": [
+                    "sent",
+                    "payloads"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Counts the requests sent on a channel so far.",
+                  "type": "object",
+                  "properties": {
+                    "sent": {
+                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "How many requests were sent on the channel so far."
+                    }
+                  },
+                  "required": [
+                    "sent",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Says no request was sent.",
+                  "type": "object",
+                  "properties": {
+                    "nothingSent": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "nothingSent"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Lists what the listened channels carried.",
+                  "type": "object",
+                  "properties": {
+                    "heard": {
+                      "type": "array",
+                      "description": "Exactly what the `listen` channels carried since the units were made or since the last `heard`.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "channel": {
+                            "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                          },
+                          "correlationId": {
+                            "description": "The correlation id the frame carries, or the one the `nth` request sent on `sent` carried.",
+                            "oneOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "sent": {
+                                    "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                                  },
+                                  "nth": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "Which request sent on `sent`, 0 for the first."
+                                  }
+                                },
+                                "required": [
+                                  "sent",
+                                  "nth"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "payload": {
+                            "$comment": "The frame's payload. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
+                          }
+                        },
+                        "required": [
+                          "channel",
+                          "payload"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "heard"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Names members whose readers have ended.",
+                  "type": "object",
+                  "properties": {
+                    "ended": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "description": "Each unit, by its name in `made`, with members whose readers have ended.",
+                      "additionalProperties": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "ended"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Says whether the client's bus has ended.",
+                  "type": "object",
+                  "properties": {
+                    "busDestroyed": {
+                      "type": "boolean",
+                      "description": "Whether the client's bus has ended."
+                    }
+                  },
+                  "required": [
+                    "busDestroyed"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Lists the queries the case's search was asked.",
+                  "type": "object",
+                  "properties": {
+                    "searched": {
+                      "type": "array",
+                      "description": "Every query the case's search was asked so far, in order.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "searched"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "unit",
+          "case",
+          "transport",
+          "made",
+          "steps"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "notices",
+    "fixtures",
+    "cases"
+  ],
+  "additionalProperties": false
+}

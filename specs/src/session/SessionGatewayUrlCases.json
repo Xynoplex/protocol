@@ -1,0 +1,41 @@
+{
+  "description": "session/gateway-url-cases.json: an HTTP endpoint, and the origin a client reaches its gateway at.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "endpoint": {
+            "$ref": "../components/schemas/HttpEndpoint.json"
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true,
+            "description": "The gateway's origin, or null when the host is refused."
+          }
+        },
+        "required": [
+          "why",
+          "endpoint",
+          "origin"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

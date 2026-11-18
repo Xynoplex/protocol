@@ -1,0 +1,211 @@
+{
+  "description": "session/stored.json: what a registry of knowledge bases keeps in a SessionStorage, and what the sessions it makes keep there.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The fixed keys.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "member": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The constant's name, as specs/src/client/surface.json names it."
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The key."
+          },
+          "docs": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "Its documentation, in prose."
+          }
+        },
+        "required": [
+          "member",
+          "key",
+          "docs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "sessionKeyPrefix": {
+      "description": "What begins the key a knowledge base's stored session is kept under.",
+      "type": "object",
+      "properties": {
+        "prefix": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The prefix."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Its documentation, in prose."
+        }
+      },
+      "required": [
+        "prefix",
+        "docs"
+      ],
+      "additionalProperties": false
+    },
+    "lastEventIdKeyPrefix": {
+      "description": "What begins the key of what a session keeps of its stream for one person.",
+      "type": "object",
+      "properties": {
+        "prefix": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The prefix."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Its documentation, in prose."
+        },
+        "example": {
+          "description": "One key, worked out.",
+          "type": "object",
+          "properties": {
+            "kbId": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A knowledge base's id."
+            },
+            "did": {
+              "$ref": "../components/schemas/UserId.json"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The key they make."
+            }
+          },
+          "required": [
+            "kbId",
+            "did",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "prefix",
+        "docs",
+        "example"
+      ],
+      "additionalProperties": false
+    },
+    "cacheKeyPrefix": {
+      "description": "What begins the key of what a client keeps of a query for one person.",
+      "type": "object",
+      "properties": {
+        "prefix": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The prefix."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Its documentation, in prose."
+        },
+        "example": {
+          "description": "One key, worked out.",
+          "type": "object",
+          "properties": {
+            "kbId": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A knowledge base's id."
+            },
+            "did": {
+              "$ref": "../components/schemas/UserId.json"
+            },
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A query's name."
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The key they make."
+            }
+          },
+          "required": [
+            "kbId",
+            "did",
+            "query",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "prefix",
+        "docs",
+        "example"
+      ],
+      "additionalProperties": false
+    },
+    "wholeKey": {
+      "description": "The key a kept query that is per nothing keeps its one entry under.",
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The key."
+        },
+        "docs": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Its documentation, in prose."
+        }
+      },
+      "required": [
+        "key",
+        "docs"
+      ],
+      "additionalProperties": false
+    },
+    "storedSession": {
+      "$comment": "A JSON Schema of what is kept of a sign-in, under `sessionKeyPrefix`: JSON, as it is given."
+    },
+    "pendingAuthorization": {
+      "$comment": "A JSON Schema of what a sign-in by a page redirect remembers, under `pendingAuthorizationKey`: JSON, as it is given."
+    },
+    "openResource": {
+      "$comment": "A JSON Schema of a resource open in a knowledge base, each entry of a list under `openResourcesByKbKey`: JSON, as it is given."
+    },
+    "cacheDocument": {
+      "$comment": "A JSON Schema of what a client keeps of one query, under `cacheKeyPrefix`: JSON, as it is given."
+    },
+    "lastEventIds": {
+      "$comment": "A JSON Schema of where a knowledge base's stream was, under `lastEventIdKeyPrefix`: JSON, as it is given."
+    }
+  },
+  "required": [
+    "$comment",
+    "keys",
+    "sessionKeyPrefix",
+    "lastEventIdKeyPrefix",
+    "cacheKeyPrefix",
+    "wholeKey",
+    "storedSession",
+    "pendingAuthorization",
+    "openResource",
+    "cacheDocument",
+    "lastEventIds"
+  ],
+  "additionalProperties": false
+}
