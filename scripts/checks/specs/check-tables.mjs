@@ -5,14 +5,17 @@
 // A table's schema is found by its place (tables.mjs). Each one is read twice:
 //   - as a schema of the table dialect, written so a reader can derive a type
 //     from every node of it. Its keywords mean the same in OpenAPI 3.0 and in
-//     JSON Schema 2020-12. A node is one of:
+//     JSON Schema 2020-12 but one: `nullable`, OpenAPI 3.0's, as the
+//     components write it, which 2020-12 writes as a `type` that lists
+//     "null". A node is one of:
 //       - a `$ref` and nothing beside it, which OpenAPI 3.0 would not read;
 //       - `{ "$comment": … }` alone: a value that is JSON by nature, such as an
 //         expected annotation, whose comment says what it is;
 //       - a `oneOf` of closed objects, told apart by a property every member
 //         requires and gives a different `const`, or by a required property
 //         only one member has;
-//       - a node of one `type`, with only the keywords that type takes. An
+//       - a node of one `type`, with only the keywords that type takes, and
+//         `"nullable": true` when its value may be null. An
 //         object with `properties` is closed (`additionalProperties: false`);
 //         one without is a map, whose `additionalProperties` is its values'
 //         schema. An array states its `items`;
@@ -23,7 +26,8 @@
 // A case table's schema extends CaseTable.json: its `allOf` is that and only
 // that, and it admits each of CaseTable's properties with `true`, except
 // `cases`, which it states as an array of its own cases, or leaves out when
-// it has none. A case's `why`, where it has one, is CaseTable's.
+// it has none. A row's `why`, in `cases` or in any other list the table
+// states, is CaseTable's.
 // `additionalProperties` does not see through `allOf`, so the admissions are
 // what keeps the closed table open to what CaseTable states. Any other table's schema requires `$comment`, stated
 // as CaseTable's.
@@ -142,10 +146,11 @@ function derivable(file, pointer, node) {
     return fail(file, `${pointer}/type`, `must be one of ${Object.keys(TAKES).join(', ')}, or the node a $ref, a oneOf or { "$comment": … }`);
   }
   for (const key of keys) {
-    if (key !== 'type' && !ANNOTATIONS.includes(key) && !TAKES[node.type].includes(key)) {
+    if (key !== 'type' && key !== 'nullable' && !ANNOTATIONS.includes(key) && !TAKES[node.type].includes(key)) {
       fail(file, `${pointer}/${escape(key)}`, `is no keyword of the table dialect for a ${node.type}`);
     }
   }
+  if ('nullable' in node && node.nullable !== true) fail(file, `${pointer}/nullable`, 'must be true, or be left out of a node whose value is never null');
   for (const key of ['enum', 'const'].filter((key) => key in node)) {
     const values = key === 'enum' ? node.enum : [node.const];
     if (!Array.isArray(values) || values.length === 0) { fail(file, `${pointer}/enum`, 'must list one value or more'); continue; }
@@ -186,11 +191,14 @@ function tableSchema(table, file, schema) {
     }
     own.properties = properties;
     const why = { $ref: toCaseTable + '#/properties/cases/items/properties/why' };
-    const items = properties.cases?.items;
-    const cases = isObject(items) && Array.isArray(items.oneOf) ? items.oneOf.map((member, index) => [`/properties/cases/items/oneOf/${index}`, member]) : [['/properties/cases/items', items]];
-    for (const [pointer, kind] of cases) {
-      if (isObject(kind) && isObject(kind.properties) && 'why' in kind.properties && !equal(kind.properties.why, why)) {
-        fail(file, `${pointer}/properties/why`, `is CaseTable's, and must be { "$ref": "${why.$ref}" }`);
+    for (const [name, list] of Object.entries(properties)) {
+      const items = isObject(list) && list.type === 'array' ? list.items : undefined;
+      const at = `/properties/${escape(name)}/items`;
+      const rows = isObject(items) && Array.isArray(items.oneOf) ? items.oneOf.map((member, index) => [`${at}/oneOf/${index}`, member]) : [[at, items]];
+      for (const [pointer, row] of rows) {
+        if (isObject(row) && isObject(row.properties) && 'why' in row.properties && !equal(row.properties.why, why)) {
+          fail(file, `${pointer}/properties/why`, `is CaseTable's, and must be { "$ref": "${why.$ref}" }`);
+        }
       }
     }
   } else {

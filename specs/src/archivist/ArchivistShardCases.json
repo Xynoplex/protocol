@@ -1,0 +1,45 @@
+{
+  "description": "archivist/shard-cases.json: the shard a key is filed under.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "key": {
+            "type": "string",
+            "description": "The key: a resource id, a storage URI or a content checksum. It may be empty."
+          },
+          "shard": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{2}/[0-9a-f]{2}$",
+            "description": "The two directory levels the key is filed under, `<ab>/<cd>`."
+          }
+        },
+        "required": [
+          "why",
+          "key",
+          "shard"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

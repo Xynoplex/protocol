@@ -13,8 +13,7 @@
 //     motivations not exactly Motivation;
 //   - the anchored-text entry's provenance is not ExtractedText's, or its
 //     decline classes are not ExtractionDeclined's;
-//   - the shard table is empty, or a case's shard is not two pairs of
-//     lowercase hex digits;
+//   - the shard table is missing (check-tables.mjs holds it to its schema);
 //   - the protocol's account of the Archivist is missing, or does not name a
 //     schema, a table, a persisted event or a route of its HTTP surface.
 //
@@ -99,15 +98,7 @@ if (has('AnchoredTextEntry')) {
   }
 }
 
-const table = (path) => (existsSync(resolve(REPO, path)) ? read(resolve(REPO, path)).cases ?? [] : null);
-for (const path of TABLES) {
-  const cases = table(path);
-  if (cases === null) fail(`${path} is missing`);
-  else if (cases.length === 0) fail(`${path} has no cases`);
-}
-for (const { key, shard } of table(TABLES[0]) ?? []) {
-  if (!/^[0-9a-f]{2}\/[0-9a-f]{2}$/.test(shard)) fail(`shard case ${JSON.stringify(key)}: ${JSON.stringify(shard)} is not <ab>/<cd>`);
-}
+for (const path of TABLES) if (!existsSync(resolve(REPO, path))) fail(`${path} is missing`);
 
 if (!existsSync(resolve(REPO, PROTOCOL))) {
   fail(`${PROTOCOL} is missing`);
