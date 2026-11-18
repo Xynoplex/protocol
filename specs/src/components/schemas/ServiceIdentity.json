@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "description": "The identity provider a service's account signs in at, by its issuer.",
+  "properties": {
+    "issuer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The issuer URL, exactly as tokens carry it in `iss`."
+    }
+  },
+  "required": [
+    "issuer"
+  ],
+  "additionalProperties": false
+}

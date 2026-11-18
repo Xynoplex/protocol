@@ -15,50 +15,28 @@
           "description": "Discriminant — both ExtractionOutcome members carry `kind`, single-valued: the category here, the detail in `method`."
         },
         "method": {
-          "type": "string",
-          "enum": [
-            "text-passthrough",
-            "pdf-text-layer",
-            "table",
-            "form",
-            "ocr"
+          "allOf": [
+            {
+              "$ref": "./ExtractionMethod.json"
+            }
           ],
           "description": "How the text was extracted."
         },
         "pdfClass": {
-          "type": "string",
-          "enum": [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G"
+          "allOf": [
+            {
+              "$ref": "./PdfClass.json"
+            }
           ],
           "description": "PDF classification, when the source was a PDF."
         },
         "ocrConfidence": {
-          "type": "object",
-          "description": "How well the engine read the pixels, when any of this text came from OCR.",
-          "properties": {
-            "mean": {
-              "type": "number",
-              "description": "Mean per-word confidence, 0-100."
-            },
-            "lowConfidenceWords": {
-              "type": "integer",
-              "description": "Words the engine was unsure of."
-            },
-            "totalWords": {
-              "type": "integer"
+          "allOf": [
+            {
+              "$ref": "./OcrConfidence.json"
             }
-          },
-          "required": [
-            "mean",
-            "lowConfidenceWords",
-            "totalWords"
-          ]
+          ],
+          "description": "How well the engine read the pixels, when any of this text came from OCR."
         },
         "unreadPages": {
           "type": "array",

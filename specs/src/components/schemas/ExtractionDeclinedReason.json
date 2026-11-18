@@ -1,0 +1,10 @@
+{
+  "type": "string",
+  "enum": [
+    "no-text-layer",
+    "encrypted",
+    "corrupt",
+    "too-large"
+  ],
+  "description": "Why extraction yielded nothing, by class."
+}

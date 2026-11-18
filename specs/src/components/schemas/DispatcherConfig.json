@@ -11,19 +11,12 @@
       "description": "The URL the dispatcher reaches the gateway at: its only route to the bus."
     },
     "identity": {
-      "type": "object",
-      "description": "The issuer the dispatcher's service account signs in at.",
-      "properties": {
-        "issuer": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The issuer URL, exactly as tokens carry it in `iss`."
+      "allOf": [
+        {
+          "$ref": "./ServiceIdentity.json"
         }
-      },
-      "required": [
-        "issuer"
       ],
-      "additionalProperties": false
+      "description": "The issuer the dispatcher's service account signs in at."
     },
     "queue": {
       "type": "object",

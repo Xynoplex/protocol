@@ -3,15 +3,7 @@
   "description": "Success response after creating a cloned resource.",
   "properties": {
     "response": {
-      "type": "object",
-      "properties": {
-        "resourceId": {
-          "$ref": "./ResourceId.json"
-        }
-      },
-      "required": [
-        "resourceId"
-      ]
+      "$ref": "./YieldedResource.json"
     }
   },
   "required": [

@@ -11,39 +11,20 @@
       "description": "The URL the Librarian reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "type": "object",
-      "description": "The issuer the Librarian's service account signs in at.",
-      "properties": {
-        "issuer": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The issuer URL, exactly as tokens carry it in `iss`."
+      "allOf": [
+        {
+          "$ref": "./ServiceIdentity.json"
         }
-      },
-      "required": [
-        "issuer"
       ],
-      "additionalProperties": false
+      "description": "The issuer the Librarian's service account signs in at."
     },
     "archivist": {
-      "type": "object",
-      "description": "Where the Archivist listens. The Librarian reads a resource's bytes from it, as its service account.",
-      "properties": {
-        "host": {
-          "type": "string",
-          "minLength": 1
-        },
-        "port": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 65535
+      "allOf": [
+        {
+          "$ref": "./ServiceAddress.json"
         }
-      },
-      "required": [
-        "host",
-        "port"
       ],
-      "additionalProperties": false
+      "description": "Where the Archivist listens. The Librarian reads a resource's bytes from it, as its service account."
     },
     "graph": {
       "$ref": "./GraphConfig.json"

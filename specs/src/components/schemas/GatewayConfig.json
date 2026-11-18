@@ -38,24 +38,12 @@
       "additionalProperties": false
     },
     "archivist": {
-      "type": "object",
-      "description": "Where the Archivist listens.",
-      "properties": {
-        "host": {
-          "type": "string",
-          "minLength": 1
-        },
-        "port": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 65535
+      "allOf": [
+        {
+          "$ref": "./ServiceAddress.json"
         }
-      },
-      "required": [
-        "host",
-        "port"
       ],
-      "additionalProperties": false
+      "description": "Where the Archivist listens."
     },
     "signal": {
       "type": "object",

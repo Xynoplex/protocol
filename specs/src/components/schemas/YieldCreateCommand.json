@@ -68,18 +68,12 @@
       "type": "string"
     },
     "generator": {
-      "description": "The Software peer that produced the content, when software did. Its identity must be the emitter's own — the knowledge base refuses a generator naming anyone else, and supplies it from the verified emitter when omitted. `creator` and `wasAttributedTo` are never sent; the knowledge base derives them from the emitter and the cited job.",
-      "oneOf": [
+      "allOf": [
         {
-          "$ref": "./Agent.json"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "./Agent.json"
-          }
+          "$ref": "./OneOrMoreAgents.json"
         }
-      ]
+      ],
+      "description": "The Software peer that produced the content, when software did. Its identity must be the emitter's own — the knowledge base refuses a generator naming anyone else, and supplies it from the verified emitter when omitted. `creator` and `wasAttributedTo` are never sent; the knowledge base derives them from the emitter and the cited job."
     }
   },
   "required": [

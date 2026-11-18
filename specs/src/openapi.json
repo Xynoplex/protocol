@@ -130,6 +130,9 @@
       "AgentSoftware": {
         "$ref": "components/schemas/AgentSoftware.json"
       },
+      "OneOrMoreAgents": {
+        "$ref": "components/schemas/OneOrMoreAgents.json"
+      },
       "Annotation": {
         "$ref": "components/schemas/Annotation.json"
       },
@@ -189,6 +192,9 @@
       },
       "BodyOperationReplace": {
         "$ref": "components/schemas/BodyOperationReplace.json"
+      },
+      "BodyOperation": {
+        "$ref": "components/schemas/BodyOperation.json"
       },
       "BodyPurpose": {
         "$ref": "components/schemas/BodyPurpose.json"
@@ -373,8 +379,20 @@
       "ExtractedText": {
         "$ref": "components/schemas/ExtractedText.json"
       },
+      "PdfClass": {
+        "$ref": "components/schemas/PdfClass.json"
+      },
+      "ExtractionMethod": {
+        "$ref": "components/schemas/ExtractionMethod.json"
+      },
+      "OcrConfidence": {
+        "$ref": "components/schemas/OcrConfidence.json"
+      },
       "ExtractionDeclined": {
         "$ref": "components/schemas/ExtractionDeclined.json"
+      },
+      "ExtractionDeclinedReason": {
+        "$ref": "components/schemas/ExtractionDeclinedReason.json"
       },
       "ExtractionOutcome": {
         "$ref": "components/schemas/ExtractionOutcome.json"
@@ -706,6 +724,12 @@
       "Representation": {
         "$ref": "components/schemas/Representation.json"
       },
+      "OneOrMoreStrings": {
+        "$ref": "components/schemas/OneOrMoreStrings.json"
+      },
+      "OneOrMoreUris": {
+        "$ref": "components/schemas/OneOrMoreUris.json"
+      },
       "RepresentationAddedPayload": {
         "$ref": "components/schemas/RepresentationAddedPayload.json"
       },
@@ -834,6 +858,9 @@
       },
       "YieldUpdateOk": {
         "$ref": "components/schemas/YieldUpdateOk.json"
+      },
+      "YieldedResource": {
+        "$ref": "components/schemas/YieldedResource.json"
       },
       "BusEventMessage": {
         "$ref": "components/schemas/BusEventMessage.json"
@@ -1056,6 +1083,12 @@
       },
       "ArchivistConfig": {
         "$ref": "components/schemas/ArchivistConfig.json"
+      },
+      "ServiceIdentity": {
+        "$ref": "components/schemas/ServiceIdentity.json"
+      },
+      "ServiceAddress": {
+        "$ref": "components/schemas/ServiceAddress.json"
       },
       "ResourceAnnotations": {
         "$ref": "components/schemas/ResourceAnnotations.json"

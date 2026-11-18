@@ -8,17 +8,7 @@
     "operations": {
       "type": "array",
       "items": {
-        "oneOf": [
-          {
-            "$ref": "./BodyOperationAdd.json"
-          },
-          {
-            "$ref": "./BodyOperationRemove.json"
-          },
-          {
-            "$ref": "./BodyOperationReplace.json"
-          }
-        ]
+        "$ref": "./BodyOperation.json"
       },
       "minItems": 1,
       "description": "Array of body modification operations to apply"

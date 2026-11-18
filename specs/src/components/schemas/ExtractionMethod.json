@@ -1,0 +1,11 @@
+{
+  "type": "string",
+  "enum": [
+    "text-passthrough",
+    "pdf-text-layer",
+    "table",
+    "form",
+    "ocr"
+  ],
+  "description": "How a text was extracted: a plain text taken as it is, a PDF's text layer read, a grid written as rows, a filled form's values read, or pixels read by OCR."
+}
