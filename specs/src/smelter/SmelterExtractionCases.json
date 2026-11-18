@@ -1,0 +1,192 @@
+{
+  "description": "smelter/extraction-cases.json: what deriving a PDF's text comes to, document by document.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "fixtures": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The directory the fixtures are in, from the root of the repository."
+    },
+    "largestPdfBytes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The most bytes a document is read of."
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A document whose text is read.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "fixture": {
+                "type": "string",
+                "pattern": "^[a-z0-9-]+\\.pdf$",
+                "description": "A file in the directory `fixtures`."
+              },
+              "pdfClass": {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "description": "The class the document is sorted into."
+              },
+              "method": {
+                "$ref": "../components/schemas/ExtractionMethod.json"
+              },
+              "pagesWithItems": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How many pages have a run of the text placed on them."
+              },
+              "words": {
+                "description": "Words the text has.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "onPage": {
+                "type": "object",
+                "description": "The page an item with each word is on, by the word.",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "absent": {
+                "description": "Strings the text has not.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "rows": {
+                "description": "A grid's rows, each its cells in order.",
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "unreadPages": {
+                "description": "The pages nothing was read from.",
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "required": [
+              "why",
+              "fixture",
+              "pdfClass",
+              "method",
+              "pagesWithItems",
+              "words"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A file that is declined.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "fixture": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/fixture"
+              },
+              "declined": {
+                "$ref": "../components/schemas/ExtractionDeclinedReason.json"
+              }
+            },
+            "required": [
+              "why",
+              "fixture",
+              "declined"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A document that is no file, which is declined.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "bytes": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "utf8": {
+                        "type": "string",
+                        "description": "A text whose UTF-8 bytes are the document."
+                      }
+                    },
+                    "required": [
+                      "utf8"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "length": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "A document of this many bytes, whatever they are."
+                      }
+                    },
+                    "required": [
+                      "length"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "declined": {
+                "$ref": "../components/schemas/ExtractionDeclinedReason.json"
+              }
+            },
+            "required": [
+              "why",
+              "bytes",
+              "declined"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "fixtures",
+    "largestPdfBytes",
+    "cases"
+  ],
+  "additionalProperties": false
+}

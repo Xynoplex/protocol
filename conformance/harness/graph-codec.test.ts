@@ -54,17 +54,6 @@ function annotation(why: string, value: unknown): Annotation {
   return value;
 }
 
-/**
- * An annotation as the record gives it. The table gives one with an empty
- * body, to say that nothing is stored for it; the spec's Annotation has no
- * empty body, so that one is held to the spec without it.
- */
-function recorded(why: string, value: unknown): Annotation {
-  if (!isRow(value) || !Array.isArray(value['body']) || value['body'].length > 0) return annotation(why, value);
-  const { body: _empty, ...rest } = value;
-  return { ...annotation(why, rest), body: [] };
-}
-
 function resource(why: string, value: unknown): ResourceDescriptor {
   if (!validators.ResourceDescriptor(value)) throw new Error(`${TABLE}: "${why}" gives a resource the spec does not allow: ${formatErrors(validators.ResourceDescriptor.errors)}`);
   return value;
@@ -81,7 +70,7 @@ function refused(why: string, value: unknown): string | undefined {
   throw new Error(`${TABLE}: "${why}" gives a refusal that is not a word`);
 }
 
-const annotationStored = part('annotationStored', (why, given) => ({ annotation: recorded(why, given['annotation']), holds: annotation(why, given['holds']) }));
+const annotationStored = part('annotationStored', (why, given) => ({ annotation: annotation(why, given['annotation']), holds: annotation(why, given['holds']) }));
 
 const annotationRead = part('annotationRead', (why, given) => {
   const tags = given['tags'];

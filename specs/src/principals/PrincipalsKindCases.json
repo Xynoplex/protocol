@@ -1,0 +1,47 @@
+{
+  "description": "principals/kind-cases.json: the kind of principal a DID names, read from the DID alone.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "did": {
+            "type": "string",
+            "description": "The DID read, which may be no DID at all."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "person",
+              "software"
+            ]
+          }
+        },
+        "required": [
+          "why",
+          "did",
+          "kind"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,349 @@
+{
+  "description": "smelter/reconcile-cases.json: the work a Smelter plans when it starts, from what its vector index, the catalog and its anchored-text store hold.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "index": {
+            "description": "What the vector index holds.",
+            "type": "object",
+            "properties": {
+              "resources": {
+                "description": "The resources the index holds points for.",
+                "type": "array",
+                "items": {
+                  "description": "A resource the index holds points for. Its checksum and media type are absent when the points carry none.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "checksum": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The checksum of bytes: of those the points were made from, here."
+                    },
+                    "mediaType": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "A media type as it is written, with whatever parameters it states. It need not be one the registry lists."
+                    },
+                    "entityTypes": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "description": "Entity types, each once, in no order."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "entityTypes"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "declined": {
+                "description": "The resources whose bytes gave no text.",
+                "type": "array",
+                "items": {
+                  "description": "A resource the index remembers declining.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "checksum": {
+                      "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/checksum"
+                    },
+                    "mediaType": {
+                      "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/mediaType"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "checksum",
+                    "mediaType"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "annotations": {
+                "description": "The annotations the index holds a point for.",
+                "type": "array",
+                "items": {
+                  "description": "An annotation the index holds a point for.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "entityTypes": {
+                      "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/entityTypes"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "entityTypes"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "resources",
+              "declined",
+              "annotations"
+            ],
+            "additionalProperties": false
+          },
+          "anchored": {
+            "description": "The keys of the anchored-text store: each the checksum of the bytes an entry was derived from.",
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/checksum"
+            }
+          },
+          "catalog": {
+            "description": "The resources of the knowledge base that are not archived.",
+            "type": "array",
+            "items": {
+              "description": "A resource of the knowledge base that is not archived. Its media type and checksum are its first representation's, and absent where the catalog states none.",
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "../components/schemas/ResourceId.json"
+                },
+                "mediaType": {
+                  "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/mediaType"
+                },
+                "checksum": {
+                  "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/checksum"
+                },
+                "entityTypes": {
+                  "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/entityTypes"
+                },
+                "annotations": {
+                  "type": "array",
+                  "items": {
+                    "description": "An annotation, with the entity types its body states.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "../components/schemas/AnnotationId.json"
+                      },
+                      "quote": {
+                        "type": "string",
+                        "description": "The text its target quotes: the empty string when it quotes none."
+                      },
+                      "entityTypes": {
+                        "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/entityTypes"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "quote",
+                      "entityTypes"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "entityTypes",
+                "annotations"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "work": {
+            "description": "What is planned, each item told apart by its kind.",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "description": "Index the resource's text in place of whatever points it has.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "embed"
+                      ]
+                    },
+                    "resource": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Rewrite the entity types the resource's points carry.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "restamp"
+                      ]
+                    },
+                    "resource": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Derive the resource's anchored text again.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "reanchor"
+                      ]
+                    },
+                    "resource": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Take out the resource's points and what is remembered of its decline.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "purge"
+                      ]
+                    },
+                    "resource": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Give the annotation a point: it quotes text and has none. `resource` is the one it is on.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "embed-annotation"
+                      ]
+                    },
+                    "annotation": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "resource": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "annotation",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Take out the annotation's point.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "purge-annotation"
+                      ]
+                    },
+                    "annotation": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "annotation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Rewrite the entity types the annotation's point carries. `resource` is the one it is on.",
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "restamp-annotation"
+                      ]
+                    },
+                    "annotation": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "resource": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "annotation",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "why",
+          "index",
+          "anchored",
+          "catalog",
+          "work"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

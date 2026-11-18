@@ -1,0 +1,114 @@
+{
+  "description": "media-types/registry.json: the media types a knowledge base admits, and what the system can do with each.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "render": {
+      "description": "The viewers a reader mounts.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z-]*$"
+      }
+    },
+    "anchoring": {
+      "description": "The annotation models.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z-]*$"
+      }
+    },
+    "textSource": {
+      "description": "Where a type's text comes from.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z-]*$"
+      }
+    },
+    "extensionAliases": {
+      "type": "object",
+      "description": "Each extension another stands for, by the extension that stands for it.",
+      "additionalProperties": {
+        "$ref": "#/properties/mediaTypes/items/properties/extension"
+      }
+    },
+    "mediaTypes": {
+      "description": "One row for each member of SupportedMediaType.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "mediaType": {
+            "$ref": "../components/schemas/SupportedMediaType.json"
+          },
+          "extension": {
+            "type": "string",
+            "pattern": "^\\.[a-z0-9]+$",
+            "description": "A file extension, with its dot."
+          },
+          "label": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "The name a person reads."
+          },
+          "render": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "The viewer a reader mounts, one of `render`."
+          },
+          "anchoring": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "The annotation model, one of `anchoring`."
+          },
+          "textSource": {
+            "type": "string",
+            "pattern": "\\S",
+            "description": "Where its text comes from, one of `textSource`."
+          },
+          "authorable": {
+            "type": "boolean"
+          },
+          "uploadable": {
+            "type": "boolean"
+          },
+          "generatable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "mediaType",
+          "extension",
+          "label",
+          "render",
+          "anchoring",
+          "textSource",
+          "authorable",
+          "uploadable",
+          "generatable"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "render",
+    "anchoring",
+    "textSource",
+    "extensionAliases",
+    "mediaTypes"
+  ],
+  "additionalProperties": false
+}

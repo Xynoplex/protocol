@@ -1,0 +1,44 @@
+{
+  "description": "graph/database-cases.json: the database of a graph store that holds a knowledge base's graph.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "kb": {
+            "$ref": "../KbDid.json"
+          },
+          "database": {
+            "type": "string",
+            "pattern": "^kb-[0-9a-f]{60}$",
+            "description": "The database's name."
+          }
+        },
+        "required": [
+          "why",
+          "kb",
+          "database"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

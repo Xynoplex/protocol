@@ -52,10 +52,13 @@
             ]
           },
           "did": {
-            "type": "string",
+            "description": "The DID the domain names, or null when no identity is declared.",
             "nullable": true,
-            "pattern": "^did:web:\\S+$",
-            "description": "The DID the domain names, or null when no identity is declared."
+            "allOf": [
+              {
+                "$ref": "../KbDid.json"
+              }
+            ]
           },
           "resource": {
             "type": "string",

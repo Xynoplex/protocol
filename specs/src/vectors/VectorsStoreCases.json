@@ -1,0 +1,711 @@
+{
+  "description": "vectors/store-cases.json: what the vector index answers after a history of writes.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "writes": {
+            "type": "array",
+            "description": "Done in order, on an index that holds nothing and states no stamp.",
+            "items": {
+              "oneOf": [
+                {
+                  "description": "The resource's points become these chunks'.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "resourcePut"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "chunks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "index": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "The chunk's place in the resource's text, from 0."
+                          },
+                          "text": {
+                            "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                          },
+                          "embedding": {
+                            "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/embedding"
+                          }
+                        },
+                        "required": [
+                          "index",
+                          "text",
+                          "embedding"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "contentChecksum": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
+                    },
+                    "mediaType": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/mediaType"
+                    },
+                    "entityTypes": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                    },
+                    "machineRead": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "resourceId",
+                    "chunks",
+                    "contentChecksum",
+                    "mediaType",
+                    "entityTypes"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "An annotation's one point.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "annotationPut"
+                      ]
+                    },
+                    "annotationId": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "motivation": {
+                      "$ref": "../components/schemas/Motivation.json"
+                    },
+                    "entityTypes": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                    },
+                    "text": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                    },
+                    "embedding": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/chunks/items/properties/embedding"
+                    },
+                    "machineRead": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/machineRead"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "annotationId",
+                    "resourceId",
+                    "motivation",
+                    "entityTypes",
+                    "text",
+                    "embedding"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Sets the entity types on every point of a resource's chunks.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "entityTypesRewritten"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "entityTypes": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "resourceId",
+                    "entityTypes"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Sets the entity types on the one point of an annotation.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "annotationEntityTypesRewritten"
+                      ]
+                    },
+                    "annotationId": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "entityTypes": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "annotationId",
+                    "entityTypes"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Takes every point of a resource's chunks, and what was remembered of its decline.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "resourceDeleted"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "resourceId"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Takes an annotation's point.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "annotationDeleted"
+                      ]
+                    },
+                    "annotationId": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "annotationId"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Takes the point of every annotation on a resource.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "annotationsOfResourceDeleted"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "resourceId"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "A resource whose bytes gave no text: its points are taken, and the index remembers the decline in their place.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "resourceDeclined"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "contentChecksum": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/contentChecksum"
+                    },
+                    "mediaType": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/mediaType"
+                    },
+                    "reason": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/2/properties/declineStored/properties/reason"
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "resourceId",
+                    "contentChecksum",
+                    "mediaType",
+                    "reason"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Takes everything out of the index, and has it state the stamp given.",
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "enum": [
+                        "madeAnew"
+                      ]
+                    },
+                    "stamp": {
+                      "type": "object",
+                      "description": "The stamp the index then states: what made its points, as whoever writes the index says it. The index keeps it whole and reads nothing of it.",
+                      "additionalProperties": {
+                        "$comment": "A member of the stamp, any JSON value: the index reads nothing of it."
+                      }
+                    }
+                  },
+                  "required": [
+                    "write",
+                    "stamp"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "reads": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Made after the writes, in order; none changes anything.",
+            "items": {
+              "oneOf": [
+                {
+                  "description": "Searches the resources by an embedding.",
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "resourcesSearched"
+                      ]
+                    },
+                    "embedding": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/chunks/items/properties/embedding"
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "The most results answered, after the filter and the threshold. No case's is 0."
+                    },
+                    "scoreThreshold": {
+                      "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
+                    },
+                    "filter": {
+                      "description": "Every member must hold of a point it answers.",
+                      "type": "object",
+                      "properties": {
+                        "entityTypes": {
+                          "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                        },
+                        "excludeEntityTypes": {
+                          "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
+                        },
+                        "resourceId": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "excludeResourceId": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        }
+                      },
+                      "required": [],
+                      "additionalProperties": false
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "description": "A result of a search of the resources.",
+                        "type": "object",
+                        "properties": {
+                          "score": {
+                            "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
+                          },
+                          "resourceId": {
+                            "$ref": "../components/schemas/ResourceId.json"
+                          },
+                          "text": {
+                            "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                          },
+                          "entityTypes": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                          },
+                          "machineRead": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/machineRead"
+                          }
+                        },
+                        "required": [
+                          "score",
+                          "resourceId",
+                          "text",
+                          "entityTypes"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "One result for each chunk found, best first."
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "embedding",
+                    "limit",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Searches the annotations by an embedding.",
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "annotationsSearched"
+                      ]
+                    },
+                    "embedding": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/chunks/items/properties/embedding"
+                    },
+                    "limit": {
+                      "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/limit"
+                    },
+                    "scoreThreshold": {
+                      "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/scoreThreshold"
+                    },
+                    "filter": {
+                      "description": "Every member must hold of a point it answers; `motivation` keeps the annotations of that motivation alone.",
+                      "type": "object",
+                      "properties": {
+                        "motivation": {
+                          "$ref": "../components/schemas/Motivation.json"
+                        },
+                        "entityTypes": {
+                          "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/filter/properties/entityTypes"
+                        },
+                        "excludeEntityTypes": {
+                          "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/filter/properties/excludeEntityTypes"
+                        },
+                        "resourceId": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        },
+                        "excludeResourceId": {
+                          "$ref": "../components/schemas/ResourceId.json"
+                        }
+                      },
+                      "required": [],
+                      "additionalProperties": false
+                    },
+                    "answers": {
+                      "type": "array",
+                      "description": "Best first.",
+                      "items": {
+                        "description": "A result of a search of the annotations.",
+                        "type": "object",
+                        "properties": {
+                          "score": {
+                            "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
+                          },
+                          "resourceId": {
+                            "$ref": "../components/schemas/ResourceId.json"
+                          },
+                          "annotationId": {
+                            "$ref": "../components/schemas/AnnotationId.json"
+                          },
+                          "text": {
+                            "$ref": "./VectorsPayloadCases.json#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
+                          },
+                          "entityTypes": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                          },
+                          "machineRead": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/machineRead"
+                          }
+                        },
+                        "required": [
+                          "score",
+                          "resourceId",
+                          "annotationId",
+                          "text",
+                          "entityTypes"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "embedding",
+                    "limit",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Searches the resources by the vectors of one resource's chunks.",
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "searchedByResource"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "limit": {
+                      "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/limit"
+                    },
+                    "scoreThreshold": {
+                      "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/scoreThreshold"
+                    },
+                    "filter": {
+                      "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/filter"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items"
+                      },
+                      "description": "One result for each resource found, best first, never the resource searched by."
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "resourceId",
+                    "limit",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "counted"
+                      ]
+                    },
+                    "answers": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "The number of points in both collections together."
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "stampsListed"
+                      ]
+                    },
+                    "answers": {
+                      "type": "object",
+                      "description": "The stamp of every resource that has points, by its id: a set.",
+                      "additionalProperties": {
+                        "description": "A resource's stamp: what its points carry.",
+                        "type": "object",
+                        "properties": {
+                          "contentChecksum": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/contentChecksum"
+                          },
+                          "mediaType": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/mediaType"
+                          },
+                          "entityTypes": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                          },
+                          "machineRead": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/machineRead"
+                          }
+                        },
+                        "required": [
+                          "contentChecksum",
+                          "mediaType",
+                          "entityTypes"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "The stamp of one resource; no `answers` where it has no points.",
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "stampRead"
+                      ]
+                    },
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "answers": {
+                      "$ref": "#/properties/cases/items/properties/reads/items/oneOf/4/properties/answers/additionalProperties"
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "resourceId"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "annotationStampsListed"
+                      ]
+                    },
+                    "answers": {
+                      "type": "object",
+                      "description": "The stamp of every annotation that has a point, by its id: a set.",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "resourceId": {
+                            "$ref": "../components/schemas/ResourceId.json"
+                          },
+                          "entityTypes": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/entityTypes"
+                          }
+                        },
+                        "required": [
+                          "resourceId",
+                          "entityTypes"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "declinedListed"
+                      ]
+                    },
+                    "answers": {
+                      "type": "object",
+                      "description": "What the index remembers of every declined resource, by its id: a set.",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "contentChecksum": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/contentChecksum"
+                          },
+                          "mediaType": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/0/properties/mediaType"
+                          },
+                          "reason": {
+                            "$ref": "#/properties/cases/items/properties/writes/items/oneOf/7/properties/reason"
+                          }
+                        },
+                        "required": [
+                          "contentChecksum",
+                          "mediaType",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "read",
+                    "answers"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "The stamp the index states; no `answers` where it states none.",
+                  "type": "object",
+                  "properties": {
+                    "read": {
+                      "type": "string",
+                      "enum": [
+                        "indexStampRead"
+                      ]
+                    },
+                    "answers": {
+                      "$ref": "#/properties/cases/items/properties/writes/items/oneOf/8/properties/stamp"
+                    }
+                  },
+                  "required": [
+                    "read"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "why",
+          "writes",
+          "reads"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

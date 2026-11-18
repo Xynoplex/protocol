@@ -1,0 +1,5 @@
+{
+  "type": "string",
+  "pattern": "^did:web:\\S+$",
+  "description": "A knowledge base's DID: `did:web:` and its domain. No API states one as such, so it is no component."
+}

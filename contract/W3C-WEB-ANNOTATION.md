@@ -115,7 +115,6 @@ A highlight is a motivation and a target. It carries no body:
       }
     ]
   },
-  "body": [],
   "creator": {
     "@type": "Person",
     "@id": "did:web:example.org:users:alice",
@@ -177,7 +176,7 @@ Link text to another document with entity type tags:
 
 ### 3. Stub References (Unresolved Links)
 
-A `linking` annotation with empty body array indicates a planned link not yet resolved:
+A `linking` annotation with no body is a planned link not yet resolved:
 
 ```json
 {
@@ -199,7 +198,6 @@ A `linking` annotation with empty body array indicates a planned link not yet re
       }
     ]
   },
-  "body": [],
   "creator": {
     "@type": "Person",
     "@id": "did:web:example.org:users:alice",
