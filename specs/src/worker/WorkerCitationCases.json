@@ -1,0 +1,190 @@
+{
+  "description": "worker/citation-cases.json: how a worker resolves the citation tokens of a text it generated, and which ids a gathered context makes citable.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text the model wrote, with its tokens."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "text/plain",
+              "text/markdown",
+              "application/pdf"
+            ],
+            "description": "The media type the text is written in."
+          },
+          "contextResourceIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "What the context makes citable as a resource: the ids it holds, as it holds them, some of which may be no ResourceId.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "contextAnnotationIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "What the context makes citable as an annotation: the ids it holds, as it holds them, some of which may be no AnnotationId.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "contextNames": {
+            "type": "object",
+            "description": "The name the context gives each resource, by its id.",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A resource's name."
+            }
+          },
+          "resolved": {
+            "description": "What the text resolves to.",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The text with its tokens taken out."
+              },
+              "citations": {
+                "type": "array",
+                "description": "Each citation, in order.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "resourceId": {
+                      "$ref": "../components/schemas/ResourceId.json"
+                    },
+                    "annotationId": {
+                      "$ref": "../components/schemas/AnnotationId.json"
+                    },
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Its start in the resolved text, in code points."
+                    },
+                    "end": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Its end in the resolved text, in code points."
+                    },
+                    "exact": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The text between them."
+                    }
+                  },
+                  "required": [
+                    "resourceId",
+                    "start",
+                    "end",
+                    "exact"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "additionalProperties": false
+          },
+          "dropped": {
+            "type": "array",
+            "description": "The first id of each dropped citation, in order.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "why",
+          "text",
+          "format",
+          "contextResourceIds",
+          "contextAnnotationIds",
+          "contextNames",
+          "resolved",
+          "dropped"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "contexts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Which ids a gathered context makes citable, and the names it gives them.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "context": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../components/schemas/GatheredContext.json"
+              }
+            ]
+          },
+          "resourceIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "The resources the context makes citable.",
+            "items": {
+              "$ref": "../components/schemas/ResourceId.json"
+            }
+          },
+          "annotationIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "The annotations the context makes citable.",
+            "items": {
+              "$ref": "../components/schemas/AnnotationId.json"
+            }
+          },
+          "names": {
+            "$ref": "#/properties/cases/items/properties/contextNames"
+          }
+        },
+        "required": [
+          "why",
+          "context",
+          "resourceIds",
+          "annotationIds",
+          "names"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases",
+    "contexts"
+  ],
+  "additionalProperties": false
+}

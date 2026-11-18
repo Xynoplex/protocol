@@ -16,8 +16,9 @@
 //       - a `oneOf` of closed objects, any two of them told apart: by a
 //         property both require and fix to different values (a `const` or a
 //         one-member `enum`), or by a property one requires and the other
-//         does not state; and `"nullable": true` beside it when its value
-//         may be null;
+//         does not state; beside them, at most one member of each other
+//         type, told apart by its type; and `"nullable": true` beside the
+//         `oneOf` when its value may be null;
 //       - a node of one `type`, with only the keywords that type takes, and
 //         `"nullable": true` when its value may be null. An
 //         object with `properties` is closed (`additionalProperties: false`);
@@ -113,6 +114,12 @@ function objectOf(file, node) {
   return isObject(node) && node.type === 'object' && isObject(node.properties) ? node : undefined;
 }
 
+/** The type other than an object that the schema `node` is, following `$ref`s, or nothing. */
+function scalarOf(file, node) {
+  while (isObject(node) && '$ref' in node) ({ file, node } = resolveRef(file, node.$ref));
+  return isObject(node) && typeof node.type === 'string' && node.type !== 'object' ? node.type : undefined;
+}
+
 /** The value `node` fixes for a property, by `const` or a one-member `enum`. */
 const fixed = (node) => (!isObject(node) ? undefined : 'const' in node ? node.const : node.enum?.length === 1 ? node.enum[0] : undefined);
 
@@ -151,9 +158,11 @@ function derivable(file, pointer, node) {
     if ('nullable' in node && node.nullable !== true) fail(file, `${pointer}/nullable`, 'must be true, or be left out of a oneOf whose value is never null');
     if (!Array.isArray(node.oneOf) || node.oneOf.length < 2) return fail(file, `${pointer}/oneOf`, 'must name two members or more');
     node.oneOf.forEach((member, index) => derivable(file, `${pointer}/oneOf/${index}`, member));
-    const members = node.oneOf.map((member) => objectOf(file, member));
+    const scalars = node.oneOf.map((member) => scalarOf(file, member)).filter((type) => type !== undefined);
+    if (new Set(scalars).size !== scalars.length) return fail(file, `${pointer}/oneOf`, 'has two members of one type other than an object, which nothing tells apart');
+    const members = node.oneOf.filter((member) => scalarOf(file, member) === undefined).map((member) => objectOf(file, member));
     if (members.some((member) => member === undefined || member.additionalProperties !== false)) {
-      return fail(file, `${pointer}/oneOf`, 'must be of closed objects, so a value is one member or none');
+      return fail(file, `${pointer}/oneOf`, 'must be of closed objects and of at most one member of each other type, so a value is one member or none');
     }
     members.forEach((member, index) => members.slice(index + 1).forEach((other, offset) => {
       if (!apart(member, other)) fail(file, `${pointer}/oneOf`, `has members ${index} and ${index + 1 + offset}, which no property tells apart`);

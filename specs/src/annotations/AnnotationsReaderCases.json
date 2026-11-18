@@ -1,0 +1,156 @@
+{
+  "description": "annotations/reader-cases.json: what each annotation reader answers of an annotation.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "readers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Each reader, by the name every SDK spells in its own convention.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][A-Za-z]*$"
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "annotation": {
+            "$ref": "../components/schemas/Annotation.json"
+          },
+          "reads": {
+            "description": "What each reader answers, null for nothing; textQuoteSelector is left out where the target has no selector to give it.",
+            "type": "object",
+            "properties": {
+              "bodySource": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  }
+                ]
+              },
+              "isBodyResolved": {
+                "type": "boolean"
+              },
+              "targetSource": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "targetSelector": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "../components/schemas/AnnotationSelector.json"
+                  }
+                ]
+              },
+              "isHighlight": {
+                "type": "boolean"
+              },
+              "isReference": {
+                "type": "boolean"
+              },
+              "isAssessment": {
+                "type": "boolean"
+              },
+              "isComment": {
+                "type": "boolean"
+              },
+              "isTag": {
+                "type": "boolean"
+              },
+              "commentText": {
+                "type": "string",
+                "nullable": true
+              },
+              "isStubReference": {
+                "type": "boolean"
+              },
+              "isResolvedReference": {
+                "type": "boolean"
+              },
+              "exactText": {
+                "type": "string"
+              },
+              "annotationExactText": {
+                "type": "string"
+              },
+              "textQuoteSelector": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "../components/schemas/TextQuoteSelector.json"
+                  }
+                ]
+              },
+              "entityTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tagCategory": {
+                "type": "string",
+                "nullable": true
+              },
+              "tagSchemaId": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "../components/schemas/TaggingJobParams.json#/properties/schemaId"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "bodySource",
+              "isBodyResolved",
+              "targetSource",
+              "targetSelector",
+              "isHighlight",
+              "isReference",
+              "isAssessment",
+              "isComment",
+              "isTag",
+              "commentText",
+              "isStubReference",
+              "isResolvedReference",
+              "exactText",
+              "annotationExactText",
+              "entityTypes",
+              "tagCategory",
+              "tagSchemaId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "why",
+          "annotation",
+          "reads"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "readers",
+    "cases"
+  ],
+  "additionalProperties": false
+}

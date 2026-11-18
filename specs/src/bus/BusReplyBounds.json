@@ -1,0 +1,56 @@
+{
+  "description": "bus/reply-bounds.json: each list or map an operation's reply carries that its own schema does not bound, and what bounds it.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "replies": {
+      "type": "object",
+      "description": "Each operation, by its request's channel.",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Each list or map of the reply, by its path.",
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "description": "A list or map bounded by a member of the request.",
+              "type": "object",
+              "properties": {
+                "by": {
+                  "type": "string",
+                  "pattern": "^[a-z][A-Za-z]*$",
+                  "description": "The member of the request that bounds it: an array, or an integer with a maximum."
+                }
+              },
+              "required": [
+                "by"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "description": "A list or map not yet bounded, which grows.",
+              "type": "object",
+              "properties": {
+                "grows": {
+                  "type": "string",
+                  "pattern": "^with \\S",
+                  "description": "What it grows with."
+                }
+              },
+              "required": [
+                "grows"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "replies"
+  ],
+  "additionalProperties": false
+}

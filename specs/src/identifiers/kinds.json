@@ -10,7 +10,8 @@
         "resultResourceId",
         "scope",
         "wasDerivedFrom",
-        "excludeResourceId"
+        "excludeResourceId",
+        "resourceIds"
       ],
       "accepts": [
         {
@@ -322,6 +323,14 @@
       "docs": "The gateway's name for one open stream."
     },
     {
+      "property": "contextAnnotationIds",
+      "docs": "The ids a worker's context holds of annotations a citation may name, as a case gives them: one that is no AnnotationId drops a citation of it, so not every one is (worker/citation-cases.json)."
+    },
+    {
+      "property": "contextResourceIds",
+      "docs": "The ids a worker's context holds of resources a citation may name, as a case gives them: one that is no ResourceId drops a citation of it, so not every one is (worker/citation-cases.json)."
+    },
+    {
       "property": "correlationId",
       "docs": "What pairs a reply with its request: made by whoever asks, and opaque to everything between."
     },
@@ -348,6 +357,10 @@
     {
       "property": "schemaId",
       "docs": "A tag schema's id: a name the knowledge base's vocabulary gives it."
+    },
+    {
+      "property": "tagSchemaId",
+      "docs": "The tag schema a tagging annotation names, read from its body: a schemaId (annotations/reader-cases.json)."
     }
   ]
 }

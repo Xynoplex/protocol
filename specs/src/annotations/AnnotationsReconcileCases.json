@@ -1,0 +1,53 @@
+{
+  "description": "annotations/reconcile-cases.json: where a quoted span is in a text, reconciled, or null where it is refused.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "text": {
+            "type": "string",
+            "description": "The real text."
+          },
+          "quoted": {
+            "$ref": "../client/types/QuotedText.json"
+          },
+          "reconciled": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../client/types/ReconciledSpan.json"
+              }
+            ]
+          }
+        },
+        "required": [
+          "why",
+          "text",
+          "quoted",
+          "reconciled"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

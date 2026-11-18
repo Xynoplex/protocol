@@ -1,0 +1,124 @@
+{
+  "description": "worker/failure-class-cases.json: a job's failure, described as data, and the class a worker reports for it.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "failure": {
+            "description": "What was thrown, described as data: a failure object, or a string or null, which are no failure object.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "description": "A failure object: whichever of these it has.",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "pattern": "^([A-Z][A-Za-z]*)?Error$",
+                    "description": "The failure's name: one the worker or its inference drivers declare."
+                  },
+                  "stopReason": {
+                    "type": "string",
+                    "pattern": "^[a-z_]+$",
+                    "description": "The stop reason of the reply that could not be read."
+                  },
+                  "aborted": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  },
+                  "status": {
+                    "oneOf": [
+                      {
+                        "type": "integer",
+                        "description": "The HTTP status the failure carries."
+                      },
+                      {
+                        "type": "string",
+                        "description": "A status written as text, which is no status."
+                      }
+                    ]
+                  },
+                  "salvage": {
+                    "type": "array",
+                    "description": "What a YieldCollapseError's reply did find.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "verdict": {
+                    "description": "A yield collapse's verdict.",
+                    "type": "object",
+                    "properties": {
+                      "found": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "The items the reply found."
+                      },
+                      "counted": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "The mentions the count call counted."
+                      },
+                      "pieceChars": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "The piece's length, in code points."
+                      }
+                    },
+                    "required": [
+                      "found",
+                      "counted",
+                      "pieceChars"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              },
+              {
+                "type": "string",
+                "description": "Something thrown that is text."
+              }
+            ]
+          },
+          "failureClass": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "../components/schemas/FailureClass.json"
+              }
+            ]
+          }
+        },
+        "required": [
+          "why",
+          "failure",
+          "failureClass"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

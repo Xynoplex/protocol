@@ -1,0 +1,285 @@
+{
+  "description": "annotations/builder-cases.json: the annotation a worker builds of a span of a text or a PDF, or of a resource as a whole, or why it refuses the span.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "unstated": {
+      "description": "The members every built annotation has and no case can state, for `cases` and for `resources`.",
+      "type": "object",
+      "properties": {
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][A-Za-z]*$"
+          }
+        },
+        "resources": {
+          "$ref": "#/properties/unstated/properties/cases"
+        }
+      },
+      "required": [
+        "cases",
+        "resources"
+      ],
+      "additionalProperties": false
+    },
+    "builders": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "What builds an annotation, each by the name every SDK spells in its own convention.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][A-Za-z]*$"
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "description": "A span of a text, built.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "text": {
+                "type": "string",
+                "description": "The resource's text."
+              },
+              "resourceId": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "generator": {
+                "$ref": "../components/schemas/Agent.json"
+              },
+              "motivation": {
+                "$ref": "../components/schemas/Motivation.json"
+              },
+              "span": {
+                "$ref": "../client/types/TextSpan.json"
+              },
+              "body": {
+                "$ref": "../components/schemas/AnnotationBodies.json"
+              },
+              "annotation": {
+                "$comment": "The annotation built, whole, but for the members `unstated` names: JSON, as it is given."
+              }
+            },
+            "required": [
+              "why",
+              "text",
+              "resourceId",
+              "generator",
+              "motivation",
+              "span",
+              "annotation"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A span of a text, refused: the refusal is a span-refusal code of errors/codes.json.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "text": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+              },
+              "resourceId": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "generator": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
+              },
+              "motivation": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
+              },
+              "span": {
+                "description": "A span as it is given, which may be no TextSpan: its offsets are what is refused, where the refusal is span-out-of-range.",
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": "number",
+                    "description": "Where the span is said to start, which need not be a whole number from 0."
+                  },
+                  "end": {
+                    "type": "number",
+                    "description": "Where it is said to end, which need not be a whole number, nor at or after its start."
+                  },
+                  "exact": {
+                    "$ref": "../client/types/QuotedText.json#/properties/exact"
+                  },
+                  "prefix": {
+                    "$ref": "../client/types/QuotedText.json#/properties/prefix"
+                  },
+                  "suffix": {
+                    "$ref": "../client/types/QuotedText.json#/properties/suffix"
+                  }
+                },
+                "required": [
+                  "start",
+                  "end",
+                  "exact"
+                ],
+                "additionalProperties": false
+              },
+              "body": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/body"
+              },
+              "refused": {
+                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              }
+            },
+            "required": [
+              "why",
+              "text",
+              "resourceId",
+              "generator",
+              "motivation",
+              "span",
+              "refused"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A span of a PDF, built.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "anchored": {
+                "$ref": "../components/schemas/AnchoredText.json"
+              },
+              "resourceId": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "generator": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
+              },
+              "motivation": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
+              },
+              "span": {
+                "$ref": "../client/types/TextSpan.json"
+              },
+              "body": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/body"
+              },
+              "annotation": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/annotation"
+              }
+            },
+            "required": [
+              "why",
+              "anchored",
+              "resourceId",
+              "generator",
+              "motivation",
+              "span",
+              "annotation"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A span of a PDF, refused.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "anchored": {
+                "$ref": "#/properties/cases/items/oneOf/2/properties/anchored"
+              },
+              "resourceId": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "generator": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
+              },
+              "motivation": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
+              },
+              "span": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/span"
+              },
+              "body": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/body"
+              },
+              "refused": {
+                "$ref": "#/properties/cases/items/oneOf/1/properties/refused"
+              }
+            },
+            "required": [
+              "why",
+              "anchored",
+              "resourceId",
+              "generator",
+              "motivation",
+              "span",
+              "refused"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "resources": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Annotations of a resource as a whole.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "resourceId": {
+            "$ref": "../components/schemas/ResourceId.json"
+          },
+          "motivation": {
+            "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
+          },
+          "generator": {
+            "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
+          },
+          "body": {
+            "$ref": "#/properties/cases/items/oneOf/0/properties/body"
+          },
+          "annotation": {
+            "$ref": "#/properties/cases/items/oneOf/0/properties/annotation"
+          }
+        },
+        "required": [
+          "why",
+          "resourceId",
+          "motivation",
+          "annotation"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "unstated",
+    "builders",
+    "cases",
+    "resources"
+  ],
+  "additionalProperties": false
+}

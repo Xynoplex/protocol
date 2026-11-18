@@ -7,13 +7,19 @@
 //
 //   - telemetry's `anchor.method` values (service-telemetry/telemetry.json)
 //     are anything but AnchorMethod's words;
-//   - a reconciled span of annotations/reconcile-cases.json is found by a
-//     method AnchorMethod does not name, or by a search MatchQuality does not
-//     name, or names a search when its method is not `fuzzy-match`, or names
-//     none when it is;
-//   - a refused frame of bus/frame-cases.json is refused for a reason
-//     FrameRefusalReason does not name, or FrameRefusalReason names one no
-//     case is refused for;
+//   - a reconciled span of annotations/reconcile-cases.json names a search
+//     when its method is not `fuzzy-match`, or names none when it is. That
+//     its method is an AnchorMethod and its search a MatchQuality is its
+//     schema's, through ReconciledSpan, which check-tables.mjs holds it to;
+//   - FrameRefusalReason names a reason no case of bus/frame-cases.json is
+//     refused for. That each case is refused for one it names is the
+//     table's schema's;
+//   - annotations/reader-cases.json's `readers` is not, in order, what its
+//     schema says a case `reads`, or is not every reader of client/surface.json's
+//     annotations module that every SDK has, and only those, beside its
+//     functions that read an annotation (`is…`);
+//   - annotations/builder-cases.json's `builders` is not the annotations
+//     module's other functions;
 //   - DeviceCode is anything but what control/UserAction.json carries less its
 //     `requestId`, its `expiresInSeconds` named `expiresIn`;
 //   - ClientSecretForm's grant is not client-assertion-cases.json's grant.
@@ -33,7 +39,6 @@ const failures = [];
 const fail = (message) => failures.push(message);
 
 const anchorMethods = clientType('AnchorMethod').enum;
-const matchQualities = clientType('MatchQuality').enum;
 
 const telemetry = read('specs/src/service-telemetry/telemetry.json');
 const anchorAttributes = [...telemetry.spans, ...telemetry.metrics]
@@ -51,21 +56,36 @@ for (const [index, { reconciled }] of reconcile.cases.entries()) {
   if (reconciled === null) continue;
   const at = `reconcile-cases.json case ${index}`;
   const { anchorMethod, matchQuality } = reconciled;
-  if (!anchorMethods.includes(anchorMethod)) fail(`${at} is found by ${JSON.stringify(anchorMethod)}, which AnchorMethod does not name`);
-  if (anchorMethod === 'fuzzy-match' && !matchQualities.includes(matchQuality)) {
-    fail(`${at} is a fuzzy match by ${JSON.stringify(matchQuality)}, which MatchQuality does not name`);
-  }
+  if (anchorMethod === 'fuzzy-match' && matchQuality === undefined) fail(`${at} is a fuzzy match, and names no search`);
   if (anchorMethod !== 'fuzzy-match' && matchQuality !== undefined) fail(`${at} names a search, ${JSON.stringify(matchQuality)}, and is not a fuzzy match`);
 }
 
 const refusalReasons = clientType('FrameRefusalReason').enum;
 const frames = read('specs/src/bus/frame-cases.json');
 const refusedFor = new Set(frames.cases.filter((c) => c.refused).map((c) => c.reason));
-for (const reason of refusedFor) {
-  if (!refusalReasons.includes(reason)) fail(`frame-cases.json refuses a frame for ${JSON.stringify(reason)}, which FrameRefusalReason does not name`);
-}
 for (const reason of refusalReasons) {
   if (!refusedFor.has(reason)) fail(`FrameRefusalReason names ${JSON.stringify(reason)}, and no case of frame-cases.json is refused for it`);
+}
+
+const annotations = read('specs/src/client/surface.json').modules.find((module) => module.module === 'annotations');
+const everySdk = (member) => member.absent === undefined;
+const readerTable = read('specs/src/annotations/reader-cases.json');
+const reads = Object.keys(read('specs/src/annotations/AnnotationsReaderCases.json').properties.cases.items.properties.reads.properties);
+if (!same(readerTable.readers, reads)) {
+  fail(`reader-cases.json's readers ${JSON.stringify(readerTable.readers)} are not, in order, what its schema says a case reads ${JSON.stringify(reads)}`);
+}
+const surfaceReaders = annotations.members
+  .filter((member) => (member.kind === 'reader' && everySdk(member)) || (member.kind === 'function' && /^is[A-Z]/.test(member.member)))
+  .map((member) => member.member);
+if (!same([...readerTable.readers].sort(), [...surfaceReaders].sort())) {
+  fail(`reader-cases.json's readers ${JSON.stringify(readerTable.readers)} are not the readers client/surface.json's annotations module gives every SDK ${JSON.stringify(surfaceReaders)}`);
+}
+const builders = read('specs/src/annotations/builder-cases.json').builders;
+const surfaceBuilders = annotations.members
+  .filter((member) => member.kind === 'function' && !/^is[A-Z]/.test(member.member))
+  .map((member) => member.member);
+if (!same(builders, surfaceBuilders)) {
+  fail(`builder-cases.json's builders ${JSON.stringify(builders)} are not client/surface.json's other annotations functions ${JSON.stringify(surfaceBuilders)}`);
 }
 
 const userAction = read('specs/src/control/UserAction.json');
@@ -98,5 +118,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  `✓ the client types agree with what restates them (${anchorMethods.length} anchor methods, ${reconcile.cases.length} reconcile cases, ${refusalReasons.length} refusal reasons, DeviceCode, the client secret form)`,
+  `✓ the client types agree with what restates them (${anchorMethods.length} anchor methods, ${reconcile.cases.length} reconcile cases, ${refusalReasons.length} refusal reasons, ${reads.length} readers, ${builders.length} builders, DeviceCode, the client secret form)`,
 );

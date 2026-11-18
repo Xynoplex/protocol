@@ -1,0 +1,302 @@
+{
+  "description": "worker/parser-cases.json: a model's reply to one call for items, and the items a worker reads from it or the failure it is refused with.",
+  "allOf": [
+    {
+      "$ref": "../CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "runBy": true,
+    "absent": true,
+    "notYetReached": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "A reply that is read.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "motivation": {
+                "$ref": "../components/schemas/Motivation.json"
+              },
+              "text": {
+                "type": "string",
+                "description": "The text asked about."
+              },
+              "category": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The category the tagging call was for."
+              },
+              "entityType": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The entity type the linking call asked for."
+              },
+              "reply": {
+                "oneOf": [
+                  {
+                    "description": "A reply that is a JSON array.",
+                    "type": "object",
+                    "properties": {
+                      "elements": {
+                        "type": "array",
+                        "description": "The reply's array.",
+                        "items": {
+                          "$comment": "An element of the reply's array, as the model wrote it: JSON."
+                        }
+                      },
+                      "stopReason": {
+                        "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/stopReason"
+                      }
+                    },
+                    "required": [
+                      "elements",
+                      "stopReason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "description": "A reply that is text.",
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "The reply's text."
+                      },
+                      "stopReason": {
+                        "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/stopReason"
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "stopReason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "count": {
+                "oneOf": [
+                  {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/reply/oneOf/0"
+                  },
+                  {
+                    "$ref": "#/properties/cases/items/oneOf/0/properties/reply/oneOf/1"
+                  },
+                  {
+                    "description": "A count call that fails.",
+                    "type": "object",
+                    "properties": {
+                      "fails": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ]
+                      }
+                    },
+                    "required": [
+                      "fails"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "countCalls": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How many count calls were made."
+              },
+              "calls": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "How many times the model was asked for items."
+              },
+              "read": {
+                "description": "What the worker read.",
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "What the worker hands on.",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "description": "A passage, anchored.",
+                          "type": "object",
+                          "properties": {
+                            "exact": {
+                              "type": "string",
+                              "description": "The passage as the text has it."
+                            },
+                            "start": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "description": "Its start, in code points."
+                            },
+                            "end": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "description": "Its end, in code points."
+                            },
+                            "prefix": {
+                              "type": "string",
+                              "description": "The text before it."
+                            },
+                            "suffix": {
+                              "type": "string",
+                              "description": "The text after it."
+                            },
+                            "comment": {
+                              "type": "string",
+                              "description": "The comment, as written."
+                            },
+                            "assessment": {
+                              "type": "string",
+                              "description": "The assessment, as written."
+                            },
+                            "category": {
+                              "type": "string",
+                              "description": "The category the tagging call was for."
+                            }
+                          },
+                          "required": [
+                            "exact",
+                            "start",
+                            "end"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "description": "A mention, not yet anchored.",
+                          "type": "object",
+                          "properties": {
+                            "exact": {
+                              "type": "string",
+                              "description": "The mention as the model wrote it."
+                            },
+                            "entityType": {
+                              "type": "string",
+                              "description": "Its entity type."
+                            },
+                            "prefix": {
+                              "type": "string",
+                              "description": "The text before it, as the model wrote it."
+                            },
+                            "suffix": {
+                              "type": "string",
+                              "description": "The text after it, as the model wrote it."
+                            }
+                          },
+                          "required": [
+                            "exact",
+                            "entityType"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "dropped": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "The passages or mentions that could not be anchored."
+                  },
+                  "counted": {
+                    "type": "array",
+                    "description": "The count of each piece whose items were accepted.",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "unchecked": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "The pieces whose check did not run."
+                  },
+                  "underReported": {
+                    "type": "array",
+                    "description": "The verdict of each collapse accepted.",
+                    "items": {
+                      "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/verdict"
+                    }
+                  }
+                },
+                "required": [
+                  "items",
+                  "dropped"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "why",
+              "motivation",
+              "text",
+              "reply",
+              "calls",
+              "read"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A reply that is refused.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "motivation": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
+              },
+              "text": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/text"
+              },
+              "category": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/category"
+              },
+              "entityType": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/entityType"
+              },
+              "reply": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/reply"
+              },
+              "count": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/count"
+              },
+              "countCalls": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/countCalls"
+              },
+              "calls": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/calls"
+              },
+              "refused": {
+                "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
+              }
+            },
+            "required": [
+              "why",
+              "motivation",
+              "text",
+              "reply",
+              "calls",
+              "refused"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}
