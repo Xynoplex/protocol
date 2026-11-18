@@ -8,14 +8,14 @@ offers offsets into it; a PDF offers page geometry; an image offers regions.
 The media-type registry records that as `AnchoringModel` — `'text-selector'` or
 `'spatial'` — and every producer follows it. **How** the geometry for a spatial anchor is obtained, and
 how a scanned page gets one at all, is
-[ANCHORING.md](../../docs/architecture/ANCHORING.md).
+[ANCHORING.md](https://github.com/xynolog/docs/blob/main/architecture/ANCHORING.md).
 
 **Related Documentation:**
-- [Anchoring](../../docs/architecture/ANCHORING.md) - How a coordinate map is derived, stored and turned into a selector
+- [Anchoring](https://github.com/xynolog/docs/blob/main/architecture/ANCHORING.md) - How a coordinate map is derived, stored and turned into a selector
 - [W3C Web Annotation Implementation](./W3C-WEB-ANNOTATION.md) - Complete annotation architecture
 - [Xynolog Protocol](./README.md) - The eight verbs and the bus these annotations travel on
 - [OpenAPI Specification](../specs/src/openapi.json) - Machine-readable API spec
-- [Media Types](../../docs/architecture/MEDIA-TYPES.md) - What each media type declares, and what that changes
+- [Media Types](https://github.com/xynolog/docs/blob/main/architecture/MEDIA-TYPES.md) - What each media type declares, and what that changes
 - [@xynolog/core Utilities](https://github.com/xynolog/sdk/tree/main/typescript/core/docs/Utilities.md) - Implementation aids: fuzzy anchoring, SVG selector parsing, position validation
 
 ## Text selectors

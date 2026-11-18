@@ -2,7 +2,7 @@
 
 This document describes the wire-level event protocol that every actor in Xynolog speaks: channel naming, payload conventions, the gateway's identity injection, the trace-context carrier, and resource scoping. It is the contract that a transport (HTTP with server-sent events) implements and that an SDK hides behind typed methods.
 
-If you only want to *use* the protocol from a script, you don't need this doc — read **[../../docs/builder/Usage.md](../../docs/builder/Usage.md)**, the SDK already wraps every channel pattern. Read this if you're:
+If you only want to *use* the protocol from a script, you don't need this doc — read **[docs' `builder/Usage.md`](https://github.com/xynolog/docs/blob/main/builder/Usage.md)**, the SDK already wraps every channel pattern. Read this if you're:
 
 - Building a transport
 - Adding a new actor or worker that subscribes to channels directly via `eventBus.on(channel)`
@@ -147,7 +147,7 @@ The underscore prefix is the convention's marker — anything starting with `_` 
 
 ## Correlation: request/response over a fan-out bus
 
-> **Where the bus lives.** Inside the gateway the bus is a *driver seam*, below the wire this document describes: the in-process driver keeps the fan-out inside one gateway process, and a `nats` signal plane (the gateway's `signal.type`) swaps in a NATS driver that fans out over core subjects across replicas. Neither the wire nor anything below changes — the gateway injects identity, applies entitlement, and mints correlation the same way under both, so this protocol and every SDK client are unaffected by the choice. See [Job queue and signal plane](../../docs/operator/administration/CONFIGURATION.md#job-queue-and-signal-plane).
+> **Where the bus lives.** Inside the gateway the bus is a *driver seam*, below the wire this document describes: the in-process driver keeps the fan-out inside one gateway process, and a `nats` signal plane (the gateway's `signal.type`) swaps in a NATS driver that fans out over core subjects across replicas. Neither the wire nor anything below changes — the gateway injects identity, applies entitlement, and mints correlation the same way under both, so this protocol and every SDK client are unaffected by the choice. See [Job queue and signal plane](https://github.com/xynolog/docs/blob/main/operator/administration/CONFIGURATION.md#job-queue-and-signal-plane).
 
 The bus is fan-out: every subscriber to a channel sees every event on it. Request/response semantics are layered on top via a `correlationId`:
 
@@ -170,7 +170,7 @@ Two declarations make this work, and together they rule out a whole bug class (a
 - **The reply-shape standard.** Every reply carries the request's `correlationId` on its envelope, and its payload is one of three shapes:
   - `{ response: T }` — success with data → resolves to `T`.
   - `{}` — success, no data → resolves to `void`.
-  - `CommandError` — failure → rejects with `BusRequestError` whose `code` is the failure's own `CommandError.code` promoted to the client vocabulary (`bus.not-found`, `bus.peer-unavailable`, `bus.unauthorized`, `bus.none-pending`), or `bus.rejected` when the failure carries none, per the [SDK error model](../../docs/builder/Usage.md#error-handling).
+  - `CommandError` — failure → rejects with `BusRequestError` whose `code` is the failure's own `CommandError.code` promoted to the client vocabulary (`bus.not-found`, `bus.peer-unavailable`, `bus.unauthorized`, `bus.none-pending`), or `bus.rejected` when the failure carries none, per the [SDK error model](https://github.com/xynolog/docs/blob/main/builder/Usage.md#error-handling).
 
   `request` reads `e.response`, so **every reply handler must carry the request's `correlationId` onto its reply's envelope and put its data under `response`** — a reply without the id hangs the caller until `bus.timeout`. The uniformity is exactly what lets the return type be derived from the registry instead of hand-annotated.
 
@@ -194,7 +194,7 @@ The two directions carry it differently:
 
 The field is **internal plumbing**: subscribers see it stripped before delivery, and most consumer code never needs to touch it. A new wire transport mirrors the pattern — propagate on emit, extract before subscriber dispatch.
 
-For details on how a frame's trace correlates with the grep-friendly `busLog` timeline and the OpenTelemetry span tree, see **[../../docs/operator/administration/OBSERVABILITY.md](../../docs/operator/administration/OBSERVABILITY.md)**.
+For details on how a frame's trace correlates with the grep-friendly `busLog` timeline and the OpenTelemetry span tree, see **[docs' `operator/administration/OBSERVABILITY.md`](https://github.com/xynolog/docs/blob/main/operator/administration/OBSERVABILITY.md)**.
 
 ## Resource scoping
 
@@ -308,7 +308,7 @@ Two legitimate paths to the bus, each suited to a distinct case:
 - **Typed namespace method** (preferred) — `client.mark.annotation(...)`, `client.beckon.hover(...)`. Types catch mistakes; channel names and correlation IDs are internal. The right path whenever a namespace covers the operation.
 - **A channel by name: `client.bus.on(channel)`, `client.wire.frames(channel)`, `client.wire.emit(channel, ...)`** — channel-by-name observation and the lowest-level path: when the channel name is dynamic (`useEventSubscription` in React, an agent watching `mark:added` for another principal's activity), when no namespace exposes a typed listener for the channel you care about, for workers and actors that *are* the handlers (a worker written on the SDK uses this), for RxJS operator composition on a channel stream, or for prototyping new operations not yet wrapped by a namespace. `client.bus` is the client's own bus, which also carries its in-process signals; `client.wire` is the typed bus over its transport, as Rust's `client.wire()` and Python's `client.wire` are. A channel delivered on a resource's scope is read on the wire for its resource, `client.wire.frames(channel, resourceId)`, and the read holds the scope while it is read. A frame the transport refused, or whose payload is not its channel's, reaches either read as a `FrameRefusal` in its place (§ Identity in [TRANSPORT-CONTRACT.md](./TRANSPORT-CONTRACT.md#identity)).
 
-The paths are documented end-to-end (with code shapes and call-site examples) in [`docs/builder/REACTIVE-MODEL.md`](../../docs/builder/REACTIVE-MODEL.md#two-paths-to-the-bus). The bus surface is *not* `@internal` — it's a real surface for advanced and worker use — but the typed namespaces are the canonical entry point for everything else. If you find yourself writing `client.wire.emit(channel, ...)` from application code, the right move is usually to reach for the namespace, or — if no namespace covers your case — to add one.
+The paths are documented end-to-end (with code shapes and call-site examples) in [docs' `builder/REACTIVE-MODEL.md`](https://github.com/xynolog/docs/blob/main/builder/REACTIVE-MODEL.md#two-paths-to-the-bus). The bus surface is *not* `@internal` — it's a real surface for advanced and worker use — but the typed namespaces are the canonical entry point for everything else. If you find yourself writing `client.wire.emit(channel, ...)` from application code, the right move is usually to reach for the namespace, or — if no namespace covers your case — to add one.
 
 ## The registry is the authority; every language is generated
 
@@ -447,7 +447,7 @@ Then for the OpenAPI schema:
 And for the SDK:
 
 7. Add a namespace method that wraps `this.wire.emit(channel, ...)` or `this.wire.request(...)` for the new operation.
-8. Update [docs/builder/Usage.md](../../docs/builder/Usage.md) under the right verb.
+8. Update [docs' `builder/Usage.md`](https://github.com/xynolog/docs/blob/main/builder/Usage.md) under the right verb.
 
 Skipping any step is caught at build time — `CHANNEL_SCHEMAS`'s `satisfies` clause and [sdk's generator](https://github.com/xynolog/sdk/tree/main/codegen/lib/bus/registry.ml) make incomplete additions fail loud and clear.
 
@@ -462,6 +462,6 @@ Skipping any step is caught at build time — `CHANNEL_SCHEMAS`'s `satisfies` cl
 - **`sdk/go/bus/`** — GENERATED Go channels, each a value typed by its payload, the operations with their replies, and the bridged and scoped lists; `typed.go` holds the types they are values of.
 - **[`sdk/typescript/core/src/event-bus.ts`](https://github.com/xynolog/sdk/tree/main/typescript/core/src/event-bus.ts)** — the in-process `EventBus` and `ScopedEventBus` implementation.
 - **[../../images/e2e/docs/bus-logging.md](https://github.com/xynolog/images/tree/main/e2e/docs/bus-logging.md)** — the bus log format and capture API.
-- **[../../docs/builder/Usage.md](../../docs/builder/Usage.md)** — the namespace tour with worked examples per verb.
-- **[../../docs/operator/administration/OBSERVABILITY.md](../../docs/operator/administration/OBSERVABILITY.md)** — how a frame's trace correlates with OpenTelemetry spans and the `busLog` grep timeline.
+- **[docs' `builder/Usage.md`](https://github.com/xynolog/docs/blob/main/builder/Usage.md)** — the namespace tour with worked examples per verb.
+- **[docs' `operator/administration/OBSERVABILITY.md`](https://github.com/xynolog/docs/blob/main/operator/administration/OBSERVABILITY.md)** — how a frame's trace correlates with OpenTelemetry spans and the `busLog` grep timeline.
 - **[flows/README.md](flows/README.md)** — the eight verbs that organize the channel namespace.

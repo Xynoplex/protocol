@@ -9,7 +9,7 @@ section that touches one says what happens and links there.
 The client side of the two job types is in the flow documents: [Yield](flows/YIELD.md), whose
 `yield` job makes a resource, and [Mark](flows/MARK.md), whose `mark` job annotates one. What a
 worker promises is [WORKER-CONTRACT.md](WORKER-CONTRACT.md), and how one is built is in the
-[`xynolog-worker` skill](../../docs/builder/skills/xynolog-worker/SKILL.md). Channel payloads
+[`xynolog-worker` skill](https://github.com/xynolog/docs/blob/main/builder/skills/xynolog-worker/SKILL.md). Channel payloads
 are named in [the registry](../specs/src/bus/registry.json); the bus conventions this document
 relies on (`_userId`, `correlationId`, audiences) are in [EVENT-BUS.md](EVENT-BUS.md). The
 [dispatcher conformance suite](../conformance/dispatcher/README.md) checks a running
