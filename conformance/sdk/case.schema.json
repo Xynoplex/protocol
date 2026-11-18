@@ -32,11 +32,6 @@
       },
       "description": "The signal planes the case runs on. Absent, it runs on both."
     },
-    "needs": {
-      "type": "string",
-      "pattern": "^([a-z0-9-]+/)+([a-z0-9-]+-)?cases\\.json$",
-      "description": "The case table of specs/src whose behaviour the case needs, by its path there. The case is not run for an SDK that table names under `notYetReached`, and is run for it once the table no longer does."
-    },
   "tier": {
       "enum": [
         "fleet",

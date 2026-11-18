@@ -15,9 +15,9 @@
 //     refused for. That each case is refused for one it names is the
 //     table's schema's;
 //   - annotations/reader-cases.json's `readers` is not, in order, what its
-//     schema says a case `reads`, or is not every reader of client/surface.json's
-//     annotations module that every SDK has, and only those, beside its
-//     functions that read an annotation (`is…`);
+//     schema says a case `reads`, or names one that is neither a reader of
+//     client/surface.json's annotations module nor one of its functions that
+//     read an annotation (`is…`);
 //   - annotations/builder-cases.json's `builders` is not the annotations
 //     module's other functions;
 //   - DeviceCode is anything but what control/UserAction.json carries less its
@@ -68,17 +68,18 @@ for (const reason of refusalReasons) {
 }
 
 const annotations = read('specs/src/client/surface.json').modules.find((module) => module.module === 'annotations');
-const everySdk = (member) => member.absent === undefined;
 const readerTable = read('specs/src/annotations/reader-cases.json');
 const reads = Object.keys(read('specs/src/annotations/AnnotationsReaderCases.json').properties.cases.items.properties.reads.properties);
 if (!same(readerTable.readers, reads)) {
   fail(`reader-cases.json's readers ${JSON.stringify(readerTable.readers)} are not, in order, what its schema says a case reads ${JSON.stringify(reads)}`);
 }
-const surfaceReaders = annotations.members
-  .filter((member) => (member.kind === 'reader' && everySdk(member)) || (member.kind === 'function' && /^is[A-Z]/.test(member.member)))
-  .map((member) => member.member);
-if (!same([...readerTable.readers].sort(), [...surfaceReaders].sort())) {
-  fail(`reader-cases.json's readers ${JSON.stringify(readerTable.readers)} are not the readers client/surface.json's annotations module gives every SDK ${JSON.stringify(surfaceReaders)}`);
+// Which of the module's readers every SDK has is each SDK repository's to
+// record, and so is that the table names each of those.
+const surfaceReaders = new Set(annotations.members
+  .filter((member) => member.kind === 'reader' || (member.kind === 'function' && /^is[A-Z]/.test(member.member)))
+  .map((member) => member.member));
+for (const reader of readerTable.readers) {
+  if (!surfaceReaders.has(reader)) fail(`reader-cases.json names the reader ${JSON.stringify(reader)}, which client/surface.json's annotations module does not have`);
 }
 const builders = read('specs/src/annotations/builder-cases.json').builders;
 const surfaceBuilders = annotations.members

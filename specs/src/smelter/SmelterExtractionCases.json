@@ -8,9 +8,6 @@
   "type": "object",
   "properties": {
     "$comment": true,
-    "runBy": true,
-    "absent": true,
-    "notYetReached": true,
     "fixtures": {
       "type": "string",
       "minLength": 1,

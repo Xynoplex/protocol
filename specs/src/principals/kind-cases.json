@@ -1,17 +1,5 @@
 {
   "$comment": "What kind of principal a DID names, read from the DID alone: a reader of the record does not know the knowledge base's domain, and a domain may hold colons. Split the DID on `:`. The last segment that is exactly `users` or `agents`, with at least one segment after it, is the kind segment: `agents` names software, `users` a person. A DID with no kind segment names a person, as it always has: the knowledge base's own DID, which seeds the vocabulary, is one. Everything after the kind segment is the principal's subject, its account's, which this rule does not read: only the kind is read here.",
-  "runBy": {
-    "rust": ["sdk/rust/sdk/tests/tables.rs"],
-    "archivist": ["archivist/record/src/agents.rs"]
-  },
-  "absent": {
-    "csharp": "The C# SDK builds principal DIDs and does not read a principal kind from a DID.",
-    "typescript": "No TypeScript code reads a DID's kind: the record, in Rust, attributes every write, and the Browser reads the agents the record gives it.",
-    "python": "No Python code reads a DID's kind: the Librarian names principals from the record's profiles, and the worker states its own generator.",
-    "go": "No Go code reads a DID's kind: the launcher and the Go SDK name the knowledge base and its people, and read no principal's DID.",
-    "kotlin": "No Kotlin code reads a DID's kind: the Kotlin SDK builds the DIDs of a knowledge base's people and agents, and reads no principal's kind.",
-    "swift": "No Swift code reads a DID's kind: the Swift SDK builds the DIDs of a knowledge base's people and agents, and reads no principal's kind."
-  },
   "cases": [
     {
       "why": "a person",

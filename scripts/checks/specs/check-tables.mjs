@@ -36,15 +36,12 @@
 // Any other table's schema requires `$comment`, stated as CaseTable's. A
 // `why`, wherever a table's schema states one, is CaseTable's.
 //
-// A case table also names no implementation in more than one of `runBy`,
-// `absent` and `notYetReached`, which no schema can say.
-//
 // `format` and `discriminator` are read as annotations: the type and the
 // `oneOf` decide.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
-import { CASE_TABLE, SPECS, hasSchema, isCaseTable, restated, schemaOf } from './tables.mjs';
+import { CASE_TABLE, SPECS, hasSchema, isCaseTable, schemaOf } from './tables.mjs';
 
 const failures = [];
 const fail = (file, pointer, message) => failures.push(`${file}#${pointer} ${message}`);
@@ -327,7 +324,6 @@ for (const table of tables) {
   tableSchema(table, file, schema);
   const value = load(table);
   for (const [pointer, message] of errors(file, schema, value, '')) fail(table, pointer, message);
-  if (isCaseTable(table)) for (const [field, implementation, first] of restated(value)) fail(table, `/${field}/${escape(implementation)}`, `is already in ${first}`);
 }
 
 if (failures.length) {

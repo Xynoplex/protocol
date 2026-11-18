@@ -1,18 +1,5 @@
 {
   "$comment": "The knowledge base's identity as every reader must compute it from <dir>/.xynolog/config.yaml, the project file ProjectConfig.json holds. Every reader of the file runs every case against the name, domain, DID and resource it reads, and fails on any difference; every SDK runs each case that has a domain against its derivation of the DID and of the resource from it, the resource being the audience the gateway's tokens must carry. `config` null means the file is absent; `refused` true means the file does not hold to ProjectConfig.json, and every reader of it refuses it; `name` null means a refused file names nothing; `domain`, `did` and `resource` null mean no identity is declared. Add a case here before changing any reader.",
-  "runBy": {
-    "ocaml": ["sdk/ocaml/sdk/test/closure_behavior.ml"],
-    "haskell": ["sdk/haskell/sdk/test/IdentityCases.hs"],
-    "csharp": ["sdk/csharp/sdk/tests/Xynolog.Tests/IdentityTests.cs"],
-    "swift": ["sdk/swift/sdk/Tests/XynologTests/SessionTablesTests.swift"],
-    "typescript": ["sdk/typescript/core/src/__tests__/kb-identity-agreement.test.ts"],
-    "rust": ["sdk/rust/sdk/tests/tables.rs"],
-    "python": ["sdk/python/sdk/tests/test_identity.py"],
-    "go": ["sdk/go/identity_test.go"],
-    "archivist": ["archivist/record/src/kb.rs"],
-    "launcher": ["cli/internal/launcher/kbidentity_agreement_test.go", "cli/internal/launcher/staging_test.go"],
-    "kotlin": ["sdk/kotlin/sdk/src/test/kotlin/xynolog/identity/IdentityTest.kt"]
-  },
   "cases": [
     {
       "why": "the shape xynolog init writes",

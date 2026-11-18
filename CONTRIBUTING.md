@@ -6,7 +6,7 @@ Protocol changes affect independently released consumers. Keep one authoritative
 
 1. Describe the compatibility effect in the change.
 2. Update normative prose and/or `specs/src/`; do not edit generated bundles.
-3. Add or adjust case tables when behavior changes, and keep `runBy`, `absent`, and `notYetReached` accurate.
+3. Add or adjust case tables when behavior changes. A table states its cases; each consumer records which of its tests runs it.
 4. Run `make validate`. The conformance integration suites require implementation manifests and isolated external services; run those from the consumer repositories that provide them.
 5. Apply the Semantic Versioning rules in the root README and record breaking changes explicitly.
 

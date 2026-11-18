@@ -15,7 +15,7 @@ make bundle
 
 ## Case tables
 
-A file under `src/` whose name ends in `cases.json` states behavior case by case. Its `$comment` describes the rule; `runBy` names consumer-owned test locations, while `absent` and `notYetReached` explain SDK coverage gaps. [`src/CaseTable.json`](src/CaseTable.json) is the schema of what every case table carries. Each consumer repository owns its implementation tests and uses the pinned protocol revision as input.
+A file under `src/` whose name ends in `cases.json` states behavior case by case. Its `$comment` describes the rule, and its cases state it; a table names no consumer, and each consumer records which of its tests runs it. [`src/CaseTable.json`](src/CaseTable.json) is the schema of what every case table carries. Each consumer repository owns its implementation tests and uses the pinned protocol revision as input.
 
 ## Table schemas
 

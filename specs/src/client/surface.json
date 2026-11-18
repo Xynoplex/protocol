@@ -1,5 +1,5 @@
 {
-  "$comment": "AUTHORITY for the surface of a Xynolog client: every namespace, every method, the shape of what it returns, and what calling it does first. Every SDK is held to this table two ways. Its signatures are read by .github/scripts/checks/check-client-surface.mjs, which fails on a method the table lacks, one an SDK lacks, and one whose return shape is not the row's; each of its sections holds the SDKs it has a reader for. Its behaviour is run: each SDK's surface test calls every method as each of its `cases` states and holds what the call did to the row. A method name is the table's, in camelCase; an SDK spells it by its language's convention (`resourceContent` is `resource_content` in Rust and `ResourceContent` in Go, whose first letter is a capital), and a namespace whose name is a keyword there takes a trailing underscore (`yield_`, `match_`). Swift keeps both names, including its contextual `yield`. Neither is a keyword in Kotlin, which keeps both names; Java reaches them through their getters (`getYield()`), which Java's contextual `yield` does not touch. An `events` row is a property named `<method>$` in TypeScript. `absent` names an SDK that does not have the method, and why: the lint then fails if that SDK has it, so an exemption that stopped being true is caught. Add a row here before adding a method to any SDK. `worker` is the surface of what a worker is handed: the claims `job.claim` returns, and a job the worker holds. Each lists its members by name, and the same lint holds every SDK to the list both ways: a member the list has and an SDK lacks, and a public member an SDK has and the list lacks. A member is held by its name alone, spelled as its language spells it, and its form is its language's: what a held job states is a property in TypeScript and Python and a method in Rust, and a property that gives a stream of values is named `<member>$` in TypeScript. What a language's own protocols give a type is no member here: how a type is made, Python's names that begin with an underscore, its `__aenter__` and `__anext__` among them, Rust's trait implementations, and what a TypeScript class inherits from a class the SDK does not declare. `absent` is as it is for a method. `named` gives the name an SDK has the member under where its ecosystem has a name of its own for it, and why: the lint then fails if that SDK lacks that name, or has the table's name as well. `takes` marks a member a held job has as its verb's: for each verb, the schema of what the member takes. What a member does is not held here and these rows have no cases: contract/WORKER-CONTRACT.md states it, and the worker conformance suite (conformance/worker) holds each SDK to it. Add a member here before adding it to any SDK. `stateUnits` lists each state unit: what each SDK makes it as (`made`), and its members by name. The same lint holds every SDK to it both ways: a unit an SDK does not declare, or declares as no `StateUnit`; a `StateUnit` an SDK declares among its units that no row makes; a member the list has and an SDK's unit lacks; and a public member an SDK's unit has and the list lacks. A member is held by its name alone, spelled as its language spells it, and its form is its language's, as for `worker`; a member's `absent` names an SDK whose unit has no such member, and why, and the lint then fails if that SDK's unit has it. `dispose` is no member here: every unit has it, being a `StateUnit`. How a unit is made is held apart from its members: every unit can be made from outside its SDK, by the type's own public constructor (Rust's `pub fn new` in the type's own `impl`, Python's class), or by the public function that `madeBy` names for that SDK, spelled as that SDK spells it, where the constructor is not what makes it; Go has no constructors, so every Go unit names one. The same lint fails a unit no public way makes, and a `madeBy` that names a function its SDK lacks, or has but not publicly. Public is reachable from outside the SDK, including what Swift declares `public` or `open`: what TypeScript's entry (sdk/typescript/sdk/src/index.ts) exports, an item a module Rust's crate root reaches declares or re-exports, a name in the `__all__` of a Python module whose path has no private part, what Kotlin declares `public`, and what Go exports from a package that is not internal. `absent` names an SDK that has no such unit, and why: the lint then fails if that SDK has one. What a unit does is not held here: each SDK's tests of its units hold that. Add a unit or a member here before adding it to any SDK. `wire` is the typed bus over a client's transport, which every client hands out as `wire`: what each SDK makes it as (`made`), and its members by name. The same lint holds every SDK to it both ways, as for a state unit: a bus an SDK does not declare, a member the list has and an SDK's bus lacks, and a public member an SDK's bus has and the list lacks; a member's `absent` names an SDK whose bus has no such member, and why, and the lint then fails if that SDK's has it. A member is held by its name alone, as for `worker`; how a bus is made is no member. A Go method takes no type parameters, so a member of Go's bus that is generic in its channel is a function of its package that takes the bus (`Emit(ctx, w, bus.MarkSubmit, payload)`). TypeScript's bus is read where @xynolog/core declares it. A transport is no member: a bus hands out none. Add a member here before adding it to any SDK. `storage` is where a client keeps text under a key: the interface an application implements (a trait in Rust, a protocol in Python), what each SDK names it (`made`), and its members by name. The same lint holds every SDK to it both ways, as for `wire`: a storage an SDK does not declare, a member the list has and an SDK's storage lacks, and a public member an SDK's storage has and the list lacks; a member's `absent` names an SDK whose storage has no such member, and why, and the lint then fails if that SDK's has it. A member is held by its name alone, as for `worker`. What implements a storage is not read here. Add a member here before adding it to any SDK. `modules` is what each SDK has beside its namespaces: the free functions, types and values of its modules, each module with where each SDK keeps it and its members. A member is named as the table spells it and held by its `kind`: a `function` is spelled by each language's convention, a `reader` as a function but `get` and its name in TypeScript, a `type` as the table spells it, and a `constant` in capitals with underscores but in Go, as a function, and in Swift, as the table spells it. `named` gives an SDK's own name where the rule does not, `absent` says why an SDK has none, and `notYetReached`, on a member or a module, names an SDK still to have it; each is stale, and fails the lint, once it is not so. A module whose `whole` names an SDK is that SDK's files alone, and every public member of them is listed. `clock` is what a caller controls of an SDK's time and chance: the clock every wait keeps, and the random source every jitter draws, one row each. For every SDK a row says either how a caller controls the source from outside the SDK (`outside`), or which public makers take it (`takes`): each maker as its SDK spells it (`Type.member`, or `Type::member` in Rust, for a type's function), with the types it takes the source as. The same lint holds every SDK to it both ways: every public way of making a listed maker takes each of its types, or is handed another maker of the row that takes them already, and keeps that one's; and no parameter or field of an `outside` SDK has a type the row's `typeWords` name. `notYetReached` names a maker still to take it, with what is to be built, and is stale, and fails the lint, once the maker takes it. When a wait ends under a moved clock is specs/src/client/clock-cases.json's.",
+  "$comment": "AUTHORITY for the surface of a Xynolog client: every namespace, every method, the shape of what it returns, and what calling it does first. Every SDK is held to this table two ways. Its signatures are read by .github/scripts/checks/check-client-surface.mjs, which fails on a method the table lacks, one an SDK lacks, and one whose return shape is not the row's; each of its sections holds the SDKs it has a reader for. Its behaviour is run: each SDK's surface test calls every method as each of its `cases` states and holds what the call did to the row. A method name is the table's, in camelCase; an SDK spells it by its language's convention (`resourceContent` is `resource_content` in Rust and `ResourceContent` in Go, whose first letter is a capital), and a namespace whose name is a keyword there takes a trailing underscore (`yield_`, `match_`). Swift keeps both names, including its contextual `yield`. Neither is a keyword in Kotlin, which keeps both names; Java reaches them through their getters (`getYield()`), which Java's contextual `yield` does not touch. An `events` row is a property named `<method>$` in TypeScript. The table names no SDK that lacks part of the surface: which SDK lacks a method, a member, a unit, a module or a clock's maker, or is still to have one, and why, is each SDK repository's to record, and the lint excuses an SDK only what that record names. Add a row here before adding a method to any SDK. `worker` is the surface of what a worker is handed: the claims `job.claim` returns, and a job the worker holds. Each lists its members by name, and the same lint holds every SDK to the list both ways: a member the list has and an SDK lacks, and a public member an SDK has and the list lacks. A member is held by its name alone, spelled as its language spells it, and its form is its language's: what a held job states is a property in TypeScript and Python and a method in Rust, and a property that gives a stream of values is named `<member>$` in TypeScript. What a language's own protocols give a type is no member here: how a type is made, Python's names that begin with an underscore, its `__aenter__` and `__anext__` among them, Rust's trait implementations, and what a TypeScript class inherits from a class the SDK does not declare. `named` gives the name an SDK has the member under where its ecosystem has a name of its own for it, and why: the lint then fails if that SDK lacks that name, or has the table's name as well. `takes` marks a member a held job has as its verb's: for each verb, the schema of what the member takes. What a member does is not held here and these rows have no cases: contract/WORKER-CONTRACT.md states it, and the worker conformance suite (conformance/worker) holds each SDK to it. Add a member here before adding it to any SDK. `stateUnits` lists each state unit: what each SDK makes it as (`made`), and its members by name. The same lint holds every SDK to it both ways: a unit an SDK does not declare, or declares as no `StateUnit`; a `StateUnit` an SDK declares among its units that no row makes; a member the list has and an SDK's unit lacks; and a public member an SDK's unit has and the list lacks. A member is held by its name alone, spelled as its language spells it, and its form is its language's, as for `worker`. `dispose` is no member here: every unit has it, being a `StateUnit`. How a unit is made is held apart from its members: every unit can be made from outside its SDK, by the type's own public constructor (Rust's `pub fn new` in the type's own `impl`, Python's class), or by the public function that `madeBy` names for that SDK, spelled as that SDK spells it, where the constructor is not what makes it; Go has no constructors, so every Go unit names one. The same lint fails a unit no public way makes, and a `madeBy` that names a function its SDK lacks, or has but not publicly. Public is reachable from outside the SDK, including what Swift declares `public` or `open`: what TypeScript's entry (sdk/typescript/sdk/src/index.ts) exports, an item a module Rust's crate root reaches declares or re-exports, a name in the `__all__` of a Python module whose path has no private part, what Kotlin declares `public`, and what Go exports from a package that is not internal. What a unit does is not held here: each SDK's tests of its units hold that. Add a unit or a member here before adding it to any SDK. `wire` is the typed bus over a client's transport, which every client hands out as `wire`: what each SDK makes it as (`made`), and its members by name. The same lint holds every SDK to it both ways, as for a state unit: a bus an SDK does not declare, a member the list has and an SDK's bus lacks, and a public member an SDK's bus has and the list lacks. A member is held by its name alone, as for `worker`; how a bus is made is no member. A Go method takes no type parameters, so a member of Go's bus that is generic in its channel is a function of its package that takes the bus (`Emit(ctx, w, bus.MarkSubmit, payload)`). TypeScript's bus is read where @xynolog/core declares it. A transport is no member: a bus hands out none. Add a member here before adding it to any SDK. `storage` is where a client keeps text under a key: the interface an application implements (a trait in Rust, a protocol in Python), what each SDK names it (`made`), and its members by name. The same lint holds every SDK to it both ways, as for `wire`: a storage an SDK does not declare, a member the list has and an SDK's storage lacks, and a public member an SDK's storage has and the list lacks. A member is held by its name alone, as for `worker`. What implements a storage is not read here. Add a member here before adding it to any SDK. `modules` is what each SDK has beside its namespaces: the free functions, types and values of its modules, each module with where each SDK keeps it and its members. A member is named as the table spells it and held by its `kind`: a `function` is spelled by each language's convention, a `reader` as a function but `get` and its name in TypeScript, a `type` as the table spells it, and a `constant` in capitals with underscores but in Go, as a function, and in Swift, as the table spells it. `named` gives an SDK's own name where the rule does not, and is stale, and fails the lint, once it is not so. A module whose `whole` names an SDK is that SDK's files alone, and every public member of them is listed. `clock` is what a caller controls of an SDK's time and chance: the clock every wait keeps, and the random source every jitter draws, one row each. For every SDK a row says either how a caller controls the source from outside the SDK (`outside`), or which public makers take it (`takes`): each maker as its SDK spells it (`Type.member`, or `Type::member` in Rust, for a type's function), with the types it takes the source as. The same lint holds every SDK to it both ways: every public way of making a listed maker takes each of its types, or is handed another maker of the row that takes them already, and keeps that one's; and no parameter or field of an `outside` SDK has a type the row's `typeWords` name. When a wait ends under a moved clock is specs/src/client/clock-cases.json's.",
   "shapes": {
     "promise": "Asked once, answered once: the value, or a failure with a code.",
     "stream": "A long-running operation: what it reports as it goes, then its final value. Awaited, it gives the final value.",
@@ -720,23 +720,11 @@
       "members": [
         {
           "member": "next",
-          "absent": {
-            "typescript": "The claims are an rxjs Observable, read by subscribing to them: `subscribe` is rxjs's own, and the SDK declares no member for it.",
-            "python": "The claims are an asynchronous iterator, read with `async for`: `__anext__` is the language's protocol.",
-            "swift": "Claims is an AsyncSequence. Its iterator implements Swift's next()."
-          },
           "named": {
             "go": { "name": "All", "why": "The claims are ranged over, `for job, err := range claims.All()`, and Go's standard library names the method that gives a sequence of every element `All` (`maps.All`, `slices.All`)." }
           }
         },
-        {
-          "member": "refused",
-          "absent": {
-            "rust": "`next` answers a `Result`, and a claim that was refused is its `Err`: it is handed out where a job would be.",
-            "python": "The claims are iterated with `async for`, and an exception raised into the loop would end it; a claim that was refused does not end a worker's claims, so it is handed out where a job would be, as a `ClaimRefusal`.",
-            "go": "The claims are ranged over as pairs of a job and an error, and a claim that was refused is the error, a `*ClaimRefusal`: it is handed out where a job would be."
-          }
-        },
+        { "member": "refused" },
         { "member": "stalled" },
         { "member": "vitals" },
         {
@@ -764,12 +752,7 @@
         { "member": "annotationId" },
         { "member": "trace" },
         { "member": "cancelled" },
-        {
-          "member": "settled",
-          "absent": {
-            "rust": "`complete`, `fail` and `cancel` take the job by value: a job its holder has settled is gone, and nothing is left to ask it."
-          }
-        },
+        { "member": "settled" },
         { "member": "start" },
         { "member": "progress" },
         { "member": "checkpoint" },
@@ -891,78 +874,20 @@
       "made": {"ocaml": "Cache", "csharp": "Cache", "typescript": "Cache", "rust": "Cache", "python": "Cache", "go": "Cache", "kotlin": "Cache", "swift": "Cache", "haskell": "Cache"},
       "madeBy": {"typescript": "createCache", "go": "NewCache", "haskell": "newCache"},
       "members": [
-        {
-          "member": "observe"
-        },
-        {
-          "member": "fetch"
-        },
-        {
-          "member": "get"
-        },
-        {
-          "member": "known"
-        },
-        {
-          "member": "keys"
-        },
-        {
-          "member": "invalidate"
-        },
-        {
-          "member": "invalidateAll"
-        },
-        {
-          "member": "remove"
-        },
-        {
-          "member": "set"
-        },
-        {
-          "member": "patch"
-        },
-        {
-          "member": "persistencePending"
-        },
-        {
-          "member": "keptFetching",
-          "absent": {
-            "typescript": "TypeScript's is PersistableCache.fetching, which the SDK does not export: the client that makes a cache reads it as its disposal seals the stream's places.",
-            "rust": "Rust's is pub(crate), the fetching of the persistence a cache reports: the client reads it as its close seals the stream's places.",
-            "go": "Go's is unexported: the client reads it as its Close seals the stream's places.",
-            "kotlin": "Kotlin's is internal (keptFetchInFlight): the client reads it as its close seals the stream's places.",
-            "swift": "A Swift cache counts each fetch in the work under way of what keeps its values, given when it is made, and its client reads that count.",
-            "csharp": "C#'s is internal (Cache.Fetching): its client's CachePersistence reads it as it seals the stream's places.",
-            "haskell": "Haskell's is in the internal library (Xynolog.Internal.Cache.fetching): the client reads it as its close seals the stream's places.",
-            "ocaml": "OCaml's client keeps no stream places beside its caches, so its close asks no cache whether it is fetching."
-          }
-        },
-        {
-          "member": "attach",
-          "absent": {
-            "typescript": "TypeScript's client gives a cache what keeps its values through createPersistableCache, which the SDK does not export.",
-            "rust": "Rust's is pub(crate): the client that makes a cache gives it what keeps its values.",
-            "go": "Go's is unexported: the client that makes a cache gives it what keeps its values.",
-            "kotlin": "Kotlin's is internal: the client that makes a cache gives it what keeps its values.",
-            "swift": "A Swift cache is given what keeps its values when it is made.",
-            "csharp": "A C# cache keeps nothing itself: its client's CachePersistence keeps what its caches hold.",
-            "haskell": "A Haskell cache is given what keeps its values when it is made, in its CacheOptions.",
-            "ocaml": "An OCaml cache is given what keeps its values when it is made, as its restore and save."
-          }
-        },
-        {
-          "member": "query",
-          "absent": {
-            "ocaml": "The OCaml cache observes a key directly; Client.query provides the public client query.",
-            "csharp": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch.",
-            "typescript": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch.",
-            "rust": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch.",
-            "python": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch.",
-            "go": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch.",
-            "kotlin": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch.",
-            "swift": "This SDK returns its live observation directly from observe; Haskell also constructs a composable Query value, whose reader is scoped by watch."
-          }
-        }
+        { "member": "observe" },
+        { "member": "fetch" },
+        { "member": "get" },
+        { "member": "known" },
+        { "member": "keys" },
+        { "member": "invalidate" },
+        { "member": "invalidateAll" },
+        { "member": "remove" },
+        { "member": "set" },
+        { "member": "patch" },
+        { "member": "persistencePending" },
+        { "member": "keptFetching" },
+        { "member": "attach" },
+        { "member": "query" }
       ]
     },
     {
@@ -981,19 +906,7 @@
         { "member": "ready" },
         { "member": "expiresAt" },
         { "member": "refresh" },
-        {
-          "member": "renewer",
-          "absent": {
-            "ocaml": "The client transport uses the credential session directly.",
-            "csharp": "The transport takes a callback bound to the kept session when the transport is constructed.",
-            "swift": "The transport uses a closure that calls the session's `refresh` with the token refused through a weak session reference.",
-            "typescript": "A TypeScript transport is handed a closure that calls the session's `refresh` with the token refused, and a closure can name the session it is built before. Rust's ownership forbids a transport and its session holding each other, so Rust hands its transport a weak handle instead.",
-            "python": "A Python transport is handed a closure that calls the session's `refresh` with the token refused (`refresher`), and a closure can name the session it is built before. Rust's ownership forbids a transport and its session holding each other, so Rust hands its transport a weak handle instead.",
-            "go": "A Go transport is handed a TokenRefresher that asks the session's `Refresh` with the token refused (SessionFromKept's `refreshedBy`), and a closure can name the session it is built before. Rust's ownership forbids a transport and its session holding each other, so Rust hands its transport a weak handle instead.",
-            "kotlin": "A Kotlin transport is handed a refresher that asks the session to renew the token a request was refused with (sessionFromKept's), and a closure can name the session it is built before. Rust's ownership forbids a transport and its session holding each other, so Rust hands its transport a weak handle instead.",
-            "haskell": "The HTTP transport calls the session refresh closure with the refused token; it needs no separate weak renewal handle."
-          }
-        }
+        { "member": "renewer" }
       ]
     }
   ],
@@ -1013,55 +926,11 @@
     "members": [
       { "member": "emit" },
       { "member": "frames" },
-      {
-        "member": "framesOf",
-        "absent": {
-          "ocaml": "Bus uses typed channel and operation values and exposes frames through a subscription callback.",
-          "haskell": "Haskell passes typed channel/operation values and a ScopeArg to the same functions.",
-          "csharp": "C# uses generated channel and operation values, and Frames accepts a resource scope.",
-          "swift": "Swift uses typed channel and operation values; frames is overloaded for a resource scope.",
-          "typescript": "`frames` is overloaded: a channel of a resource's scope is read as `frames(channel, resourceId)`. Rust, which has no overloading, names that read apart.",
-          "python": "`frames` is overloaded (`typing.overload`): a channel of a resource's scope is read as `frames(channel, resource)`. Rust, which has no overloading, names that read apart.",
-          "kotlin": "`frames` is overloaded: a channel of a resource's scope (`ScopedChannel`) is read as `frames(channel, resource)`. Rust, which has no overloading, names that read apart."
-        }
-      },
+      { "member": "framesOf" },
       { "member": "request" },
-      {
-        "member": "emitOn",
-        "absent": {
-          "ocaml": "Bus uses typed channel and operation values and exposes frames through a subscription callback.",
-          "haskell": "Haskell passes typed channel/operation values and a ScopeArg to the same functions.",
-          "csharp": "C# uses generated channel and operation values, and Frames accepts a resource scope.",
-          "swift": "Swift uses typed channel and operation values; frames is overloaded for a resource scope.",
-          "typescript": "A TypeScript channel is a value, checked against the registry's names, so a channel chosen at run time is emitted on with `emit`. Rust's typed `emit` takes its channel as a type parameter, and a channel named at run time needs a method of its own.",
-          "python": "A Python channel is a value (`Channel`), so a channel chosen at run time is emitted on with `emit`. Rust's typed `emit` takes its channel as a type parameter, and a channel named at run time needs a method of its own.",
-          "kotlin": "A Kotlin channel is a value (`Channel`), so a channel chosen at run time is emitted on with `emit`. Rust's typed `emit` takes its channel as a type parameter, and a channel named at run time needs a method of its own."
-        }
-      },
-      {
-        "member": "framesOn",
-        "absent": {
-          "ocaml": "Bus uses typed channel and operation values and exposes frames through a subscription callback.",
-          "haskell": "Haskell passes typed channel/operation values and a ScopeArg to the same functions.",
-          "csharp": "C# uses generated channel and operation values, and Frames accepts a resource scope.",
-          "swift": "Swift uses typed channel and operation values; frames is overloaded for a resource scope.",
-          "typescript": "A TypeScript channel is a value, checked against the registry's names, so a channel chosen at run time is read with `frames`. Rust's typed `frames` takes its channel as a type parameter, and a channel named at run time needs a method of its own.",
-          "python": "A Python channel is a value (`Channel`), so a channel chosen at run time is read with `frames`. Rust's typed `frames` takes its channel as a type parameter, and a channel named at run time needs a method of its own.",
-          "kotlin": "A Kotlin channel is a value (`Channel`), so a channel chosen at run time is read with `frames`. Rust's typed `frames` takes its channel as a type parameter, and a channel named at run time needs a method of its own."
-        }
-      },
-      {
-        "member": "requestOf",
-        "absent": {
-          "ocaml": "Bus uses typed channel and operation values and exposes frames through a subscription callback.",
-          "haskell": "Haskell passes typed channel/operation values and a ScopeArg to the same functions.",
-          "csharp": "C# uses generated channel and operation values, and Frames accepts a resource scope.",
-          "swift": "Swift uses typed channel and operation values; frames is overloaded for a resource scope.",
-          "typescript": "A TypeScript operation is a value, checked against the registry's operations, so one chosen at run time is asked with `request`. Rust's typed `request` takes its operation as a type parameter, and an operation named at run time needs a method of its own.",
-          "python": "A Python operation is a value (`Operation`), so one chosen at run time is asked with `request`. Rust's typed `request` takes its operation as a type parameter, and an operation named at run time needs a method of its own.",
-          "kotlin": "A Kotlin operation is a value (`Operation`), so one chosen at run time is asked with `request`. Rust's typed `request` takes its operation as a type parameter, and an operation named at run time needs a method of its own."
-        }
-      }
+      { "member": "emitOn" },
+      { "member": "framesOn" },
+      { "member": "requestOf" }
     ]
   },
   "storage": {
@@ -1187,33 +1056,15 @@
         },
         {
           "member": "textPositionSelector",
-          "kind": "reader",
-          "absent": {
-            "rust": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "python": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "go": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "kotlin": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself."
-          }
+          "kind": "reader"
         },
         {
           "member": "svgSelector",
-          "kind": "reader",
-          "absent": {
-            "rust": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "python": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "go": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "kotlin": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself."
-          }
+          "kind": "reader"
         },
         {
           "member": "fragmentSelector",
-          "kind": "reader",
-          "absent": {
-            "rust": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "python": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "go": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself.",
-            "kotlin": "TypeScript's alone: the selectors react-ui's viewer draws by. A reader of a selector in another SDK reads the selector itself."
-          }
+          "kind": "reader"
         },
         {
           "member": "reconcile",
@@ -1245,65 +1096,28 @@
         },
         {
           "member": "MatchQuality",
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript states it inline, as ReconciledSpan's matchQuality, and names no type for it."
-          }
+          "kind": "type"
         },
         {
           "member": "SpanRefusedError",
-          "kind": "type",
-          "absent": {
-            "rust": "Rust refuses a span with errors::SpanRefusal, which is itself an error.",
-            "kotlin": "Kotlin's is xynolog.errors.SpanRefusedError: a XynologError, and that family is sealed, so every member of it is in xynolog.errors."
-          }
+          "kind": "type"
         },
         {
           "member": "SpanRefusal",
           "named": {"haskell": "SpanRefusalCode"},
-          "kind": "type",
-          "absent": {
-            "csharp": "C# reports the shared refusal code on SpanRefusedError.",
-            "swift": "Swift uses SpanRefusalErrorCode, generated with the other error families.",
-            "typescript": "TypeScript's is with @xynolog/core's other error codes.",
-            "rust": "Rust's is errors::SpanRefusal, which is itself the error a refused span is.",
-            "go": "Go's is xynolog.SpanRefusal, generated with the other error codes.",
-            "kotlin": "Kotlin's is xynolog.errors.SpanRefusal, generated with the other error codes."
-          }
+          "kind": "type"
         },
         {
           "member": "Spanned",
-          "kind": "type",
-          "absent": {
-            "typescript": "Rust's alone: its annotation_of_span takes a text or a PDF as one enum, where the others take a PDF's anchored text beside the text.",
-            "python": "Rust's alone: its annotation_of_span takes a text or a PDF as one enum, where the others take a PDF's anchored text beside the text.",
-            "go": "Rust's alone: its annotation_of_span takes a text or a PDF as one enum, where the others take a PDF's anchored text beside the text.",
-            "kotlin": "Rust's alone: its annotation_of_span takes a text or a PDF as one enum, where Kotlin's annotationOfSpan is overloaded for each."
-          }
+          "kind": "type"
         },
         {
           "member": "OfSpan",
-          "kind": "type",
-          "absent": {
-            "ocaml": "The OCaml builder takes its inputs as labeled arguments.",
-            "haskell": "The Haskell builder takes its typed inputs as arguments, without an input record.",
-            "typescript": "Go's alone: Go's builder takes what it builds from as one struct, which it names, where TypeScript's states the object's type inline.",
-            "rust": "Go's alone: Go's builder takes what it builds from as one struct, where Rust's takes each as an argument.",
-            "python": "Go's alone: Go's builder takes what it builds from as one struct, where Python's takes each as an argument.",
-            "kotlin": "Go's alone: Go's builder takes what it builds from as one struct, where Kotlin's takes each as an argument."
-          }
+          "kind": "type"
         },
         {
           "member": "OfResource",
-          "kind": "type",
-          "absent": {
-            "ocaml": "The OCaml builder takes its inputs as labeled arguments.",
-            "haskell": "The Haskell builder takes its typed inputs as arguments, without an input record.",
-            "typescript": "Go's alone: Go's builder takes what it builds from as one struct, which it names, where TypeScript's states the object's type inline.",
-            "rust": "Go's alone: Go's builder takes what it builds from as one struct, where Rust's takes each as an argument.",
-            "python": "Go's alone: Go's builder takes what it builds from as one struct, where Python's takes each as an argument.",
-            "kotlin": "Go's alone: Go's builder takes what it builds from as one struct, where Kotlin's takes each as an argument."
-          }
+          "kind": "type"
         }
       ]
     },
@@ -1502,10 +1316,7 @@
         },
         {
           "member": "renewalDelay",
-          "kind": "function",
-          "absent": {
-            "typescript": "TypeScript's session reads when to renew from the token itself (refreshDelayMs), and hands out no reckoning from a lifetime and what is left of it."
-          }
+          "kind": "function"
         },
         {
           "member": "refreshDelay",
@@ -1594,18 +1405,11 @@
         },
         {
           "member": "unsubscribed",
-          "kind": "function",
-          "absent": {
-            "ocaml": "Subscription.request returns the Unsubscribed constructor directly.",
-            "typescript": "TypeScript makes the refusal where it refuses, and hands out no maker of it."
-          }
+          "kind": "function"
         },
         {
           "member": "persistedEventTypes",
-          "kind": "constant",
-          "absent": {
-            "rust": "Rust tells the record's events by their channels' type, `Recorded`."
-          }
+          "kind": "constant"
         },
         {
           "member": "FrameRefusal",
@@ -1614,22 +1418,11 @@
         {
           "member": "FrameRefusalReason",
           "named": {"haskell": "FaultReason"},
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript's refusal states its reason as one of two strings, `lacks` and `malformed`.",
-            "python": "Python's refusal states its reason as a Literal of the two spellings, `lacks` and `malformed`."
-          }
+          "kind": "type"
         },
         {
           "member": "Carried",
-          "kind": "type",
-          "absent": {
-            "ocaml": "Bus.frames delivers the standard OCaml result of a frame or its refusal.",
-            "typescript": "TypeScript's transport delivers a refusal where a frame's payload would be, on the frame's envelope (`BusFrame<P | FrameRefusal>`), as its client's bus does.",
-            "rust": "Rust's transport delivers a frame or its refusal as a `Result<Frame, FrameRefusal>`.",
-            "python": "Python's transport delivers a frame or its refusal as the union `Frame | FrameRefusal`.",
-            "go": "Go's transport delivers a frame or, as its error, its refusal (`iter.Seq2[Frame, error]`)."
-          }
+          "kind": "type"
         }
       ]
     },
@@ -1686,14 +1479,7 @@
         },
         {
           "member": "newXynologBrowser",
-          "kind": "function",
-          "absent": {
-            "csharp": "C# makes one with the public XynologBrowser constructor.",
-            "python": "Python makes one with `XynologBrowser(config)`, held with `async with`.",
-            "typescript": "TypeScript makes one with `new XynologBrowser(config)`.",
-            "rust": "Rust makes one with `XynologBrowser::new(config)`.",
-            "kotlin": "Kotlin makes one with `XynologBrowser(config)`, closed with `close()`."
-          }
+          "kind": "function"
         },
         {
           "member": "XynologBrowserConfig",
@@ -1702,19 +1488,13 @@
         {
           "member": "SignedIn",
           "kind": "type",
-          "absent": {
-            "typescript": "TypeScript's `completeSignIn` lands a sign-in itself, and names no type for what the registry is handed."
-          },
           "fieldsNamed": {
             "go": { "kbId": "KbID" }
           }
         },
         {
           "member": "Expected",
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript states what a person believed inside `SignInOutcome`, and names no type for it."
-          }
+          "kind": "type"
         },
         {
           "member": "SignInOutcome",
@@ -1726,12 +1506,7 @@
         },
         {
           "member": "KbReadKind",
-          "kind": "type",
-          "absent": {
-            "ocaml": "OCaml represents the read verdict as a variant.",
-            "typescript": "TypeScript's verdict is a union told apart by its `kind`.",
-            "rust": "Rust's verdict is an enum, whose variants are its kinds."
-          }
+          "kind": "type"
         },
         {
           "member": "SessionFactory",
@@ -1764,12 +1539,7 @@
         },
         {
           "member": "TabVerdict",
-          "kind": "type",
-          "absent": {
-            "ocaml": "OCaml represents the tab check as a variant.",
-            "typescript": "TypeScript's check is a union told apart by its `verdict`.",
-            "rust": "Rust's check is an enum, whose variants are its verdicts."
-          }
+          "kind": "type"
         },
         {
           "member": "applyTabChecks",
@@ -1846,17 +1616,11 @@
         },
         {
           "member": "beginSignIn",
-          "kind": "function",
-          "absent": {
-            "typescript": "TypeScript's is a method of `XynologBrowser`."
-          }
+          "kind": "function"
         },
         {
           "member": "completeSignIn",
-          "kind": "function",
-          "absent": {
-            "typescript": "TypeScript's is a method of `XynologBrowser`."
-          }
+          "kind": "function"
         }
       ]
     },
@@ -2032,9 +1796,6 @@
           "named": {
             "haskell": "stateDirectory",
             "ocaml": "state_directory"
-          },
-          "absent": {
-            "csharp": "C#'s state home is SignInStore.StateDirectory, a static member of the store, which takes the system's name as text."
           }
         },
         {
@@ -2044,10 +1805,6 @@
             "kotlin": "Platform",
             "swift": "Platform",
             "ocaml": "platform"
-          },
-          "absent": {
-            "csharp": "C#'s SignInStore.StateDirectory takes the system's name as text.",
-            "haskell": "Haskell's stateDirectory takes the system's name as text."
           }
         },
         {
@@ -2055,13 +1812,6 @@
           "kind": "function",
           "named": {
             "kotlin": "thisPlatform"
-          },
-          "absent": {
-            "typescript": "TypeScript reads nothing of the system it runs on: its caller says which it is.",
-            "rust": "Rust's is a function of the type, System::of_this_build.",
-            "swift": "Swift's caller says which system it runs on.",
-            "csharp": "C#'s caller names the system it runs on.",
-            "ocaml": "The OCaml caller supplies the platform."
           }
         },
         {
@@ -2070,35 +1820,16 @@
           "named": {
             "go": "SignInFile",
             "haskell": "signInFileName"
-          },
-          "absent": {
-            "typescript": "TypeScript's is SIGN_IN_STORE_FILE, generated into @xynolog/core, which the store hands to its caller's files.",
-            "swift": "Swift's store is made at a path its caller gives.",
-            "csharp": "C#'s store is made in a directory its caller gives, and names the file there itself.",
-            "ocaml": "The OCaml store names tokens.json inside the directory supplied by its caller."
           }
         },
         {
           "member": "SignInFiles",
-          "kind": "type",
-          "absent": {
-            "rust": "Rust reads, writes and locks the file itself, through its standard library.",
-            "python": "Python reads, writes and locks the file itself, through its standard library and ctypes.",
-            "go": "Go reads, writes and locks the file itself, through its standard library.",
-            "kotlin": "Kotlin reads, writes and locks the file itself, through the JDK and its foreign-function interface.",
-            "swift": "Swift reads, writes and locks the file itself, through Foundation and the C library.",
-            "csharp": "C# reads, writes and locks the file itself, through .NET and the C library.",
-            "haskell": "Haskell reads, writes and locks the file itself, through its directory and file libraries and the C library.",
-            "ocaml": "The OCaml store uses Unix file operations and a native flock binding."
-          }
+          "kind": "type"
         }
       ]
     },
     {
       "module": "keptSignIn",
-      "notYetReached": {
-        "ocaml": "OCaml keeps a sign-in only in the launcher's store (Sign_in_store), with OAuth's device grant beside it: it is to have a SignInKept a session holds and renews wherever it is kept, a MemorySignIn, and signInDevice, sessionFromKept, renewKept and signOut over one."
-      },
       "docs": "A sign-in a session holds and renews wherever it is kept (a registry's storage, through the registry's keptIn; the sign-ins `xynolog login` keeps; memory; a host's own), and what a script does with one: signs a person in to it by the device grant, opens a session over it, renews it at the issuer, and signs out of it. A session opened over one asks the gateway who its token is unless it is told not to (`validate`, true when it is left out). Its client keeps for the person the kept sign-in names from the start, whether or not it asks (specs/src/session/persisted-cases.json, `startup`); asking is how it learns the person when the sign-in names nobody yet, and a session that does not ask then keeps for nobody. docs/builder/SIGN-IN.md says which to use when.",
       "where": {
         "typescript": [
@@ -2139,39 +1870,25 @@
         },
         {
           "member": "MemorySignIn",
-          "kind": "type",
-          "absent": { "haskell": "Haskell makes one with newMemorySignIn, a KeptSignIn held in memory, and names no type for it." }
+          "kind": "type"
         },
         {
           "member": "signInDevice",
           "kind": "function",
-          "named": { "go": "SignInWithDevice" },
-          "absent": {
-            "typescript": "TypeScript's is XynologSession.signInDevice, a static method of the session.",
-            "csharp": "C#'s is Issuer.SignInDeviceAsync, a method of the issuer."
-          }
+          "named": { "go": "SignInWithDevice" }
         },
         {
           "member": "sessionFromKept",
           "kind": "function",
-          "named": { "haskell": "fromKeptSession" },
-          "absent": {
-            "typescript": "TypeScript's is XynologSession.fromKept, a static method of the session.",
-            "csharp": "C#'s is XynologSession.FromKeptAsync, a static method of the session."
-          }
+          "named": { "haskell": "fromKeptSession" }
         },
         {
           "member": "renewKept",
-          "kind": "function",
-          "absent": {
-            "go": "Go's is Issuer.RenewKept, a method of the issuer.",
-            "csharp": "C#'s is Issuer.RenewAsync, a method of the issuer."
-          }
+          "kind": "function"
         },
         {
           "member": "signOut",
-          "kind": "function",
-          "absent": { "csharp": "C#'s is Issuer.SignOutAsync, a method of the issuer." }
+          "kind": "function"
         }
       ]
     },
@@ -2211,11 +1928,7 @@
       "members": [
         {
           "member": "discoveryInterval",
-          "kind": "constant",
-          "absent": {
-            "typescript": "TypeScript's subscription is given its interval by its caller.",
-            "haskell": "DiscoveryOptions requires its interval from the caller; Xynolog.Timing supplies the protocol default."
-          }
+          "kind": "constant"
         },
         {
           "member": "DiscoveryAbsentReason",
@@ -2235,33 +1948,15 @@
         },
         {
           "member": "Absent",
-          "kind": "type",
-          "absent": {
-            "ocaml": "OCaml represents absence as a variant constructor.",
-            "typescript": "TypeScript's state is a union told apart by its `kind`.",
-            "rust": "Rust's state is an enum, whose variants are its kinds.",
-            "haskell": "Haskell represents this case as an algebraic data constructor of DiscoveryState or DiscoveryRead, rather than a separate type."
-          }
+          "kind": "type"
         },
         {
           "member": "Managed",
-          "kind": "type",
-          "absent": {
-            "ocaml": "OCaml represents a managed document as a variant constructor.",
-            "typescript": "TypeScript's state is a union told apart by its `kind`.",
-            "rust": "Rust's state is an enum, whose variants are its kinds.",
-            "haskell": "Haskell represents this case as an algebraic data constructor of DiscoveryState or DiscoveryRead, rather than a separate type."
-          }
+          "kind": "type"
         },
         {
           "member": "Unchanged",
-          "kind": "type",
-          "absent": {
-            "ocaml": "OCaml represents an unchanged read as a variant constructor.",
-            "typescript": "TypeScript's read is a union told apart by its `kind`.",
-            "rust": "Rust's read is an enum, whose variants are its kinds.",
-            "haskell": "Haskell represents this case as an algebraic data constructor of DiscoveryState or DiscoveryRead, rather than a separate type."
-          }
+          "kind": "type"
         },
         {
           "member": "DiscoveryTransport",
@@ -2344,9 +2039,6 @@
           "named": {
             "go": "MakeResponse",
             "python": "MakeResponse"
-          },
-          "absent": {
-            "typescript": "TypeScript's spec states how the gateway answers as a function it names no type for."
           }
         },
         {
@@ -2395,10 +2087,7 @@
         },
         {
           "member": "TestSession",
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript gives the session, and what it was built over, as an object it names no type for."
-          }
+          "kind": "type"
         },
         {
           "member": "TestSessionOptions",
@@ -2409,28 +2098,15 @@
         },
         {
           "member": "ScriptedSessions",
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript's testing module has no factory of scripted sessions."
-          }
+          "kind": "type"
         },
         {
           "member": "Renewal",
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript's testing module has no factory of scripted sessions.",
-            "rust": "Rust's scripted sessions are given what a renewal gives as it is: a token, none, or the SignInError it fails with, which Rust makes with the issuer's status.",
-            "python": "Python's scripted sessions are given what a renewal gives as it is: a token, None, or the SignInError it raises, which Python makes with the issuer's status.",
-            "kotlin": "Kotlin's scripted sessions are given a token (queueRenewals) or the SignInError a renewal fails with (failRenewal), which Kotlin makes with the issuer's status.",
-            "haskell": "The scripted factory queues Either SignInError (Maybe Text): the renewal result itself, with no separate wrapper."
-          }
+          "kind": "type"
         },
         {
           "member": "SharedStorage",
-          "kind": "type",
-          "absent": {
-            "typescript": "TypeScript's testing module has no storage several contexts share."
-          }
+          "kind": "type"
         }
       ]
     },
@@ -2465,55 +2141,19 @@
       "members": [
         {
           "member": "faultSaid",
-          "kind": "function",
-          "absent": {
-            "ocaml": "OCaml renders the shared fault with said.",
-            "haskell": "Its HTTP transport is in the same Cabal package and reads refusals internally.",
-            "typescript": "TypeScript's transport finds a body's fault with faultOf and says it with said.",
-            "python": "Its HTTP transport is in the SDK's own package, and reads its answers by the table there.",
-            "go": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "kotlin": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "swift": "Its HTTP transport is in the SDK's own package.",
-            "csharp": "Its HTTP transport is in the SDK's own assembly."
-          }
+          "kind": "function"
         },
         {
           "member": "faultOf",
-          "kind": "function",
-          "absent": {
-            "haskell": "Its HTTP transport is in the same Cabal package and reads refusals internally.",
-            "rust": "Rust's transport crate is told a body's fault in words (fault_said), and a refused frame's as its refusal (FrameRefusal::of).",
-            "python": "Its HTTP transport is in the SDK's own package, and reads its answers by the table there.",
-            "go": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "kotlin": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "swift": "Its HTTP transport is in the SDK's own package.",
-            "csharp": "Its HTTP transport is in the SDK's own assembly."
-          }
+          "kind": "function"
         },
         {
           "member": "said",
-          "kind": "function",
-          "absent": {
-            "haskell": "Its HTTP transport is in the same Cabal package and reads refusals internally.",
-            "rust": "Rust's transport crate is told a body's fault in words (fault_said), and a refused frame's as its refusal (FrameRefusal::of).",
-            "python": "Its HTTP transport is in the SDK's own package, and reads its answers by the table there.",
-            "go": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "kotlin": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "swift": "Its HTTP transport is in the SDK's own package.",
-            "csharp": "Its HTTP transport is in the SDK's own assembly."
-          }
+          "kind": "function"
         },
         {
           "member": "Fault",
-          "kind": "type",
-          "absent": {
-            "rust": "Rust's transport crate is told a body's fault in words (fault_said), and a refused frame's as its refusal (FrameRefusal::of).",
-            "python": "Its HTTP transport is in the SDK's own package, and reads its answers by the table there.",
-            "go": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "kotlin": "Its HTTP transport is in the SDK's own module, and reads its answers by the table there.",
-            "swift": "Its HTTP transport is in the SDK's own package.",
-            "csharp": "Its HTTP transport is in the SDK's own assembly."
-          }
+          "kind": "type"
         }
       ]
     }

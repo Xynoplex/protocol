@@ -8,9 +8,6 @@
   "type": "object",
   "properties": {
     "$comment": true,
-    "runBy": true,
-    "absent": true,
-    "notYetReached": true,
     "cloneFormat": {
       "description": "The format a clone of a resource takes.",
       "type": "array",
