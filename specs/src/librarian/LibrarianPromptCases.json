@@ -13,9 +13,11 @@
       "type": "object",
       "properties": {
         "score": {
+          "$ref": "../JsonSchema.json",
           "$comment": "The JSON Schema a provider holds each element of the reply to a score prompt to."
         },
         "reference-suggestions": {
+          "$ref": "../JsonSchema.json",
           "$comment": "The JSON Schema a provider holds each element of the reply to a reference-suggestions prompt to."
         }
       },

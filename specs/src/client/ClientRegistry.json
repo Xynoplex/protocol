@@ -10,6 +10,7 @@
       "minProperties": 1,
       "description": "Each record, by its type name.",
       "additionalProperties": {
+        "$ref": "../JsonSchema.json",
         "$comment": "The record's JSON Schema, by the type name surface.json's `registry` module gives it: JSON, as it is given."
       }
     }

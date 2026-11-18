@@ -10,6 +10,7 @@
       "minProperties": 1,
       "description": "Each notice, by its name.",
       "additionalProperties": {
+        "$ref": "../JsonSchema.json",
         "$comment": "The notice's JSON Schema: JSON, as it is given."
       }
     },
