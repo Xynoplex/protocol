@@ -1,0 +1,70 @@
+{
+  "description": "jobs/storage.json: where the job queue keeps its state on the broker.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "../CaseTable.json#/properties/$comment"
+    },
+    "stream": {
+      "type": "object",
+      "description": "The work-queue stream every job is published into.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjectRoot": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The root of the subjects the stream captures: a job is published on `<subjectRoot>.<jobType>`."
+        }
+      },
+      "required": [
+        "name",
+        "subjectRoot"
+      ],
+      "additionalProperties": false
+    },
+    "consumer": {
+      "type": "object",
+      "description": "The durable consumer that delivers each job to the dispatcher holding its lease.",
+      "properties": {
+        "durableName": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "durableName"
+      ],
+      "additionalProperties": false
+    },
+    "bucket": {
+      "type": "object",
+      "description": "The KV bucket that keeps one record per job, keyed by the job's id.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "record": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The component schema each of the bucket's values is."
+        }
+      },
+      "required": [
+        "name",
+        "record"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "stream",
+    "consumer",
+    "bucket"
+  ],
+  "additionalProperties": false
+}
