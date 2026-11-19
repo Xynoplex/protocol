@@ -7,11 +7,10 @@
 The OpenAPI bundle files are generated and ignored by Git. From the repository root:
 
 ```sh
-make install
 make bundle
 ```
 
-`specs/openapi.json` and `specs/archivist.openapi.json` are outputs for type generation and conformance runs. Edit only files under `src/`. `make lint` applies the Redocly rules; `make reader` runs the reader, which holds the protocol's own rules, including each table's schema. Every JSON file under `src/` is spelled as `JSON.stringify(value, null, 2)` and a newline write it, so an edit made with any tool changes only what it means to change; `make reader` refuses any other spelling.
+The reader (`xynolog-protocol bundle`) writes `specs/openapi.json` and `specs/archivist.openapi.json`, the outputs for type generation and conformance runs. A bundle names nothing outside itself: a path item is written in its place, and every other file a `$ref` names is a component, by the name its document lists it under, or, unlisted, by its stem, as a schema when a schema names it and otherwise as the kind of its directory (`schemas/` or `responses/`). Edit only files under `src/`. `make lint` applies the Redocly rules; `make reader` runs the reader, which holds the protocol's own rules, including each table's schema. Every JSON file under `src/` is spelled as `JSON.stringify(value, null, 2)` and a newline write it, so an edit made with any tool changes only what it means to change; `make reader` refuses any other spelling.
 
 ## Layout
 
