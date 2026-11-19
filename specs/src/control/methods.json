@@ -1,28 +1,28 @@
 {
-  "$comment": "The control API's methods and notifications: what `xynolog control` serves, over JSON-RPC 2.0, one message per line on stdin and stdout. Each method names the schema of its params and of its result; each notification, the schema of its params. the consumer-owned generator generates the launcher's Go types and Desktop's TypeScript types from this table and the schemas it names, and the schemas themselves for both sides to validate against. contract/LAUNCHER-CONTROL.md is the contract's prose. `errorData`: the schema of a failed request's error data. `exclusive`: the request waits for every other exclusive request to end, and holds the others off until it does. `sends`: the notifications a request of the method may send besides notifications/progress, which any may.",
-  "apiVersion": "./ApiVersion.json",
-  "errorData": "./ErrorData.json",
+  "$comment": "The control API's methods and notifications: what `xynolog control` serves, over JSON-RPC 2.0, one message per line on stdin and stdout. Each method names the schema of its params and of its result, and each notification the schema of its params, by the schema's $id; each is a schema of control/. the consumer-owned generator generates the launcher's Go types and Desktop's TypeScript types from this table and the schemas it names, and the schemas themselves for both sides to validate against. contract/LAUNCHER-CONTROL.md is the contract's prose. `errorData`: the schema of a failed request's error data. `exclusive`: the request waits for every other exclusive request to end, and holds the others off until it does. `sends`: the notifications a request of the method may send besides notifications/progress, which any may.",
+  "apiVersion": "https://xynolog.org/protocol/ApiVersion.json",
+  "errorData": "https://xynolog.org/protocol/ErrorData.json",
   "methods": [
     {
       "name": "launcher.about",
-      "params": "./AboutParams.json",
-      "result": "./AboutResult.json",
+      "params": "https://xynolog.org/protocol/AboutParams.json",
+      "result": "https://xynolog.org/protocol/AboutResult.json",
       "exclusive": false,
       "sends": [],
       "docs": "What the launcher is: its version, the API versions it speaks, the runtimes it detects. It reads none of the machine's state."
     },
     {
       "name": "roots.list",
-      "params": "./RootsListParams.json",
-      "result": "./RootsListResult.json",
+      "params": "https://xynolog.org/protocol/RootsListParams.json",
+      "result": "https://xynolog.org/protocol/RootsListResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Every knowledge base this machine knows: xynolog roots."
     },
     {
       "name": "roots.init",
-      "params": "./RootsInitParams.json",
-      "result": "./RootsInitResult.json",
+      "params": "https://xynolog.org/protocol/RootsInitParams.json",
+      "result": "https://xynolog.org/protocol/RootsInitResult.json",
       "exclusive": true,
       "sends": [
         "notifications/progress"
@@ -31,40 +31,40 @@
     },
     {
       "name": "roots.forget",
-      "params": "./RootsForgetParams.json",
-      "result": "./RootsForgetResult.json",
+      "params": "https://xynolog.org/protocol/RootsForgetParams.json",
+      "result": "https://xynolog.org/protocol/RootsForgetResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Remove one registry row, and no file: xynolog forget."
     },
     {
       "name": "status.snapshot",
-      "params": "./StatusSnapshotParams.json",
-      "result": "./StatusSnapshotResult.json",
+      "params": "https://xynolog.org/protocol/StatusSnapshotParams.json",
+      "result": "https://xynolog.org/protocol/StatusSnapshotResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Each knowledge base's stack, and the services they share: xynolog status."
     },
     {
       "name": "stack.start",
-      "params": "./StackStartParams.json",
-      "result": "./StackStartResult.json",
+      "params": "https://xynolog.org/protocol/StackStartParams.json",
+      "result": "https://xynolog.org/protocol/StackStartResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Start a stack, or some of its services: xynolog start."
     },
     {
       "name": "stack.stop",
-      "params": "./StackStopParams.json",
-      "result": "./StackStopResult.json",
+      "params": "https://xynolog.org/protocol/StackStopParams.json",
+      "result": "https://xynolog.org/protocol/StackStopResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Stop a stack, or some of its services: xynolog stop."
     },
     {
       "name": "auth.login",
-      "params": "./AuthLoginParams.json",
-      "result": "./AuthLoginResult.json",
+      "params": "https://xynolog.org/protocol/AuthLoginParams.json",
+      "result": "https://xynolog.org/protocol/AuthLoginResult.json",
       "exclusive": true,
       "sends": [
         "notifications/userAction"
@@ -73,32 +73,32 @@
     },
     {
       "name": "auth.logout",
-      "params": "./AuthLogoutParams.json",
-      "result": "./AuthLogoutResult.json",
+      "params": "https://xynolog.org/protocol/AuthLogoutParams.json",
+      "result": "https://xynolog.org/protocol/AuthLogoutResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "End the launcher's session for a stack: xynolog logout."
     },
     {
       "name": "identity.useradd",
-      "params": "./IdentityUseraddParams.json",
-      "result": "./IdentityUseraddResult.json",
+      "params": "https://xynolog.org/protocol/IdentityUseraddParams.json",
+      "result": "https://xynolog.org/protocol/IdentityUseraddResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Create an account in a local knowledge base's launcher-managed Keycloak realm: xynolog useradd. A supplied password is secret request data and is never narrated or persisted; a generated password is returned once in the result."
     },
     {
       "name": "identity.users.list",
-      "params": "./IdentityUsersListParams.json",
-      "result": "./IdentityUsersListResult.json",
+      "params": "https://xynolog.org/protocol/IdentityUsersListParams.json",
+      "result": "https://xynolog.org/protocol/IdentityUsersListResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "List accounts in one local knowledge base's launcher-managed Keycloak realm. Passwords and tokens are never returned."
     },
     {
       "name": "logs.follow",
-      "params": "./LogsFollowParams.json",
-      "result": "./LogsFollowResult.json",
+      "params": "https://xynolog.org/protocol/LogsFollowParams.json",
+      "result": "https://xynolog.org/protocol/LogsFollowResult.json",
       "exclusive": true,
       "sends": [
         "notifications/log"
@@ -107,40 +107,40 @@
     },
     {
       "name": "settings.list",
-      "params": "./SettingsListParams.json",
-      "result": "./SettingsListResult.json",
+      "params": "https://xynolog.org/protocol/SettingsListParams.json",
+      "result": "https://xynolog.org/protocol/SettingsListResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Every setting the launcher keeps: xynolog settings."
     },
     {
       "name": "settings.get",
-      "params": "./SettingsGetParams.json",
-      "result": "./Setting.json",
+      "params": "https://xynolog.org/protocol/SettingsGetParams.json",
+      "result": "https://xynolog.org/protocol/Setting.json",
       "exclusive": true,
       "sends": [],
       "docs": "One setting: xynolog settings <name>."
     },
     {
       "name": "settings.set",
-      "params": "./SettingsSetParams.json",
-      "result": "./Setting.json",
+      "params": "https://xynolog.org/protocol/SettingsSetParams.json",
+      "result": "https://xynolog.org/protocol/Setting.json",
       "exclusive": true,
       "sends": [],
       "docs": "Set a setting, checked as a start would check it: xynolog settings <name> <value>."
     },
     {
       "name": "settings.unset",
-      "params": "./SettingsUnsetParams.json",
-      "result": "./Setting.json",
+      "params": "https://xynolog.org/protocol/SettingsUnsetParams.json",
+      "result": "https://xynolog.org/protocol/Setting.json",
       "exclusive": true,
       "sends": [],
       "docs": "Return a setting to its default: xynolog settings <name> --unset."
     },
     {
       "name": "settings.path",
-      "params": "./SettingsPathParams.json",
-      "result": "./SettingsPathResult.json",
+      "params": "https://xynolog.org/protocol/SettingsPathParams.json",
+      "result": "https://xynolog.org/protocol/SettingsPathResult.json",
       "exclusive": true,
       "sends": [],
       "docs": "Where a machine document is: xynolog settings <document> --path."
@@ -150,25 +150,25 @@
     {
       "name": "notifications/progress",
       "from": "launcher",
-      "params": "./Progress.json",
+      "params": "https://xynolog.org/protocol/Progress.json",
       "docs": "A line of what a request is doing."
     },
     {
       "name": "notifications/userAction",
       "from": "launcher",
-      "params": "./UserAction.json",
+      "params": "https://xynolog.org/protocol/UserAction.json",
       "docs": "A sign-in waits for a person to enter a code."
     },
     {
       "name": "notifications/log",
       "from": "launcher",
-      "params": "./LogRecord.json",
+      "params": "https://xynolog.org/protocol/LogRecord.json",
       "docs": "A line a followed service wrote."
     },
     {
       "name": "notifications/cancelled",
       "from": "client",
-      "params": "./Cancelled.json",
+      "params": "https://xynolog.org/protocol/Cancelled.json",
       "docs": "The client gives up on a request."
     }
   ]

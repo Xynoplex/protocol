@@ -10,8 +10,10 @@ This document states the rules every launcher and every client keep. The
 shapes are not stated here.
 [`specs/src/control/methods.json`](../specs/src/control/methods.json)
 names each method, whether it is exclusive, the notifications it may send,
-and the schema of its params and of its result; the schemas beside it are the
-shapes; the `control` group of
+and the schema of its params and of its result, each schema by its `$id`
+(`https://xynolog.org/protocol/AboutParams.json`), never by its path; the
+schemas beside it are the shapes, and each it names is one of them; the
+`control` group of
 [`specs/src/errors/codes.json`](../specs/src/errors/codes.json) is
 why a request failed. `the consumer-owned generator`
 generates the launcher's Go types and Desktop's TypeScript types from them,
