@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AgentPerson.json",
   "description": "A human participant — the Person branch of Agent.",
   "type": "object",
   "additionalProperties": true,

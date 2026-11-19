@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ClientTesting.json",
   "description": "client/testing.json: the testing kit every SDK ships.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "faultActions": {
       "type": "array",

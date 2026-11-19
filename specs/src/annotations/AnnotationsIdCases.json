@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationsIdCases.json",
   "description": "annotations/id-cases.json: what an annotation a worker makes is, and the id derived from it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,13 +16,13 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "resourceId": {
-            "$ref": "../components/schemas/ResourceId.json"
+            "$ref": "https://xynolog.org/protocol/ResourceId.json"
           },
           "motivation": {
-            "$ref": "../components/schemas/Motivation.json"
+            "$ref": "https://xynolog.org/protocol/Motivation.json"
           },
           "anchor": {
             "type": "string",
@@ -30,7 +32,7 @@
             "$comment": "The annotation's body or bodies, as JSON: every member goes into the id, those no body schema states among them."
           },
           "id": {
-            "$ref": "../components/schemas/AnnotationId.json"
+            "$ref": "https://xynolog.org/protocol/AnnotationId.json"
           }
         },
         "required": [

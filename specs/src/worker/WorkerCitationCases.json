@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerCitationCases.json",
   "description": "worker/citation-cases.json: how a worker resolves the citation tokens of a text it generated, and which ids a gathered context makes citable.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "text": {
             "type": "string",
@@ -71,10 +73,10 @@
                   "type": "object",
                   "properties": {
                     "resourceId": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "annotationId": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "start": {
                       "type": "integer",
@@ -138,12 +140,12 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "context": {
             "anyOf": [
               {
-                "$ref": "../components/schemas/GatheredContext.json"
+                "$ref": "https://xynolog.org/protocol/GatheredContext.json"
               },
               {
                 "type": "null"
@@ -155,7 +157,7 @@
             "uniqueItems": true,
             "description": "The resources the context makes citable.",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           },
           "annotationIds": {
@@ -163,7 +165,7 @@
             "uniqueItems": true,
             "description": "The annotations the context makes citable.",
             "items": {
-              "$ref": "../components/schemas/AnnotationId.json"
+              "$ref": "https://xynolog.org/protocol/AnnotationId.json"
             }
           },
           "names": {

@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MatchResourcesResponse.json",
   "type": "object",
   "description": "One page of the resources a text search found, and which kind of answer it is.",
   "properties": {
     "resources": {
       "type": "array",
       "items": {
-        "$ref": "./ResourceDescriptor.json"
+        "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
       }
     },
     "total": {

@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/UserAction.json",
   "title": "UserAction",
   "type": "object",
   "description": "A sign-in waits for a person: open the verification page and enter the code. The code is sent here and nowhere else — in no progress line, no log record and no diagnostic.",
   "properties": {
     "requestId": {
-      "$ref": "./RequestId.json"
+      "$ref": "https://xynolog.org/protocol/RequestId.json"
     },
     "verificationUri": {
       "type": "string",

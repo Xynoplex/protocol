@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobProgressDetectingEntities.json",
   "type": "object",
   "description": "Entity detection, one entity type at a time.",
   "properties": {

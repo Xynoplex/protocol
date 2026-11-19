@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionOauth.json",
   "description": "session/oauth.json: the clients a Xynolog client signs in to the issuer as, and the scope every sign-in asks for.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "clients": {
       "type": "array",

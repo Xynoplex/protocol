@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobCompleteCommand.json",
   "description": "A job's worker says the job is complete. The result it carries is its verb's: a `mark` job's counts or the resource a `yield` job made, or a decline from either. A completion whose result is the other verb's is refused where the command is admitted.",
   "oneOf": [
     {
-      "$ref": "./MarkJobCompleteCommand.json"
+      "$ref": "https://xynolog.org/protocol/MarkJobCompleteCommand.json"
     },
     {
-      "$ref": "./YieldJobCompleteCommand.json"
+      "$ref": "https://xynolog.org/protocol/YieldJobCompleteCommand.json"
     }
   ],
   "discriminator": {
     "propertyName": "jobType",
     "mapping": {
-      "mark": "./MarkJobCompleteCommand.json",
-      "yield": "./YieldJobCompleteCommand.json"
+      "mark": "https://xynolog.org/protocol/MarkJobCompleteCommand.json",
+      "yield": "https://xynolog.org/protocol/YieldJobCompleteCommand.json"
     }
   }
 }

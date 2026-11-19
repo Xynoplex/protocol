@@ -7,7 +7,7 @@
       "asks": "browse:resource-requested",
       "persisted": true,
       "value": {
-        "$ref": "../components/schemas/ResourceDescriptor.json"
+        "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
       },
       "docs": "A resource's description."
     },
@@ -17,7 +17,7 @@
       "reads": "GET /resources/{id}/annotations",
       "persisted": true,
       "value": {
-        "$ref": "../components/schemas/GetAnnotationsResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
       },
       "docs": "The annotations of a resource."
     },
@@ -27,7 +27,7 @@
       "asks": "browse:annotation-requested",
       "persisted": true,
       "value": {
-        "$ref": "../components/schemas/Annotation.json"
+        "$ref": "https://xynolog.org/protocol/Annotation.json"
       },
       "docs": "One annotation."
     },
@@ -36,7 +36,7 @@
       "per": "resource",
       "asks": "browse:events-requested",
       "value": {
-        "$ref": "../components/schemas/GetEventsResponse.json#/properties/events"
+        "$ref": "https://xynolog.org/protocol/GetEventsResponse.json#/properties/events"
       },
       "docs": "The recorded history of a resource."
     },
@@ -45,7 +45,7 @@
       "per": "resource",
       "asks": "gather:referenced-by-requested",
       "value": {
-        "$ref": "../components/schemas/GetReferencedByResponse.json#/properties/referencedBy"
+        "$ref": "https://xynolog.org/protocol/GetReferencedByResponse.json#/properties/referencedBy"
       },
       "docs": "The annotations elsewhere that refer to a resource."
     },
@@ -54,7 +54,7 @@
       "per": "filters",
       "asks": "browse:resources-requested",
       "value": {
-        "$ref": "../components/schemas/ListResourcesResponse.json"
+        "$ref": "https://xynolog.org/protocol/ListResourcesResponse.json"
       },
       "docs": "A list of resources, one per set of filters asked for. It is a query's answer, kept fresh by what every client hears and by the events of the resources whose scope the client holds, and by nothing else: a resource archived, unarchived or retagged elsewhere, by someone else, does not refresh it."
     },
@@ -63,7 +63,7 @@
       "per": "filters",
       "asks": "match:resources-requested",
       "value": {
-        "$ref": "../components/schemas/MatchResourcesResponse.json"
+        "$ref": "https://xynolog.org/protocol/MatchResourcesResponse.json"
       },
       "docs": "The resources a text search found, one per search and set of filters asked for. A query's answer like `resources`, and kept fresh by the same events and no others."
     },
@@ -72,7 +72,7 @@
       "asks": "browse:entity-types-requested",
       "persisted": true,
       "value": {
-        "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+        "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
       },
       "docs": "The knowledge base's entity types."
     },
@@ -81,7 +81,7 @@
       "asks": "browse:tag-schemas-requested",
       "persisted": true,
       "value": {
-        "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+        "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json#/properties/tagSchemas"
       },
       "docs": "The knowledge base's tag schemas."
     },
@@ -89,7 +89,7 @@
       "name": "engines",
       "asks": "browse:engines-requested",
       "value": {
-        "$ref": "../components/schemas/BrowseEnginesResult.json#/properties/response/properties/engines"
+        "$ref": "https://xynolog.org/protocol/BrowseEnginesResult.json#/properties/response/properties/engines"
       },
       "docs": "The knowledge base's engines, joined with the limits each inference key holder reports: asking again asks every `<flow>:limits-requested` operation of the registry again too."
     }

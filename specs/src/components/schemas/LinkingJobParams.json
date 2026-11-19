@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LinkingJobParams.json",
   "type": "object",
   "description": "What a linking job takes: mentions of the named entity types are marked as references, each unresolved until it is bound to a resource.",
   "properties": {

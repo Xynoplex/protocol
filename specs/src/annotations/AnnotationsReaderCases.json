@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationsReaderCases.json",
   "description": "annotations/reader-cases.json: what each annotation reader answers of an annotation.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -25,10 +27,10 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "annotation": {
-            "$ref": "../components/schemas/Annotation.json"
+            "$ref": "https://xynolog.org/protocol/Annotation.json"
           },
           "reads": {
             "description": "What each reader answers, null for nothing; textQuoteSelector is left out where the target has no selector to give it.",
@@ -37,7 +39,7 @@
               "bodySource": {
                 "anyOf": [
                   {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   },
                   {
                     "type": "null"
@@ -48,12 +50,12 @@
                 "type": "boolean"
               },
               "targetSource": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "targetSelector": {
                 "anyOf": [
                   {
-                    "$ref": "../components/schemas/AnnotationSelector.json"
+                    "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
                   },
                   {
                     "type": "null"
@@ -96,7 +98,7 @@
               "textQuoteSelector": {
                 "anyOf": [
                   {
-                    "$ref": "../components/schemas/TextQuoteSelector.json"
+                    "$ref": "https://xynolog.org/protocol/TextQuoteSelector.json"
                   },
                   {
                     "type": "null"
@@ -118,7 +120,7 @@
               "tagSchemaId": {
                 "anyOf": [
                   {
-                    "$ref": "../components/schemas/TaggingJobParams.json#/properties/schemaId"
+                    "$ref": "https://xynolog.org/protocol/TaggingJobParams.json#/properties/schemaId"
                   },
                   {
                     "type": "null"

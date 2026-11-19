@@ -14,20 +14,20 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../ArchivistStreamsResponse.json"
+              "$ref": "https://xynolog.org/protocol/ArchivistStreamsResponse.json"
             }
           }
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "500": {
         "description": "The event log could not be read.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

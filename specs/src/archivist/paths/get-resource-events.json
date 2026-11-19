@@ -18,7 +18,7 @@
         "required": true,
         "description": "The resource whose stream is read, or `__system__` for the knowledge base's own; percent-encoded.",
         "schema": {
-          "$ref": "../../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       },
       {
@@ -38,7 +38,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../ArchivistEventsResponse.json"
+              "$ref": "https://xynolog.org/protocol/ArchivistEventsResponse.json"
             }
           }
         }
@@ -48,20 +48,20 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "500": {
         "description": "The stream could not be read.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

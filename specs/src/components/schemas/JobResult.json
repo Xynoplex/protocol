@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobResult.json",
   "description": "What a job reports when it concludes without failing: a `mark` job's counts, the resource a `yield` job made, or a decline from either. A result has no discriminant of its own: the job description beside it says which job it answers, and the three share no member, so each is told from the others by what it alone carries.",
   "oneOf": [
     {
-      "$ref": "./MarkJobDone.json"
+      "$ref": "https://xynolog.org/protocol/MarkJobDone.json"
     },
     {
-      "$ref": "./YieldJobDone.json"
+      "$ref": "https://xynolog.org/protocol/YieldJobDone.json"
     },
     {
-      "$ref": "./JobDeclined.json"
+      "$ref": "https://xynolog.org/protocol/JobDeclined.json"
     }
   ]
 }

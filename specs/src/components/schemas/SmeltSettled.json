@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SmeltSettled.json",
   "type": "object",
   "description": "The payload of `smelt:settled`: the Smelter's decision for one resource's content, keyed by the checksum of the bytes it inspected. `indexed`: the content is in the vector index. `skipped`: it declined, and `reason` says why.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The resource whose content was inspected."
     },
     "contentChecksum": {

@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RootsListParams.json",
   "title": "RootsListParams",
   "type": "object",
   "description": "roots.list's params.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json",
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json",
       "description": "The version of the control API the request is written to."
     }
   },

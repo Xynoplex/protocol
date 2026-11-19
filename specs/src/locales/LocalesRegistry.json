@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LocalesRegistry.json",
   "description": "locales/registry.json: the languages Xynolog supports.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "locales": {
       "type": "array",

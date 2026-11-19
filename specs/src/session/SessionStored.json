@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionStored.json",
   "description": "session/stored.json: what a registry of knowledge bases keeps in a SessionStorage, and what the sessions it makes keep there.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "keys": {
       "type": "array",
@@ -81,7 +83,7 @@
               "description": "A knowledge base's id."
             },
             "did": {
-              "$ref": "../components/schemas/UserId.json"
+              "$ref": "https://xynolog.org/protocol/UserId.json"
             },
             "key": {
               "type": "string",
@@ -128,7 +130,7 @@
               "description": "A knowledge base's id."
             },
             "did": {
-              "$ref": "../components/schemas/UserId.json"
+              "$ref": "https://xynolog.org/protocol/UserId.json"
             },
             "query": {
               "type": "string",
@@ -179,22 +181,22 @@
       "additionalProperties": false
     },
     "storedSession": {
-      "$ref": "../JsonSchema.json",
+      "$ref": "https://xynolog.org/protocol/JsonSchema.json",
       "$comment": "A JSON Schema of what is kept of a sign-in, under `sessionKeyPrefix`: JSON, as it is given."
     },
     "pendingAuthorization": {
-      "$ref": "../JsonSchema.json",
+      "$ref": "https://xynolog.org/protocol/JsonSchema.json",
       "$comment": "A JSON Schema of what a sign-in by a page redirect remembers, under `pendingAuthorizationKey`: JSON, as it is given."
     },
     "openResource": {
-      "$ref": "../JsonSchema.json",
+      "$ref": "https://xynolog.org/protocol/JsonSchema.json",
       "$comment": "A JSON Schema of a resource open in a knowledge base, each entry of a list under `openResourcesByKbKey`: JSON, as it is given."
     },
     "cacheDocument": {
       "$comment": "A JSON Schema of what a client keeps of one query, under `cacheKeyPrefix`: JSON, as it is given."
     },
     "lastEventIds": {
-      "$ref": "../JsonSchema.json",
+      "$ref": "https://xynolog.org/protocol/JsonSchema.json",
       "$comment": "A JSON Schema of where a knowledge base's stream was, under `lastEventIdKeyPrefix`: JSON, as it is given."
     }
   },

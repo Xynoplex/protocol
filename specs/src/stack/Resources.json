@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Resources.json",
   "title": "Resources",
   "type": "object",
   "description": "What a container is given, in Kubernetes' spelling.",

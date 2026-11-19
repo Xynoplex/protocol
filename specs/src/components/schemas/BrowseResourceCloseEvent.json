@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseResourceCloseEvent.json",
   "type": "object",
   "description": "Emitted when a resource is closed in the browse panel",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     }
   },
   "required": [

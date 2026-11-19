@@ -47,7 +47,7 @@ let rec with_fixtures fixtures at (value : Yojson.Safe.t) =
   | other -> (other, [])
 
 (* The method at [at], which a caller calls as [called]. *)
-let method_refusals ~schema_at ~fixtures ~at ~called
+let method_refusals ~ids ~schema_at ~fixtures ~at ~called
     (method_ : Tables.Client_surface.methods_item) =
   let parameters = indexed method_.parameters in
   let twice =
@@ -87,7 +87,7 @@ let method_refusals ~schema_at ~fixtures ~at ~called
         | Some schema ->
             List.map
               (fun (pointer, message) -> refusal pointer message)
-              (Validate.errors schema_at schema value at_argument))
+              (Validate.errors ids schema_at schema value at_argument))
   in
   let case (c, (case : Tables.Client_surface.cases_item)) =
     let args_at = at / "cases" / string_of_int c / "args" in
@@ -108,7 +108,7 @@ let method_refusals ~schema_at ~fixtures ~at ~called
   in
   twice @ List.concat_map case (indexed method_.cases)
 
-let refusals ~read_json ~schema_at (surface : Tables.Client_surface.t) =
+let refusals ~ids ~read_json ~schema_at (surface : Tables.Client_surface.t) =
   match Option.bind (read_json file) (Decode.at_pointer "/fixtures") with
   | None -> [ refusal "" "has no fixtures" ]
   | Some fixtures ->
@@ -116,7 +116,7 @@ let refusals ~read_json ~schema_at (surface : Tables.Client_surface.t) =
         (fun (n, (namespace : Tables.Client_surface.namespaces_item)) ->
           List.concat_map
             (fun (m, (method_ : Tables.Client_surface.methods_item)) ->
-              method_refusals ~schema_at ~fixtures
+              method_refusals ~ids ~schema_at ~fixtures
                 ~at:
                   ("" / "namespaces" / string_of_int n / "methods"
                  / string_of_int m)

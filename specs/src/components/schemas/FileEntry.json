@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/FileEntry.json",
   "type": "object",
   "required": [
     "type",
@@ -37,7 +39,7 @@
       "description": "True if this file is a tracked resource in the Knowledge Base"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Resource ID (only when tracked is true)"
     },
     "entityTypes": {

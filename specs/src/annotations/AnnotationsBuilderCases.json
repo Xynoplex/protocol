@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationsBuilderCases.json",
   "description": "annotations/builder-cases.json: the annotation a worker builds of a span of a text or a PDF, or of a resource as a whole, or why it refuses the span.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -52,26 +54,48 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "text": {
                 "type": "string",
                 "description": "The resource's text."
               },
               "resourceId": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "generator": {
-                "$ref": "../components/schemas/Agent.json"
+                "type": "object",
+                "description": "What made the annotation, as a worker states it: AgentSoftware's members, and no `name`, which is the agent's profile (WORKER-SERVICE.md G4).",
+                "properties": {
+                  "@type": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/@type"
+                  },
+                  "@id": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/@id"
+                  },
+                  "provider": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/provider"
+                  },
+                  "model": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/model"
+                  },
+                  "parameters": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/parameters"
+                  }
+                },
+                "required": [
+                  "@type"
+                ],
+                "additionalProperties": false
               },
               "motivation": {
-                "$ref": "../components/schemas/Motivation.json"
+                "$ref": "https://xynolog.org/protocol/Motivation.json"
               },
               "span": {
-                "$ref": "../client/types/TextSpan.json"
+                "$ref": "https://xynolog.org/protocol/TextSpan.json"
               },
               "body": {
-                "$ref": "../components/schemas/AnnotationBodies.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationBodies.json"
               },
               "annotation": {
                 "$comment": "The annotation built, whole, but for the members `unstated` names: JSON, as it is given."
@@ -94,13 +118,13 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "text": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/text"
               },
               "resourceId": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "generator": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
@@ -121,13 +145,13 @@
                     "description": "Where it is said to end, which need not be a whole number, nor at or after its start."
                   },
                   "exact": {
-                    "$ref": "../client/types/QuotedText.json#/$defs/Members/properties/exact"
+                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members/properties/exact"
                   },
                   "prefix": {
-                    "$ref": "../client/types/QuotedText.json#/$defs/Members/properties/prefix"
+                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members/properties/prefix"
                   },
                   "suffix": {
-                    "$ref": "../client/types/QuotedText.json#/$defs/Members/properties/suffix"
+                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members/properties/suffix"
                   }
                 },
                 "required": [
@@ -141,7 +165,7 @@
                 "$ref": "#/properties/cases/items/oneOf/0/properties/body"
               },
               "refused": {
-                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
               }
             },
             "required": [
@@ -161,13 +185,13 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "anchored": {
-                "$ref": "../components/schemas/AnchoredText.json"
+                "$ref": "https://xynolog.org/protocol/AnchoredText.json"
               },
               "resourceId": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "generator": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
@@ -176,7 +200,7 @@
                 "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
               },
               "span": {
-                "$ref": "../client/types/TextSpan.json"
+                "$ref": "https://xynolog.org/protocol/TextSpan.json"
               },
               "body": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/body"
@@ -202,13 +226,13 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "anchored": {
                 "$ref": "#/properties/cases/items/oneOf/2/properties/anchored"
               },
               "resourceId": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "generator": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/generator"
@@ -248,10 +272,10 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "resourceId": {
-            "$ref": "../components/schemas/ResourceId.json"
+            "$ref": "https://xynolog.org/protocol/ResourceId.json"
           },
           "motivation": {
             "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"

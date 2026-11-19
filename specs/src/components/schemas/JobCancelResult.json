@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobCancelResult.json",
   "type": "object",
   "description": "What a cancel did, in the `response` of `job:cancel-ok`: whether the queue acted on the job it named. A pending job is cancelled outright; a running one is left to its worker, so for it true means accepted, not stopped.",
   "properties": {

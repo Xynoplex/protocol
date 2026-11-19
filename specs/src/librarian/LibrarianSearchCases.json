@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianSearchCases.json",
   "description": "librarian/search-cases.json: what a search of resources by text is given, what each store answers, and the page; and what a lexical page's previews are.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -17,7 +19,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "search": {
                 "description": "A search.",
@@ -28,10 +30,10 @@
                     "type": "object",
                     "properties": {
                       "filters": {
-                        "$ref": "../components/schemas/MatchResourcesRequest.json"
+                        "$ref": "https://xynolog.org/protocol/MatchResourcesRequest.json"
                       },
                       "semanticFloor": {
-                        "$ref": "./LibrarianConfig.json#/properties/search/properties/semanticFloor"
+                        "$ref": "https://xynolog.org/protocol/LibrarianConfig.json#/properties/search/properties/semanticFloor"
                       },
                       "page": {
                         "description": "The answer.",
@@ -41,14 +43,14 @@
                             "type": "array",
                             "description": "The resources of the page.",
                             "items": {
-                              "$ref": "../components/schemas/ResourceDescriptor.json"
+                              "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                             }
                           },
                           "total": {
-                            "$ref": "../components/schemas/MatchResourcesResponse.json#/properties/total"
+                            "$ref": "https://xynolog.org/protocol/MatchResourcesResponse.json#/properties/total"
                           },
                           "matchKind": {
-                            "$ref": "../components/schemas/MatchResourcesResponse.json#/properties/matchKind"
+                            "$ref": "https://xynolog.org/protocol/MatchResourcesResponse.json#/properties/matchKind"
                           }
                         },
                         "required": [
@@ -111,7 +113,7 @@
                                     "type": "array",
                                     "description": "One page of the resources that match.",
                                     "items": {
-                                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                                      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                                     }
                                   },
                                   "total": {
@@ -258,13 +260,13 @@
                                       "description": "The chunk's id."
                                     },
                                     "resourceId": {
-                                      "$ref": "../components/schemas/ResourceId.json"
+                                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                                     },
                                     "score": {
-                                      "$ref": "../vectors/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
+                                      "$ref": "https://xynolog.org/protocol/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
                                     },
                                     "text": {
-                                      "$ref": "../vectors/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/text"
+                                      "$ref": "https://xynolog.org/protocol/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/text"
                                     }
                                   },
                                   "required": [
@@ -314,7 +316,7 @@
                           "type": "object",
                           "properties": {
                             "resource": {
-                              "$ref": "../components/schemas/ResourceId.json"
+                              "$ref": "https://xynolog.org/protocol/ResourceId.json"
                             },
                             "graph": {
                               "description": "What the graph answers for the resource: a description, or null.",
@@ -327,7 +329,7 @@
                                     "answers": {
                                       "anyOf": [
                                         {
-                                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                                          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                                         },
                                         {
                                           "type": "null"
@@ -371,7 +373,7 @@
                                     "answers": {
                                       "anyOf": [
                                         {
-                                          "$ref": "../components/schemas/ResourceView.json"
+                                          "$ref": "https://xynolog.org/protocol/ResourceView.json"
                                         },
                                         {
                                           "type": "null"
@@ -426,10 +428,10 @@
                     "type": "object",
                     "properties": {
                       "filters": {
-                        "$ref": "../components/schemas/MatchResourcesRequest.json"
+                        "$ref": "https://xynolog.org/protocol/MatchResourcesRequest.json"
                       },
                       "semanticFloor": {
-                        "$ref": "./LibrarianConfig.json#/properties/search/properties/semanticFloor"
+                        "$ref": "https://xynolog.org/protocol/LibrarianConfig.json#/properties/search/properties/semanticFloor"
                       },
                       "graph": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/graph"
@@ -472,7 +474,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "preview": {
                 "description": "The previews of a lexical page's resources.",
@@ -482,7 +484,7 @@
                     "type": "array",
                     "description": "The resources.",
                     "items": {
-                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                     }
                   },
                   "served": {

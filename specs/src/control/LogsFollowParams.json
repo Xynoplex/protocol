@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LogsFollowParams.json",
   "title": "LogsFollowParams",
   "type": "object",
   "description": "logs.follow's params.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json",
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json",
       "description": "The version of the control API the request is written to."
     },
     "target": {
-      "$ref": "./Target.json",
+      "$ref": "https://xynolog.org/protocol/Target.json",
       "description": "Which knowledge base's stack. Absent: the one the command line chooses, standing where the control server was started."
     },
     "runtime": {
-      "$ref": "./Runtime.json",
+      "$ref": "https://xynolog.org/protocol/Runtime.json",
       "description": "Keep to the local stacks, as --runtime does."
     },
     "service": {

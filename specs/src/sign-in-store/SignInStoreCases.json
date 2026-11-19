@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SignInStoreCases.json",
   "description": "sign-in-store/cases.json: where the launcher's state home is, and what a renewal of a kept sign-in writes and gives.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "os": {
             "type": "string",
@@ -68,7 +70,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "kept": {
             "description": "A sign-in: its access token and its refresh token.",

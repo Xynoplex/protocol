@@ -97,6 +97,8 @@ conformance/harness/git.ts,Portable conformance,xynolog/protocol,Protocol-owned 
 conformance/harness/global-setup.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/graph-codec.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/graph-codec.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/harness/graph-database.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/harness/graph-database.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/http.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/implementations.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/implementations.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -557,6 +559,7 @@ reader/lib/archivist_rules.ml,Protocol validation tooling,xynolog/protocol,"The 
 reader/lib/bundle.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/client_surface.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/client_types_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/lib/control_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/identifiers_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/jobs_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -618,18 +621,18 @@ specs/src/archivist/ArchivistStreamsResponse.json,Normative protocol source,xyno
 specs/src/archivist/README.md,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/RepresentationNotFound.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/openapi.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/anchored-text_entries.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/anchored-text_stamp.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/events.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/events_{resourceId}.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/health.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/resources.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/resources_{id}_anchored-text.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/resources_{id}_anchored-text_stored.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/resources_{id}_annotations.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/resources_{id}_content.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/paths/resources_{id}_jsonld.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/responses/Unauthorized.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/get-health.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/get-resource-annotations.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/get-resource-content.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/get-resource-events.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/get-resource-json-ld.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/get-stored-resource-anchored-text.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/list-anchored-text-entries.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/list-streams.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/put-anchored-text-stamp.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/resource-anchored-text.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/paths/store-resource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/responses/ArchivistUnauthorized.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/shard-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/bus/BusFrameCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/bus/BusLogCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -647,6 +650,9 @@ specs/src/client/ClientStateUnits.json,Normative protocol source,xynolog/protoco
 specs/src/client/ClientSurface.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientTesting.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/ClientTiming.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/Expected.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/KbReadKind.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/TabVerdict.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/clock-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/discovery-absent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/refresh.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1092,6 +1098,7 @@ specs/src/librarian/LibrarianScoreCases.json,Normative protocol source,xynolog/p
 specs/src/librarian/LibrarianSearchCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianWindowCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/derive-views-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/librarian/elements/LibrarianPromptScore.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/knowledge-graph-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/prompt-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/reply-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1105,21 +1112,21 @@ specs/src/media-types/MediaTypesRegistry.json,Normative protocol source,xynolog/
 specs/src/media-types/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/media-types/registry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/openapi.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/api_health.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/api_openapi.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/api_resources_{id}.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/api_status.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/api_tokens_media.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/api_users_me.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/bus_emit.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/bus_subscribe.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/resources.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/resources_{id}.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/resources_{id}_anchored-text.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/resources_{id}_annotations.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/resources_{id}_jsonld.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/root.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/paths/well-known_oauth-protected-resource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/create-media-token.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/emit-on-bus.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-current-user.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-health-at-root.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-health.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-open-api-document.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-protected-resource-metadata.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-resource-anchored-text.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-resource-annotations.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-resource-json-ld.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-resource-representation-with-media-token.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-resource-representation.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/get-status.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/subscribe-to-bus.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/paths/upload-resource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/principals/PrincipalsCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/principals/PrincipalsKindCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/principals/PrincipalsNamingCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1137,9 +1144,11 @@ specs/src/service-environment/variables.json,Normative protocol source,xynolog/p
 specs/src/service-telemetry/ServiceTelemetryTelemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/service-telemetry/telemetry.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/ClientSecretForm.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/OpenResource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionCacheCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionClientAssertionCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/SessionEndReason.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionGatewayUrlCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionOauth.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionOpenResourceCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1147,6 +1156,7 @@ specs/src/session/SessionPersistedCases.json,Normative protocol source,xynolog/p
 specs/src/session/SessionRegistryCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionRegistryErrorsCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/SessionStored.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/session/StoredSession.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/cache-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/session/client-assertion-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

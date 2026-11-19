@@ -40,7 +40,10 @@ let () =
       match
         Result.bind
           (Spec.load (Filename.concat root Repository.specs))
-          (fun _ -> match Bundle.write ~root with [] -> Ok () | e -> Error e)
+          (fun (spec : Spec.t) ->
+            match Bundle.write ~root ~ids:spec.ids with
+            | [] -> Ok ()
+            | e -> Error e)
       with
       | Ok () ->
           List.iter

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobProgressCompleteCreated.json",
   "type": "object",
   "description": "Terminal success summary.",
   "properties": {
@@ -13,7 +15,7 @@
       "description": "How many annotations were created"
     },
     "motivation": {
-      "$ref": "./Motivation.json",
+      "$ref": "https://xynolog.org/protocol/Motivation.json",
       "description": "The motivation of the job, and so of what it created. A client words it in its own language."
     }
   },

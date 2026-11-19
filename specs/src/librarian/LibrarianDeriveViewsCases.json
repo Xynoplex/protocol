@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianDeriveViewsCases.json",
   "description": "librarian/derive-views-cases.json: a knowledge graph, its main resource, and the flat views read off it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,16 +16,16 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "graph": {
-            "$ref": "../components/schemas/KnowledgeGraph.json"
+            "$ref": "https://xynolog.org/protocol/KnowledgeGraph.json"
           },
           "resource": {
-            "$ref": "../components/schemas/ResourceId.json"
+            "$ref": "https://xynolog.org/protocol/ResourceId.json"
           },
           "annotation": {
-            "$ref": "../components/schemas/AnnotationId.json"
+            "$ref": "https://xynolog.org/protocol/AnnotationId.json"
           },
           "views": {
             "description": "The views read off the graph.",
@@ -36,7 +38,7 @@
                   "type": "object",
                   "properties": {
                     "resourceId": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "resourceName": {
                       "type": "string",
@@ -70,7 +72,7 @@
                   "type": "object",
                   "properties": {
                     "resourceId": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "resourceName": {
                       "type": "string",

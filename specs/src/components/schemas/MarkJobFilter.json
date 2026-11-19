@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkJobFilter.json",
   "type": "object",
   "description": "`mark` jobs of one motivation.",
   "properties": {
@@ -12,7 +14,7 @@
       "type": "object",
       "properties": {
         "motivation": {
-          "$ref": "./Motivation.json"
+          "$ref": "https://xynolog.org/protocol/Motivation.json"
         }
       },
       "required": [

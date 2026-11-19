@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherReferencedByResult.json",
   "type": "object",
   "description": "The annotations elsewhere that refer to a resource",
   "properties": {
     "response": {
-      "$ref": "./GetReferencedByResponse.json"
+      "$ref": "https://xynolog.org/protocol/GetReferencedByResponse.json"
     }
   },
   "required": [

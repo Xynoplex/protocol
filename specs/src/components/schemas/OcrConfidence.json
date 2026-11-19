@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/OcrConfidence.json",
   "type": "object",
   "description": "How well an OCR engine read the pixels.",
   "properties": {

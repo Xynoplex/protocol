@@ -5,7 +5,8 @@
    an id nothing checks.
 
    - A kind's schema is exactly a string with a pattern and a description,
-     and openapi.json declares it among its schemas.
+     beside the dialect and the [$id] every schema states, and openapi.json
+     declares it among its schemas.
    - Each id a kind accepts matches its pattern, and none it refuses does.
    - A property the table names for a kind is, in every file of specs/src,
      a reference to that kind, a list of them, or a union of one of them and
@@ -27,7 +28,7 @@ let member name = function
 let named_like_an_id name =
   String.ends_with ~suffix:"Id" name || String.ends_with ~suffix:"Ids" name
 
-let refusals ~(read_json : string -> Yojson.Safe.t option) files
+let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) files
     (table : Tables.Identifiers_kinds.t) =
   let found = ref [] in
   let refuse file pointer fmt =
@@ -59,11 +60,12 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) files
               text (member "description" schema) )
           with
           | Some "string", Some pattern, Some _
-            when keys = [ "description"; "pattern"; "type" ] ->
+            when keys = [ "$id"; "$schema"; "description"; "pattern"; "type" ]
+            ->
               if
                 Option.bind declared (member kind.schema)
                 |> Option.map (member "$ref")
-                <> Some (Some (`String (kind_file kind.schema)))
+                <> Some (Some (`String (Decode.base ^ kind.schema ^ ".json")))
               then
                 refuse "openapi.json" "/components/schemas"
                   "does not declare %s among its schemas" kind.schema;
@@ -153,7 +155,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) files
         match target with
         | None -> None
         | Some target -> (
-            match Decode.resolve { target; file; pointer = "" } with
+            match Decode.resolve ids { target; file; pointer = "" } with
             | named, "" -> List.assoc_opt named kinds
             | _ -> None))
   in

@@ -1,16 +1,18 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerEngineHealth.json",
   "type": "object",
   "description": "One engine at one knowledge base: which it is, the jobs it claims, and what its claims can say of themselves (WORKER-CONTRACT V1).",
   "properties": {
     "engine": {
-      "$ref": "../components/schemas/Engine.json"
+      "$ref": "https://xynolog.org/protocol/Engine.json"
     },
     "jobs": {
       "type": "array",
       "minItems": 1,
       "description": "The jobs it claims, as its claims state them.",
       "items": {
-        "$ref": "../components/schemas/JobFilter.json"
+        "$ref": "https://xynolog.org/protocol/JobFilter.json"
       }
     },
     "lastQueuedEventAt": {
@@ -53,10 +55,10 @@
       "description": "The job it holds, or null.",
       "properties": {
         "jobId": {
-          "$ref": "../components/schemas/JobId.json"
+          "$ref": "https://xynolog.org/protocol/JobId.json"
         },
         "type": {
-          "$ref": "../components/schemas/JobType.json"
+          "$ref": "https://xynolog.org/protocol/JobType.json"
         },
         "since": {
           "type": "string",

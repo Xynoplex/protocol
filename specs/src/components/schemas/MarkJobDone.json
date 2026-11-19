@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkJobDone.json",
   "type": "object",
   "description": "What a `mark` job reports when it has done its work, whatever its motivation.",
   "properties": {

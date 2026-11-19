@@ -1,8 +1,8 @@
 {
   "get": {
-    "operationId": "getResourceJsonLd",
-    "summary": "A resource's linked-data description",
-    "description": "The descriptor, its annotations, and the annotations elsewhere that reference it — what the gateway serves at its own `GET /resources/{id}/jsonld`.",
+    "operationId": "getResourceAnnotations",
+    "summary": "A resource's annotations",
+    "description": "Every annotation on the resource, with the people it mentions named, and how many there are: what the gateway serves at its own `GET /resources/{id}/annotations`, and what a service reads directly. Never the bus's: a resource's annotations grow without a bound.",
     "security": [
       {
         "serviceAccount": []
@@ -15,30 +15,30 @@
         "required": true,
         "description": "The resource, percent-encoded.",
         "schema": {
-          "$ref": "../../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       }
     ],
     "responses": {
       "200": {
-        "description": "The description.",
+        "description": "The annotations.",
         "content": {
-          "application/ld+json": {
+          "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/GetResourceResponse.json"
+              "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
             }
           }
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "404": {
         "description": "The record holds no such resource.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

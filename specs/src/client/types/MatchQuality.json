@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MatchQuality.json",
   "title": "MatchQuality",
   "type": "string",
   "description": "Which looser search found a quoted selection, stated of a span whose `anchorMethod` is `fuzzy-match` and only then. Which search finds it is reconcile's rule (specs/src/annotations/reconcile-cases.json).",

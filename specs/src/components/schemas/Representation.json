@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Representation.json",
   "type": "object",
   "description": "A specific, byte-addressable rendition of a resource (file/asset/variant).",
   "required": [
@@ -13,7 +15,7 @@
     },
     "@type": {
       "description": "Type(s), e.g., schema:MediaObject.",
-      "$ref": "./OneOrMoreStrings.json"
+      "$ref": "https://xynolog.org/protocol/OneOrMoreStrings.json"
     },
     "mediaType": {
       "type": "string",
@@ -68,7 +70,7 @@
     },
     "conformsTo": {
       "description": "Profile/shape the bytes conform to (e.g., a JSON profile or SVG profile).",
-      "$ref": "./OneOrMoreUris.json"
+      "$ref": "https://xynolog.org/protocol/OneOrMoreUris.json"
     },
     "tags": {
       "type": "array",

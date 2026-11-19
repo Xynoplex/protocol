@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IdentityUseraddResult.json",
   "title": "IdentityUseraddResult",
   "type": "object",
   "description": "The created account's sign-in identity. A generated password is present only in this one answer and is not stored by the launcher.",

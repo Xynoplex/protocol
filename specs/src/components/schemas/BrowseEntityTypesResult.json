@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseEntityTypesResult.json",
   "type": "object",
   "description": "Result of browsing entity types",
   "properties": {
     "response": {
-      "$ref": "./GetEntityTypesResponse.json"
+      "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json"
     }
   },
   "required": [

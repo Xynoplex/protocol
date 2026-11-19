@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ControlMethods.json",
   "description": "control/methods.json: the control API's methods and notifications, and the schemas each names.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "apiVersion": {
       "type": "string",
-      "pattern": "^\\./[A-Z][A-Za-z]*\\.json$",
-      "description": "A schema of control/, by its path from there."
+      "pattern": "^https://xynolog\\.org/protocol/[A-Z][A-Za-z]*\\.json$",
+      "description": "A schema of control/, by its $id."
     },
     "errorData": {
       "$ref": "#/properties/apiVersion"

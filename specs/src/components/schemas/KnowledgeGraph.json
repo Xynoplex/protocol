@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/KnowledgeGraph.json",
   "type": "object",
   "description": "Knowledge graph gathered for an LLM context — a shared backbone in which resources AND annotations are typed nodes, connected by typed (optionally bidirectional) edges. Flattened views the matcher/generation read (connections, citedBy, siblings) are derived from these nodes/edges.",
   "properties": {
@@ -7,17 +9,17 @@
       "items": {
         "oneOf": [
           {
-            "$ref": "./GraphResourceNode.json"
+            "$ref": "https://xynolog.org/protocol/GraphResourceNode.json"
           },
           {
-            "$ref": "./GraphAnnotationNode.json"
+            "$ref": "https://xynolog.org/protocol/GraphAnnotationNode.json"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
-            "resource": "./GraphResourceNode.json",
-            "annotation": "./GraphAnnotationNode.json"
+            "resource": "https://xynolog.org/protocol/GraphResourceNode.json",
+            "annotation": "https://xynolog.org/protocol/GraphAnnotationNode.json"
           }
         }
       }

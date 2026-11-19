@@ -7,6 +7,9 @@ open Js_of_ocaml
 
 let bundle = "bundle.json"
 
+(* A bundle states no [$id]: each reference in it is to a place within it. *)
+let ids = Result.get_ok (Decode.ids [])
+
 let validator text =
   let json = Yojson.Safe.from_string (Js.to_string text) in
   let cache = Hashtbl.create 64 in
@@ -44,7 +47,7 @@ let validator text =
              (List.map
                 (fun (pointer, why) ->
                   Js.string ((if pointer = "" then "/" else pointer) ^ " " ^ why))
-                (Validate.errors schema_at schema
+                (Validate.errors ids schema_at schema
                    (Yojson.Safe.from_string (Js.to_string value))
                    "")))
 

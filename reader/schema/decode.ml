@@ -160,14 +160,42 @@ let reference cursor =
   cursor.references := found :: !(cursor.references);
   found
 
-let resolve { target; file; _ } =
-  let path, fragment =
-    match String.index_opt target '#' with
-    | None -> (target, "")
-    | Some i ->
-        ( String.sub target 0 i,
-          String.sub target (i + 1) (String.length target - i - 1) )
-  in
+let base = "https://xynolog.org/protocol/"
+let dialect = "https://json-schema.org/draft/2020-12/schema"
+
+type ids = (string, string) Hashtbl.t
+
+let ids stated =
+  let index = Hashtbl.create 1024 in
+  match
+    List.filter_map
+      (fun (id, file) ->
+        match Hashtbl.find_opt index id with
+        | Some other ->
+            Some
+              {
+                file;
+                pointer = "/$id";
+                message =
+                  Printf.sprintf "states the $id %s, which %s states too" id
+                    other;
+              }
+        | None ->
+            Hashtbl.replace index id file;
+            None)
+      stated
+  with
+  | [] -> Ok index
+  | twice -> Error twice
+
+let split target =
+  match String.index_opt target '#' with
+  | None -> (target, "")
+  | Some i ->
+      ( String.sub target 0 i,
+        String.sub target (i + 1) (String.length target - i - 1) )
+
+let relative file path =
   let segments =
     if path = "" then String.split_on_char '/' file
     else
@@ -183,7 +211,23 @@ let resolve { target; file; _ } =
         | _ -> segment :: kept)
       [] segments
   in
-  (String.concat "/" (List.rev normal), fragment)
+  String.concat "/" (List.rev normal)
+
+let names ids { target; file; _ } =
+  let path, fragment = split target in
+  if String.starts_with ~prefix:base path then
+    Option.map (fun named -> (named, fragment)) (Hashtbl.find_opt ids path)
+  else Some (relative file path, fragment)
+
+let resolve ids reference =
+  match names ids reference with
+  | Some named -> named
+  | None ->
+      invalid_arg
+        (Printf.sprintf
+           "%s, written in %s, names an $id no schema states, which the reader \
+            refuses before it resolves a reference"
+           reference.target reference.file)
 
 let child cursor token json =
   { cursor with tokens = token :: cursor.tokens; json }
@@ -229,13 +273,14 @@ let map_by key value cursor =
       (key { at with json = `String name }, value at))
     (members_of cursor)
 
-let names cases = String.concat ", " (List.map fst cases)
+let case_names cases = String.concat ", " (List.map fst cases)
 
 let enum cases cursor =
   let text = string cursor in
   match List.assoc_opt text cases with
   | Some value -> value
-  | None -> refuse cursor (Printf.sprintf "%S is none of %s" text (names cases))
+  | None ->
+      refuse cursor (Printf.sprintf "%S is none of %s" text (case_names cases))
 
 let wrong_length count cursor =
   match cursor.json with
@@ -264,15 +309,17 @@ let variant member cases cursor =
       match List.assoc_opt name cases with
       | Some decoder -> decoder cursor
       | None ->
-          refuse tag (Printf.sprintf "%S is none of %s" name (names cases)))
+          refuse tag (Printf.sprintf "%S is none of %s" name (case_names cases))
+      )
 
 let keyed cases cursor =
   let fields = members_of cursor in
   match List.filter (fun (name, _) -> List.mem_assoc name fields) cases with
   | [ (_, decoder) ] -> decoder cursor
-  | [] -> refuse cursor (Printf.sprintf "has none of %s" (names cases))
+  | [] -> refuse cursor (Printf.sprintf "has none of %s" (case_names cases))
   | present ->
-      refuse cursor (Printf.sprintf "has more than one of %s" (names present))
+      refuse cursor
+        (Printf.sprintf "has more than one of %s" (case_names present))
 
 type members = {
   cursor : cursor;

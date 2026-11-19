@@ -1,10 +1,10 @@
 {
   "get": {
-    "operationId": "getStatus",
-    "summary": "Get Service Status",
-    "description": "Get service status and feature availability",
+    "operationId": "getCurrentUser",
+    "summary": "Get Current User",
+    "description": "Get information about the authenticated user",
     "tags": [
-      "General"
+      "Users"
     ],
     "security": [
       {
@@ -13,11 +13,11 @@
     ],
     "responses": {
       "200": {
-        "description": "Service status information",
+        "description": "User information",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/StatusResponse.json"
+              "$ref": "https://xynolog.org/protocol/UserResponse.json"
             }
           }
         }

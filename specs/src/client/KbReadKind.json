@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/KbReadKind.json",
+  "title": "KbReadKind",
+  "type": "string",
+  "description": "What reading the active knowledge base against its entry concluded.",
+  "enum": [
+    "recorded",
+    "conflict",
+    "no-verdict"
+  ]
+}

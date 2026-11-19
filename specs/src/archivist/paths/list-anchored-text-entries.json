@@ -14,13 +14,13 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../AnchoredTextEntries.json"
+              "$ref": "https://xynolog.org/protocol/AnchoredTextEntries.json"
             }
           }
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "500": {
         "$ref": "../../components/responses/InternalError.json"

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/StackCases.json",
   "description": "stack/cases.json: a launcher document, read against the schema each case names, and whether it is accepted or where and why it is refused.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -18,7 +20,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "schema": {
                 "type": "string",
@@ -64,7 +66,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "schema": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/schema"
@@ -115,7 +117,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "schema": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/schema"
@@ -146,7 +148,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "schema": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/schema"

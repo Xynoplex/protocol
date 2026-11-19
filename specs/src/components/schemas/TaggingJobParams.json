@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/TaggingJobParams.json",
   "type": "object",
   "description": "What a tagging job takes: passages of the resource are marked with categories of one tag schema.",
   "properties": {

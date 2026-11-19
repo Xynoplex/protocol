@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkDeleteOk.json",
   "type": "object",
   "description": "Success reply after deleting an annotation, matched to the originating command by correlationId.",
   "properties": {
@@ -7,7 +9,7 @@
       "description": "The deleted annotation's identity.",
       "properties": {
         "annotationId": {
-          "$ref": "./AnnotationId.json"
+          "$ref": "https://xynolog.org/protocol/AnnotationId.json"
         }
       },
       "required": [

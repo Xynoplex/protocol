@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnchoredTextDeclinedEntry.json",
   "type": "object",
   "description": "The bytes were declined: no text is extracted from them.",
   "properties": {
@@ -15,7 +17,7 @@
       "description": "The stamp the entry was derived under: the PDF reader's and the OCR engine's. A reader takes the entry only when it equals the stamp the Smelter last stated."
     },
     "declined": {
-      "$ref": "../components/schemas/ExtractionDeclinedReason.json",
+      "$ref": "https://xynolog.org/protocol/ExtractionDeclinedReason.json",
       "description": "Why extraction yielded nothing, by class."
     }
   },

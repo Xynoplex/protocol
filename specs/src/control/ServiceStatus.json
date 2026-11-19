@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceStatus.json",
   "title": "ServiceStatus",
   "type": "object",
   "description": "One service, as xynolog status reads it: where it runs, its state, and whether it answers. Nothing is reported that the launcher did not observe: an endpoint is named only when the stack's record or the descriptor names one, and a page to open only when the service answers.",
@@ -8,7 +10,7 @@
       "description": "The service, as xynolog status names it."
     },
     "group": {
-      "$ref": "./ServiceGroup.json",
+      "$ref": "https://xynolog.org/protocol/ServiceGroup.json",
       "description": "The group it belongs to."
     },
     "product": {

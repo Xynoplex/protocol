@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkUnarchiveCommand.json",
   "type": "object",
   "description": "Bus command to unarchive a previously archived resource.",
   "properties": {
     "_userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "Authenticated user's DID, injected by the /bus/emit gateway. Clients do not set this."
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "storageUri": {
       "type": "string",

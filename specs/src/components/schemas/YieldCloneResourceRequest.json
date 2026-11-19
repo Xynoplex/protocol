@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/YieldCloneResourceRequest.json",
   "type": "object",
   "description": "Bus command to request cloning a resource using a clone token.",
   "properties": {

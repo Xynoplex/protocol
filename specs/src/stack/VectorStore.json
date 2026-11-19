@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/VectorStore.json",
   "title": "VectorStore",
   "type": "object",
   "description": "The vector store the launcher runs for the knowledge bases on a machine, each knowledge base's index in collections of its own. It belongs to no knowledge base, so its document is kept in the launcher's state home, in `stack/vectors.yaml`, not in a knowledge base's repository. A knowledge base keeps its index in it by naming `shared` at `spec.vectors`.",
   "properties": {
     "apiVersion": {
-      "$ref": "./StackApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/StackApiVersion.json"
     },
     "kind": {
       "type": "string",
       "const": "VectorStore"
     },
     "metadata": {
-      "$ref": "./Metadata.json"
+      "$ref": "https://xynolog.org/protocol/Metadata.json"
     },
     "spec": {
       "type": "object",
@@ -23,10 +25,10 @@
           "description": "The vector store's driver: `qdrant`."
         },
         "image": {
-          "$ref": "./Image.json"
+          "$ref": "https://xynolog.org/protocol/Image.json"
         },
         "resources": {
-          "$ref": "./Resources.json"
+          "$ref": "https://xynolog.org/protocol/Resources.json"
         },
         "port": {
           "type": "integer",

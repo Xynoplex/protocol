@@ -21,7 +21,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -39,7 +38,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -67,7 +65,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -95,7 +92,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -133,7 +129,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -153,7 +148,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -181,7 +175,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3",
         "parameters": {
@@ -208,7 +201,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3",
           "parameters": {
@@ -245,7 +237,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -264,7 +255,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -284,7 +274,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -304,7 +293,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -324,7 +312,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -344,7 +331,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -364,7 +350,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -382,7 +367,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -410,7 +394,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -429,7 +412,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -457,7 +439,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -495,7 +476,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -514,7 +494,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -543,7 +522,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -562,7 +540,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -591,7 +568,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -611,7 +587,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -630,7 +605,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -649,7 +623,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -668,7 +641,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -687,7 +659,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -746,7 +717,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -764,7 +734,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -832,7 +801,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -860,7 +828,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -943,7 +910,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -961,7 +927,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -1034,7 +999,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1057,7 +1021,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -1130,7 +1093,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1189,7 +1151,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1266,7 +1227,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1284,7 +1244,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -1370,7 +1329,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1398,7 +1356,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -1481,7 +1438,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1540,7 +1496,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1599,7 +1554,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1660,7 +1614,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1739,7 +1692,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1759,7 +1711,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -1811,7 +1762,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1852,7 +1802,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1911,7 +1860,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1952,7 +1900,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1973,7 +1920,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -1990,7 +1936,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },
@@ -2049,7 +1994,6 @@
       "generator": {
         "@type": "Software",
         "@id": "did:web:kb.example:agents:xynolog-worker",
-        "name": "gemma3",
         "provider": "ollama",
         "model": "gemma3"
       },
@@ -2061,7 +2005,6 @@
         "generator": {
           "@type": "Software",
           "@id": "did:web:kb.example:agents:xynolog-worker",
-          "name": "gemma3",
           "provider": "ollama",
           "model": "gemma3"
         },

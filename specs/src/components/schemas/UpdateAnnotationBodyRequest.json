@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/UpdateAnnotationBodyRequest.json",
   "type": "object",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Resource ID containing the annotation (required for O(1) Layer 3 lookup)"
     },
     "operations": {
       "type": "array",
       "items": {
-        "$ref": "./BodyOperation.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperation.json"
       },
       "minItems": 1,
       "description": "Array of body modification operations to apply"

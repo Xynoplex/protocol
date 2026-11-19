@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IdentifiersKinds.json",
   "description": "identifiers/kinds.json: the kinds of id the protocol names, the properties that carry each, and the properties named like an id that carry something else.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "kinds": {
       "type": "array",
@@ -38,7 +40,7 @@
                   "description": "A string the kind's rule is asked about."
                 },
                 "why": {
-                  "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                  "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
                 }
               },
               "required": [

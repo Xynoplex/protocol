@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MatchSearchResult.json",
   "type": "object",
   "description": "Search results payload emitted on match:search-results SSE channel.",
   "properties": {
     "referenceId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     },
     "response": {
       "type": "array",
       "description": "The scored candidates, best first.",
       "items": {
-        "$ref": "ScoredResource.json"
+        "$ref": "https://xynolog.org/protocol/ScoredResource.json"
       }
     }
   },

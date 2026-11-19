@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Session.json",
   "title": "Session",
   "type": "object",
   "description": "The launcher's own stored sign-in for a stack (xynolog login), never Desktop's. No token is in it.",

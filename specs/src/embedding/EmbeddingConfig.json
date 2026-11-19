@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/EmbeddingConfig.json",
   "description": "The embedding provider a service asks for vectors, and what that kind of provider needs to be asked: one of the providers `xynolog-vectors` has, told apart by `type`. Two services that share an index name the same provider and the same model: a vector is compared only with vectors of the model that made it. A secret is never a value here: a provider's key is named by the environment variable that holds it.",
   "oneOf": [
     {
-      "$ref": "./OllamaEmbeddingConfig.json"
+      "$ref": "https://xynolog.org/protocol/OllamaEmbeddingConfig.json"
     },
     {
-      "$ref": "./VoyageEmbeddingConfig.json"
+      "$ref": "https://xynolog.org/protocol/VoyageEmbeddingConfig.json"
     }
   ],
   "discriminator": {
     "propertyName": "type",
     "mapping": {
-      "ollama": "./OllamaEmbeddingConfig.json",
-      "voyage": "./VoyageEmbeddingConfig.json"
+      "ollama": "https://xynolog.org/protocol/OllamaEmbeddingConfig.json",
+      "voyage": "https://xynolog.org/protocol/VoyageEmbeddingConfig.json"
     }
   }
 }

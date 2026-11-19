@@ -13,7 +13,7 @@
  */
 import { randomBytes, randomUUID } from 'node:crypto';
 import { afterAll, afterEach, beforeAll, describe } from 'vitest';
-import type { components } from './protocol-core';
+import { mintedJobId, type components } from './protocol-core';
 import { QUIET_TIMING, startDispatcher, type DispatcherEnvironment, type DispatcherProcess, type DispatcherSettings, type DispatcherTiming } from './dispatcher';
 import { startBroker, type Broker, type BrokerOptions } from './nats';
 import { eventually, freePort } from './net';
@@ -324,7 +324,7 @@ export class DispatcherWorld {
   async answering(): Promise<void> {
     const probe = await this.sidecar('readiness');
     await eventually('the dispatcher to answer on the bus', 20_000, async () => {
-      const answer = await probe.status(`job-${randomUUID()}`);
+      const answer = await probe.status(mintedJobId());
       return answer.payload['code'] === 'peer-unavailable' ? undefined : true;
     });
   }

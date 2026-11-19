@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationSelector.json",
   "oneOf": [
     {
-      "$ref": "./Selector.json"
+      "$ref": "https://xynolog.org/protocol/Selector.json"
     },
     {
       "type": "array",
       "items": {
-        "$ref": "./Selector.json"
+        "$ref": "https://xynolog.org/protocol/Selector.json"
       },
       "description": "Several selectors of the same segment, each a different way of finding it"
     }

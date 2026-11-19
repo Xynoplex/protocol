@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SignInStoreOwnerOnly.json",
   "description": "sign-in-store/owner-only.json: how a writer keeps a directory and a file to its owner.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "directoryMode": {
       "description": "A mode, on a system that has modes.",

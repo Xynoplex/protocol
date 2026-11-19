@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobStatusRequest.json",
   "type": "object",
   "description": "Request to check the status of a job",
   "properties": {
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     }
   },
   "required": [

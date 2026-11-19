@@ -12,7 +12,7 @@
   "content": {
     "application/json": {
       "schema": {
-        "$ref": "../schemas/ErrorResponse.json"
+        "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
       }
     }
   }

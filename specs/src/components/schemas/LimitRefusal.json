@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LimitRefusal.json",
   "description": "An ErrorResponse that names, in `code`, the limit the request met.",
   "allOf": [
     {
-      "$ref": "./ErrorResponse.json"
+      "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
     },
     {
       "type": "object",

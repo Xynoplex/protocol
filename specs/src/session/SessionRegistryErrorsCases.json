@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionRegistryErrorsCases.json",
   "description": "session/registry-errors-cases.json: what a registry says of the errors its active session says, and of those owed when it closes.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "while": {
             "type": "string",
@@ -36,7 +38,7 @@
                   "type": "object",
                   "properties": {
                     "own": {
-                      "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                      "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
                     }
                   },
                   "required": [
@@ -50,7 +52,7 @@
                   "type": "object",
                   "properties": {
                     "transport": {
-                      "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                      "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
                     },
                     "message": {
                       "type": "string",
@@ -70,7 +72,7 @@
             "type": "array",
             "description": "The codes said on the registry's errors up to the case's last effect, in order.",
             "items": {
-              "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
             }
           },
           "permissionDenied": {
@@ -95,7 +97,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "owed": {
             "type": "boolean",
@@ -105,7 +107,7 @@
             "type": "array",
             "description": "Every code the registry says from its close until its errors end, in order.",
             "items": {
-              "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
             }
           }
         },

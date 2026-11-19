@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerKnowledgeBaseConfig.json",
   "type": "object",
   "description": "One knowledge base a worker does jobs for: which it is, where its gateway is, the account the worker signs in as there, and the engines it offers it. The worker signs in, confirms the knowledge base and claims at each knowledge base apart from every other.",
   "properties": {
@@ -38,7 +40,7 @@
       "minItems": 1,
       "description": "The engines the worker offers this knowledge base, and the jobs it does with each: its own choice, on its own providers' keys. It claims each engine's jobs there for it, so a job no engine here is used for is not claimed at this knowledge base.",
       "items": {
-        "$ref": "./WorkerEngineConfig.json"
+        "$ref": "https://xynolog.org/protocol/WorkerEngineConfig.json"
       }
     }
   },

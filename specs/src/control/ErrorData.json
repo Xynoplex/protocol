@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ErrorData.json",
   "title": "ErrorData",
   "type": "object",
   "description": "The data of a control error: the launcher's code for the failure, one of specs/src/errors/codes.json's control group, and what a client can act on. A request's failure is never only a message.",
@@ -15,14 +17,14 @@
     "fields": {
       "type": "array",
       "items": {
-        "$ref": "./FieldFault.json"
+        "$ref": "https://xynolog.org/protocol/FieldFault.json"
       },
       "description": "For params the contract refuses: each fault, where it is."
     },
     "choices": {
       "type": "array",
       "items": {
-        "$ref": "./Target.json"
+        "$ref": "https://xynolog.org/protocol/Target.json"
       },
       "description": "For control.target-required and control.target-ambiguous: each target the request could have meant, to send again with one."
     },

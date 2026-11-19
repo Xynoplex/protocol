@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/EnrichedResourceEvent.json",
   "type": "object",
   "description": "Wire format for persisted events delivered over the bus SSE stream (GET /bus/subscribe). Extends StoredEventResponse with optional enrichment fields the EventStore populates from the materialized view at publish time (persistence → view → enrich → notification). Subscribers read the enrichment fields directly to update local caches without an additional fetch.",
   "allOf": [
     {
-      "$ref": "./StoredEventResponse.json"
+      "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
     },
     {
       "type": "object",
       "properties": {
         "annotation": {
-          "$ref": "./Annotation.json",
+          "$ref": "https://xynolog.org/protocol/Annotation.json",
           "description": "Populated for events that mutate an annotation (mark:added, mark:body-updated, mark:removed). Carries the post-materialization annotation as it exists in the view, so subscribers can update local caches in-place without refetching. Absent for events that don't touch annotations."
         }
       }

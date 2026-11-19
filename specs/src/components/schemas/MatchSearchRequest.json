@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MatchSearchRequest.json",
   "type": "object",
   "description": "Request payload sent on the match:search-request bus channel to find candidate matches.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Resource ID the reference annotation belongs to. Used to scope result events on the EventBus so the events-stream delivers them to participants viewing this resource."
     },
     "referenceId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Annotation ID of the reference to search candidates for"
     },
     "context": {
-      "$ref": "./GatheredContext.json",
+      "$ref": "https://xynolog.org/protocol/GatheredContext.json",
       "description": "Gathered context for the reference annotation"
     },
     "limit": {

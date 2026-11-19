@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobParams.json",
   "type": "object",
   "description": "A job's parameters as the Dispatcher holds them: the `params` of its `job:create`, and what the Dispatcher adds. It adds `resourceId`, the resource the job is about: a `mark` job's own, and for a `yield` job the one its context focuses on. For a tagging job it adds `schema`, the tag schema its `schemaId` names, so that whoever holds the job needs no registry. Nothing the caller sent is changed or removed.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "schema": {
-      "$ref": "./TagSchema.json",
+      "$ref": "https://xynolog.org/protocol/TagSchema.json",
       "description": "The tag schema a tagging job's `schemaId` names, as the knowledge base registered it when the job was created. On a tagging job, and on no other."
     }
   },

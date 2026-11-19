@@ -30,7 +30,7 @@ conformance-install:
 bundle:
 	bash scripts/make-target.sh bundle
 
-## lint: Apply the Redocly rules to the specifications
+## lint: Bundle with the reader, then apply the Redocly rules to the bundles
 lint:
 	bash scripts/make-target.sh lint
 

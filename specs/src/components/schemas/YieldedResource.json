@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/YieldedResource.json",
   "type": "object",
   "description": "The resource a yield command wrote, by its id.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     }
   },
   "required": [

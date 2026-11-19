@@ -70,7 +70,7 @@ let schema_at ({ file; pointer } : Validate.place) =
       found
 
 let place_of (reference : Decode.reference) =
-  let file, pointer = Decode.resolve reference in
+  let file, pointer = Decode.resolve (spec ()).ids reference in
   { Validate.file; pointer }
 
 let schema_of reference =
@@ -83,7 +83,7 @@ let schema_of reference =
 let refusals schema value =
   List.map
     (fun (pointer, why) -> (if pointer = "" then "/" else pointer) ^ " " ^ why)
-    (Validate.errors schema_at schema value "")
+    (Validate.errors (spec ()).ids schema_at schema value "")
 
 (* A component schema of the gateway's document, by its name. *)
 let component name =
@@ -118,7 +118,9 @@ let document = function
 let find_operation which meth path : Openapi.operation option =
   Option.bind (List.assoc_opt path (document which).paths) (fun reference ->
       let item : Openapi.path_item =
-        List.assoc (fst (Decode.resolve reference)) (spec ()).path_items
+        List.assoc
+          (fst (Decode.resolve (spec ()).ids reference))
+          (spec ()).path_items
       in
       match meth with
       | "GET" -> item.get
@@ -144,7 +146,9 @@ let response which meth path status : Openapi.response option =
   | None -> None
   | Some (Openapi.Inline response) -> Some response
   | Some (Openapi.Ref reference) ->
-      List.assoc_opt (fst (Decode.resolve reference)) (spec ()).responses
+      List.assoc_opt
+        (fst (Decode.resolve (spec ()).ids reference))
+        (spec ()).responses
 
 (* One of an operation's x-xynolog-limits that is a count. *)
 let limit which meth path key =

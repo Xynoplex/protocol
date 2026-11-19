@@ -57,14 +57,14 @@ let bound f = Printf.sprintf "%g" f
 let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
 
 (* The ways [value], at [path] within its file, is not what [schema] says,
-   each as the pointer into the value and why. A [$ref] is resolved from the
-   file it is written in, which it carries. *)
-let rec errors (schemas : schemas) (schema : Schema.t) value path =
-  fst (evaluate schemas schema value path)
+   each as the pointer into the value and why. A [$ref] is resolved through
+   [ids], from the file it is written in, which it carries. *)
+let rec errors ids (schemas : schemas) (schema : Schema.t) value path =
+  fst (evaluate ids schemas schema value path)
 
 (* [errors], and the members of [value], when it is an object, that [schema]
    evaluated. *)
-and evaluate schemas (schema : Schema.t) value path =
+and evaluate ids schemas (schema : Schema.t) value path =
   match schema with
   | Boolean_schema true -> ([], [])
   | Boolean_schema false -> ([ (path, "is admitted by no schema") ], [])
@@ -73,9 +73,9 @@ and evaluate schemas (schema : Schema.t) value path =
         match s.ref_ with
         | None -> ([], [])
         | Some r -> (
-            let file, pointer = Decode.resolve r in
+            let file, pointer = Decode.resolve ids r in
             match schemas { file; pointer } with
-            | Some target -> evaluate schemas target value path
+            | Some target -> evaluate ids schemas target value path
             | None ->
                 ( [
                     ( path,
@@ -84,7 +84,7 @@ and evaluate schemas (schema : Schema.t) value path =
                   ],
                   [] ))
       in
-      let own, by_layer = layer schemas s value path in
+      let own, by_layer = layer ids schemas s value path in
       let evaluated = by_name @ by_layer in
       let rest, by_rest =
         match (s.unevaluated_properties, value) with
@@ -100,14 +100,14 @@ and evaluate schemas (schema : Schema.t) value path =
                   match unevaluated with
                   | Boolean_schema false ->
                       [ (at, "is a member the schema does not state") ]
-                  | values -> errors schemas values member at)
+                  | values -> errors ids schemas values member at)
                 left,
               List.map fst left )
         | _ -> ([], [])
       in
       (named @ own @ rest, evaluated @ by_rest)
 
-and layer schemas (s : Schema.schema) value path =
+and layer ids schemas (s : Schema.schema) value path =
   let found = ref [] in
   let evaluated = ref [] in
   let say message = found := (path, message) :: !found in
@@ -191,7 +191,8 @@ and layer schemas (s : Schema.schema) value path =
           (fun item_schema ->
             List.iteri
               (fun i item ->
-                add (errors schemas item_schema item (path / string_of_int i)))
+                add
+                  (errors ids schemas item_schema item (path / string_of_int i)))
               items)
           s.items
     | _ -> ());
@@ -219,12 +220,12 @@ and layer schemas (s : Schema.schema) value path =
                 add
                   (List.map
                      (fun (_, message) -> (at, "is a name that " ^ message))
-                     (errors schemas names (`String name) at)))
+                     (errors ids schemas names (`String name) at)))
               s.property_names;
             match List.assoc_opt name properties with
             | Some property ->
                 saw [ name ];
-                add (errors schemas property member at)
+                add (errors ids schemas property member at)
             | None -> (
                 match s.additional_properties with
                 | Some (Boolean_schema false) ->
@@ -232,14 +233,14 @@ and layer schemas (s : Schema.schema) value path =
                     add [ (at, "is a member the schema does not state") ]
                 | Some (Schema _ as values) ->
                     saw [ name ];
-                    add (errors schemas values member at)
+                    add (errors ids schemas values member at)
                 | Some (Boolean_schema true) -> saw [ name ]
                 | None -> ()))
           members
     | _ -> ());
   List.iter
     (fun part ->
-      let wrong, names = evaluate schemas part value path in
+      let wrong, names = evaluate ids schemas part value path in
       add wrong;
       saw names)
     (Option.value ~default:[] s.all_of);
@@ -247,7 +248,7 @@ and layer schemas (s : Schema.schema) value path =
   let fitting members =
     List.filter_map
       (fun member ->
-        match evaluate schemas member value path with
+        match evaluate ids schemas member value path with
         | [], names -> Some names
         | _ -> None)
       members
@@ -270,7 +271,7 @@ and layer schemas (s : Schema.schema) value path =
     s.one_of;
   Option.iter
     (fun refused ->
-      if errors schemas refused value path = [] then
+      if errors ids schemas refused value path = [] then
         say "is what the not refuses")
     s.not_;
   (List.rev !found, !evaluated)

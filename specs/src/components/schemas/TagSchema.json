@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/TagSchema.json",
   "type": "object",
   "description": "A structural-analysis schema (e.g. legal-irac, scientific-imrad, argument-toulmin). Defines a methodology framework as an id, name, description, domain hint, and an ordered list of categories. KBs and their skills register schemas with the runtime registry via `frame.addTagSchema(...)` at session start.",
   "properties": {
@@ -18,7 +20,7 @@
     "tags": {
       "type": "array",
       "items": {
-        "$ref": "./TagCategory.json"
+        "$ref": "https://xynolog.org/protocol/TagCategory.json"
       }
     }
   },

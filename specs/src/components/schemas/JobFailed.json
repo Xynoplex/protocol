@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobFailed.json",
   "type": "object",
   "description": "A job that failed and will not be retried.",
   "properties": {
@@ -9,10 +11,10 @@
       ]
     },
     "metadata": {
-      "$ref": "./JobMetadata.json"
+      "$ref": "https://xynolog.org/protocol/JobMetadata.json"
     },
     "params": {
-      "$ref": "./JobParams.json"
+      "$ref": "https://xynolog.org/protocol/JobParams.json"
     },
     "startedAt": {
       "type": "string",
@@ -27,7 +29,7 @@
       "description": "The failure's message."
     },
     "failureClass": {
-      "$ref": "./FailureClass.json"
+      "$ref": "https://xynolog.org/protocol/FailureClass.json"
     }
   },
   "required": [

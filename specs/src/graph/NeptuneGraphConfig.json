@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/NeptuneGraphConfig.json",
   "type": "object",
   "description": "A graph kept in Amazon Neptune, asked in Gremlin. No service has been run against one.",
   "properties": {

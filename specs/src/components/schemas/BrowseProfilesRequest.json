@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseProfilesRequest.json",
   "type": "object",
   "description": "Request for the profiles of some principals: the DIDs a reply mentions. Bounded by the question: a reader that has more asks in parts.",
   "properties": {
@@ -8,7 +10,7 @@
       "maxItems": 500,
       "uniqueItems": true,
       "items": {
-        "$ref": "./UserId.json"
+        "$ref": "https://xynolog.org/protocol/UserId.json"
       },
       "description": "The principals asked after."
     }

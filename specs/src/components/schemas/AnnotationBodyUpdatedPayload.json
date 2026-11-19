@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationBodyUpdatedPayload.json",
   "type": "object",
   "description": "Payload for mark:body-updated domain event",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     },
     "operations": {
       "type": "array",
       "items": {
-        "$ref": "./BodyOperation.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperation.json"
       }
     }
   },

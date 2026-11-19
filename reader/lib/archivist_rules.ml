@@ -31,7 +31,10 @@ let config_schemas = [ "ArchivistConfig"; "ArchivistEngines"; "Engine" ]
 let tables = [ "archivist/shard-cases.json" ]
 let protocol = "contract/ARCHIVIST.md"
 let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
-let resolve file target = fst (Decode.resolve { target; file; pointer = "" })
+
+let resolve ids file target =
+  fst (Decode.resolve ids { target; file; pointer = "" })
+
 let at pointer json = Decode.at_pointer pointer json
 let text = function Some (`String s) -> Some s | _ -> None
 
@@ -46,19 +49,20 @@ let shown words = "[" ^ String.concat "," words ^ "]"
 (* [json], read from [file], with each [$ref] naming the file it resolves to:
    two schemas in different directories that name one schema say the
    same. *)
-let rec anchored file (json : Yojson.Safe.t) : Yojson.Safe.t =
+let rec anchored ids file (json : Yojson.Safe.t) : Yojson.Safe.t =
   match json with
   | `Assoc members ->
       `Assoc
         (List.map
            (function
-             | "$ref", `String target -> ("$ref", `String (resolve file target))
-             | key, value -> (key, anchored file value))
+             | "$ref", `String target ->
+                 ("$ref", `String (resolve ids file target))
+             | key, value -> (key, anchored ids file value))
            members)
-  | `List items -> `List (List.map (anchored file) items)
+  | `List items -> `List (List.map (anchored ids file) items)
   | value -> value
 
-let refusals ~(read_json : string -> Yojson.Safe.t option) =
+let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
   let found = ref [] in
   let refuse file pointer fmt =
     Printf.ksprintf
@@ -106,7 +110,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
               let property = Option.get (at ("" / "properties" / name) node) in
               let file, pointer, property =
                 match text (at "/$ref" property) with
-                | Some ref when resolve file ref = engines_file ->
+                | Some ref when resolve ids file ref = engines_file ->
                     (engines_file, "", engines)
                 | _ -> (file, pointer / "properties" / name, property)
               in
@@ -146,14 +150,16 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
         Option.bind
           (text (at ("/oneOf" / string_of_int index / "$ref") entry))
           (fun ref ->
-            let file = resolve entry_file ref in
-            Option.map (fun json -> (file, anchored file json)) (read_json file))
+            let file = resolve ids entry_file ref in
+            Option.map
+              (fun json -> (file, anchored ids file json))
+              (read_json file))
       in
       match (member 0, member 1) with
       | Some (extracted_file, extracted), Some (declined_file', declined) ->
           let provenance =
             match
-              at "/allOf/1/properties" (anchored text_file extracted_text)
+              at "/allOf/1/properties" (anchored ids text_file extracted_text)
             with
             | Some (`Assoc properties) ->
                 List.filter (fun (name, _) -> name <> "kind") properties
@@ -168,7 +174,8 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
             provenance;
           if
             at "/properties/declined" declined
-            <> at "/properties/declined" (anchored declined_file declined_text)
+            <> at "/properties/declined"
+                 (anchored ids declined_file declined_text)
           then
             refuse declined_file' "/properties/declined"
               "AnchoredTextEntry's declined is not ExtractionDeclined's"

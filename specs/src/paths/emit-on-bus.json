@@ -29,7 +29,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "../components/schemas/BusEmitRequest.json"
+            "$ref": "https://xynolog.org/protocol/BusEmitRequest.json"
           }
         }
       }
@@ -40,7 +40,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/BusEmitAccepted.json"
+              "$ref": "https://xynolog.org/protocol/BusEmitAccepted.json"
             }
           }
         }
@@ -50,7 +50,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
@@ -63,7 +63,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
@@ -76,7 +76,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
@@ -92,7 +92,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

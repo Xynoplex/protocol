@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ClientSurface.json",
   "description": "client/surface.json: the surface of a Xynolog client: its namespaces and methods, what a worker is handed, its state units, its bus, its storage, its modules and its clock.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "shapes": {
       "description": "Each shape a method returns, with what it is.",
@@ -118,10 +120,10 @@
       "type": "object",
       "properties": {
         "context": {
-          "$ref": "../components/schemas/GatheredContext.json"
+          "$ref": "https://xynolog.org/protocol/GatheredContext.json"
         },
         "selector": {
-          "$ref": "../components/schemas/TextQuoteSelector.json"
+          "$ref": "https://xynolog.org/protocol/TextQuoteSelector.json"
         }
       },
       "required": [
@@ -182,7 +184,7 @@
                       "type": "object",
                       "properties": {
                         "request": {
-                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                          "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                         }
                       },
                       "required": [
@@ -195,7 +197,7 @@
                       "type": "object",
                       "properties": {
                         "emit": {
-                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                          "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                         }
                       },
                       "required": [
@@ -208,7 +210,7 @@
                       "type": "object",
                       "properties": {
                         "local": {
-                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                          "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                         }
                       },
                       "required": [
@@ -251,7 +253,7 @@
                       "type": "object",
                       "properties": {
                         "observes": {
-                          "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                          "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                         }
                       },
                       "required": [
@@ -284,8 +286,8 @@
                                 "properties": {
                                   "$ref": {
                                     "type": "string",
-                                    "pattern": "^(\\.\\./components/schemas|types)/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
-                                    "description": "A component, a member within one, or a client type of specs/src/client/types: an object is always one of these, so that it is named."
+                                    "pattern": "^https://xynolog\\.org/protocol/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
+                                    "description": "The $id of a component, a member within one, or a client type of specs/src/client/types: an object is always one of these, so that it is named."
                                   }
                                 },
                                 "required": [
@@ -372,7 +374,7 @@
                     "type": "object",
                     "properties": {
                       "why": {
-                        "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                        "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
                       },
                       "args": {
                         "$comment": "The method's arguments, by its parameters' names, as the wire writes them, with `{\"$fixture\": name}`: JSON, as it is given."
@@ -394,7 +396,7 @@
                               "type": "object",
                               "properties": {
                                 "request": {
-                                  "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                                  "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                                 },
                                 "sends": {
                                   "$comment": "What it sends: JSON, as it is given."
@@ -503,7 +505,7 @@
                         "description": "The SDK's name for the member."
                       },
                       "why": {
-                        "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                        "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
                       }
                     },
                     "required": [
@@ -518,7 +520,7 @@
                   "minProperties": 1,
                   "description": "Each verb whose job the member settles, with the schema of what it takes.",
                   "additionalProperties": {
-                    "$ref": "../bus/BusRegistry.json#/properties/channels/items/oneOf/0/properties/schema"
+                    "$ref": "https://xynolog.org/protocol/BusRegistry.json#/properties/channels/items/oneOf/0/properties/schema"
                   }
                 }
               },

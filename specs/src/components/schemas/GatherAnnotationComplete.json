@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherAnnotationComplete.json",
   "type": "object",
   "description": "Completion payload emitted on the gather:annotation-complete bus channel when annotation context gathering finishes.",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Branded AnnotationId of the annotation whose context was gathered"
     },
     "response": {
-      "$ref": "./GatheredContext.json",
+      "$ref": "https://xynolog.org/protocol/GatheredContext.json",
       "description": "The gathered annotation context (unified GatheredContext, focus.kind:'annotation')"
     }
   },

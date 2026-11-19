@@ -18,7 +18,7 @@
         "required": true,
         "description": "The resource, percent-encoded.",
         "schema": {
-          "$ref": "../../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       }
     ],
@@ -28,13 +28,13 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/AnchoredTextAnswer.json"
+              "$ref": "https://xynolog.org/protocol/AnchoredTextAnswer.json"
             }
           }
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "500": {
         "$ref": "../../components/responses/InternalError.json"
@@ -60,7 +60,7 @@
         "required": true,
         "description": "The resource, percent-encoded.",
         "schema": {
-          "$ref": "../../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       }
     ],
@@ -69,7 +69,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "../AnchoredTextWrite.json"
+            "$ref": "https://xynolog.org/protocol/AnchoredTextWrite.json"
           }
         }
       }
@@ -83,20 +83,20 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "404": {
         "description": "The record holds no such resource.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
@@ -106,7 +106,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

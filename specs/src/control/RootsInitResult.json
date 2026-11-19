@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RootsInitResult.json",
   "title": "RootsInitResult",
   "type": "object",
   "description": "The local directory where xynolog init created and registered the knowledge base.",

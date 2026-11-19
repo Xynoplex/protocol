@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BusEventMessage.json",
   "type": "object",
   "description": "A bus frame on the stream: `event: bus-event`, an `id:` line, and one `data:` line holding the JSON-serialised BusFrame. This schema describes the message with `data` already parsed.",
   "properties": {
@@ -11,18 +13,18 @@
     "id": {
       "oneOf": [
         {
-          "$ref": "./PersistedEventId.json"
+          "$ref": "https://xynolog.org/protocol/PersistedEventId.json"
         },
         {
-          "$ref": "./ReplyEventId.json"
+          "$ref": "https://xynolog.org/protocol/ReplyEventId.json"
         },
         {
-          "$ref": "./EphemeralEventId.json"
+          "$ref": "https://xynolog.org/protocol/EphemeralEventId.json"
         }
       ]
     },
     "data": {
-      "$ref": "./BusFrame.json"
+      "$ref": "https://xynolog.org/protocol/BusFrame.json"
     }
   },
   "required": [

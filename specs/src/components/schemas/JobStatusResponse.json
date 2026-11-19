@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobStatusResponse.json",
   "type": "object",
   "properties": {
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     },
     "type": {
-      "$ref": "./JobType.json"
+      "$ref": "https://xynolog.org/protocol/JobType.json"
     },
     "status": {
       "type": "string",
@@ -18,7 +20,7 @@
       ]
     },
     "userId": {
-      "$ref": "./UserId.json"
+      "$ref": "https://xynolog.org/protocol/UserId.json"
     },
     "created": {
       "type": "string"
@@ -33,13 +35,13 @@
       "type": "string"
     },
     "failureClass": {
-      "$ref": "./FailureClass.json"
+      "$ref": "https://xynolog.org/protocol/FailureClass.json"
     },
     "progress": {
-      "$ref": "./JobStoredProgress.json"
+      "$ref": "https://xynolog.org/protocol/JobStoredProgress.json"
     },
     "result": {
-      "$ref": "./JobStoredResult.json"
+      "$ref": "https://xynolog.org/protocol/JobStoredResult.json"
     }
   },
   "required": [

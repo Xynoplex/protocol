@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkDelegateTimeoutEvent.json",
   "type": "object",
   "description": "The payload of `mark:delegate-timeout`, a client-local signal: a delegated job went silent past its deadline, with no progress, no completion and no `job:fail`. A real job failure arrives as `job:fail` and never produces this.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The resource the job was delegated for."
     },
     "motivation": {
-      "$ref": "./Motivation.json"
+      "$ref": "https://xynolog.org/protocol/Motivation.json"
     }
   },
   "required": [

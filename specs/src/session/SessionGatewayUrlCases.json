@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionGatewayUrlCases.json",
   "description": "session/gateway-url-cases.json: an HTTP endpoint, and the origin a client reaches its gateway at.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,10 +16,10 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "endpoint": {
-            "$ref": "../components/schemas/HttpEndpoint.json"
+            "$ref": "https://xynolog.org/protocol/HttpEndpoint.json"
           },
           "origin": {
             "type": [

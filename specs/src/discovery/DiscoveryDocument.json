@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/DiscoveryDocument.json",
   "title": "DiscoveryDocument",
   "type": "object",
   "description": "The launcher's KB discovery document — the schema authority for <stateDir>/discovery/kbs.json, which the Xynolog CLI (xynolog/cli) regenerates on every stack mutation and the Browser container mounts read-only at /discovery. NOT an API endpoint: a static document fetched same-origin by browsers (via the Browser's static server). An empty kbs list is meaningful (\"the launcher manages nothing right now\") and distinct from an absent file.",
@@ -13,7 +15,7 @@
     "kbs": {
       "type": "array",
       "items": {
-        "$ref": "./DiscoveredKB.json"
+        "$ref": "https://xynolog.org/protocol/DiscoveredKB.json"
       },
       "description": "Every KB the launcher currently manages, local and forwarded"
     }

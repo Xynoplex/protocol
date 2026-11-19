@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ExtractedText.json",
   "description": "A successful extraction: the anchored text plus its provenance. The 'extracted' member of ExtractionOutcome, the record the anchored-text store holds.",
   "allOf": [
     {
-      "$ref": "./AnchoredText.json"
+      "$ref": "https://xynolog.org/protocol/AnchoredText.json"
     },
     {
       "type": "object",
@@ -15,15 +17,15 @@
           "description": "Discriminant — both ExtractionOutcome members carry `kind`, single-valued: the category here, the detail in `method`."
         },
         "method": {
-          "$ref": "./ExtractionMethod.json",
+          "$ref": "https://xynolog.org/protocol/ExtractionMethod.json",
           "description": "How the text was extracted."
         },
         "pdfClass": {
-          "$ref": "./PdfClass.json",
+          "$ref": "https://xynolog.org/protocol/PdfClass.json",
           "description": "PDF classification, when the source was a PDF."
         },
         "ocrConfidence": {
-          "$ref": "./OcrConfidence.json",
+          "$ref": "https://xynolog.org/protocol/OcrConfidence.json",
           "description": "How well the engine read the pixels, when any of this text came from OCR."
         },
         "unreadPages": {

@@ -1,6 +1,8 @@
 (* bundle.exe SPECS: Bundle bundles every OpenAPI document of Protocol's
-   specs/src, each to one that names nothing outside itself; a small specs tree bundles as Redocly
-   bundles it; and the bundler refuses a tree it would bundle otherwise. *)
+   specs/src, each to one that names nothing outside itself; a small specs
+   tree, its schemas named by their [$id]s, bundles as Redocly bundles the
+   same tree named by path, with no [$schema] or [$id] in it; and the
+   bundler refuses a tree it would bundle otherwise. *)
 
 let write specs (file, json) =
   let path = Filename.concat specs file in
@@ -12,6 +14,15 @@ let write specs (file, json) =
   directory (Filename.dirname path);
   Out_channel.with_open_bin path (fun out ->
       Out_channel.output_string out (Yojson.Safe.to_string json))
+
+let id name = Decode.base ^ name
+
+(* A schema's file: [members], stating its dialect and its [$id]. *)
+let identified name members =
+  `Assoc
+    (("$schema", `String Decode.dialect)
+    :: ("$id", `String (id name))
+    :: members)
 
 let ref_ ?description target =
   `Assoc
@@ -33,9 +44,7 @@ let tree =
           ( "components",
             `Assoc
               [
-                ( "schemas",
-                  `Assoc [ ("Listed", ref_ "components/schemas/Listed.json") ]
-                );
+                ("schemas", `Assoc [ ("Listed", ref_ (id "Listed.json")) ]);
                 ( "securitySchemes",
                   `Assoc [ ("bearer", `Assoc [ ("type", `String "http") ]) ] );
               ] );
@@ -59,28 +68,30 @@ let tree =
             `Assoc
               [
                 ( "application/json",
-                  `Assoc [ ("schema", ref_ "../schemas/Listed.json") ] );
+                  `Assoc [ ("schema", ref_ (id "Listed.json")) ] );
               ] );
         ] );
     ( "components/schemas/Listed.json",
-      `Assoc
+      identified "Listed.json"
         [
           ("type", `String "object");
           ( "properties",
             `Assoc
               [
-                ("beside", ref_ ~description:"said here" "Beside.json");
-                ("area", ref_ "../../area/InArea.json");
+                ("beside", ref_ ~description:"said here" (id "Beside.json"));
+                ("area", ref_ (id "InArea.json"));
               ] );
           ( "discriminator",
             `Assoc
               [
                 ("propertyName", `String "kind");
-                ("mapping", `Assoc [ ("b", `String "./Beside.json") ]);
+                ("mapping", `Assoc [ ("b", `String (id "Beside.json")) ]);
               ] );
         ] );
-    ("components/schemas/Beside.json", `Assoc [ ("type", `String "string") ]);
-    ("area/InArea.json", `Assoc [ ("type", `String "integer") ]);
+    ( "components/schemas/Beside.json",
+      identified "Beside.json" [ ("type", `String "string") ] );
+    ( "area/InArea.json",
+      identified "InArea.json" [ ("type", `String "integer") ] );
   ]
 
 let components kind n = `String ("#/components/" ^ kind ^ "/" ^ n)
@@ -177,7 +188,7 @@ let bundle changes =
   let specs = Filename.temp_dir "bundle" "" in
   List.iter (write specs) tree;
   List.iter (write specs) changes;
-  Bundle.document ~specs "openapi.json"
+  Bundle.document ~specs ~ids:(Result.get_ok (Places.ids specs)) "openapi.json"
 
 let rec sorted : Yojson.Safe.t -> Yojson.Safe.t = function
   | `Assoc members ->
@@ -264,7 +275,9 @@ let () =
       (String.concat ", " (List.map fst Bundle.documents));
   List.iter
     (fun (document, _) ->
-      match Bundle.document ~specs document with
+      match
+        Bundle.document ~specs ~ids:(Result.get_ok (Places.ids specs)) document
+      with
       | Ok json -> names_within document json
       | Error error ->
           fail "%s is refused: %s" document (Decode.error_to_string error))
@@ -285,7 +298,7 @@ let () =
   refused ~why:"constrains a reference"
     [
       ( "components/schemas/Beside.json",
-        `Assoc
+        identified "Beside.json"
           [
             ( "items",
               `Assoc
@@ -317,7 +330,7 @@ let () =
     [
       ("area/Beside.json", `Assoc [ ("type", `String "null") ]);
       ( "components/schemas/Beside.json",
-        `Assoc [ ("items", ref_ "../../area/Beside.json") ] );
+        identified "Beside.json" [ ("items", ref_ "../../area/Beside.json") ] );
     ]
     ~file:"area/Beside.json"
     "is named schemas/Beside, which names components/schemas/Beside.json too";
@@ -363,7 +376,7 @@ let () =
                 ] );
           ] );
       ( "components/schemas/Beside.json",
-        `Assoc
+        identified "Beside.json"
           [
             ( "discriminator",
               `Assoc
@@ -379,7 +392,7 @@ let () =
   if !failures > 0 then exit 1;
   print_endline
     "Bundle bundles every OpenAPI document of specs/src, each to one that \
-     names nothing outside itself, a tree bundles as Redocly bundles it, and \
-     the bundler refuses a reference within a file or into one, a constrained \
-     reference, a schema it cannot name, one name for two files, two names for \
-     one, and a schema that names a response"
+     names nothing outside itself, a tree named by $id bundles as Redocly \
+     bundles it named by path, and the bundler refuses a reference within a \
+     file or into one, a constrained reference, a schema it cannot name, one \
+     name for two files, two names for one, and a schema that names a response"

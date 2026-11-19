@@ -70,7 +70,7 @@ case "$TARGET" in
     exit
     ;;
   validate) reader check-and-bundle | tar -C "$ROOT" -xf - ;;
-  conformance-typecheck|conformance-fixtures) reader bundle | tar -C "$ROOT" -xf - ;;
+  lint|conformance-typecheck|conformance-fixtures) reader bundle | tar -C "$ROOT" -xf - ;;
 esac
 
 case "$TARGET" in

@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/DirectoryEntry.json",
   "oneOf": [
     {
-      "$ref": "./FileEntry.json"
+      "$ref": "https://xynolog.org/protocol/FileEntry.json"
     },
     {
-      "$ref": "./DirEntry.json"
+      "$ref": "https://xynolog.org/protocol/DirEntry.json"
     }
   ],
   "discriminator": {
     "propertyName": "type",
     "mapping": {
-      "file": "./FileEntry.json",
-      "dir": "./DirEntry.json"
+      "file": "https://xynolog.org/protocol/FileEntry.json",
+      "dir": "https://xynolog.org/protocol/DirEntry.json"
     }
   },
   "description": "One entry in a directory listing: a file, which may carry the resource it was ingested as, or a subdirectory. Tell them apart by `type`, which is required on both and single-valued."

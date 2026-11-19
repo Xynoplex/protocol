@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerKnowledgeBaseHealth.json",
   "type": "object",
   "description": "One knowledge base the worker serves, as its health says it. `did` and `engines` are there while it is `working`, and only then.",
   "properties": {
@@ -26,7 +28,7 @@
       "minItems": 1,
       "description": "One entry for each of the entry's engines, in its order.",
       "items": {
-        "$ref": "./WorkerEngineHealth.json"
+        "$ref": "https://xynolog.org/protocol/WorkerEngineHealth.json"
       }
     }
   },

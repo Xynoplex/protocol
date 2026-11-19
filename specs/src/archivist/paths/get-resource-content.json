@@ -15,7 +15,7 @@
         "required": true,
         "description": "The resource, percent-encoded.",
         "schema": {
-          "$ref": "../../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       }
     ],
@@ -40,14 +40,14 @@
         }
       },
       "401": {
-        "$ref": "../responses/Unauthorized.json"
+        "$ref": "../responses/ArchivistUnauthorized.json"
       },
       "404": {
         "description": "The record holds no such resource, or holds it but not its bytes; `code` says which.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../RepresentationNotFound.json"
+              "$ref": "https://xynolog.org/protocol/RepresentationNotFound.json"
             }
           }
         }
@@ -57,7 +57,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

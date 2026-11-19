@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ResourceUpload.json",
   "type": "object",
   "description": "The multipart upload that creates a resource. A client sends it to the gateway's `POST /resources`; the gateway forwards it untouched to the Archivist's `POST /resources`, which stores the bytes and records the resource. One body, two hops.",
   "properties": {
@@ -28,11 +30,11 @@
       "description": "JSON-stringified array of entity type names"
     },
     "sourceAnnotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "For AI-generated resources: the annotation that triggered generation. Nested into generatedFrom.annotationId on the persisted event."
     },
     "sourceResourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "For AI-generated resources: the source resource the generating annotation lives on. Nested into generatedFrom.resourceId on the persisted event."
     },
     "generationPrompt": {
@@ -44,7 +46,7 @@
       "description": "For AI-generated resources: JSON-stringified Agent naming the model/worker that produced the content. Its identity must be the uploading agent's own — the knowledge base refuses a generator naming anyone else. `creator` and `wasAttributedTo` are never sent; the knowledge base derives them from the cited job."
     },
     "jobId": {
-      "$ref": "./JobId.json",
+      "$ref": "https://xynolog.org/protocol/JobId.json",
       "description": "The job this resource fulfils, when a worker is creating it. Forwarded onto yield:create; the knowledge base derives who requested the resource from the cited job's own events, and refuses a worker-role create that cites none. Absent for a person's own upload."
     },
     "isDraft": {

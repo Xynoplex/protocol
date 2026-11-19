@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GraphDatabaseCases.json",
   "description": "graph/database-cases.json: the database of a graph store that holds a knowledge base's graph.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,10 +16,10 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "kb": {
-            "$ref": "../KbDid.json"
+            "$ref": "https://xynolog.org/protocol/KbDid.json"
           },
           "database": {
             "type": "string",

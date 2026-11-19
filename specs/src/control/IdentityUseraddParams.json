@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IdentityUseraddParams.json",
   "title": "IdentityUseraddParams",
   "type": "object",
   "description": "Create one account in the launcher-managed Keycloak realm for a specific local knowledge base.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json"
     },
     "target": {
-      "$ref": "./IdentityLocalTarget.json"
+      "$ref": "https://xynolog.org/protocol/IdentityLocalTarget.json"
     },
     "email": {
       "type": "string",

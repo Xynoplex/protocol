@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/EngineLimits.json",
   "type": "object",
   "description": "The discovered limits of one engine.",
   "properties": {
     "engine": {
-      "$ref": "./Engine.json"
+      "$ref": "https://xynolog.org/protocol/Engine.json"
     },
     "limits": {
-      "$ref": "./InferenceLimits.json"
+      "$ref": "https://xynolog.org/protocol/InferenceLimits.json"
     }
   },
   "required": [

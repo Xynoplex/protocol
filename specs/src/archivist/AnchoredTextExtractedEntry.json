@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnchoredTextExtractedEntry.json",
   "type": "object",
   "description": "The text extracted from the bytes, where each word is on the page, and how it was extracted.",
   "properties": {
@@ -60,15 +62,15 @@
       "description": "Where each word of `text` is, line by line, in reading order."
     },
     "method": {
-      "$ref": "../components/schemas/ExtractionMethod.json",
+      "$ref": "https://xynolog.org/protocol/ExtractionMethod.json",
       "description": "How the text was extracted."
     },
     "pdfClass": {
-      "$ref": "../components/schemas/PdfClass.json",
+      "$ref": "https://xynolog.org/protocol/PdfClass.json",
       "description": "PDF classification, when the source was a PDF."
     },
     "ocrConfidence": {
-      "$ref": "../components/schemas/OcrConfidence.json",
+      "$ref": "https://xynolog.org/protocol/OcrConfidence.json",
       "description": "How well the engine read the pixels, when any of this text came from OCR."
     },
     "unreadPages": {

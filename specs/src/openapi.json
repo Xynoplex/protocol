@@ -29,49 +29,49 @@
   },
   "paths": {
     "/api/health": {
-      "$ref": "paths/api_health.json"
+      "$ref": "paths/get-health.json"
     },
     "/": {
-      "$ref": "paths/root.json"
+      "$ref": "paths/get-health-at-root.json"
     },
     "/api/openapi.json": {
-      "$ref": "paths/api_openapi.json"
+      "$ref": "paths/get-open-api-document.json"
     },
     "/.well-known/oauth-protected-resource": {
-      "$ref": "paths/well-known_oauth-protected-resource.json"
+      "$ref": "paths/get-protected-resource-metadata.json"
     },
     "/api/tokens/media": {
-      "$ref": "paths/api_tokens_media.json"
+      "$ref": "paths/create-media-token.json"
     },
     "/api/users/me": {
-      "$ref": "paths/api_users_me.json"
+      "$ref": "paths/get-current-user.json"
     },
     "/api/status": {
-      "$ref": "paths/api_status.json"
+      "$ref": "paths/get-status.json"
     },
     "/bus/subscribe": {
-      "$ref": "paths/bus_subscribe.json"
+      "$ref": "paths/subscribe-to-bus.json"
     },
     "/bus/emit": {
-      "$ref": "paths/bus_emit.json"
+      "$ref": "paths/emit-on-bus.json"
     },
     "/resources": {
-      "$ref": "paths/resources.json"
+      "$ref": "paths/upload-resource.json"
     },
     "/resources/{id}": {
-      "$ref": "paths/resources_{id}.json"
+      "$ref": "paths/get-resource-representation.json"
     },
     "/resources/{id}/jsonld": {
-      "$ref": "paths/resources_{id}_jsonld.json"
+      "$ref": "paths/get-resource-json-ld.json"
     },
     "/resources/{id}/annotations": {
-      "$ref": "paths/resources_{id}_annotations.json"
+      "$ref": "paths/get-resource-annotations.json"
     },
     "/resources/{id}/anchored-text": {
-      "$ref": "paths/resources_{id}_anchored-text.json"
+      "$ref": "paths/get-resource-anchored-text.json"
     },
     "/api/resources/{id}": {
-      "$ref": "paths/api_resources_{id}.json"
+      "$ref": "paths/get-resource-representation-with-media-token.json"
     }
   },
   "components": {
@@ -119,937 +119,937 @@
     },
     "schemas": {
       "Agent": {
-        "$ref": "components/schemas/Agent.json"
+        "$ref": "https://xynolog.org/protocol/Agent.json"
       },
       "AgentOrganization": {
-        "$ref": "components/schemas/AgentOrganization.json"
+        "$ref": "https://xynolog.org/protocol/AgentOrganization.json"
       },
       "AgentPerson": {
-        "$ref": "components/schemas/AgentPerson.json"
+        "$ref": "https://xynolog.org/protocol/AgentPerson.json"
       },
       "AgentSoftware": {
-        "$ref": "components/schemas/AgentSoftware.json"
+        "$ref": "https://xynolog.org/protocol/AgentSoftware.json"
       },
       "OneOrMoreAgents": {
-        "$ref": "components/schemas/OneOrMoreAgents.json"
+        "$ref": "https://xynolog.org/protocol/OneOrMoreAgents.json"
       },
       "Annotation": {
-        "$ref": "components/schemas/Annotation.json"
+        "$ref": "https://xynolog.org/protocol/Annotation.json"
       },
       "AnnotationAddedPayload": {
-        "$ref": "components/schemas/AnnotationAddedPayload.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationAddedPayload.json"
       },
       "AnnotationBodies": {
-        "$ref": "components/schemas/AnnotationBodies.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationBodies.json"
       },
       "AnnotationBody": {
-        "$ref": "components/schemas/AnnotationBody.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationBody.json"
       },
       "AnnotationBodyUpdatedPayload": {
-        "$ref": "components/schemas/AnnotationBodyUpdatedPayload.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationBodyUpdatedPayload.json"
       },
       "AnnotationId": {
-        "$ref": "components/schemas/AnnotationId.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationId.json"
       },
       "AnnotationRemovedPayload": {
-        "$ref": "components/schemas/AnnotationRemovedPayload.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationRemovedPayload.json"
       },
       "AnnotationSelector": {
-        "$ref": "components/schemas/AnnotationSelector.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
       },
       "AnnotationTarget": {
-        "$ref": "components/schemas/AnnotationTarget.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationTarget.json"
       },
       "AttributedEvent": {
-        "$ref": "components/schemas/AttributedEvent.json"
+        "$ref": "https://xynolog.org/protocol/AttributedEvent.json"
       },
       "BeckonFocusEvent": {
-        "$ref": "components/schemas/BeckonFocusEvent.json"
+        "$ref": "https://xynolog.org/protocol/BeckonFocusEvent.json"
       },
       "BeckonHoverEvent": {
-        "$ref": "components/schemas/BeckonHoverEvent.json"
+        "$ref": "https://xynolog.org/protocol/BeckonHoverEvent.json"
       },
       "BeckonSparkleEvent": {
-        "$ref": "components/schemas/BeckonSparkleEvent.json"
+        "$ref": "https://xynolog.org/protocol/BeckonSparkleEvent.json"
       },
       "BindBodyOperation": {
-        "$ref": "components/schemas/BindBodyOperation.json"
+        "$ref": "https://xynolog.org/protocol/BindBodyOperation.json"
       },
       "BindBodyUpdated": {
-        "$ref": "components/schemas/BindBodyUpdated.json"
+        "$ref": "https://xynolog.org/protocol/BindBodyUpdated.json"
       },
       "BindInitiateCommand": {
-        "$ref": "components/schemas/BindInitiateCommand.json"
+        "$ref": "https://xynolog.org/protocol/BindInitiateCommand.json"
       },
       "BindUpdateBodyCommand": {
-        "$ref": "components/schemas/BindUpdateBodyCommand.json"
+        "$ref": "https://xynolog.org/protocol/BindUpdateBodyCommand.json"
       },
       "BodyOperationAdd": {
-        "$ref": "components/schemas/BodyOperationAdd.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperationAdd.json"
       },
       "BodyOperationRemove": {
-        "$ref": "components/schemas/BodyOperationRemove.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperationRemove.json"
       },
       "BodyOperationReplace": {
-        "$ref": "components/schemas/BodyOperationReplace.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperationReplace.json"
       },
       "BodyOperation": {
-        "$ref": "components/schemas/BodyOperation.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperation.json"
       },
       "BodyPurpose": {
-        "$ref": "components/schemas/BodyPurpose.json"
+        "$ref": "https://xynolog.org/protocol/BodyPurpose.json"
       },
       "BrowseEnginesRequest": {
-        "$ref": "components/schemas/BrowseEnginesRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEnginesRequest.json"
       },
       "BrowseEnginesResult": {
-        "$ref": "components/schemas/BrowseEnginesResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEnginesResult.json"
       },
       "BrowseProfilesRequest": {
-        "$ref": "components/schemas/BrowseProfilesRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseProfilesRequest.json"
       },
       "BrowseProfilesResult": {
-        "$ref": "components/schemas/BrowseProfilesResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseProfilesResult.json"
       },
       "BrowseAnnotationHistoryRequest": {
-        "$ref": "components/schemas/BrowseAnnotationHistoryRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseAnnotationHistoryRequest.json"
       },
       "BrowseAnnotationHistoryResult": {
-        "$ref": "components/schemas/BrowseAnnotationHistoryResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseAnnotationHistoryResult.json"
       },
       "BrowseAnnotationRequest": {
-        "$ref": "components/schemas/BrowseAnnotationRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseAnnotationRequest.json"
       },
       "BrowseAnnotationResult": {
-        "$ref": "components/schemas/BrowseAnnotationResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseAnnotationResult.json"
       },
       "BrowseClickEvent": {
-        "$ref": "components/schemas/BrowseClickEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseClickEvent.json"
       },
       "BrowseDirectoryRequest": {
-        "$ref": "components/schemas/BrowseDirectoryRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseDirectoryRequest.json"
       },
       "BrowseDirectoryResult": {
-        "$ref": "components/schemas/BrowseDirectoryResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseDirectoryResult.json"
       },
       "BrowseDirectoryResultResponse": {
-        "$ref": "components/schemas/BrowseDirectoryResultResponse.json"
+        "$ref": "https://xynolog.org/protocol/BrowseDirectoryResultResponse.json"
       },
       "BrowseEntityTypeClickedEvent": {
-        "$ref": "components/schemas/BrowseEntityTypeClickedEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEntityTypeClickedEvent.json"
       },
       "BrowseEntityTypesRequest": {
-        "$ref": "components/schemas/BrowseEntityTypesRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEntityTypesRequest.json"
       },
       "BrowseEntityTypesResult": {
-        "$ref": "components/schemas/BrowseEntityTypesResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEntityTypesResult.json"
       },
       "BrowseEventsRequest": {
-        "$ref": "components/schemas/BrowseEventsRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEventsRequest.json"
       },
       "BrowseEventsResult": {
-        "$ref": "components/schemas/BrowseEventsResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseEventsResult.json"
       },
       "BrowseExternalNavigateEvent": {
-        "$ref": "components/schemas/BrowseExternalNavigateEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseExternalNavigateEvent.json"
       },
       "BrowseFilesResponse": {
-        "$ref": "components/schemas/BrowseFilesResponse.json"
+        "$ref": "https://xynolog.org/protocol/BrowseFilesResponse.json"
       },
       "BrowseKbRequest": {
-        "$ref": "components/schemas/BrowseKbRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseKbRequest.json"
       },
       "BrowseKbResult": {
-        "$ref": "components/schemas/BrowseKbResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseKbResult.json"
       },
       "BrowseLinkClickedEvent": {
-        "$ref": "components/schemas/BrowseLinkClickedEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseLinkClickedEvent.json"
       },
       "BrowsePanelOpenEvent": {
-        "$ref": "components/schemas/BrowsePanelOpenEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowsePanelOpenEvent.json"
       },
       "BrowsePanelToggleEvent": {
-        "$ref": "components/schemas/BrowsePanelToggleEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowsePanelToggleEvent.json"
       },
       "BrowseResourceOpenEvent": {
-        "$ref": "components/schemas/BrowseResourceOpenEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourceOpenEvent.json"
       },
       "BrowseResourceViewedEvent": {
-        "$ref": "components/schemas/BrowseResourceViewedEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourceViewedEvent.json"
       },
       "BrowseResourceCloseEvent": {
-        "$ref": "components/schemas/BrowseResourceCloseEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourceCloseEvent.json"
       },
       "BrowseResourceReorderEvent": {
-        "$ref": "components/schemas/BrowseResourceReorderEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourceReorderEvent.json"
       },
       "AnchoredText": {
-        "$ref": "components/schemas/AnchoredText.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredText.json"
       },
       "JobId": {
-        "$ref": "components/schemas/JobId.json"
+        "$ref": "https://xynolog.org/protocol/JobId.json"
       },
       "PdfTextItem": {
-        "$ref": "components/schemas/PdfTextItem.json"
+        "$ref": "https://xynolog.org/protocol/PdfTextItem.json"
       },
       "AnchoredTextAnswer": {
-        "$ref": "components/schemas/AnchoredTextAnswer.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextAnswer.json"
       },
       "AnchoredTextAbsent": {
-        "$ref": "components/schemas/AnchoredTextAbsent.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextAbsent.json"
       },
       "BrowseResourceRequest": {
-        "$ref": "components/schemas/BrowseResourceRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourceRequest.json"
       },
       "BrowseResourceResult": {
-        "$ref": "components/schemas/BrowseResourceResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourceResult.json"
       },
       "BrowseResourcesRequest": {
-        "$ref": "components/schemas/BrowseResourcesRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourcesRequest.json"
       },
       "BrowseResourcesResult": {
-        "$ref": "components/schemas/BrowseResourcesResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseResourcesResult.json"
       },
       "BrowseRouterPushEvent": {
-        "$ref": "components/schemas/BrowseRouterPushEvent.json"
+        "$ref": "https://xynolog.org/protocol/BrowseRouterPushEvent.json"
       },
       "BrowseTagSchemasRequest": {
-        "$ref": "components/schemas/BrowseTagSchemasRequest.json"
+        "$ref": "https://xynolog.org/protocol/BrowseTagSchemasRequest.json"
       },
       "BrowseTagSchemasResult": {
-        "$ref": "components/schemas/BrowseTagSchemasResult.json"
+        "$ref": "https://xynolog.org/protocol/BrowseTagSchemasResult.json"
       },
       "BusEmitAccepted": {
-        "$ref": "components/schemas/BusEmitAccepted.json"
+        "$ref": "https://xynolog.org/protocol/BusEmitAccepted.json"
       },
       "BusEmitRequest": {
-        "$ref": "components/schemas/BusEmitRequest.json"
+        "$ref": "https://xynolog.org/protocol/BusEmitRequest.json"
       },
       "BusSubscribeRequest": {
-        "$ref": "components/schemas/BusSubscribeRequest.json"
+        "$ref": "https://xynolog.org/protocol/BusSubscribeRequest.json"
       },
       "CloneResourceWithTokenResponse": {
-        "$ref": "components/schemas/CloneResourceWithTokenResponse.json"
+        "$ref": "https://xynolog.org/protocol/CloneResourceWithTokenResponse.json"
       },
       "EngineEntry": {
-        "$ref": "components/schemas/EngineEntry.json"
+        "$ref": "https://xynolog.org/protocol/EngineEntry.json"
       },
       "CommandError": {
-        "$ref": "components/schemas/CommandError.json"
+        "$ref": "https://xynolog.org/protocol/CommandError.json"
       },
       "ContentFormat": {
-        "$ref": "components/schemas/ContentFormat.json"
+        "$ref": "https://xynolog.org/protocol/ContentFormat.json"
       },
       "ContextualSummaryResponse": {
-        "$ref": "components/schemas/ContextualSummaryResponse.json"
+        "$ref": "https://xynolog.org/protocol/ContextualSummaryResponse.json"
       },
       "CreateAnnotationRequest": {
-        "$ref": "components/schemas/CreateAnnotationRequest.json"
+        "$ref": "https://xynolog.org/protocol/CreateAnnotationRequest.json"
       },
       "CreateResourceResponse": {
-        "$ref": "components/schemas/CreateResourceResponse.json"
+        "$ref": "https://xynolog.org/protocol/CreateResourceResponse.json"
       },
       "DirEntry": {
-        "$ref": "components/schemas/DirEntry.json"
+        "$ref": "https://xynolog.org/protocol/DirEntry.json"
       },
       "DirectoryEntry": {
-        "$ref": "components/schemas/DirectoryEntry.json"
+        "$ref": "https://xynolog.org/protocol/DirectoryEntry.json"
       },
       "DiscoveredKB": {
-        "$ref": "discovery/DiscoveredKB.json"
+        "$ref": "https://xynolog.org/protocol/DiscoveredKB.json"
       },
       "DiscoveryDocument": {
-        "$ref": "discovery/DiscoveryDocument.json"
+        "$ref": "https://xynolog.org/protocol/DiscoveryDocument.json"
       },
       "EnrichedResourceEvent": {
-        "$ref": "components/schemas/EnrichedResourceEvent.json"
+        "$ref": "https://xynolog.org/protocol/EnrichedResourceEvent.json"
       },
       "EntityTagChangedPayload": {
-        "$ref": "components/schemas/EntityTagChangedPayload.json"
+        "$ref": "https://xynolog.org/protocol/EntityTagChangedPayload.json"
       },
       "EntityTypeAddedPayload": {
-        "$ref": "components/schemas/EntityTypeAddedPayload.json"
+        "$ref": "https://xynolog.org/protocol/EntityTypeAddedPayload.json"
       },
       "ErrorResponse": {
-        "$ref": "components/schemas/ErrorResponse.json"
+        "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
       },
       "EventMetadata": {
-        "$ref": "components/schemas/EventMetadata.json"
+        "$ref": "https://xynolog.org/protocol/EventMetadata.json"
       },
       "ExtractedText": {
-        "$ref": "components/schemas/ExtractedText.json"
+        "$ref": "https://xynolog.org/protocol/ExtractedText.json"
       },
       "PdfClass": {
-        "$ref": "components/schemas/PdfClass.json"
+        "$ref": "https://xynolog.org/protocol/PdfClass.json"
       },
       "ExtractionMethod": {
-        "$ref": "components/schemas/ExtractionMethod.json"
+        "$ref": "https://xynolog.org/protocol/ExtractionMethod.json"
       },
       "OcrConfidence": {
-        "$ref": "components/schemas/OcrConfidence.json"
+        "$ref": "https://xynolog.org/protocol/OcrConfidence.json"
       },
       "ExtractionDeclined": {
-        "$ref": "components/schemas/ExtractionDeclined.json"
+        "$ref": "https://xynolog.org/protocol/ExtractionDeclined.json"
       },
       "ExtractionDeclinedReason": {
-        "$ref": "components/schemas/ExtractionDeclinedReason.json"
+        "$ref": "https://xynolog.org/protocol/ExtractionDeclinedReason.json"
       },
       "ExtractionOutcome": {
-        "$ref": "components/schemas/ExtractionOutcome.json"
+        "$ref": "https://xynolog.org/protocol/ExtractionOutcome.json"
       },
       "FileEntry": {
-        "$ref": "components/schemas/FileEntry.json"
+        "$ref": "https://xynolog.org/protocol/FileEntry.json"
       },
       "FragmentSelector": {
-        "$ref": "components/schemas/FragmentSelector.json"
+        "$ref": "https://xynolog.org/protocol/FragmentSelector.json"
       },
       "FrameAddEntityTypeCommand": {
-        "$ref": "components/schemas/FrameAddEntityTypeCommand.json"
+        "$ref": "https://xynolog.org/protocol/FrameAddEntityTypeCommand.json"
       },
       "FrameAddTagSchemaCommand": {
-        "$ref": "components/schemas/FrameAddTagSchemaCommand.json"
+        "$ref": "https://xynolog.org/protocol/FrameAddTagSchemaCommand.json"
       },
       "GatherAnnotationComplete": {
-        "$ref": "components/schemas/GatherAnnotationComplete.json"
+        "$ref": "https://xynolog.org/protocol/GatherAnnotationComplete.json"
       },
       "GatherAnnotationOptions": {
-        "$ref": "components/schemas/GatherAnnotationOptions.json"
+        "$ref": "https://xynolog.org/protocol/GatherAnnotationOptions.json"
       },
       "GatherAnnotationRequest": {
-        "$ref": "components/schemas/GatherAnnotationRequest.json"
+        "$ref": "https://xynolog.org/protocol/GatherAnnotationRequest.json"
       },
       "GatherResourceComplete": {
-        "$ref": "components/schemas/GatherResourceComplete.json"
+        "$ref": "https://xynolog.org/protocol/GatherResourceComplete.json"
       },
       "GatherResourceRequest": {
-        "$ref": "components/schemas/GatherResourceRequest.json"
+        "$ref": "https://xynolog.org/protocol/GatherResourceRequest.json"
       },
       "GatherResourceRequestOptions": {
-        "$ref": "components/schemas/GatherResourceRequestOptions.json"
+        "$ref": "https://xynolog.org/protocol/GatherResourceRequestOptions.json"
       },
       "GatherSummaryRequest": {
-        "$ref": "components/schemas/GatherSummaryRequest.json"
+        "$ref": "https://xynolog.org/protocol/GatherSummaryRequest.json"
       },
       "GatherReferencedByRequest": {
-        "$ref": "components/schemas/GatherReferencedByRequest.json"
+        "$ref": "https://xynolog.org/protocol/GatherReferencedByRequest.json"
       },
       "GatherReferencedByResult": {
-        "$ref": "components/schemas/GatherReferencedByResult.json"
+        "$ref": "https://xynolog.org/protocol/GatherReferencedByResult.json"
       },
       "DurabilityEvidence": {
-        "$ref": "components/schemas/DurabilityEvidence.json"
+        "$ref": "https://xynolog.org/protocol/DurabilityEvidence.json"
       },
       "FailureClass": {
-        "$ref": "components/schemas/FailureClass.json"
+        "$ref": "https://xynolog.org/protocol/FailureClass.json"
       },
       "GatheredContext": {
-        "$ref": "components/schemas/GatheredContext.json"
+        "$ref": "https://xynolog.org/protocol/GatheredContext.json"
       },
       "GenerationJobParams": {
-        "$ref": "components/schemas/GenerationJobParams.json"
+        "$ref": "https://xynolog.org/protocol/GenerationJobParams.json"
       },
       "GetAnnotationHistoryResponse": {
-        "$ref": "components/schemas/GetAnnotationHistoryResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetAnnotationHistoryResponse.json"
       },
       "GetAnnotationResponse": {
-        "$ref": "components/schemas/GetAnnotationResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetAnnotationResponse.json"
       },
       "GetAnnotationsResponse": {
-        "$ref": "components/schemas/GetAnnotationsResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
       },
       "GetEntityTypesResponse": {
-        "$ref": "components/schemas/GetEntityTypesResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json"
       },
       "GetEventsResponse": {
-        "$ref": "components/schemas/GetEventsResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetEventsResponse.json"
       },
       "GetReferencedByResponse": {
-        "$ref": "components/schemas/GetReferencedByResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetReferencedByResponse.json"
       },
       "GetReferencedByResponseReferencedByItem": {
-        "$ref": "components/schemas/GetReferencedByResponseReferencedByItem.json"
+        "$ref": "https://xynolog.org/protocol/GetReferencedByResponseReferencedByItem.json"
       },
       "GetResourceByTokenResponse": {
-        "$ref": "components/schemas/GetResourceByTokenResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetResourceByTokenResponse.json"
       },
       "GetResourceResponse": {
-        "$ref": "components/schemas/GetResourceResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetResourceResponse.json"
       },
       "GetTagSchemasResponse": {
-        "$ref": "components/schemas/GetTagSchemasResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json"
       },
       "HealthResponse": {
-        "$ref": "components/schemas/HealthResponse.json"
+        "$ref": "https://xynolog.org/protocol/HealthResponse.json"
       },
       "InferenceLimits": {
-        "$ref": "components/schemas/InferenceLimits.json"
+        "$ref": "https://xynolog.org/protocol/InferenceLimits.json"
       },
       "InferenceLimitsRequest": {
-        "$ref": "components/schemas/InferenceLimitsRequest.json"
+        "$ref": "https://xynolog.org/protocol/InferenceLimitsRequest.json"
       },
       "InferenceLimitsResult": {
-        "$ref": "components/schemas/InferenceLimitsResult.json"
+        "$ref": "https://xynolog.org/protocol/InferenceLimitsResult.json"
       },
       "EngineLimits": {
-        "$ref": "components/schemas/EngineLimits.json"
+        "$ref": "https://xynolog.org/protocol/EngineLimits.json"
       },
       "GraphAnnotationNode": {
-        "$ref": "components/schemas/GraphAnnotationNode.json"
+        "$ref": "https://xynolog.org/protocol/GraphAnnotationNode.json"
       },
       "GraphResourceNode": {
-        "$ref": "components/schemas/GraphResourceNode.json"
+        "$ref": "https://xynolog.org/protocol/GraphResourceNode.json"
       },
       "JobCancelRequest": {
-        "$ref": "components/schemas/JobCancelRequest.json"
+        "$ref": "https://xynolog.org/protocol/JobCancelRequest.json"
       },
       "JobCancelCommand": {
-        "$ref": "components/schemas/JobCancelCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobCancelCommand.json"
       },
       "JobClaimCommand": {
-        "$ref": "components/schemas/JobClaimCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobClaimCommand.json"
       },
       "JobCompleteCommand": {
-        "$ref": "components/schemas/JobCompleteCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobCompleteCommand.json"
       },
       "JobCompletedPayload": {
-        "$ref": "components/schemas/JobCompletedPayload.json"
+        "$ref": "https://xynolog.org/protocol/JobCompletedPayload.json"
       },
       "JobCreateCommand": {
-        "$ref": "components/schemas/JobCreateCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobCreateCommand.json"
       },
       "JobCreatedResult": {
-        "$ref": "components/schemas/JobCreatedResult.json"
+        "$ref": "https://xynolog.org/protocol/JobCreatedResult.json"
       },
       "JobCreatedResultResponse": {
-        "$ref": "components/schemas/JobCreatedResultResponse.json"
+        "$ref": "https://xynolog.org/protocol/JobCreatedResultResponse.json"
       },
       "JobFailCommand": {
-        "$ref": "components/schemas/JobFailCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobFailCommand.json"
       },
       "JobCheckpointCommand": {
-        "$ref": "components/schemas/JobCheckpointCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobCheckpointCommand.json"
       },
       "ResourceId": {
-        "$ref": "components/schemas/ResourceId.json"
+        "$ref": "https://xynolog.org/protocol/ResourceId.json"
       },
       "UnitCursor": {
-        "$ref": "./components/schemas/UnitCursor.json"
+        "$ref": "https://xynolog.org/protocol/UnitCursor.json"
       },
       "JobDeclined": {
-        "$ref": "components/schemas/JobDeclined.json"
+        "$ref": "https://xynolog.org/protocol/JobDeclined.json"
       },
       "JobFailedPayload": {
-        "$ref": "components/schemas/JobFailedPayload.json"
+        "$ref": "https://xynolog.org/protocol/JobFailedPayload.json"
       },
       "YieldJobDone": {
-        "$ref": "components/schemas/YieldJobDone.json"
+        "$ref": "https://xynolog.org/protocol/YieldJobDone.json"
       },
       "JobProgress": {
-        "$ref": "components/schemas/JobProgress.json"
+        "$ref": "https://xynolog.org/protocol/JobProgress.json"
       },
       "JobProgressMessage": {
-        "$ref": "components/schemas/JobProgressMessage.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressMessage.json"
       },
       "JobProgressAnalyzing": {
-        "$ref": "components/schemas/JobProgressAnalyzing.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressAnalyzing.json"
       },
       "JobProgressAnalyzingTags": {
-        "$ref": "components/schemas/JobProgressAnalyzingTags.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressAnalyzingTags.json"
       },
       "JobProgressCompleteCreated": {
-        "$ref": "components/schemas/JobProgressCompleteCreated.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressCompleteCreated.json"
       },
       "JobProgressCompleteGenerated": {
-        "$ref": "components/schemas/JobProgressCompleteGenerated.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressCompleteGenerated.json"
       },
       "JobProgressCreatingAnnotations": {
-        "$ref": "components/schemas/JobProgressCreatingAnnotations.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressCreatingAnnotations.json"
       },
       "JobProgressCreatingResource": {
-        "$ref": "components/schemas/JobProgressCreatingResource.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressCreatingResource.json"
       },
       "JobProgressCreatingTagAnnotations": {
-        "$ref": "components/schemas/JobProgressCreatingTagAnnotations.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressCreatingTagAnnotations.json"
       },
       "JobProgressDetectingEntities": {
-        "$ref": "components/schemas/JobProgressDetectingEntities.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressDetectingEntities.json"
       },
       "JobProgressGeneratingResource": {
-        "$ref": "components/schemas/JobProgressGeneratingResource.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressGeneratingResource.json"
       },
       "JobProgressLoading": {
-        "$ref": "components/schemas/JobProgressLoading.json"
+        "$ref": "https://xynolog.org/protocol/JobProgressLoading.json"
       },
       "JobQueuedEvent": {
-        "$ref": "components/schemas/JobQueuedEvent.json"
+        "$ref": "https://xynolog.org/protocol/JobQueuedEvent.json"
       },
       "MarkJobDone": {
-        "$ref": "components/schemas/MarkJobDone.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobDone.json"
       },
       "JobReportProgressCommand": {
-        "$ref": "components/schemas/JobReportProgressCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobReportProgressCommand.json"
       },
       "JobResult": {
-        "$ref": "components/schemas/JobResult.json"
+        "$ref": "https://xynolog.org/protocol/JobResult.json"
       },
       "JobStartCommand": {
-        "$ref": "components/schemas/JobStartCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobStartCommand.json"
       },
       "JobAssignCommand": {
-        "$ref": "components/schemas/JobAssignCommand.json"
+        "$ref": "https://xynolog.org/protocol/JobAssignCommand.json"
       },
       "JobStartedPayload": {
-        "$ref": "components/schemas/JobStartedPayload.json"
+        "$ref": "https://xynolog.org/protocol/JobStartedPayload.json"
       },
       "JobAssignedPayload": {
-        "$ref": "components/schemas/JobAssignedPayload.json"
+        "$ref": "https://xynolog.org/protocol/JobAssignedPayload.json"
       },
       "PrincipalProfileCommand": {
-        "$ref": "components/schemas/PrincipalProfileCommand.json"
+        "$ref": "https://xynolog.org/protocol/PrincipalProfileCommand.json"
       },
       "PrincipalProfiledPayload": {
-        "$ref": "components/schemas/PrincipalProfiledPayload.json"
+        "$ref": "https://xynolog.org/protocol/PrincipalProfiledPayload.json"
       },
       "JobStatusRequest": {
-        "$ref": "components/schemas/JobStatusRequest.json"
+        "$ref": "https://xynolog.org/protocol/JobStatusRequest.json"
       },
       "JobStatusResponse": {
-        "$ref": "components/schemas/JobStatusResponse.json"
+        "$ref": "https://xynolog.org/protocol/JobStatusResponse.json"
       },
       "JobStatusResult": {
-        "$ref": "components/schemas/JobStatusResult.json"
+        "$ref": "https://xynolog.org/protocol/JobStatusResult.json"
       },
       "JobType": {
-        "$ref": "components/schemas/JobType.json"
+        "$ref": "https://xynolog.org/protocol/JobType.json"
       },
       "KbDescription": {
-        "$ref": "components/schemas/KbDescription.json"
+        "$ref": "https://xynolog.org/protocol/KbDescription.json"
       },
       "HttpEndpoint": {
-        "$ref": "components/schemas/HttpEndpoint.json"
+        "$ref": "https://xynolog.org/protocol/HttpEndpoint.json"
       },
       "KbEndpoint": {
-        "$ref": "components/schemas/KbEndpoint.json"
+        "$ref": "https://xynolog.org/protocol/KbEndpoint.json"
       },
       "KbRead": {
-        "$ref": "components/schemas/KbRead.json"
+        "$ref": "https://xynolog.org/protocol/KbRead.json"
       },
       "KbTarget": {
-        "$ref": "components/schemas/KbTarget.json"
+        "$ref": "https://xynolog.org/protocol/KbTarget.json"
       },
       "KnowledgeBase": {
-        "$ref": "components/schemas/KnowledgeBase.json"
+        "$ref": "https://xynolog.org/protocol/KnowledgeBase.json"
       },
       "LocalEndpoint": {
-        "$ref": "components/schemas/LocalEndpoint.json"
+        "$ref": "https://xynolog.org/protocol/LocalEndpoint.json"
       },
       "NewKnowledgeBase": {
-        "$ref": "components/schemas/NewKnowledgeBase.json"
+        "$ref": "https://xynolog.org/protocol/NewKnowledgeBase.json"
       },
       "KnowledgeGraph": {
-        "$ref": "components/schemas/KnowledgeGraph.json"
+        "$ref": "https://xynolog.org/protocol/KnowledgeGraph.json"
       },
       "ListResourcesResponse": {
-        "$ref": "components/schemas/ListResourcesResponse.json"
+        "$ref": "https://xynolog.org/protocol/ListResourcesResponse.json"
       },
       "MarkArchiveCommand": {
-        "$ref": "components/schemas/MarkArchiveCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkArchiveCommand.json"
       },
       "MarkCreateOk": {
-        "$ref": "components/schemas/MarkCreateOk.json"
+        "$ref": "https://xynolog.org/protocol/MarkCreateOk.json"
       },
       "MarkCreateOkResponse": {
-        "$ref": "components/schemas/MarkCreateOkResponse.json"
+        "$ref": "https://xynolog.org/protocol/MarkCreateOkResponse.json"
       },
       "MarkCommitCommand": {
-        "$ref": "components/schemas/MarkCommitCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkCommitCommand.json"
       },
       "MarkCommitOk": {
-        "$ref": "components/schemas/MarkCommitOk.json"
+        "$ref": "https://xynolog.org/protocol/MarkCommitOk.json"
       },
       "MarkCreateRequest": {
-        "$ref": "components/schemas/MarkCreateRequest.json"
+        "$ref": "https://xynolog.org/protocol/MarkCreateRequest.json"
       },
       "MarkDeleteCommand": {
-        "$ref": "components/schemas/MarkDeleteCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkDeleteCommand.json"
       },
       "MarkDeleteOk": {
-        "$ref": "components/schemas/MarkDeleteOk.json"
+        "$ref": "https://xynolog.org/protocol/MarkDeleteOk.json"
       },
       "MarkRequestedEvent": {
-        "$ref": "components/schemas/MarkRequestedEvent.json"
+        "$ref": "https://xynolog.org/protocol/MarkRequestedEvent.json"
       },
       "MarkSubmitEvent": {
-        "$ref": "components/schemas/MarkSubmitEvent.json"
+        "$ref": "https://xynolog.org/protocol/MarkSubmitEvent.json"
       },
       "MarkUnarchiveCommand": {
-        "$ref": "components/schemas/MarkUnarchiveCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkUnarchiveCommand.json"
       },
       "MarkUpdateBodyCommand": {
-        "$ref": "components/schemas/MarkUpdateBodyCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkUpdateBodyCommand.json"
       },
       "MarkUpdateEntityTypesCommand": {
-        "$ref": "components/schemas/MarkUpdateEntityTypesCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkUpdateEntityTypesCommand.json"
       },
       "MatchSearchFailed": {
-        "$ref": "components/schemas/MatchSearchFailed.json"
+        "$ref": "https://xynolog.org/protocol/MatchSearchFailed.json"
       },
       "MatchSearchRequest": {
-        "$ref": "components/schemas/MatchSearchRequest.json"
+        "$ref": "https://xynolog.org/protocol/MatchSearchRequest.json"
       },
       "MatchSearchResult": {
-        "$ref": "components/schemas/MatchSearchResult.json"
+        "$ref": "https://xynolog.org/protocol/MatchSearchResult.json"
       },
       "MatchResourcesRequest": {
-        "$ref": "components/schemas/MatchResourcesRequest.json"
+        "$ref": "https://xynolog.org/protocol/MatchResourcesRequest.json"
       },
       "MatchResourcesResponse": {
-        "$ref": "components/schemas/MatchResourcesResponse.json"
+        "$ref": "https://xynolog.org/protocol/MatchResourcesResponse.json"
       },
       "MatchResourcesResult": {
-        "$ref": "components/schemas/MatchResourcesResult.json"
+        "$ref": "https://xynolog.org/protocol/MatchResourcesResult.json"
       },
       "MediaTokenRequest": {
-        "$ref": "components/schemas/MediaTokenRequest.json"
+        "$ref": "https://xynolog.org/protocol/MediaTokenRequest.json"
       },
       "MediaTokenResponse": {
-        "$ref": "components/schemas/MediaTokenResponse.json"
+        "$ref": "https://xynolog.org/protocol/MediaTokenResponse.json"
       },
       "Motivation": {
-        "$ref": "components/schemas/Motivation.json"
+        "$ref": "https://xynolog.org/protocol/Motivation.json"
       },
       "ProtectedResourceMetadata": {
-        "$ref": "components/schemas/ProtectedResourceMetadata.json"
+        "$ref": "https://xynolog.org/protocol/ProtectedResourceMetadata.json"
       },
       "Representation": {
-        "$ref": "components/schemas/Representation.json"
+        "$ref": "https://xynolog.org/protocol/Representation.json"
       },
       "OneOrMoreStrings": {
-        "$ref": "components/schemas/OneOrMoreStrings.json"
+        "$ref": "https://xynolog.org/protocol/OneOrMoreStrings.json"
       },
       "OneOrMoreUris": {
-        "$ref": "components/schemas/OneOrMoreUris.json"
+        "$ref": "https://xynolog.org/protocol/OneOrMoreUris.json"
       },
       "RepresentationAddedPayload": {
-        "$ref": "components/schemas/RepresentationAddedPayload.json"
+        "$ref": "https://xynolog.org/protocol/RepresentationAddedPayload.json"
       },
       "RepresentationRemovedPayload": {
-        "$ref": "components/schemas/RepresentationRemovedPayload.json"
+        "$ref": "https://xynolog.org/protocol/RepresentationRemovedPayload.json"
       },
       "ResourceArchivedPayload": {
-        "$ref": "components/schemas/ResourceArchivedPayload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceArchivedPayload.json"
       },
       "ResourceClonedPayload": {
-        "$ref": "components/schemas/ResourceClonedPayload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceClonedPayload.json"
       },
       "ResourceCreatedPayload": {
-        "$ref": "components/schemas/ResourceCreatedPayload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceCreatedPayload.json"
       },
       "ResourceDescriptor": {
-        "$ref": "components/schemas/ResourceDescriptor.json"
+        "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
       },
       "ResourceMovedPayload": {
-        "$ref": "components/schemas/ResourceMovedPayload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceMovedPayload.json"
       },
       "ResourceUnarchivedPayload": {
-        "$ref": "components/schemas/ResourceUnarchivedPayload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceUnarchivedPayload.json"
       },
       "ResourceUpdatedPayload": {
-        "$ref": "components/schemas/ResourceUpdatedPayload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceUpdatedPayload.json"
       },
       "ScoredResource": {
-        "$ref": "components/schemas/ScoredResource.json"
+        "$ref": "https://xynolog.org/protocol/ScoredResource.json"
       },
       "SemanticMatch": {
-        "$ref": "components/schemas/SemanticMatch.json"
+        "$ref": "https://xynolog.org/protocol/SemanticMatch.json"
       },
       "SessionJoinedEvent": {
-        "$ref": "components/schemas/SessionJoinedEvent.json"
+        "$ref": "https://xynolog.org/protocol/SessionJoinedEvent.json"
       },
       "SessionLeftEvent": {
-        "$ref": "components/schemas/SessionLeftEvent.json"
+        "$ref": "https://xynolog.org/protocol/SessionLeftEvent.json"
       },
       "SettingsHoverDelayChangedEvent": {
-        "$ref": "components/schemas/SettingsHoverDelayChangedEvent.json"
+        "$ref": "https://xynolog.org/protocol/SettingsHoverDelayChangedEvent.json"
       },
       "SettingsLocaleChangedEvent": {
-        "$ref": "components/schemas/SettingsLocaleChangedEvent.json"
+        "$ref": "https://xynolog.org/protocol/SettingsLocaleChangedEvent.json"
       },
       "SettingsThemeChangedEvent": {
-        "$ref": "components/schemas/SettingsThemeChangedEvent.json"
+        "$ref": "https://xynolog.org/protocol/SettingsThemeChangedEvent.json"
       },
       "SpecificResource": {
-        "$ref": "components/schemas/SpecificResource.json"
+        "$ref": "https://xynolog.org/protocol/SpecificResource.json"
       },
       "StatusResponse": {
-        "$ref": "components/schemas/StatusResponse.json"
+        "$ref": "https://xynolog.org/protocol/StatusResponse.json"
       },
       "StoredEventResponse": {
-        "$ref": "components/schemas/StoredEventResponse.json"
+        "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
       },
       "SupportedMediaType": {
-        "$ref": "components/schemas/SupportedMediaType.json"
+        "$ref": "https://xynolog.org/protocol/SupportedMediaType.json"
       },
       "Selector": {
-        "$ref": "components/schemas/Selector.json"
+        "$ref": "https://xynolog.org/protocol/Selector.json"
       },
       "SvgSelector": {
-        "$ref": "components/schemas/SvgSelector.json"
+        "$ref": "https://xynolog.org/protocol/SvgSelector.json"
       },
       "TagCategory": {
-        "$ref": "components/schemas/TagCategory.json"
+        "$ref": "https://xynolog.org/protocol/TagCategory.json"
       },
       "TagSchema": {
-        "$ref": "components/schemas/TagSchema.json"
+        "$ref": "https://xynolog.org/protocol/TagSchema.json"
       },
       "TagSchemaAddedPayload": {
-        "$ref": "components/schemas/TagSchemaAddedPayload.json"
+        "$ref": "https://xynolog.org/protocol/TagSchemaAddedPayload.json"
       },
       "TextPositionSelector": {
-        "$ref": "components/schemas/TextPositionSelector.json"
+        "$ref": "https://xynolog.org/protocol/TextPositionSelector.json"
       },
       "TextQuoteSelector": {
-        "$ref": "components/schemas/TextQuoteSelector.json"
+        "$ref": "https://xynolog.org/protocol/TextQuoteSelector.json"
       },
       "TextualBody": {
-        "$ref": "components/schemas/TextualBody.json"
+        "$ref": "https://xynolog.org/protocol/TextualBody.json"
       },
       "UpdateAnnotationBodyRequest": {
-        "$ref": "components/schemas/UpdateAnnotationBodyRequest.json"
+        "$ref": "https://xynolog.org/protocol/UpdateAnnotationBodyRequest.json"
       },
       "UserId": {
-        "$ref": "components/schemas/UserId.json"
+        "$ref": "https://xynolog.org/protocol/UserId.json"
       },
       "UserResponse": {
-        "$ref": "components/schemas/UserResponse.json"
+        "$ref": "https://xynolog.org/protocol/UserResponse.json"
       },
       "SmeltRebuildAnchorsCommand": {
-        "$ref": "components/schemas/SmeltRebuildAnchorsCommand.json"
+        "$ref": "https://xynolog.org/protocol/SmeltRebuildAnchorsCommand.json"
       },
       "WeaveRebuildCommand": {
-        "$ref": "components/schemas/WeaveRebuildCommand.json"
+        "$ref": "https://xynolog.org/protocol/WeaveRebuildCommand.json"
       },
       "YieldCloneCreateCommand": {
-        "$ref": "components/schemas/YieldCloneCreateCommand.json"
+        "$ref": "https://xynolog.org/protocol/YieldCloneCreateCommand.json"
       },
       "YieldCloneCreated": {
-        "$ref": "components/schemas/YieldCloneCreated.json"
+        "$ref": "https://xynolog.org/protocol/YieldCloneCreated.json"
       },
       "YieldCloneResourceRequest": {
-        "$ref": "components/schemas/YieldCloneResourceRequest.json"
+        "$ref": "https://xynolog.org/protocol/YieldCloneResourceRequest.json"
       },
       "YieldCloneTokenRequest": {
-        "$ref": "components/schemas/YieldCloneTokenRequest.json"
+        "$ref": "https://xynolog.org/protocol/YieldCloneTokenRequest.json"
       },
       "YieldCreateCommand": {
-        "$ref": "components/schemas/YieldCreateCommand.json"
+        "$ref": "https://xynolog.org/protocol/YieldCreateCommand.json"
       },
       "YieldClonePersistCommand": {
-        "$ref": "components/schemas/YieldClonePersistCommand.json"
+        "$ref": "https://xynolog.org/protocol/YieldClonePersistCommand.json"
       },
       "YieldCreateOk": {
-        "$ref": "components/schemas/YieldCreateOk.json"
+        "$ref": "https://xynolog.org/protocol/YieldCreateOk.json"
       },
       "YieldClonePersistOk": {
-        "$ref": "components/schemas/YieldClonePersistOk.json"
+        "$ref": "https://xynolog.org/protocol/YieldClonePersistOk.json"
       },
       "YieldUpdateCommand": {
-        "$ref": "components/schemas/YieldUpdateCommand.json"
+        "$ref": "https://xynolog.org/protocol/YieldUpdateCommand.json"
       },
       "YieldUpdateOk": {
-        "$ref": "components/schemas/YieldUpdateOk.json"
+        "$ref": "https://xynolog.org/protocol/YieldUpdateOk.json"
       },
       "YieldedResource": {
-        "$ref": "components/schemas/YieldedResource.json"
+        "$ref": "https://xynolog.org/protocol/YieldedResource.json"
       },
       "BusEventMessage": {
-        "$ref": "components/schemas/BusEventMessage.json"
+        "$ref": "https://xynolog.org/protocol/BusEventMessage.json"
       },
       "BusFrame": {
-        "$ref": "components/schemas/BusFrame.json"
+        "$ref": "https://xynolog.org/protocol/BusFrame.json"
       },
       "BusPingMessage": {
-        "$ref": "components/schemas/BusPingMessage.json"
+        "$ref": "https://xynolog.org/protocol/BusPingMessage.json"
       },
       "BusResumeGap": {
-        "$ref": "components/schemas/BusResumeGap.json"
+        "$ref": "https://xynolog.org/protocol/BusResumeGap.json"
       },
       "BusStreamMessage": {
-        "$ref": "components/schemas/BusStreamMessage.json"
+        "$ref": "https://xynolog.org/protocol/BusStreamMessage.json"
       },
       "EphemeralEventId": {
-        "$ref": "components/schemas/EphemeralEventId.json"
+        "$ref": "https://xynolog.org/protocol/EphemeralEventId.json"
       },
       "PersistedEventId": {
-        "$ref": "components/schemas/PersistedEventId.json"
+        "$ref": "https://xynolog.org/protocol/PersistedEventId.json"
       },
       "ReplyEventId": {
-        "$ref": "components/schemas/ReplyEventId.json"
+        "$ref": "https://xynolog.org/protocol/ReplyEventId.json"
       },
       "KbIdentity": {
-        "$ref": "components/schemas/KbIdentity.json"
+        "$ref": "https://xynolog.org/protocol/KbIdentity.json"
       },
       "ResourceUpload": {
-        "$ref": "components/schemas/ResourceUpload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceUpload.json"
       },
       "LimitRefusal": {
-        "$ref": "components/schemas/LimitRefusal.json"
+        "$ref": "https://xynolog.org/protocol/LimitRefusal.json"
       },
       "JobMetadata": {
-        "$ref": "components/schemas/JobMetadata.json"
+        "$ref": "https://xynolog.org/protocol/JobMetadata.json"
       },
       "JobParams": {
-        "$ref": "components/schemas/JobParams.json"
+        "$ref": "https://xynolog.org/protocol/JobParams.json"
       },
       "MarkJobParams": {
-        "$ref": "components/schemas/MarkJobParams.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobParams.json"
       },
       "HighlightingJobParams": {
-        "$ref": "components/schemas/HighlightingJobParams.json"
+        "$ref": "https://xynolog.org/protocol/HighlightingJobParams.json"
       },
       "CommentingJobParams": {
-        "$ref": "components/schemas/CommentingJobParams.json"
+        "$ref": "https://xynolog.org/protocol/CommentingJobParams.json"
       },
       "AssessingJobParams": {
-        "$ref": "components/schemas/AssessingJobParams.json"
+        "$ref": "https://xynolog.org/protocol/AssessingJobParams.json"
       },
       "LinkingJobParams": {
-        "$ref": "components/schemas/LinkingJobParams.json"
+        "$ref": "https://xynolog.org/protocol/LinkingJobParams.json"
       },
       "TaggingJobParams": {
-        "$ref": "components/schemas/TaggingJobParams.json"
+        "$ref": "https://xynolog.org/protocol/TaggingJobParams.json"
       },
       "GenerationJobRequest": {
-        "$ref": "components/schemas/GenerationJobRequest.json"
+        "$ref": "https://xynolog.org/protocol/GenerationJobRequest.json"
       },
       "MarkJobCreateCommand": {
-        "$ref": "components/schemas/MarkJobCreateCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobCreateCommand.json"
       },
       "YieldJobCreateCommand": {
-        "$ref": "components/schemas/YieldJobCreateCommand.json"
+        "$ref": "https://xynolog.org/protocol/YieldJobCreateCommand.json"
       },
       "MarkJobQueuedEvent": {
-        "$ref": "components/schemas/MarkJobQueuedEvent.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobQueuedEvent.json"
       },
       "YieldJobQueuedEvent": {
-        "$ref": "components/schemas/YieldJobQueuedEvent.json"
+        "$ref": "https://xynolog.org/protocol/YieldJobQueuedEvent.json"
       },
       "MarkJobResult": {
-        "$ref": "components/schemas/MarkJobResult.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobResult.json"
       },
       "YieldJobResult": {
-        "$ref": "components/schemas/YieldJobResult.json"
+        "$ref": "https://xynolog.org/protocol/YieldJobResult.json"
       },
       "MarkJobCompleteCommand": {
-        "$ref": "components/schemas/MarkJobCompleteCommand.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobCompleteCommand.json"
       },
       "YieldJobCompleteCommand": {
-        "$ref": "components/schemas/YieldJobCompleteCommand.json"
+        "$ref": "https://xynolog.org/protocol/YieldJobCompleteCommand.json"
       },
       "JobFilter": {
-        "$ref": "components/schemas/JobFilter.json"
+        "$ref": "https://xynolog.org/protocol/JobFilter.json"
       },
       "MarkJobFilter": {
-        "$ref": "components/schemas/MarkJobFilter.json"
+        "$ref": "https://xynolog.org/protocol/MarkJobFilter.json"
       },
       "YieldJobFilter": {
-        "$ref": "components/schemas/YieldJobFilter.json"
+        "$ref": "https://xynolog.org/protocol/YieldJobFilter.json"
       },
       "JobPending": {
-        "$ref": "components/schemas/JobPending.json"
+        "$ref": "https://xynolog.org/protocol/JobPending.json"
       },
       "JobStoredProgress": {
-        "$ref": "components/schemas/JobStoredProgress.json"
+        "$ref": "https://xynolog.org/protocol/JobStoredProgress.json"
       },
       "JobStoredResult": {
-        "$ref": "components/schemas/JobStoredResult.json"
+        "$ref": "https://xynolog.org/protocol/JobStoredResult.json"
       },
       "JobRunning": {
-        "$ref": "components/schemas/JobRunning.json"
+        "$ref": "https://xynolog.org/protocol/JobRunning.json"
       },
       "JobComplete": {
-        "$ref": "components/schemas/JobComplete.json"
+        "$ref": "https://xynolog.org/protocol/JobComplete.json"
       },
       "JobFailed": {
-        "$ref": "components/schemas/JobFailed.json"
+        "$ref": "https://xynolog.org/protocol/JobFailed.json"
       },
       "JobCancelled": {
-        "$ref": "components/schemas/JobCancelled.json"
+        "$ref": "https://xynolog.org/protocol/JobCancelled.json"
       },
       "Job": {
-        "$ref": "components/schemas/Job.json"
+        "$ref": "https://xynolog.org/protocol/Job.json"
       },
       "JobRecord": {
-        "$ref": "components/schemas/JobRecord.json"
+        "$ref": "https://xynolog.org/protocol/JobRecord.json"
       },
       "JobClaimedResult": {
-        "$ref": "components/schemas/JobClaimedResult.json"
+        "$ref": "https://xynolog.org/protocol/JobClaimedResult.json"
       },
       "LogLevel": {
-        "$ref": "components/schemas/LogLevel.json"
+        "$ref": "https://xynolog.org/protocol/LogLevel.json"
       },
       "LogFormat": {
-        "$ref": "components/schemas/LogFormat.json"
+        "$ref": "https://xynolog.org/protocol/LogFormat.json"
       },
       "CursorsPath": {
-        "$ref": "components/schemas/CursorsPath.json"
+        "$ref": "https://xynolog.org/protocol/CursorsPath.json"
       },
       "ServiceIdentity": {
-        "$ref": "components/schemas/ServiceIdentity.json"
+        "$ref": "https://xynolog.org/protocol/ServiceIdentity.json"
       },
       "ServiceAddress": {
-        "$ref": "components/schemas/ServiceAddress.json"
+        "$ref": "https://xynolog.org/protocol/ServiceAddress.json"
       },
       "ResourceAnnotations": {
-        "$ref": "components/schemas/ResourceAnnotations.json"
+        "$ref": "https://xynolog.org/protocol/ResourceAnnotations.json"
       },
       "ResourceView": {
-        "$ref": "components/schemas/ResourceView.json"
+        "$ref": "https://xynolog.org/protocol/ResourceView.json"
       },
       "EntityTypesProjection": {
-        "$ref": "components/schemas/EntityTypesProjection.json"
+        "$ref": "https://xynolog.org/protocol/EntityTypesProjection.json"
       },
       "TagSchemasProjection": {
-        "$ref": "components/schemas/TagSchemasProjection.json"
+        "$ref": "https://xynolog.org/protocol/TagSchemasProjection.json"
       },
       "ProfilesProjection": {
-        "$ref": "components/schemas/ProfilesProjection.json"
+        "$ref": "https://xynolog.org/protocol/ProfilesProjection.json"
       },
       "Profile": {
-        "$ref": "components/schemas/Profile.json"
+        "$ref": "https://xynolog.org/protocol/Profile.json"
       },
       "StorageUriEntry": {
-        "$ref": "components/schemas/StorageUriEntry.json"
+        "$ref": "https://xynolog.org/protocol/StorageUriEntry.json"
       },
       "ArchivistEngines": {
-        "$ref": "components/schemas/ArchivistEngines.json"
+        "$ref": "https://xynolog.org/protocol/ArchivistEngines.json"
       },
       "Engine": {
-        "$ref": "components/schemas/Engine.json"
+        "$ref": "https://xynolog.org/protocol/Engine.json"
       },
       "GatherFailed": {
-        "$ref": "components/schemas/GatherFailed.json"
+        "$ref": "https://xynolog.org/protocol/GatherFailed.json"
       },
       "GatherResourceFailed": {
-        "$ref": "components/schemas/GatherResourceFailed.json"
+        "$ref": "https://xynolog.org/protocol/GatherResourceFailed.json"
       },
       "BrowseDirectoryFailed": {
-        "$ref": "components/schemas/BrowseDirectoryFailed.json"
+        "$ref": "https://xynolog.org/protocol/BrowseDirectoryFailed.json"
       },
       "MarkDelegateTimeoutEvent": {
-        "$ref": "components/schemas/MarkDelegateTimeoutEvent.json"
+        "$ref": "https://xynolog.org/protocol/MarkDelegateTimeoutEvent.json"
       },
       "ResourceErrorEvent": {
-        "$ref": "components/schemas/ResourceErrorEvent.json"
+        "$ref": "https://xynolog.org/protocol/ResourceErrorEvent.json"
       },
       "JobCancelResult": {
-        "$ref": "components/schemas/JobCancelResult.json"
+        "$ref": "https://xynolog.org/protocol/JobCancelResult.json"
       },
       "WeaveApplied": {
-        "$ref": "components/schemas/WeaveApplied.json"
+        "$ref": "https://xynolog.org/protocol/WeaveApplied.json"
       },
       "SmeltSettled": {
-        "$ref": "components/schemas/SmeltSettled.json"
+        "$ref": "https://xynolog.org/protocol/SmeltSettled.json"
       }
     }
   }

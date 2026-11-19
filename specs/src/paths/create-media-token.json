@@ -16,7 +16,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "../components/schemas/MediaTokenRequest.json"
+            "$ref": "https://xynolog.org/protocol/MediaTokenRequest.json"
           }
         }
       }
@@ -27,7 +27,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/MediaTokenResponse.json"
+              "$ref": "https://xynolog.org/protocol/MediaTokenResponse.json"
             }
           }
         }
@@ -37,7 +37,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

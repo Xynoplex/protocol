@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/TextSpan.json",
   "title": "TextSpan",
   "description": "A span of a text: the code points from `start` up to but not including `end`, the words they are, and maybe the text just before and just after them.",
   "$ref": "#/$defs/Members",
@@ -27,7 +29,7 @@
           ]
         },
         {
-          "$ref": "./QuotedText.json#/$defs/Members"
+          "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members"
         }
       ]
     }

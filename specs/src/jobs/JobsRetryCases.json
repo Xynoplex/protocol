@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobsRetryCases.json",
   "description": "jobs/retry-cases.json: whether a failed attempt is retried.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "retryCount": {
             "type": "integer",
@@ -26,7 +28,7 @@
             "minimum": 0
           },
           "failureClass": {
-            "$ref": "../components/schemas/FailureClass.json"
+            "$ref": "https://xynolog.org/protocol/FailureClass.json"
           },
           "retries": {
             "type": "boolean"

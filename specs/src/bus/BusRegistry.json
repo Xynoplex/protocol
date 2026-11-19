@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BusRegistry.json",
   "description": "bus/registry.json: the event bus's channels, their payloads, and its request/reply operations.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "channelOrder": {
       "description": "The two orders every SDK lists the channels in.",

@@ -1,27 +1,29 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Browser.json",
   "title": "Browser",
   "type": "object",
   "description": "The shared Browser: one viewer for every knowledge base the machine reaches. It belongs to no knowledge base, so its document is kept in the launcher's state home, in `stack/browser.yaml`, not in a knowledge base's repository.",
   "properties": {
     "apiVersion": {
-      "$ref": "./StackApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/StackApiVersion.json"
     },
     "kind": {
       "type": "string",
       "const": "Browser"
     },
     "metadata": {
-      "$ref": "./Metadata.json"
+      "$ref": "https://xynolog.org/protocol/Metadata.json"
     },
     "spec": {
       "type": "object",
       "description": "How the Browser runs.",
       "properties": {
         "image": {
-          "$ref": "./Image.json"
+          "$ref": "https://xynolog.org/protocol/Image.json"
         },
         "resources": {
-          "$ref": "./Resources.json"
+          "$ref": "https://xynolog.org/protocol/Resources.json"
         },
         "port": {
           "type": "integer",

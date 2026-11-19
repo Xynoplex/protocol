@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetReferencedByResponseReferencedByItem.json",
   "type": "object",
   "properties": {
     "id": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Reference annotation ID"
     },
     "resourceName": {
@@ -14,7 +16,7 @@
       "type": "object",
       "properties": {
         "source": {
-          "$ref": "./ResourceId.json",
+          "$ref": "https://xynolog.org/protocol/ResourceId.json",
           "description": "ID of resource containing the reference"
         },
         "selector": {

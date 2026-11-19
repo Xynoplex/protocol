@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Issuer.json",
   "title": "Issuer",
   "type": "object",
   "description": "The issuer the launcher runs for the knowledge bases on a machine, with a realm for each, and the database it keeps their realms in. It belongs to no knowledge base, so its document is kept in the launcher's state home, in `stack/issuer.yaml`, not in a knowledge base's repository. A knowledge base trusts it by naming `shared`; one trusting somebody else's issuer names it at `external`.",
   "properties": {
     "apiVersion": {
-      "$ref": "./StackApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/StackApiVersion.json"
     },
     "kind": {
       "type": "string",
       "const": "Issuer"
     },
     "metadata": {
-      "$ref": "./Metadata.json"
+      "$ref": "https://xynolog.org/protocol/Metadata.json"
     },
     "spec": {
       "type": "object",
@@ -23,10 +25,10 @@
           "description": "The issuer's driver: `keycloak`."
         },
         "image": {
-          "$ref": "./Image.json"
+          "$ref": "https://xynolog.org/protocol/Image.json"
         },
         "resources": {
-          "$ref": "./Resources.json"
+          "$ref": "https://xynolog.org/protocol/Resources.json"
         },
         "port": {
           "type": "integer",
@@ -54,10 +56,10 @@
               "description": "The user the issuer signs in as."
             },
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "port": {
               "type": "integer",
@@ -81,7 +83,7 @@
                   "description": "The port it listens on."
                 },
                 "password": {
-                  "$ref": "./SecretRef.json"
+                  "$ref": "https://xynolog.org/protocol/SecretRef.json"
                 }
               },
               "required": [
@@ -99,7 +101,7 @@
           ],
           "allOf": [
             {
-              "$ref": "./Runner.json"
+              "$ref": "https://xynolog.org/protocol/Runner.json"
             },
             {
               "oneOf": [

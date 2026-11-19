@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/VectorsPayloadCases.json",
   "description": "vectors/payload-cases.json: what a point of the vector index is, as every implementation of the index writes it and reads it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -87,14 +89,14 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "resourceStored": {
                 "description": "A resource's chunks stored, and the points they become.",
                 "type": "object",
                 "properties": {
                   "resourceId": {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   },
                   "chunks": {
                     "description": "The chunks the resource's text was cut into.",
@@ -165,7 +167,7 @@
                           "type": "object",
                           "properties": {
                             "resourceId": {
-                              "$ref": "../components/schemas/ResourceId.json"
+                              "$ref": "https://xynolog.org/protocol/ResourceId.json"
                             },
                             "chunkIndex": {
                               "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/index"
@@ -212,7 +214,7 @@
                               "description": "The cosine of the angle between the two vectors, to six decimal places."
                             },
                             "resourceId": {
-                              "$ref": "../components/schemas/ResourceId.json"
+                              "$ref": "https://xynolog.org/protocol/ResourceId.json"
                             },
                             "text": {
                               "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
@@ -289,20 +291,20 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "annotationStored": {
                 "description": "An annotation stored, and the point it becomes.",
                 "type": "object",
                 "properties": {
                   "annotationId": {
-                    "$ref": "../components/schemas/AnnotationId.json"
+                    "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                   },
                   "resourceId": {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   },
                   "motivation": {
-                    "$ref": "../components/schemas/Motivation.json"
+                    "$ref": "https://xynolog.org/protocol/Motivation.json"
                   },
                   "entityTypes": {
                     "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
@@ -328,13 +330,13 @@
                         "type": "object",
                         "properties": {
                           "annotationId": {
-                            "$ref": "../components/schemas/AnnotationId.json"
+                            "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                           },
                           "resourceId": {
-                            "$ref": "../components/schemas/ResourceId.json"
+                            "$ref": "https://xynolog.org/protocol/ResourceId.json"
                           },
                           "motivation": {
-                            "$ref": "../components/schemas/Motivation.json"
+                            "$ref": "https://xynolog.org/protocol/Motivation.json"
                           },
                           "entityTypes": {
                             "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
@@ -362,10 +364,10 @@
                             "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
                           },
                           "resourceId": {
-                            "$ref": "../components/schemas/ResourceId.json"
+                            "$ref": "https://xynolog.org/protocol/ResourceId.json"
                           },
                           "annotationId": {
-                            "$ref": "../components/schemas/AnnotationId.json"
+                            "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                           },
                           "text": {
                             "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
@@ -418,14 +420,14 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "declineStored": {
                 "description": "A declined resource remembered, and the point it becomes.",
                 "type": "object",
                 "properties": {
                   "resourceId": {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   },
                   "contentChecksum": {
                     "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
@@ -450,7 +452,7 @@
                         "type": "object",
                         "properties": {
                           "resourceId": {
-                            "$ref": "../components/schemas/ResourceId.json"
+                            "$ref": "https://xynolog.org/protocol/ResourceId.json"
                           },
                           "contentChecksum": {
                             "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/contentChecksum"
@@ -499,7 +501,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "stampRead": {
                 "description": "A point's payload, and the stamp read from it.",
@@ -510,7 +512,7 @@
                     "type": "object",
                     "properties": {
                       "resourceId": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "chunkIndex": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/index"
@@ -577,7 +579,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "annotationStampRead": {
                 "description": "The payload of a point of the annotations, and the stamp read from it.",
@@ -588,13 +590,13 @@
                     "type": "object",
                     "properties": {
                       "annotationId": {
-                        "$ref": "../components/schemas/AnnotationId.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                       },
                       "resourceId": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "motivation": {
-                        "$ref": "../components/schemas/Motivation.json"
+                        "$ref": "https://xynolog.org/protocol/Motivation.json"
                       },
                       "entityTypes": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
@@ -617,7 +619,7 @@
                     "type": "object",
                     "properties": {
                       "resourceId": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "entityTypes": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
@@ -646,7 +648,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "resultRead": {
                 "description": "A point's payload and the score a search gave it, and the result read from them.",
@@ -665,7 +667,7 @@
                     "type": "object",
                     "properties": {
                       "resourceId": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "chunkIndex": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/chunks/items/properties/index"
@@ -683,10 +685,10 @@
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
                       },
                       "annotationId": {
-                        "$ref": "../components/schemas/AnnotationId.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                       },
                       "motivation": {
-                        "$ref": "../components/schemas/Motivation.json"
+                        "$ref": "https://xynolog.org/protocol/Motivation.json"
                       },
                       "machineRead": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
@@ -710,7 +712,7 @@
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/result/properties/score"
                       },
                       "resourceId": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "text": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/text"
@@ -719,7 +721,7 @@
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/entityTypes"
                       },
                       "annotationId": {
-                        "$ref": "../components/schemas/AnnotationId.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                       },
                       "machineRead": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/resourceStored/properties/points/items/properties/payload/properties/machineRead"
@@ -754,14 +756,14 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "collectionsNamed": {
                 "description": "A knowledge base's DID, and the names of its collections.",
                 "type": "object",
                 "properties": {
                   "kb": {
-                    "$ref": "../KbDid.json"
+                    "$ref": "https://xynolog.org/protocol/KbDid.json"
                   },
                   "names": {
                     "description": "Its collections' names, under their words: the SHA-256 of the DID's UTF-8 bytes, in lower-case hexadecimal, a hyphen and the word.",

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionClientAssertionCases.json",
   "description": "session/client-assertion-cases.json: the client assertion a service account that holds a key signs in with.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -18,7 +20,7 @@
       }
     },
     "grantType": {
-      "$ref": "ClientSecretForm.json#/properties/grant_type"
+      "$ref": "https://xynolog.org/protocol/ClientSecretForm.json#/properties/grant_type"
     },
     "assertionType": {
       "type": "string",
@@ -38,7 +40,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "jwk": {
             "description": "A public key, as a JWK (RFC 7517).",
@@ -87,7 +89,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "jwk": {
             "$ref": "#/properties/thumbprints/items/properties/jwk"

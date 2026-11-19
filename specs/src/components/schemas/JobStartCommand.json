@@ -1,22 +1,24 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobStartCommand.json",
   "type": "object",
   "description": "Command to start a job",
   "properties": {
     "_userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "Authenticated user's DID, injected by the /bus/emit gateway. Clients do not set this."
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     },
     "jobType": {
-      "$ref": "./JobType.json"
+      "$ref": "https://xynolog.org/protocol/JobType.json"
     },
     "annotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Annotation this job is attached to, when applicable. Set for annotation-scoped jobs like generation (from a specific reference). Unset for resource-scoped jobs like bulk reference/tag/highlight detection."
     },
     "attempt": {

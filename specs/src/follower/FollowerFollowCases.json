@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/FollowerFollowCases.json",
   "description": "follower/follow-cases.json: how a follower of the record takes each log it follows.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "record": {
             "type": "object",
@@ -47,7 +49,7 @@
                   "type": "object",
                   "properties": {
                     "log": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "sequence": {
                       "type": "integer",
@@ -69,7 +71,7 @@
                   "type": "object",
                   "properties": {
                     "log": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "sequence": {
                       "$ref": "#/properties/cases/items/properties/fold/properties/refuses/items/properties/sequence"
@@ -157,7 +159,7 @@
                       "type": "object",
                       "properties": {
                         "log": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         },
                         "type": {
                           "$ref": "#/properties/cases/items/properties/record/additionalProperties/items"
@@ -265,14 +267,14 @@
             "description": "The logs a failed taking has stopped.",
             "type": "array",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           },
           "startedOwnWay": {
             "description": "The logs started the projector's own way.",
             "type": "array",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           }
         },

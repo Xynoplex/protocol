@@ -487,7 +487,7 @@ export class StandInKnowledgeBase {
         this.descriptorReads.push(resourceId);
         await this.hooks.described?.(resourceId);
         const resource = this.descriptors.get(resourceId);
-        if (!resource) return { channel: 'browse:resource-failed', payload: { code: 'not-found', message: `Resource not found: ${resourceId}` } };
+        if (!resource) return { channel: 'browse:resource-failed', payload: { code: 'not-found', message: 'Resource not found' } };
         return { channel: 'browse:resource-result', payload: { response: { resource, lastSequence: 1 } } };
       }
       case 'mark:commit': {

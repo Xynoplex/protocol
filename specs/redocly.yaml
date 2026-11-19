@@ -1,4 +1,6 @@
-# Redocly's rules for the two API documents: `npm run openapi:lint`.
+# Redocly's rules for the two API documents, as the reader bundles them into
+# specs/ (`make lint`, `npm run specs:lint`). Redocly fetches a reference's
+# URL, and specs/src names each schema by its $id, so it lints the bundles.
 # https://redocly.com/docs/cli/configuration/
 
 extends:
@@ -13,6 +15,11 @@ rules:
 
   # An operation has a name of its own, which a generated client's method takes.
   operation-operationId: error
+
+  # The gateway's document lists every schema of components/, the public data
+  # API (D9 of the protocol standards), and the bus carries many that no
+  # route uses.
+  no-unused-components: off
 
   # An operation documents a refusal. The five that take no credential and no
   # parameter have none to document, and .redocly.lint-ignore.yaml names them.

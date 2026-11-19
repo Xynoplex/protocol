@@ -1,3 +1,5 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JsonSchema.json",
   "$comment": "A JSON Schema, written as Protocol writes its own. A table member that holds one names this file, and the reader reads the member as a schema, resolving the $refs it holds; validating a table admits any value here, and reading it as a schema refuses what is none."
 }

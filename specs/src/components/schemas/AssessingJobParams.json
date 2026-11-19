@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AssessingJobParams.json",
   "type": "object",
   "description": "What an assessing job takes: passages of the resource are marked, each with an assessment the model writes.",
   "properties": {

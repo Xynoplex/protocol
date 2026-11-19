@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/YieldCloneCreated.json",
   "type": "object",
   "description": "Success response after creating a cloned resource.",
   "properties": {
     "response": {
-      "$ref": "./YieldedResource.json"
+      "$ref": "https://xynolog.org/protocol/YieldedResource.json"
     }
   },
   "required": [

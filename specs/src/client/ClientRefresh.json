@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ClientRefresh.json",
   "description": "client/refresh.json: what a Xynolog client asks again for, and when.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "queries": {
       "type": "array",
@@ -31,7 +33,7 @@
                 "description": "What one is kept per; absent, the knowledge base has one."
               },
               "asks": {
-                "$ref": "../bus/BusRegistry.json#/properties/operations/items/properties/request"
+                "$ref": "https://xynolog.org/protocol/BusRegistry.json#/properties/operations/items/properties/request"
               },
               "persisted": {
                 "type": "boolean",
@@ -46,8 +48,8 @@
                 "properties": {
                   "$ref": {
                     "type": "string",
-                    "pattern": "^\\.\\./components/schemas/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
-                    "description": "The schema of what its cache holds for a key: a component, or a member within one."
+                    "pattern": "^https://xynolog\\.org/protocol/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
+                    "description": "The $id of the schema of what its cache holds for a key: a component, or a member within one."
                   }
                 },
                 "required": [
@@ -106,8 +108,8 @@
                 "properties": {
                   "$ref": {
                     "type": "string",
-                    "pattern": "^\\.\\./components/schemas/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
-                    "description": "The schema of what its cache holds for a key: a component, or a member within one."
+                    "pattern": "^https://xynolog\\.org/protocol/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
+                    "description": "The $id of the schema of what its cache holds for a key: a component, or a member within one."
                   }
                 },
                 "required": [
@@ -144,7 +146,7 @@
             "type": "object",
             "properties": {
               "on": {
-                "$ref": "../bus/BusRegistry.json#/properties/channels/items/oneOf/0/properties/channel"
+                "$ref": "https://xynolog.org/protocol/BusRegistry.json#/properties/channels/items/oneOf/0/properties/channel"
               },
               "when": {
                 "type": "string",

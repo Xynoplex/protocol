@@ -27,7 +27,11 @@ let refusals document value =
       List.map
         (fun (pointer, message) ->
           if pointer = "" then message else pointer ^ ": " ^ message)
-        (Validate.errors schemas schema (Yojson.Safe.from_string value) "")
+        (Validate.errors
+           (Result.get_ok (Decode.ids []))
+           schemas schema
+           (Yojson.Safe.from_string value)
+           "")
 
 let holds document value expected () =
   Alcotest.(check (list string)) value expected (refusals document value)

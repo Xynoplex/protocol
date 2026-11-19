@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobCancelRequest.json",
   "type": "object",
   "description": "Request to cancel one job, named by its id. A pending job is cancelled immediately by the dispatcher. A running job is cancelled only by the worker that holds it: the worker stops its work and settles the job with `job:cancel` (JobCancelCommand). The queue is never made to yank a running job out from under a live worker.",
   "properties": {
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     }
   },
   "required": [

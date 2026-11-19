@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerParserCases.json",
   "description": "worker/parser-cases.json: a model's reply to one call for items, and the items a worker reads from it or the failure it is refused with.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -18,10 +20,10 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "motivation": {
-                "$ref": "../components/schemas/Motivation.json"
+                "$ref": "https://xynolog.org/protocol/Motivation.json"
               },
               "text": {
                 "type": "string",
@@ -52,7 +54,7 @@
                         }
                       },
                       "stopReason": {
-                        "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/stopReason"
+                        "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/stopReason"
                       }
                     },
                     "required": [
@@ -71,7 +73,7 @@
                         "description": "The reply's text."
                       },
                       "stopReason": {
-                        "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/stopReason"
+                        "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/stopReason"
                       }
                     },
                     "required": [
@@ -228,7 +230,7 @@
                     "type": "array",
                     "description": "The verdict of each collapse accepted.",
                     "items": {
-                      "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/verdict"
+                      "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/verdict"
                     }
                   }
                 },
@@ -255,7 +257,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "motivation": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/motivation"
@@ -282,7 +284,7 @@
                 "$ref": "#/properties/cases/items/oneOf/0/properties/calls"
               },
               "refused": {
-                "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
+                "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
               }
             },
             "required": [
