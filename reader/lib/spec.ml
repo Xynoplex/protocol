@@ -502,8 +502,12 @@ let load root =
     unlisted @ listed_elsewhere @ leaves_components @ route_leaves
     @ archivists_alone
   in
+  let client_surface =
+    Client_surface.refusals ~read_json ~schema_at tables.client_surface
+  in
   let census =
     census @ stray_case_tables @ orphan_schemas @ validation @ public_api
+    @ client_surface
   in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->
