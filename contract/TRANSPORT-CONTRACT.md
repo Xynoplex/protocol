@@ -541,7 +541,7 @@ Bytes do not ride the bus.
 - An upload carries an `Idempotency-Key` header of the client's making: a
   new key for each upload, and the same on every sending of it, the one
   sent again with a renewed credential too
-  ([`specs/src/paths/resources.json`](../specs/src/paths/resources.json)).
+  ([`specs/src/paths/upload-resource.json`](../specs/src/paths/upload-resource.json)).
   *Held by `sdk/wire/upload-keyed`, `sdk/wire/upload-credential-renewed`.*
 - An upload reports its progress as it is sent: how much has gone and how
   much there is, never less than it last said, and all of it by the time it

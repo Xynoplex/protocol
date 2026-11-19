@@ -29,37 +29,37 @@
   },
   "paths": {
     "/health": {
-      "$ref": "paths/health.json"
+      "$ref": "paths/get-health.json"
     },
     "/events": {
-      "$ref": "paths/events.json"
+      "$ref": "paths/list-streams.json"
     },
     "/events/{resourceId}": {
-      "$ref": "paths/events_{resourceId}.json"
+      "$ref": "paths/get-resource-events.json"
     },
     "/resources": {
-      "$ref": "paths/resources.json"
+      "$ref": "paths/store-resource.json"
     },
     "/resources/{id}/content": {
-      "$ref": "paths/resources_{id}_content.json"
+      "$ref": "paths/get-resource-content.json"
     },
     "/resources/{id}/jsonld": {
-      "$ref": "paths/resources_{id}_jsonld.json"
+      "$ref": "paths/get-resource-json-ld.json"
     },
     "/resources/{id}/annotations": {
-      "$ref": "paths/resources_{id}_annotations.json"
+      "$ref": "paths/get-resource-annotations.json"
     },
     "/resources/{id}/anchored-text": {
-      "$ref": "paths/resources_{id}_anchored-text.json"
+      "$ref": "paths/resource-anchored-text.json"
     },
     "/anchored-text/entries": {
-      "$ref": "paths/anchored-text_entries.json"
+      "$ref": "paths/list-anchored-text-entries.json"
     },
     "/resources/{id}/anchored-text/stored": {
-      "$ref": "paths/resources_{id}_anchored-text_stored.json"
+      "$ref": "paths/get-stored-resource-anchored-text.json"
     },
     "/anchored-text/stamp": {
-      "$ref": "paths/anchored-text_stamp.json"
+      "$ref": "paths/put-anchored-text-stamp.json"
     }
   },
   "components": {
