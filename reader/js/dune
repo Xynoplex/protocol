@@ -1,0 +1,26 @@
+; The reader's Validate as JavaScript, for the conformance harness, which
+; holds what a service answers to the schemas of a bundle the reader writes.
+; validate.d.cts is what it exports, as TypeScript reads it. It carries no
+; source map, which Vite, through which vitest loads it, cannot combine.
+(env
+ (_
+  (js_of_ocaml
+   (sourcemap no))))
+
+(executable
+ (name validate)
+ (modes js)
+ (flags (:standard -open Xynolog_protocol_schema))
+ (libraries xynolog_protocol_schema js_of_ocaml))
+
+; The conformance harness's types and tables: every table's types and value,
+; and every service schema's types, derived from specs/src whenever it
+; changes.
+(rule
+ (targets protocol.ts)
+ (deps
+  (source_tree %{project_root}/specs/src))
+ (action
+  (with-stdout-to
+   protocol.ts
+   (run %{exe:../derive/derive.exe} typescript %{project_root}/specs/src))))

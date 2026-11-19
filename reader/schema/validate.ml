@@ -23,6 +23,7 @@ let rec canonical : Yojson.Safe.t -> Yojson.Safe.t = function
            (List.map (fun (name, value) -> (name, canonical value)) members))
   | `List items -> `List (List.map canonical items)
   | `Int n -> `Float (float_of_int n)
+  | `Intlit digits -> `Float (float_of_string digits)
   | value -> value
 
 let equal a b = Yojson.Safe.equal (canonical a) (canonical b)
@@ -31,9 +32,9 @@ let show value = Yojson.Safe.to_string value
 let is_type (t : Schema.type_name) (value : Yojson.Safe.t) =
   match (t, value) with
   | String, `String _ -> true
-  | Integer, `Int _ -> true
+  | Integer, (`Int _ | `Intlit _) -> true
   | Integer, `Float f -> Float.is_integer f
-  | Number, (`Int _ | `Float _) -> true
+  | Number, (`Int _ | `Intlit _ | `Float _) -> true
   | Boolean, `Bool _ -> true
   | Null, `Null -> true
   | Object, `Assoc _ -> true
@@ -42,6 +43,7 @@ let is_type (t : Schema.type_name) (value : Yojson.Safe.t) =
 
 let number : Yojson.Safe.t -> float option = function
   | `Int n -> Some (float_of_int n)
+  | `Intlit digits -> Some (float_of_string digits)
   | `Float f -> Some f
   | _ -> None
 

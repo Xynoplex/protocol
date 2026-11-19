@@ -4,10 +4,8 @@
  * commits from the source to what it made, the citations it commits on what
  * it made, and its completion.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { SPEC_SOURCE } from '../harness/paths';
+import { annotationsIdCases } from '../harness/generated/protocol/protocol';
 import { errorsOf, spec } from '../harness/spec';
 import { eachWorkerService, WORKER_ROLES, type RunningJob, type WorkerServiceWorld } from '../harness/worker-service-world';
 import { annotationIdOf, expectGenerations, expectProgress, generation, identity, report, settled, TEXT, textAnnotation, withoutCreated } from './support';
@@ -45,9 +43,8 @@ const REQUEST = {
 
 // The ids the cases below work out are worked out by the table's rule: the suite's own reckoning is held to every case of it.
 it('works out the id of an annotation as specs/src/annotations/id-cases.json states it, case for case', () => {
-  const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'annotations/id-cases.json'), 'utf8')) as { cases: Array<{ resourceId: string; motivation: string; anchor: string; body?: unknown; id: string }> };
-  expect(table.cases.length).toBeGreaterThan(0);
-  for (const { resourceId, motivation, anchor, body, id } of table.cases) {
+  expect(annotationsIdCases.cases.length).toBeGreaterThan(0);
+  for (const { resourceId, motivation, anchor, body, id } of annotationsIdCases.cases) {
     expect(annotationIdOf(resourceId, motivation, anchor, body), JSON.stringify({ resourceId, motivation, anchor })).toBe(id);
   }
 });

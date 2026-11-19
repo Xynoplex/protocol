@@ -8,7 +8,8 @@ import { randomUUID } from 'node:crypto';
 import { expect, it } from 'vitest';
 import { nonConformance } from '../harness/http';
 import { AGENT_KIND, KIND_CLAIM, SERVICE_ROLE, WORKER_ROLE } from '../harness/roles';
-import { identifiers, operationFor, principals, registry, spec } from '../harness/spec';
+import { identifiers, operationFor, principals, spec } from '../harness/spec';
+import { busRegistry } from '../harness/generated/protocol/protocol';
 import { eventually } from '../harness/net';
 import { eachPlane } from '../harness/world';
 
@@ -239,7 +240,7 @@ eachPlane('emitting', (world, plane) => {
 
   it('every write by a person publishes the name their token carries at that write, in order', async () => {
     const watcher = await world().subscribe(await world().person('watcher'), { clientId: randomUUID(), global: ['principal:profile'] });
-    expect(registry().effect.writes).toContain(WRITE);
+    expect(busRegistry.effect.writes).toContain(WRITE);
     const did = world().personDid('writes');
     for (const name of ['Wanda Writer', 'Wanda Writer', 'Wanda Renamed']) {
       const reply = await world().emit(await world().person('writes', { name }), { channel: WRITE, payload: { tag: 'Conformance' } });
@@ -265,7 +266,7 @@ eachPlane('emitting', (world, plane) => {
 
   it('a read, or a write by a token with no name, a person\'s or an agent\'s, publishes no profile', async () => {
     const watcher = await world().subscribe(await world().person('watcher'), { clientId: randomUUID(), global: ['principal:profile'] });
-    expect(registry().effect.reads).toContain(REQUEST);
+    expect(busRegistry.effect.reads).toContain(REQUEST);
 
     const reader = await world().person('only-reads', { name: 'Rita Reader' });
     await world().emit(reader, { channel: REQUEST, payload: { resourceId: 'r' } });

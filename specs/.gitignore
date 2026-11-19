@@ -1,3 +1,4 @@
 # The bundles the reader makes from src/ (make bundle)
 /openapi.json
 /archivist.openapi.json
+/services.json

@@ -78,6 +78,9 @@ val nullable : (cursor -> 'a) -> cursor -> 'a option
 val map : (cursor -> 'a) -> cursor -> (string * 'a) list
 (** An object whose member names are data, in the file's order. *)
 
+val map_by : (cursor -> 'k) -> (cursor -> 'a) -> cursor -> ('k * 'a) list
+(** A {!val:map} whose member names are each decoded too, as a string. *)
+
 val enum : (string * 'a) list -> cursor -> 'a
 (** A string naming one of a closed set. *)
 

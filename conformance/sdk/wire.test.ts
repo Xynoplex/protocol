@@ -3,16 +3,13 @@
  * sdk/wire/ against a real gateway on each signal plane. README.md states the
  * driver protocol and the case format; case.ts runs one case.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, inject, it } from 'vitest';
-import { SPEC_SOURCE } from '../harness/paths';
+import { clientTiming, errorsCodes, ErrorsCodes } from '../harness/generated/protocol/protocol';
 import { eachPlane } from '../harness/world';
 import { cases, runCase, type Case } from './case';
 
 const corpus = cases('wire');
 
-const table = <T>(path: string): T => JSON.parse(readFileSync(join(SPEC_SOURCE, path), 'utf8')) as T;
 const named = (name: string): Case => {
   const found = corpus.find((c) => c.name === name);
   if (!found) throw new Error(`the corpus has no case ${name}`);
@@ -25,11 +22,8 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 // to agree with a client about a stale value.
 describe('the corpus against the tables it restates', () => {
   it('failure-codes answers with every code a failure can carry, and expects of each the client code specs/src/errors/codes.json gives it', () => {
-    const { busRequest, transport } = table<{
-      busRequest: { unrecognizedFailure: string; codes: Array<{ code: string; wire?: string }> };
-      transport: { unclassified: string };
-    }>('errors/codes.json');
-    const wireCodes = table<{ properties: { code: { enum: string[] } } }>('components/schemas/CommandError.json').properties.code.enum;
+    const { busRequest, transport } = errorsCodes;
+    const wireCodes: readonly unknown[] = ErrorsCodes.commandErrorCodeAll;
     // A failure with no words is not its channel's, and is refused as a result with a fault is.
     const expected = (failure: Record<string, unknown>): string =>
       typeof failure['message'] !== 'string'
@@ -57,8 +51,8 @@ describe('the corpus against the tables it restates', () => {
   });
 
   it('emit-budget-spent refuses as many attempts as specs/src/client/timing.json gives one emit', () => {
-    const { timing } = table<{ timing: Array<{ name: string; value: unknown }> }>('client/timing.json');
-    const budget = timing.find((entry) => entry.name === 'emitRetry')?.value as { attempts: number };
+    const budget = clientTiming.timing.find((entry) => entry.name === 'emitRetry')?.value;
+    if (typeof budget !== 'object') throw new Error('client/timing.json states no emitRetry budget');
     const steps = named('emit-budget-spent').steps;
     const refused = steps.filter((step) => 'wire' in step && step.wire === 'POST /bus/emit' && step.status === 429);
     expect(refused).toHaveLength(budget.attempts);
@@ -67,8 +61,7 @@ describe('the corpus against the tables it restates', () => {
   });
 
   it('dedup-window has the new stream replay as many events as specs/src/client/timing.json has a client remember', () => {
-    const { timing } = table<{ timing: Array<{ name: string; value: unknown }> }>('client/timing.json');
-    const remembered = timing.find((entry) => entry.name === 'seenEventIdsCount')?.value;
+    const remembered = clientTiming.timing.find((entry) => entry.name === 'seenEventIdsCount')?.value;
     const steps = named('dedup-window').steps;
     const replayed = steps.find((step) => 'backend' in step && step.backend === 'record' && step.with?.['count'] !== undefined);
     expect(replayed && 'with' in replayed ? replayed.with?.['count'] : undefined).toBe(remembered);

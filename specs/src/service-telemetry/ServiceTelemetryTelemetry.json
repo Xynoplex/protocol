@@ -8,6 +8,9 @@
     "sdk": {
       "type": "object",
       "description": "The services that reach the bus through an SDK, and for each the SDK transports it uses, or of a transport it uses part of, the rows it exports.",
+      "propertyNames": {
+        "$ref": "#/properties/spans/items/properties/services/items"
+      },
       "additionalProperties": {
         "type": "array",
         "minItems": 1,

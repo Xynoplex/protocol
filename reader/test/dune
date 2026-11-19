@@ -70,3 +70,10 @@
   (source_tree %{project_root}/specs/src))
  (action
   (run %{test} %{project_root}/specs/src)))
+
+(test
+ (name validate)
+ (modules validate)
+ (flags
+  (:standard -open Xynolog_protocol_schema))
+ (libraries xynolog_protocol_schema yojson alcotest))

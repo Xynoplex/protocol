@@ -5,11 +5,25 @@
  * Everything a case asserts about shape comes from here — nothing is restated.
  */
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { Ajv2020, type ValidateFunction } from 'ajv/dist/2020.js';
 import addFormatsModule from 'ajv-formats';
 import { inject } from 'vitest';
-import { SPEC_SOURCE } from './paths';
+import {
+  busRegistry,
+  clientTiming as timingTable,
+  identifiersKinds,
+  kbIdentityCases,
+  principalsCases,
+  sdkTelemetryTelemetry,
+  serviceEnvironmentVariables,
+  serviceTelemetryTelemetry,
+  type BusRegistry,
+  type IdentifiersKinds,
+  type KbIdentityCases,
+  type PrincipalsCases,
+  type SdkTelemetryTelemetry,
+  type ServiceTelemetryTelemetry,
+} from './generated/protocol/protocol';
 
 // ajv-formats is CommonJS; its default export arrives wrapped under ESM.
 const addFormats = (addFormatsModule as unknown as { default?: typeof addFormatsModule }).default ?? addFormatsModule;
@@ -175,13 +189,6 @@ export function spec(): Spec {
   return cached;
 }
 
-let servicesCached: Spec | undefined;
-/** The services' own schemas the suites read (harness/service-schemas.json). */
-export function servicesSpec(): Spec {
-  servicesCached ??= new Spec(inject('servicesSpecPath'));
-  return servicesCached;
-}
-
 let archivistCached: Spec | undefined;
 /** The Archivist's HTTP surface. */
 export function archivistSpec(): Spec {
@@ -193,207 +200,53 @@ export function errorsOf(validate: ValidateFunction): string {
   return (validate.errors ?? []).map((e) => `${e.instancePath || '/'} ${e.message ?? ''}`).join('; ');
 }
 
-// ── The bus registry, read from its source ────────────────────────────────
+// ── The tables, as Protocol's reader writes them (generated/protocol) ─────
 
-interface RegistryChannel {
-  channel: string;
-  shape: string;
-  /** The payload's schema, when `shape` is `schema`: what a frame on the channel carries. */
-  schema?: string;
-  validate: string | null;
-}
-interface RegistryOperation {
-  request: string;
-  result: string;
-  failure: string;
-}
-interface Registry {
-  channels: RegistryChannel[];
-  operations: RegistryOperation[];
-  /** `scoped`: the channels delivered only to the subscribers of a resource's scope. */
-  audience: { scoped: string[] };
-  effect: { writes: string[]; reads: string[] };
-  /** `field`: the payload field a relayed frame's trace rides in. */
-  trace: { field: string };
-}
-
-let registryCache: Registry | undefined;
-export function registry(): Registry {
-  registryCache ??= JSON.parse(readFileSync(join(SPEC_SOURCE, 'bus/registry.json'), 'utf8')) as Registry;
-  return registryCache;
-}
-
-export function operationFor(request: string): RegistryOperation {
-  const op = registry().operations.find((o) => o.request === request);
+export function operationFor(request: string): BusRegistry.OperationsItem {
+  const op = busRegistry.operations.find((o) => o.request === request);
   if (!op) throw new Error(`the registry declares no operation ${request}`);
   return op;
 }
 
-/** A Rust service: what the spec's service-environment table covers, and, with the worker, its service-telemetry table. */
-export type Service = 'gateway' | 'dispatcher' | 'archivist';
-const SERVICES: readonly Service[] = ['gateway', 'dispatcher', 'archivist'];
+/** A Xynolog service, as the telemetry table names it. */
+export type TelemetryService = ServiceTelemetryTelemetry.ServicesItem;
 
 /** The names of the environment variables `service` reads (service-environment/variables.json). */
-export function serviceEnvironment(service: Service): string[] {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'service-environment/variables.json'), 'utf8'));
-  const rows = isObject(table) && Array.isArray(table['variables']) ? table['variables'] : [];
-  const names = rows.flatMap((row) =>
-    isObject(row) && typeof row['name'] === 'string' && Array.isArray(row['services']) && row['services'].includes(service) ? [row['name']] : [],
-  );
+export function serviceEnvironment(service: TelemetryService): string[] {
+  const names = serviceEnvironmentVariables.variables.filter((row) => row.services.includes(service)).map((row) => row.name);
   if (names.length === 0) throw new Error(`service-environment/variables.json lists no variables for the ${service}`);
   return names;
 }
 
-export interface TelemetryAttribute {
-  key: string;
-  /** The only values it may carry, where the spec lists them, each of the type it is carried as. */
-  values?: (string | boolean)[];
-  /** Why it may be absent: it is carried only under this condition. */
-  only?: string;
-}
+export type TelemetryAttribute = ServiceTelemetryTelemetry.AttributesItem;
+type Span = ServiceTelemetryTelemetry.SpansItem | SdkTelemetryTelemetry.SpansItem;
+type Metric = ServiceTelemetryTelemetry.MetricsItem | SdkTelemetryTelemetry.MetricsItem;
+/** A row of either table. An SDK's arrives with its traffic: the table states no `when`, because there is no other. */
+export type TelemetryRow = Span | Metric;
 
-export interface TelemetryRow {
-  name: string;
-  /** A span's OTLP kind, or a metric's instrument. */
-  kind: string;
-  when: 'export' | 'traffic' | 'supervised' | 'fatal';
-  attributes: TelemetryAttribute[];
-  planes?: string[];
-}
-
-/** The services the telemetry table names: those above, the worker, the weaver, the smelter and the librarian. */
-export type TelemetryService = Service | 'worker' | 'weaver' | 'smelter' | 'librarian';
-const TELEMETRY_SERVICES: readonly TelemetryService[] = [...SERVICES, 'worker', 'weaver', 'smelter', 'librarian'];
-
-/** A row of the service table: the services that export it. */
-interface ServiceRow extends TelemetryRow {
-  services: TelemetryService[];
-}
-
-/** A row of the SDK table: the transport it comes from. */
-interface SdkRow extends TelemetryRow {
-  transport: string;
-}
-
-const WHEN = ['export', 'traffic', 'supervised', 'fatal'] as const;
-const isWhen = (v: unknown): v is TelemetryRow['when'] => WHEN.some((w) => w === v);
-
-const isTelemetryService = (v: unknown): v is TelemetryService => TELEMETRY_SERVICES.some((s) => s === v);
-
-/** What every row of either table states: its name, its kind or instrument, its attributes. */
-function row(table: string, r: unknown, kindKey: 'kind' | 'instrument'): { fields: JsonObject; name: string; kind: string; attributes: TelemetryAttribute[] } {
-  if (!isObject(r) || typeof r['name'] !== 'string' || typeof r[kindKey] !== 'string' || !Array.isArray(r['attributes'])) {
-    throw new Error(`${table}: a row is malformed: ${JSON.stringify(r)}`);
-  }
-  const name = r['name'];
-  const attributes = r['attributes'].map((a): TelemetryAttribute => {
-    if (!isObject(a) || typeof a['key'] !== 'string') throw new Error(`${table}: ${name} has a malformed attribute`);
-    const key = a['key'];
-    const values = Array.isArray(a['values'])
-      ? a['values'].map((v): string | boolean => {
-          if (typeof v === 'string' || typeof v === 'boolean') return v;
-          throw new Error(`${table}: ${name}'s ${key} lists ${JSON.stringify(v)}, which is no string or boolean`);
-        })
-      : undefined;
-    return { key, ...(values ? { values } : {}), ...(typeof a['only'] === 'string' ? { only: a['only'] } : {}) };
-  });
-  return { fields: r, name, kind: String(r[kindKey]), attributes };
+export interface Telemetry {
+  spans: Span[];
+  metrics: Metric[];
 }
 
 const SERVICE_TABLE = 'service-telemetry/telemetry.json';
 const SDK_TABLE = 'sdk-telemetry/telemetry.json';
 
-function serviceRows(rows: unknown, kindKey: 'kind' | 'instrument'): ServiceRow[] {
-  if (!Array.isArray(rows)) throw new Error(`${SERVICE_TABLE}: spans and metrics must be lists`);
-  return rows.map((r) => {
-    const { fields, name, kind, attributes } = row(SERVICE_TABLE, r, kindKey);
-    const { services, when } = fields;
-    if (!isWhen(when)) throw new Error(`${SERVICE_TABLE}: ${name} states no \`when\``);
-    if (!Array.isArray(services) || services.length === 0 || !services.every(isTelemetryService)) {
-      throw new Error(`${SERVICE_TABLE}: ${name} names no services, or one that is not ${TELEMETRY_SERVICES.join(' or ')}`);
-    }
-    const planes = Array.isArray(fields['planes']) ? fields['planes'].map(String) : undefined;
-    return { name, services, kind, when, attributes, ...(planes ? { planes } : {}) };
-  });
-}
-
-/** An SDK's rows arrive with its traffic: the table states no `when`, because there is no other. */
-function sdkRows(rows: unknown, kindKey: 'kind' | 'instrument'): SdkRow[] {
-  if (!Array.isArray(rows)) throw new Error(`${SDK_TABLE}: spans and metrics must be lists`);
-  return rows.map((r) => {
-    const { fields, name, kind, attributes } = row(SDK_TABLE, r, kindKey);
-    if (typeof fields['transport'] !== 'string') throw new Error(`${SDK_TABLE}: ${name} names no transport`);
-    return { name, transport: fields['transport'], kind, when: 'traffic', attributes };
-  });
-}
-
-export interface Telemetry {
-  spans: TelemetryRow[];
-  metrics: TelemetryRow[];
-}
-
-/** A row of the service table's `resource`: an attribute of the resource a service exports under, and the services that carry it. */
-interface ResourceRow {
-  key: string;
-  services: TelemetryService[];
-  meaning: string;
-}
-
-function resourceRows(rows: unknown): ResourceRow[] {
-  if (!Array.isArray(rows) || rows.length === 0) throw new Error(`${SERVICE_TABLE} states no \`resource\`: the attributes every service's spans and metrics are exported under`);
-  return rows.map((r) => {
-    if (!isObject(r) || typeof r['key'] !== 'string' || typeof r['meaning'] !== 'string') throw new Error(`${SERVICE_TABLE}: a resource row is malformed: ${JSON.stringify(r)}`);
-    const { key, services, meaning } = r;
-    if (!Array.isArray(services) || services.length === 0 || !services.every(isTelemetryService)) {
-      throw new Error(`${SERVICE_TABLE}: the resource's ${key} names no services, or one that is not ${TELEMETRY_SERVICES.join(' or ')}`);
-    }
-    return { key, services, meaning };
-  });
-}
-
-interface Tables {
-  service: { spans: ServiceRow[]; metrics: ServiceRow[] };
-  resource: ResourceRow[];
-  /**
-   * For each service that reaches the bus through an SDK, what of the SDK
-   * table it exports: each entry a transport, for all of its rows, or the
-   * name of one row, for a service that uses part of a transport.
-   */
-  through: Partial<Record<TelemetryService, string[]>>;
-  sdk: { spans: SdkRow[]; metrics: SdkRow[] };
-}
-
-let tables: Tables | undefined;
-
-/** Both telemetry tables: what each service exports, and what an SDK's transports do. */
-function telemetryTables(): Tables {
-  if (tables) return tables;
-  const read = (path: string): JsonObject => {
-    const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, path), 'utf8'));
-    if (!isObject(table)) throw new Error(`${path} is not an object`);
-    return table;
-  };
-  const service = read(SERVICE_TABLE);
-  const sdk = read(SDK_TABLE);
-  const through: Tables['through'] = {};
-  for (const [name, entries] of Object.entries(isObject(service['sdk']) ? service['sdk'] : {})) {
-    if (!isTelemetryService(name) || !Array.isArray(entries)) throw new Error(`${SERVICE_TABLE}: \`sdk\` names ${name}, which is not ${TELEMETRY_SERVICES.join(' or ')}, or gives it nothing of the SDK table`);
-    through[name] = entries.map(String);
-  }
-  tables = {
-    service: { spans: serviceRows(service['spans'], 'kind'), metrics: serviceRows(service['metrics'], 'instrument') },
-    resource: resourceRows(service['resource']),
-    through,
-    sdk: { spans: sdkRows(sdk['spans'], 'kind'), metrics: sdkRows(sdk['metrics'], 'instrument') },
-  };
-  const shared = [...tables.sdk.spans, ...tables.sdk.metrics];
-  for (const [name, used] of Object.entries(through)) {
-    for (const entry of used) {
+/**
+ * For each service that reaches the bus through an SDK, what of the SDK
+ * table it exports: each entry a transport, for all of its rows, or the name
+ * of one row, for a service that uses part of a transport. Each names
+ * something of the SDK table.
+ */
+const through: ServiceTelemetryTelemetry.T['sdk'] = (() => {
+  const shared = [...sdkTelemetryTelemetry.spans, ...sdkTelemetryTelemetry.metrics];
+  for (const [name, used] of Object.entries(serviceTelemetryTelemetry.sdk)) {
+    for (const entry of used ?? []) {
       if (!shared.some((r) => r.transport === entry || r.name === entry)) throw new Error(`${SERVICE_TABLE}: ${name} names ${entry} of the SDK table, which is neither a transport ${SDK_TABLE} lists rows for nor one of its rows`);
     }
   }
-  return tables;
-}
+  return serviceTelemetryTelemetry.sdk;
+})();
 
 /**
  * The telemetry `service` exports: the rows of the service table that list
@@ -401,15 +254,17 @@ function telemetryTables(): Tables {
  * the transports it uses and the rows it names.
  */
 export function telemetry(service: TelemetryService): Telemetry {
-  const { service: own, through, sdk } = telemetryTables();
-  const used = through[service] ?? [];
-  const of = (rows: ServiceRow[], shared: SdkRow[]): TelemetryRow[] => [...rows.filter((r) => r.services.includes(service)), ...shared.filter((r) => used.includes(r.transport) || used.includes(r.name))];
-  return { spans: of(own.spans, sdk.spans), metrics: of(own.metrics, sdk.metrics) };
+  const used: string[] = through[service] ?? [];
+  const shared = <R extends SdkTelemetryTelemetry.SpansItem | SdkTelemetryTelemetry.MetricsItem>(rows: R[]): R[] => rows.filter((r) => used.includes(r.transport) || used.includes(r.name));
+  return {
+    spans: [...serviceTelemetryTelemetry.spans.filter((r) => r.services.includes(service)), ...shared(sdkTelemetryTelemetry.spans)],
+    metrics: [...serviceTelemetryTelemetry.metrics.filter((r) => r.services.includes(service)), ...shared(sdkTelemetryTelemetry.metrics)],
+  };
 }
 
 /** The keys of the resource `service` exports every span and metric under: exactly these (the service table's `resource`). */
 export function resourceKeys(service: TelemetryService): string[] {
-  return telemetryTables().resource.filter((r) => r.services.includes(service)).map((r) => r.key);
+  return serviceTelemetryTelemetry.resource.filter((r) => r.services.includes(service)).map((r) => r.key);
 }
 
 /**
@@ -417,11 +272,9 @@ export function resourceKeys(service: TelemetryService): string[] {
  * every row, or, for a client that uses one transport alone, that
  * transport's rows.
  */
-export function sdkTelemetry(transport?: string): Telemetry {
-  const { sdk } = telemetryTables();
-  if (transport === undefined) return sdk;
-  const of = (rows: SdkRow[]): SdkRow[] => rows.filter((r) => r.transport === transport);
-  const rows = { spans: of(sdk.spans), metrics: of(sdk.metrics) };
+export function sdkTelemetry(transport?: SdkTelemetryTelemetry.Transport): Telemetry {
+  if (transport === undefined) return sdkTelemetryTelemetry;
+  const rows = { spans: sdkTelemetryTelemetry.spans.filter((r) => r.transport === transport), metrics: sdkTelemetryTelemetry.metrics.filter((r) => r.transport === transport) };
   if (rows.spans.length + rows.metrics.length === 0) throw new Error(`${SDK_TABLE} lists no row for the transport ${transport}`);
   return rows;
 }
@@ -434,8 +287,7 @@ export function spanPattern(row: TelemetryRow): RegExp {
 
 /** A span's exported name, from the row the spec lists: `spanName('bus.dispatch:{channel}', { channel })`. */
 export function spanName(template: string, fill: Record<string, string> = {}): string {
-  const { service, sdk } = telemetryTables();
-  if (![...service.spans, ...sdk.spans].some((r) => r.name === template)) throw new Error(`the spec lists no span ${template}`);
+  if (![...serviceTelemetryTelemetry.spans, ...sdkTelemetryTelemetry.spans].some((r) => r.name === template)) throw new Error(`the spec lists no span ${template}`);
   return template.replace(/\{([A-Za-z]+)\}/g, (_, key: string) => {
     const value = fill[key];
     if (value === undefined) throw new Error(`span ${template} needs a value for {${key}}`);
@@ -445,97 +297,46 @@ export function spanName(template: string, fill: Record<string, string> = {}): s
 
 /** A metric's name, as the spec lists it. */
 export function metricName(name: string): string {
-  const { service, sdk } = telemetryTables();
-  if (![...service.metrics, ...sdk.metrics].some((r) => r.name === name)) throw new Error(`the spec lists no metric ${name}`);
+  if (![...serviceTelemetryTelemetry.metrics, ...sdkTelemetryTelemetry.metrics].some((r) => r.name === name)) throw new Error(`the spec lists no metric ${name}`);
   return name;
 }
 
-export interface IdCase {
-  id: string;
-  why: string;
-}
-
 /** The strings a kind of id takes and the ones it refuses, each with why (identifiers/kinds.json). */
-export function identifiers(kind: string): { accepts: IdCase[]; refuses: IdCase[] } {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'identifiers/kinds.json'), 'utf8'));
-  const kinds = isObject(table) && Array.isArray(table['kinds']) ? table['kinds'] : [];
-  const found = kinds.find((k) => isObject(k) && k['schema'] === kind);
-  const cases = (list: unknown): IdCase[] => {
-    if (!Array.isArray(list) || list.length === 0) throw new Error(`identifiers/kinds.json: ${kind} has no such cases`);
-    return list.map((c) => {
-      if (!isObject(c) || typeof c['id'] !== 'string' || typeof c['why'] !== 'string') throw new Error(`identifiers/kinds.json: a case of ${kind} is malformed: ${JSON.stringify(c)}`);
-      return { id: c['id'], why: c['why'] };
-    });
-  };
-  if (!isObject(found)) throw new Error(`identifiers/kinds.json names no kind ${kind}`);
-  return { accepts: cases(found['accepts']), refuses: cases(found['refuses']) };
+export function identifiers(kind: string): IdentifiersKinds.KindsItem {
+  const found = identifiersKinds.kinds.find((k) => k.schema === kind);
+  if (!found) throw new Error(`identifiers/kinds.json names no kind ${kind}`);
+  return found;
 }
 
-export interface PersonCase {
-  why: string;
-  subject: string;
-  did: string;
-}
+type PrincipalCase = PrincipalsCases.PeopleItem;
 
-export interface AgentCase {
-  why: string;
-  subject: string;
-  did: string;
-}
+/** A form of principals/cases.json, as a function of a domain and a subject: each part after the domain percent-encoded as the table states, encodeURIComponent's encoding. */
+const named = (form: string) => (domain: string, subject: string) => form.replace('{domain}', domain).replace('{subject}', encodeURIComponent(subject));
+const personDid = named(principalsCases.person);
+const agentDid = named(principalsCases.agent);
 
-interface PrincipalTable {
-  person(domain: string, subject: string): string;
-  agent(domain: string, subject: string): string;
-  people: Array<PersonCase & { domain: string }>;
-  agents: Array<AgentCase & { domain: string }>;
-}
-
-let principalTable: PrincipalTable | undefined;
-
-/** principals/cases.json, read once: its two forms, and its cases, each checked against its form. */
-function principalsTable(): PrincipalTable {
-  if (principalTable) return principalTable;
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'principals/cases.json'), 'utf8'));
-  if (!isObject(table) || typeof table['person'] !== 'string' || typeof table['agent'] !== 'string' || !Array.isArray(table['people']) || !Array.isArray(table['agents'])) {
-    throw new Error('principals/cases.json has no person or agent form, people or agents');
+/** Each case of principals/cases.json, checked against its form when the harness loads. */
+for (const [kind, form, cases] of [
+  ['person', personDid, principalsCases.people],
+  ['agent', agentDid, principalsCases.agents],
+] as const) {
+  for (const c of cases) {
+    if (form(c.domain, c.subject) !== c.did) throw new Error(`principals/cases.json: "${c.why}" — the ${kind} form gives ${form(c.domain, c.subject)}, the case says ${c.did}`);
   }
-  const named = (form: string) => (d: string, subject: string) => form.replace('{domain}', d).replace('{subject}', encodeURIComponent(subject));
-  const person = named(table['person']);
-  const agent = named(table['agent']);
-  const read = (kind: 'person' | 'agent', form: (d: string, subject: string) => string, cases: unknown[]) =>
-    cases.map((c) => {
-      if (!isObject(c) || typeof c['why'] !== 'string' || typeof c['domain'] !== 'string' || typeof c['subject'] !== 'string' || typeof c['did'] !== 'string') {
-        throw new Error(`principals/cases.json: ${kind === 'person' ? 'a person' : 'an agent'} case is malformed: ${JSON.stringify(c)}`);
-      }
-      if (form(c['domain'], c['subject']) !== c['did']) {
-        throw new Error(`principals/cases.json: "${c['why']}" — the ${kind} form gives ${form(c['domain'], c['subject'])}, the case says ${c['did']}`);
-      }
-      return { why: c['why'], domain: c['domain'], subject: c['subject'], did: c['did'] };
-    });
-  principalTable = { person, agent, people: read('person', person, table['people']), agents: read('agent', agent, table['agents']) };
-  return principalTable;
 }
 
-/**
- * How the gateway names its principals under `domain` (principals/cases.json):
- * a person's DID and an agent's from the table's forms, each part after the
- * domain percent-encoded as the table states — encodeURIComponent's encoding —
- * and each form checked against every case of the table when it is read.
- */
+/** How the gateway names its principals under `domain` (principals/cases.json): a person's DID and an agent's, from the table's forms. */
 export function principals(domain: string): { personDid(subject: string): string; agentDid(subject: string): string } {
-  const table = principalsTable();
-  return { personDid: (subject) => table.person(domain, subject), agentDid: (subject) => table.agent(domain, subject) };
+  return { personDid: (subject) => personDid(domain, subject), agentDid: (subject) => agentDid(domain, subject) };
 }
 
 /**
  * The table's cases under `domain`: people, and agents, with the DID, address
  * and name the gateway must give each. The suite's knowledge base has both.
  */
-export function principalCases(domain: string): { people: PersonCase[]; agents: AgentCase[] } {
-  const table = principalsTable();
-  const under = <T extends { domain: string }>(cases: T[]) => cases.filter((c) => c.domain === domain).map(({ domain: _domain, ...c }) => c);
-  const people = under(table.people);
-  const agents = under(table.agents);
+export function principalCases(domain: string): { people: PrincipalCase[]; agents: PrincipalCase[] } {
+  const people = principalsCases.people.filter((c) => c.domain === domain);
+  const agents = principalsCases.agents.filter((c) => c.domain === domain);
   if (people.length === 0 || agents.length === 0) throw new Error(`principals/cases.json needs person and agent cases under ${domain}, the suite's knowledge base`);
   return { people, agents };
 }
@@ -543,27 +344,22 @@ export function principalCases(domain: string): { people: PersonCase[]; agents: 
 /** The case of kb-identity/cases.json the suite's knowledge base is. */
 export const SUITE_KB = 'the shape xynolog init writes';
 
-export interface KbIdentity {
-  name: string;
-  domain: string;
-  did: string;
-  resource: string;
-}
+type Declared = 'name' | 'domain' | 'did' | 'resource';
+/** A knowledge base's declared identity: a case of kb-identity/cases.json that states each of these. */
+export type KbIdentity = { [K in Declared]: NonNullable<KbIdentityCases.CasesItem[K]> };
 
 /** A knowledge base's identity, from the shared case table (kb-identity/cases.json): the case `why` names, which must declare one. */
 export function kbIdentity(why: string): KbIdentity {
-  const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'kb-identity/cases.json'), 'utf8')) as {
-    cases: Array<{ why: string; name: string; domain: string | null; did: string | null; resource: string | null }>;
-  };
-  const chosen = table.cases.find((c) => c.why === why);
-  if (!chosen?.domain || !chosen.did || !chosen.resource) throw new Error(`kb-identity/cases.json has no "${why}" case that declares an identity`);
-  return { name: chosen.name, domain: chosen.domain, did: chosen.did, resource: chosen.resource };
+  const chosen = kbIdentityCases.cases.find((c) => c.why === why);
+  if (!chosen) throw new Error(`kb-identity/cases.json has no "${why}" case`);
+  const { name, domain, did, resource } = chosen;
+  if (name === null || domain === null || did === null || resource === null) throw new Error(`kb-identity/cases.json's "${why}" case declares no identity: its name, domain, did and resource are not all stated`);
+  return { name, domain, did, resource };
 }
 
 /** A duration of the timing every Xynolog client keeps (client/timing.json), by its name: milliseconds. */
 export function clientTiming(name: string): number {
-  const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'client/timing.json'), 'utf8')) as { timing: Array<{ name: string; value: unknown }> };
-  const value = table.timing.find((t) => t.name === name)?.value;
+  const value = timingTable.timing.find((t) => t.name === name)?.value;
   if (typeof value !== 'number' || !name.endsWith('Ms')) throw new Error(`client/timing.json states no duration ${name}`);
   return value;
 }

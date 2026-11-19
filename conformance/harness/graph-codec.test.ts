@@ -11,82 +11,25 @@
  * annotation updated, a reference resolved, a resource stored) are run by the
  * writer's codec.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { Annotation, ResourceDescriptor } from './protocol-core';
-import { formatErrors, validators } from './protocol-core';
-import { intendedGraphAnnotation, isRow, isStrings, readAnnotation, readResource, type Row } from './graph-codec';
-import { SPEC_SOURCE } from './paths';
+import { graphCodecCases, type GraphCodecCases } from './generated/protocol/protocol';
+import { intendedGraphAnnotation, readAnnotation, readResource } from './graph-codec';
 
-const TABLE = 'graph/codec-cases.json';
-const PARTS = ['annotationStored', 'annotationRead', 'annotationUpdated', 'referenceResolved', 'resourceStored', 'resourceRead'] as const;
-
-/** A case as the table gives it: why it is there, and its part. Nothing else in it is trusted until it is read. */
-interface Case {
-  why: string;
-  fields: Row;
-}
-
-function cases(): Case[] {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, TABLE), 'utf8'));
-  if (!isRow(table) || !Array.isArray(table['cases'])) throw new Error(`${TABLE} has no cases`);
-  return table['cases'].map((one: unknown) => {
-    if (!isRow(one) || typeof one['why'] !== 'string') throw new Error(`${TABLE}: a case is malformed: ${JSON.stringify(one)}`);
-    return { why: one['why'], fields: one };
+/** The cases of one part, each with why it is there. */
+function part<K extends Exclude<keyof GraphCodecCases.CasesItem, 'why'>>(key: K): Array<{ why: string; given: NonNullable<GraphCodecCases.CasesItem[K]> }> {
+  return graphCodecCases.cases.flatMap((one) => {
+    const given = one[key];
+    return given === undefined ? [] : [{ why: one.why, given }];
   });
 }
 
-const table = cases();
-
-/** The cases of one part, each read by `read` from what the table gives under the part's name. */
-function part<Given>(key: (typeof PARTS)[number], read: (why: string, given: Row) => Given): Array<{ why: string; given: Given }> {
-  return table.flatMap(({ why, fields }) => {
-    const given = fields[key];
-    if (given === undefined) return [];
-    if (!isRow(given)) throw new Error(`${TABLE}: "${why}" gives ${key} as something other than an object`);
-    return [{ why, given: read(why, given) }];
-  });
-}
-
-function annotation(why: string, value: unknown): Annotation {
-  if (!validators.Annotation(value)) throw new Error(`${TABLE}: "${why}" gives an annotation the spec does not allow: ${formatErrors(validators.Annotation.errors)}`);
-  return value;
-}
-
-function resource(why: string, value: unknown): ResourceDescriptor {
-  if (!validators.ResourceDescriptor(value)) throw new Error(`${TABLE}: "${why}" gives a resource the spec does not allow: ${formatErrors(validators.ResourceDescriptor.errors)}`);
-  return value;
-}
-
-function properties(why: string, value: unknown): Row {
-  if (!isRow(value)) throw new Error(`${TABLE}: "${why}" gives no properties`);
-  return value;
-}
-
-/** The word a refusal must name, where the case is one. */
-function refused(why: string, value: unknown): string | undefined {
-  if (value === undefined || typeof value === 'string') return value;
-  throw new Error(`${TABLE}: "${why}" gives a refusal that is not a word`);
-}
-
-const annotationStored = part('annotationStored', (why, given) => ({ annotation: annotation(why, given['annotation']), holds: annotation(why, given['holds']) }));
-
-const annotationRead = part('annotationRead', (why, given) => {
-  const tags = given['tags'];
-  if (!isStrings(tags)) throw new Error(`${TABLE}: "${why}" gives no tags`);
-  const word = refused(why, given['refused']);
-  return { properties: properties(why, given['properties']), tags, annotation: word === undefined ? annotation(why, given['annotation']) : undefined, refused: word };
-});
-
-const resourceRead = part('resourceRead', (why, given) => {
-  const word = refused(why, given['refused']);
-  return { properties: properties(why, given['properties']), resource: word === undefined ? resource(why, given['resource']) : undefined, refused: word };
-});
+const annotationStored = part('annotationStored');
+const annotationRead = part('annotationRead');
+const resourceRead = part('resourceRead');
 
 describe('the graph, as the harness reads it', () => {
   it('is held to a table whose every case is of one part, with cases of each part read here', () => {
-    for (const one of table) expect(PARTS.filter((key) => one.fields[key] !== undefined), one.why).toHaveLength(1);
+    for (const { why, ...parts } of graphCodecCases.cases) expect(Object.keys(parts), why).toHaveLength(1);
     expect(annotationStored.length, 'annotationStored').toBeGreaterThan(0);
     expect(annotationRead.length, 'annotationRead').toBeGreaterThan(0);
     expect(resourceRead.length, 'resourceRead').toBeGreaterThan(0);
@@ -100,14 +43,14 @@ describe('the graph, as the harness reads it', () => {
 
   describe("an annotation's row, read", () => {
     it.each(annotationRead)('$why', ({ given }) => {
-      if (given.refused !== undefined) expect(() => readAnnotation(given.properties, given.tags)).toThrow(given.refused);
+      if ('refused' in given) expect(() => readAnnotation(given.properties, given.tags)).toThrow(given.refused);
       else expect(readAnnotation(given.properties, given.tags)).toEqual(given.annotation);
     });
   });
 
   describe("a resource's row, read", () => {
     it.each(resourceRead)('$why', ({ given }) => {
-      if (given.refused !== undefined) expect(() => readResource(given.properties)).toThrow(given.refused);
+      if ('refused' in given) expect(() => readResource(given.properties)).toThrow(given.refused);
       else expect(readResource(given.properties)).toEqual(given.resource);
     });
   });

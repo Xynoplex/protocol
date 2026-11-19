@@ -7,11 +7,11 @@ import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { services } from '../harness/protocol-core';
+import type { ServiceSchemas } from '../harness/protocol-core';
 import { expect } from 'vitest';
 import type { RecordedMessage } from '../harness/anthropic';
 import type { RecordedGeneration } from '../harness/ollama';
-import { errorsOf, servicesSpec } from '../harness/spec';
+import { isService, serviceRefusals } from '../harness/services';
 import type { WorkerProcess } from '../harness/worker-service-process';
 import { sortedProgress, type RunningJob, type Served, type StandInKnowledgeBase } from '../harness/worker-service-world';
 
@@ -78,19 +78,18 @@ export const SMALL_CONTEXT_LENGTH = 1200;
 export const MIDDLING_CONTEXT_LENGTH = 2400;
 
 /** What `GET /health` answers (WORKER-SERVICE.md H1). */
-export type WorkerHealth = services['schemas']['WorkerHealth'];
+export type WorkerHealth = ServiceSchemas['WorkerHealth'];
 
 /** What the worker's health says of one knowledge base. */
-export type WorkerKnowledgeBaseHealth = services['schemas']['WorkerKnowledgeBaseHealth'];
+export type WorkerKnowledgeBaseHealth = ServiceSchemas['WorkerKnowledgeBaseHealth'];
 
 /** The worker's health: answered 200, as JSON, and held to the spec's `WorkerHealth` before a case reads it. */
 export async function health(process: WorkerProcess): Promise<WorkerHealth> {
   const reply = await process.http('GET', '/health');
   expect(reply.status).toBe(200);
   expect(reply.headers.get('content-type')).toMatch(/^application\/json/);
-  const validate = servicesSpec().component('WorkerHealth');
-  expect(validate(reply.json), errorsOf(validate)).toBe(true);
-  return reply.json as WorkerHealth;
+  if (!isService('WorkerHealth', reply.json)) throw new Error(`the worker's health answer is no WorkerHealth: ${serviceRefusals('WorkerHealth', reply.json).join('; ')}`);
+  return reply.json;
 }
 
 /** What an idle engine that has done nothing says of itself in the worker's health. */

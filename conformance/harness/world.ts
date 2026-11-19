@@ -11,15 +11,13 @@ import { SignJWT } from 'jose';
 import { afterAll, afterEach, beforeAll, describe, expect, type TestContext } from 'vitest';
 import { startArchivist, type FakeArchivist } from './archivist';
 import { startBroker, type Broker, type BrokerOptions } from './nats';
-import { defaultSettings, startGateway, type GatewayEnvironment, type GatewayProcess, type GatewaySettings, type Plane } from './gateway';
+import { defaultSettings, PLANES, startGateway, type GatewayEnvironment, type GatewayProcess, type GatewaySettings, type Plane } from './gateway';
 import { call, type Reply } from './http';
 import { freePort } from './net';
 import { startIssuer, type IssuerServer, type ServiceAccount } from './issuer';
 import { SERVICE_ROLE } from './roles';
 import { kbIdentity, principals, SUITE_KB, type KbIdentity } from './spec';
 import { subscribe, type BusFrame, type BusStream, type SubscribeBody } from './stream';
-
-export const PLANES: readonly Plane[] = ['in-process', 'nats'];
 
 /** The service account the gateway reaches the Archivist with. */
 export const GATEWAY_CLIENT = 'xynolog-gateway';

@@ -1,5 +1,7 @@
 (* derive.exe SPECS: every table's model, derived from its schema, as OCaml
-   source on standard output. SPECS is specs/src.
+   source on standard output. SPECS is specs/src. derive.exe typescript
+   SPECS: the same models as TypeScript, for the conformance harness, with
+   every service's schema and every table's value.
 
    Each table is a module named as its schema (Places.model_of), of types
    and strict decoders, its own model [t] and [decode] last; then [t], every
@@ -24,7 +26,8 @@
      variant, with its values ([_value]) and its constructors in order
      ([_all]). An object with
      [properties] is closed, a record; one without is a map, in its file's
-     order, of its [additionalProperties]. An array states its [items].
+     order, of its [additionalProperties], keyed by its [propertyNames]
+     when it states them. An array states its [items].
    A member a record does not require is an [option]. A string enum that
    states the values of another in the table's module is that one's type. A
    member named [$ref] is a reference, which the reader resolves.
@@ -38,6 +41,17 @@
    components state) it is [Yojson.Safe.t], which the table's validation
    against its schema holds to what it names.
 
+   The TypeScript is of the same types, and of each service's schema
+   (Places.service_schemas), read in the service dialect, which a table's
+   reference out of the table dialect is read in too: the table dialect
+   with an open object an open record, [allOf] an intersection, any [oneOf]
+   or [anyOf] a union, a node of several types a union, [format], [examples]
+   and [default] annotations, and an enum's constructors its values. Each
+   schema is a namespace named as its file's stem, its root [T]; a string
+   enum is a union of its values, and [<name>All] its values in order; and
+   each table's value is a constant, [<model>], of its root's type.
+   [ServiceSchemas] names each service's schema as its bundle does.
+
    A case table's schema extends CaseTable.json: its [allOf] is that alone,
    and it admits each of CaseTable's properties with [true] but [cases],
    which it states, or leaves out when it has no cases. Any other table's
@@ -47,16 +61,23 @@
 
 open Xynolog_protocol_schema
 
-let root =
+type output = Ocaml | Typescript
+
+let output, root =
   match Sys.argv with
-  | [| _; root |] -> root
+  | [| _; root |] -> (Ocaml, root)
+  | [| _; "typescript"; root |] -> (Typescript, root)
   | _ ->
-      prerr_endline "usage: derive.exe SPECS";
+      prerr_endline "usage: derive.exe [typescript] SPECS";
       exit 2
 
 (* Every table's schema, from specs/src: each in the table dialect. *)
 let table_schemas = List.map Places.schema_of (Places.tables root)
 let refusals = ref []
+
+(* Whether the node being derived is in the service dialect: a service's
+   schema, or what it names. *)
+let service = ref false
 
 exception Stop
 
@@ -210,7 +231,10 @@ type ty =
   | Reference
   | Constant of Yojson.Safe.t
   | List of ty
-  | Map of ty
+  | Map of ty * ty
+      (** Its keys' type, a string's or an enum's, and its values'. *)
+  | Union of ty list
+  | All of ty list
   | Nullable of ty
   | Named of string
 
@@ -227,7 +251,8 @@ and dispatch =
   | Kind of string list
 
 type decl =
-  | Record of string * field list
+  | Record of string * field list * bool
+      (** Its fields, and whether it admits members it does not state. *)
   | Enum of string * (string * string) list
   | Variant of string * case list
 
@@ -298,6 +323,7 @@ let candidates ~own file pointer =
         let at = at ^ "/" ^ key ^ "/" ^ index in
         match Hashtbl.find_opt places (file, at) with
         | Some name when key = "oneOf" -> name :: words at rest
+        | _ when !service -> ("member_" ^ index) :: words at rest
         | _ -> words at rest)
     | token :: rest -> words (at ^ "/" ^ Decode.escape token) rest
     | [] -> []
@@ -336,6 +362,12 @@ let candidates ~own file pointer =
 
 let annotations = [ "$comment"; "title"; "description" ]
 
+(* What may be said beside a node: in the service dialect, its format, its
+   examples and its default too. *)
+let said () =
+  if !service then annotations @ [ "format"; "examples"; "default" ]
+  else annotations
+
 (* Whether [s] is [{ "type": "null" }], the alternative of a node that may be
    null. *)
 let is_null = function
@@ -351,6 +383,7 @@ let takes = function
         "properties";
         "required";
         "additionalProperties";
+        "propertyNames";
         "minProperties";
         "maxProperties";
       ]
@@ -471,7 +504,7 @@ and node ~strict ~own file pointer s =
           if
             strict
             && List.exists
-                 (fun k -> k <> "$ref" && not (List.mem k annotations))
+                 (fun k -> k <> "$ref" && not (List.mem k (said ())))
                  present
           then
             refuse file pointer
@@ -480,16 +513,43 @@ and node ~strict ~own file pointer s =
           match target r with
           | tfile, "" when tfile = Places.json_schema -> Json_schema
           | tfile, tpointer ->
-              derive
-                ~strict:
-                  (strict && (tfile = file || List.mem tfile table_schemas))
-                ~own:(own && tfile = file)
-                tfile tpointer (schema_at tfile tpointer))
+              let tabled =
+                strict && (tfile = file || List.mem tfile table_schemas)
+              in
+              let named () =
+                derive ~strict:(!service || tabled)
+                  ~own:(own && tfile = file)
+                  tfile tpointer (schema_at tfile tpointer)
+              in
+              if output = Typescript && not (!service || tabled) then (
+                (* TypeScript types what a table names outside the table
+                   dialect in the service dialect, where OCaml's is JSON. *)
+                service := true;
+                Fun.protect ~finally:(fun () -> service := false) named)
+              else named ())
+      | _ when !service && List.for_all (fun k -> List.mem k (said ())) present
+        ->
+          Json
       | _ when present = [ "$comment" ] ->
           if strict && String.trim (Option.get l.comment) = "" then
             refuse file pointer
               "is JSON by nature, and must say what it is in $comment";
           Json
+      | { all_of = Some members; _ } when !service ->
+          beside ("allOf" :: said ());
+          All
+            (List.mapi
+               (fun i m ->
+                 derive ~strict ~own file
+                   (pointer / "allOf" / string_of_int i)
+                   m)
+               members)
+      | { any_of = Some members; _ } when !service ->
+          beside ("anyOf" :: said ());
+          union ~own file (pointer / "anyOf") members
+      | { one_of = Some members; _ } when !service ->
+          beside ("oneOf" :: "discriminator" :: said ());
+          union ~own file (pointer / "oneOf") members
       | { all_of = Some _; _ } ->
           fail
             "is an allOf, which a table's schema says only where it extends \
@@ -497,7 +557,7 @@ and node ~strict ~own file pointer s =
       | { any_of = Some members; _ } ->
           if not strict then Json
           else (
-            beside ("anyOf" :: annotations);
+            beside ("anyOf" :: said ());
             match members with
             | [ (Schema { ref_ = Some _; _ } as named); null ] when is_null null
               ->
@@ -511,7 +571,7 @@ and node ~strict ~own file pointer s =
       | { one_of = Some members; _ } ->
           if not strict then Json
           else (
-            beside ("oneOf" :: annotations);
+            beside ("oneOf" :: said ());
             match List.rev members with
             | null :: rest when is_null null ->
                 Nullable (variant ~own file pointer (List.rev rest))
@@ -525,7 +585,7 @@ and node ~strict ~own file pointer s =
             if List.mem Schema.Null types then Nullable ty else ty
           in
           if strict then (
-            beside (("type" :: annotations) @ takes t);
+            beside (("type" :: said ()) @ takes t);
             match (l.enum, l.const) with
             | Some values, _ ->
                 List.iter
@@ -557,22 +617,64 @@ and node ~strict ~own file pointer s =
           | Object -> (
               match (l.properties, l.additional_properties) with
               | Some properties, Some (Boolean_schema false) ->
-                  nullable (record ~strict ~own file pointer l properties)
+                  nullable
+                    (record ~strict ~own ~open_:false file pointer l properties)
+              | Some properties, (None | Some (Boolean_schema true))
+                when !service ->
+                  nullable
+                    (record ~strict ~own ~open_:true file pointer l properties)
               | Some _, _ ->
                   fail
                     "has properties, and must be closed with \
                      \"additionalProperties\": false"
               | None, Some (Schema _ as values) ->
+                  let keys =
+                    match l.property_names with
+                    | None -> String
+                    | Some names -> (
+                        match
+                          derive ~strict ~own file
+                            (pointer / "propertyNames")
+                            names
+                        with
+                        | (String | Named _) as keys -> keys
+                        | _ ->
+                            refuse file
+                              (pointer / "propertyNames")
+                              "must be a string or a string enum: a map's keys \
+                               are names")
+                  in
                   nullable
                     (Map
-                       (derive ~strict ~own file
-                          (pointer / "additionalProperties")
-                          values))
+                       ( keys,
+                         derive ~strict ~own file
+                           (pointer / "additionalProperties")
+                           values ))
+              | None, (None | Some (Boolean_schema true)) when !service ->
+                  nullable (Map (String, Json))
               | None, _ ->
                   fail
                     "is a map, and must state its values' schema in \
                      additionalProperties"))
       | { type_ = Some _; _ } when not strict -> Json
+      | { type_ = Some types; _ } when !service ->
+          beside
+            (("type" :: said ())
+            @ List.concat_map takes (List.sort_uniq compare types));
+          let scalar = function
+            | Schema.String -> String
+            | Integer -> Int
+            | Number -> Float
+            | Boolean -> Bool
+            | t ->
+                refuse file (pointer / "type")
+                  ("names " ^ Schema.type_word t
+                 ^ " beside other types, where only scalars are named together"
+                  )
+          in
+          let some = List.filter (( <> ) Schema.Null) types in
+          let union = Union (List.map scalar some) in
+          if List.mem Schema.Null types then Nullable union else union
       | _ ->
           if strict then
             refuse file (pointer / "type")
@@ -593,7 +695,9 @@ and scalar ~strict ~own file pointer t (l : Schema.schema) =
             List.map
               (function
                 | Schema.String_literal v -> (
-                    match constructor v with
+                    (* The service dialect has no OCaml model, so no
+                       constructors. *)
+                    match if !service then Some v else constructor v with
                     | Some c -> (c, v)
                     | None ->
                         refuse file (pointer / "enum")
@@ -626,13 +730,13 @@ and scalar ~strict ~own file pointer t (l : Schema.schema) =
       | Boolean, _ -> Bool
       | _ -> refuse file pointer "is no scalar")
 
-and record ~strict ~own file pointer (l : Schema.schema) properties =
+and record ~strict ~own ~open_ file pointer (l : Schema.schema) properties =
   let required = Option.value ~default:[] l.required in
-  record_of ~strict ~own file pointer ~required
+  record_of ~strict ~own ~open_ file pointer ~required
     ~names:(candidates ~own file pointer)
     properties
 
-and record_of ~strict ~own file pointer ~required ~names properties =
+and record_of ~strict ~own ~open_ file pointer ~required ~names properties =
   if strict then
     List.iter
       (fun name ->
@@ -670,7 +774,7 @@ and record_of ~strict ~own file pointer ~required ~names properties =
   let labels = List.map (fun f -> f.label) fields in
   if List.length (List.sort_uniq compare labels) <> List.length labels then
     refuse file pointer "states two properties that name one label";
-  declare (Record (name, fields));
+  declare (Record (name, fields, open_));
   Named name
 
 (* A property a case table's schema admits with [true]: CaseTable's own. *)
@@ -787,7 +891,7 @@ and variant ~own file pointer members =
               | None ->
                   let payload_name = snake constructor_name in
                   let ty =
-                    record_of ~strict:true ~own file at
+                    record_of ~strict:true ~own ~open_:false file at
                       ~required:(Option.value ~default:[] o.required)
                       ~names:[ payload_name; name ^ "_" ^ payload_name ]
                       (Option.get o.properties)
@@ -844,6 +948,21 @@ and variant ~own file pointer members =
     refuse file (pointer / "oneOf") "has two members that name one constructor";
   declare (Variant (name, cases));
   Named name
+
+(* The service dialect's [oneOf] or [anyOf]: any one of its members, or null
+   when [{ "type": "null" }] is its last. *)
+and union ~own file pointer members =
+  let null = List.exists is_null members in
+  let types =
+    List.concat
+      (List.mapi
+         (fun i m ->
+           if is_null m then []
+           else [ derive ~strict:true ~own file (pointer / string_of_int i) m ])
+         members)
+  in
+  let union = match types with [ one ] -> one | many -> Union many in
+  if null then Nullable union else union
 
 (* A table's schema at its top: a closed object, with CaseTable's admissions
    for a case table and CaseTable's [$comment] for any other. *)
@@ -932,8 +1051,8 @@ let table_schema table file =
               ("requires " ^ name ^ ", which it does not state"))
         own_required;
       ignore
-        (record_of ~strict:true ~own:true file "" ~required ~names:[ "t" ]
-           properties)
+        (record_of ~strict:true ~own:true ~open_:false file "" ~required
+           ~names:[ "t" ] properties)
   | _ -> refuse file "" "must be a closed object: a table is one"
 
 (* Printing. A type's decoder has its name, but a table's own, [decode]. *)
@@ -975,9 +1094,11 @@ let rec type_expr = function
   | Reference -> "Decode.reference"
   | Constant v -> type_expr (constant_type v)
   | List t -> "(" ^ type_expr t ^ ") list"
-  | Map t -> "(string * " ^ type_expr t ^ ") list"
+  | Map (keys, values) ->
+      "(" ^ type_expr keys ^ " * " ^ type_expr values ^ ") list"
   | Nullable t -> "(" ^ type_expr t ^ ") option"
   | Named n -> n
+  | Union _ | All _ -> invalid_arg "the service dialect has no OCaml model"
 
 let rec decoder = function
   | String -> "Decode.string"
@@ -990,19 +1111,23 @@ let rec decoder = function
   | Constant v ->
       Printf.sprintf "(fun cursor -> %s cursor; %s)" (check v) (constant_expr v)
   | List t -> "(Decode.list " ^ decoder t ^ ")"
-  | Map t -> "(Decode.map " ^ decoder t ^ ")"
+  | Map (String, values) -> "(Decode.map " ^ decoder values ^ ")"
+  | Map (keys, values) ->
+      "(Decode.map_by " ^ decoder keys ^ " " ^ decoder values ^ ")"
   | Nullable t -> "(Decode.nullable " ^ decoder t ^ ")"
   | Named n -> decoder_name n
+  | Union _ | All _ -> invalid_arg "the service dialect has no OCaml model"
 
 let strings xs =
   "[" ^ String.concat "; " (List.map (Printf.sprintf "%S") xs) ^ "]"
 
 let print_decl buffer = function
-  | Record (name, []) ->
+  | Record (_, _, true) -> invalid_arg "the service dialect has no OCaml model"
+  | Record (name, [], false) ->
       Printf.bprintf buffer
         "type %s = unit\n\nlet %s = Decode.obj (fun _ -> ())\n\n" name
         (decoder_name name)
-  | Record (name, fields) ->
+  | Record (name, fields, false) ->
       Printf.bprintf buffer "type %s = {\n" name;
       List.iter
         (fun f ->
@@ -1085,7 +1210,13 @@ let print_decl buffer = function
       Printf.bprintf buffer
         "  | _ -> Decode.refuse cursor \"is none of the oneOf's members\"\n\n"
 
-let () =
+let stop_on_refusals () =
+  if !refusals <> [] then (
+    List.iter prerr_endline (List.rev !refusals);
+    Printf.eprintf "%d refusals\n" (List.length !refusals);
+    exit 1)
+
+let ocaml () =
   let tables = Places.tables root in
   let buffer = Buffer.create (1 lsl 20) in
   Buffer.add_string buffer
@@ -1111,10 +1242,7 @@ let () =
         | exception Stop -> None)
       tables
   in
-  if !refusals <> [] then (
-    List.iter prerr_endline (List.rev !refusals);
-    Printf.eprintf "%d refusals\n" (List.length !refusals);
-    exit 1);
+  stop_on_refusals ();
   Buffer.add_string buffer "type t = {\n";
   List.iter
     (fun (_, model) ->
@@ -1146,3 +1274,133 @@ let () =
   Printf.bprintf buffer "  in\n  { %s }\n"
     (String.concat "; " (List.map snd derived));
   print_string (Buffer.contents buffer)
+
+(* TypeScript: each schema's types in a namespace named as its file, every
+   type in PascalCase and the schema's own [T], and each enum's values in
+   order, as [_all] is in OCaml; every service schema's [T] by its name; and
+   each table, as a constant of its type. *)
+let pascal name =
+  String.concat ""
+    (List.map String.capitalize_ascii (String.split_on_char '_' name))
+
+let camel name = String.uncapitalize_ascii (pascal name)
+let quoted text = Yojson.Safe.to_string (`String text)
+
+(* A JSON value as TypeScript types it: what [Json] and [Json_schema] are. *)
+let json_type = "JsonValue"
+
+let rec ts_type = function
+  | String | Reference -> "string"
+  | Int | Float -> "number"
+  | Bool -> "boolean"
+  | Json | Json_schema -> json_type
+  | Constant v -> Yojson.Safe.to_string v
+  | List t -> "(" ^ ts_type t ^ ")[]"
+  | Map (String, values) -> "{ [key: string]: " ^ ts_type values ^ " }"
+  | Map (keys, values) ->
+      "{ [key in " ^ ts_type keys ^ "]?: " ^ ts_type values ^ " }"
+  | Nullable t -> "(" ^ ts_type t ^ " | null)"
+  | Named n -> pascal n
+  | Union types -> "(" ^ String.concat " | " (List.map ts_type types) ^ ")"
+  | All types -> "(" ^ String.concat " & " (List.map ts_type types) ^ ")"
+
+let ts_decl file buffer decl =
+  let name =
+    match decl with Record (n, _, _) | Enum (n, _) | Variant (n, _) -> n
+  in
+  if pascal name = json_type then
+    refuse file "" ("names a type " ^ json_type ^ ", which is JSON's");
+  match decl with
+  | Record (name, fields, open_) ->
+      Printf.bprintf buffer "  export type %s = {\n" (pascal name);
+      List.iter
+        (fun f ->
+          Printf.bprintf buffer "    %s%s: %s;\n" (quoted f.key)
+            (if f.required then "" else "?")
+            (ts_type f.ty))
+        fields;
+      if open_ then Buffer.add_string buffer "    [member: string]: unknown;\n";
+      Buffer.add_string buffer "  };\n"
+  | Enum (name, cases) ->
+      let values = List.map (fun (_, v) -> quoted v) cases in
+      Printf.bprintf buffer "  export type %s = %s;\n" (pascal name)
+        (String.concat " | " values);
+      Printf.bprintf buffer "  export const %s: readonly %s[] = [%s];\n"
+        (camel (name ^ "_all"))
+        (pascal name)
+        (String.concat ", " values)
+  | Variant (name, cases) ->
+      Printf.bprintf buffer "  export type %s = %s;\n" (pascal name)
+        (String.concat " | " (List.map (fun c -> ts_type c.payload) cases))
+
+let typescript () =
+  let buffer = Buffer.create (1 lsl 22) in
+  Buffer.add_string buffer
+    "// Every table's types and value, and every service schema's types, \
+     derived from their schemas by reader/derive.\n\n\
+     export type JsonValue = null | boolean | number | string | JsonValue[] | \
+     { [member: string]: JsonValue };\n\n";
+  let names = Hashtbl.create 128 in
+  let namespace file ty =
+    let name = Filename.remove_extension (Filename.basename file) in
+    (match Hashtbl.find_opt names name with
+    | Some other -> refuse file "" ("is named as " ^ other ^ " is")
+    | None -> Hashtbl.replace names name file);
+    Printf.bprintf buffer "export namespace %s {\n" name;
+    List.iter (ts_decl file buffer) (List.rev !decls);
+    if ty <> Named "t" then
+      Printf.bprintf buffer "  export type T = %s;\n" (ts_type ty);
+    Buffer.add_string buffer "}\n\n";
+    name
+  in
+  let tables =
+    List.filter_map
+      (fun table ->
+        reset ();
+        service := false;
+        let file = Places.schema_of table in
+        match
+          if not (Sys.file_exists (Filename.concat root file)) then
+            refuse table "" ("has no schema, which would be " ^ file);
+          table_schema table file;
+          namespace file (Named "t")
+        with
+        | name -> Some (table, name)
+        | exception Stop -> None)
+      (Places.tables root)
+  in
+  let services =
+    List.filter_map
+      (fun file ->
+        reset ();
+        service := true;
+        (* [T] is the schema's own, whatever its top is. *)
+        Hashtbl.replace taken "t" (file, "");
+        match
+          namespace file
+            (derive ~strict:true ~own:true file "" (schema_at file ""))
+        with
+        | name -> Some name
+        | exception Stop -> None)
+      (Places.service_schemas root)
+  in
+  stop_on_refusals ();
+  Buffer.add_string buffer "export type ServiceSchemas = {\n";
+  List.iter
+    (fun name -> Printf.bprintf buffer "  %s: %s.T;\n" (quoted name) name)
+    services;
+  Buffer.add_string buffer "};\n\n";
+  List.iter
+    (fun (table, name) ->
+      match file_json table with
+      | json ->
+          Printf.bprintf buffer "export const %s: %s.T = %s;\n\n"
+            (camel (Places.model_of table))
+            name
+            (Yojson.Safe.to_string json)
+      | exception Stop -> ())
+    tables;
+  stop_on_refusals ();
+  print_string (Buffer.contents buffer)
+
+let () = match output with Ocaml -> ocaml () | Typescript -> typescript ()
