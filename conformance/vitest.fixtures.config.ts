@@ -1,10 +1,9 @@
 import { defineConfig } from 'vitest/config';
 
-/** Harness-level tests that need only protocol fixtures, the bundled specs, and local Node tools. */
+/** Harness-level tests that need only protocol fixtures and local Node tools. */
 export default defineConfig({
   test: {
     pool: 'forks',
-    globalSetup: ['harness/spec-setup.ts'],
     include: [
       'harness/graph-codec.test.ts',
       'harness/implementations.test.ts',
