@@ -9,7 +9,6 @@
     "url": "https://github.com/xynolog/protocol.git"
   },
   "scripts": {
-    "specs:bundle": "redocly bundle --config specs/redocly.yaml specs/src/openapi.json -o specs/openapi.json && redocly bundle --config specs/redocly.yaml specs/src/archivist/openapi.json -o specs/archivist.openapi.json",
     "specs:lint": "redocly lint --config specs/redocly.yaml specs/src/openapi.json specs/src/archivist/openapi.json"
   },
   "devDependencies": {
