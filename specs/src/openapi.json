@@ -1021,6 +1021,9 @@
       "StorageUriEntry": {
         "$ref": "components/schemas/StorageUriEntry.json"
       },
+      "ArchivistEngines": {
+        "$ref": "components/schemas/ArchivistEngines.json"
+      },
       "Engine": {
         "$ref": "components/schemas/Engine.json"
       },

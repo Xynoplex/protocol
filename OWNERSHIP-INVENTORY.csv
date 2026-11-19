@@ -481,7 +481,6 @@ specs/src/archivist/AnchoredTextExtractedEntry.json,Normative protocol source,xy
 specs/src/archivist/AnchoredTextStamp.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/AnchoredTextWrite.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/ArchivistConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/ArchivistEngines.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/ArchivistEventsResponse.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/ArchivistHealth.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/ArchivistShardCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -563,6 +562,7 @@ specs/src/components/schemas/AnnotationId.json,Normative protocol source,xynolog
 specs/src/components/schemas/AnnotationRemovedPayload.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AnnotationSelector.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AnnotationTarget.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/ArchivistEngines.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AssessingJobParams.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AttributedEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/BeckonFocusEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

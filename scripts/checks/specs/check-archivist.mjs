@@ -70,7 +70,7 @@ if (has('ArchivistConfig') && has('ArchivistEngines')) {
     for (const [name, property] of Object.entries(node.properties ?? {})) {
       const at = path ? `${path}.${name}` : name;
       if (!node.required?.includes(name) && !optionalAllowed) fail(`ArchivistConfig leaves ${at} optional`);
-      const resolved = property.$ref === './ArchivistEngines.json' ? schema('ArchivistEngines') : property;
+      const resolved = property.$ref && resolve(fileOf('ArchivistConfig'), '..', property.$ref) === fileOf('ArchivistEngines') ? schema('ArchivistEngines') : property;
       everythingStated(resolved, at, at === 'engines.jobs' || at === 'engines.jobs.mark' || at === 'engines.actors');
     }
   };

@@ -11,25 +11,25 @@
           "description": "The engine for `mark` jobs of each motivation.",
           "properties": {
             "highlighting": {
-              "$ref": "../components/schemas/Engine.json"
+              "$ref": "./Engine.json"
             },
             "commenting": {
-              "$ref": "../components/schemas/Engine.json"
+              "$ref": "./Engine.json"
             },
             "assessing": {
-              "$ref": "../components/schemas/Engine.json"
+              "$ref": "./Engine.json"
             },
             "linking": {
-              "$ref": "../components/schemas/Engine.json"
+              "$ref": "./Engine.json"
             },
             "tagging": {
-              "$ref": "../components/schemas/Engine.json"
+              "$ref": "./Engine.json"
             }
           },
           "additionalProperties": false
         },
         "yield": {
-          "$ref": "../components/schemas/Engine.json"
+          "$ref": "./Engine.json"
         }
       },
       "additionalProperties": false
@@ -39,10 +39,10 @@
       "description": "The engine each Librarian actor that calls a model asks.",
       "properties": {
         "gatherer": {
-          "$ref": "../components/schemas/Engine.json"
+          "$ref": "./Engine.json"
         },
         "matcher": {
-          "$ref": "../components/schemas/Engine.json"
+          "$ref": "./Engine.json"
         }
       },
       "additionalProperties": false
