@@ -1,0 +1,17 @@
+{
+  "title": "JobPollOptions",
+  "type": "object",
+  "description": "How a job's `pollUntilComplete` asks for the job's status: how long it waits between its asks, and how long it goes on asking. A member left out is client/timing.json's: `jobPollMs` and `jobPollTimeoutMs`.",
+  "properties": {
+    "everyMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How long it waits between one ask and the next, in milliseconds."
+    },
+    "withinMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How long it goes on asking, from its first ask, before it fails as timed out, in milliseconds."
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "title": "ClaimOptions",
+  "type": "object",
+  "description": "What a worker's claiming of jobs is told: the jobs it takes, and how long it waits for what it waits on. A wait left out is client/timing.json's of the same name.",
+  "properties": {
+    "accepts": {
+      "$ref": "../../components/schemas/JobClaimCommand.json#/properties/accepts"
+    },
+    "jobClaimTimeoutMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How long it waits for the answer to one claim, in milliseconds."
+    },
+    "heldJobStallMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How long a held job may show no activity before it is called stalled, in milliseconds."
+    },
+    "heldJobStallCheckMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How often it looks at how long a held job has shown no activity, in milliseconds."
+    },
+    "markCommitTimeoutMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How long it waits for the record to acknowledge a commit of annotations, in milliseconds."
+    }
+  },
+  "required": [
+    "accepts"
+  ]
+}

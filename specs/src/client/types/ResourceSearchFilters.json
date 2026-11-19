@@ -1,0 +1,19 @@
+{
+  "title": "ResourceSearchFilters",
+  "type": "object",
+  "description": "What a text search for resources is told beside its text: MatchResourcesRequest's other members. client/surface.json's `match.resources` cases state what is sent for one left out.",
+  "properties": {
+    "archived": {
+      "$ref": "../../components/schemas/MatchResourcesRequest.json#/properties/archived"
+    },
+    "entityType": {
+      "$ref": "../../components/schemas/MatchResourcesRequest.json#/properties/entityType"
+    },
+    "offset": {
+      "$ref": "../../components/schemas/MatchResourcesRequest.json#/properties/offset"
+    },
+    "limit": {
+      "$ref": "../../components/schemas/MatchResourcesRequest.json#/properties/limit"
+    }
+  }
+}

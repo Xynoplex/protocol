@@ -1,0 +1,22 @@
+{
+  "title": "GatherResourceOptions",
+  "type": "object",
+  "description": "What gathering the context of a resource is told beside the resource: GatherResourceRequestOptions, each member of which a caller may leave out. client/surface.json's `gather.resource` cases state what is sent for one left out.",
+  "properties": {
+    "depth": {
+      "$ref": "../../components/schemas/GatherResourceRequestOptions.json#/properties/depth"
+    },
+    "maxResources": {
+      "$ref": "../../components/schemas/GatherResourceRequestOptions.json#/properties/maxResources"
+    },
+    "includeContent": {
+      "$ref": "../../components/schemas/GatherResourceRequestOptions.json#/properties/includeContent"
+    },
+    "includeSummary": {
+      "$ref": "../../components/schemas/GatherResourceRequestOptions.json#/properties/includeSummary"
+    },
+    "excludeEntityTypes": {
+      "$ref": "../../components/schemas/GatherResourceRequestOptions.json#/properties/excludeEntityTypes"
+    }
+  }
+}

@@ -62,9 +62,21 @@
       "retries": true
     },
     {
+      "why": "502 is a gateway that got no good answer from behind it: the next attempt may",
+      "rule": "job",
+      "status": 502,
+      "retries": true
+    },
+    {
       "why": "503 is a promise to recover",
       "rule": "job",
       "status": 503,
+      "retries": true
+    },
+    {
+      "why": "504 is a promise to recover",
+      "rule": "job",
+      "status": 504,
       "retries": true
     },
     {
@@ -155,6 +167,13 @@
       "why": "a 502 on a GET is retried",
       "rule": "transport",
       "status": 502,
+      "method": "GET",
+      "retries": true
+    },
+    {
+      "why": "a 504 on a GET is retried",
+      "rule": "transport",
+      "status": 504,
       "method": "GET",
       "retries": true
     },

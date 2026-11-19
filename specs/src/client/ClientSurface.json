@@ -261,6 +261,109 @@
                     }
                   ]
                 },
+                "parameters": {
+                  "type": "array",
+                  "description": "What the method takes, in order: each parameter by its name, the name a case's `args` give it, with what it is, and whether a caller must give it. Empty when the method takes nothing.",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "title": "Value",
+                        "type": "object",
+                        "properties": {
+                          "parameter": {
+                            "type": "string",
+                            "pattern": "^[a-z][A-Za-z]*$",
+                            "description": "The parameter, in camelCase."
+                          },
+                          "schema": {
+                            "description": "What the parameter is.",
+                            "oneOf": [
+                              {
+                                "title": "Reference",
+                                "type": "object",
+                                "properties": {
+                                  "$ref": {
+                                    "type": "string",
+                                    "pattern": "^(\\.\\./components/schemas|types)/[A-Z][A-Za-z]*\\.json(#(/properties/[a-z][A-Za-z]*)+)?$",
+                                    "description": "A component, a member within one, or a client type of specs/src/client/types: an object is always one of these, so that it is named."
+                                  }
+                                },
+                                "required": [
+                                  "$ref"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "title": "Scalar",
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "integer",
+                                      "string",
+                                      "boolean"
+                                    ],
+                                    "description": "The value's type, where no component states one."
+                                  },
+                                  "minimum": {
+                                    "type": "integer",
+                                    "description": "The least an integer may be."
+                                  },
+                                  "description": {
+                                    "type": "string",
+                                    "pattern": "\\S",
+                                    "description": "What the value is."
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "description"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "required": {
+                            "type": "boolean",
+                            "description": "Whether a caller must give it. A parameter a caller need not give is left out; null is a value, which a caller gives only where the schema admits it."
+                          }
+                        },
+                        "required": [
+                          "parameter",
+                          "schema",
+                          "required"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "title": "Callback",
+                        "type": "object",
+                        "properties": {
+                          "parameter": {
+                            "type": "string",
+                            "pattern": "^[a-z][A-Za-z]*$",
+                            "description": "The parameter, in camelCase."
+                          },
+                          "calls": {
+                            "$ref": "#/properties/namespaces/items/properties/methods/items/properties/parameters/items/oneOf/0/properties/schema",
+                            "$comment": "What the callback is handed, each time it is called."
+                          },
+                          "required": {
+                            "type": "boolean",
+                            "description": "Whether a caller must give it."
+                          }
+                        },
+                        "required": [
+                          "parameter",
+                          "calls",
+                          "required"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
                 "cases": {
                   "type": "array",
                   "minItems": 1,
@@ -343,6 +446,7 @@
                 "method",
                 "shape",
                 "via",
+                "parameters",
                 "cases"
               ],
               "additionalProperties": false

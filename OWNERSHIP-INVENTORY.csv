@@ -429,6 +429,7 @@ reader/bin/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protoc
 reader/bin/main.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/derive.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/lib/client_surface.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/spec.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -514,15 +515,22 @@ specs/src/client/testing.json,Normative protocol source,xynolog/protocol,Compati
 specs/src/client/timing.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/AnchorMethod.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/BeginAuthorizationOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/ClaimOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/CreateFromTokenOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/DeviceCode.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/FrameRefusalReason.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/GatherResourceOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/IssuedTokens.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/JobEvent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/JobPollOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/MatchQuality.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/MatchSearchOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/PdfCoordinate.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/PendingAnnotation.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/PutBinaryRequest.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/QuotedText.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/ReconciledSpan.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/ResourceSearchFilters.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/SearchState.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/TextSpan.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/UploadProgress.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
