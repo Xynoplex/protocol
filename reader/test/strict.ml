@@ -76,5 +76,13 @@ let () =
           Alcotest.test_case "a missing envelope" `Quick
             (refuses Tables.Retry_cases.decode {|{"rules":[],"retryAfter":[]}|}
                {|x.json: /: lacks the member "$comment"|});
+          Alcotest.test_case "a retry set without its verdict on no response"
+            `Quick
+            (refuses Tables.Retry_rules.decode
+               {|{"$comment":"c","boot":{"statuses":[503]},
+                  "job":{"statuses":[429],"statusFrom":500},
+                  "transport":{"statuses":[503],"idempotentMethods":["GET"]},
+                  "refresh":{"statuses":[429],"statusFrom":500}}|}
+               {|x.json: /refresh: lacks the member "noResponse"|});
         ] );
     ]
