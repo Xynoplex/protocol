@@ -516,10 +516,11 @@ let load root =
     Identifiers_rules.refusals ~read_json files tables.identifiers_kinds
   in
   let client_types_rules = Client_types_rules.refusals ~read_json in
+  let protocol_rules = Protocol_rules.refusals ~read_json in
   let census =
     census @ stray_case_tables @ orphan_schemas @ validation @ public_api
     @ client_surface @ reply_bounds @ offset_units @ registry_rules @ jobs_rules
-    @ archivist_rules @ identifiers_rules @ client_types_rules
+    @ archivist_rules @ identifiers_rules @ client_types_rules @ protocol_rules
   in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->
