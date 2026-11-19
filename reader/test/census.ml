@@ -259,6 +259,31 @@ let () =
     "/queries/0/value/$ref: names \
      https://xynolog.org/protocol/DeviceCode.json, \
      client/types/DeviceCode.json, which is not a component";
+  let control_id =
+    "does not match ^https://xynolog\\.org/protocol/[A-Z][A-Za-z]*\\.json$"
+  in
+  changed specs ~why:"has a control method name its params by path"
+    "control/methods.json" "methods/0/params"
+    (fun _ -> `String "./AboutParams.json")
+    ("/methods/0/params: " ^ control_id);
+  changed specs ~why:"has a control notification name its params by name"
+    "control/methods.json" "notifications/0/params"
+    (fun _ -> `String "Progress")
+    ("/notifications/0/params: " ^ control_id);
+  changed specs ~why:"has a control method name a node within a schema"
+    "control/methods.json" "methods/0/result"
+    (fun _ -> `String (id "AboutResult.json#/properties/version"))
+    ("/methods/0/result: " ^ control_id);
+  changed specs ~why:"has control/methods.json name an $id no schema states"
+    "control/methods.json" "errorData"
+    (fun _ -> `String (id "Nowhere.json"))
+    "/errorData: names https://xynolog.org/protocol/Nowhere.json, an $id no \
+     JSON Schema states";
+  changed specs ~why:"has control/methods.json name a schema outside control/"
+    "control/methods.json" "apiVersion"
+    (fun _ -> `String (id "JobId.json"))
+    "/apiVersion: names https://xynolog.org/protocol/JobId.json, \
+     components/schemas/JobId.json, which is not a schema of control/";
   changed specs ~why:"names a schema by its path"
     "components/schemas/JobCancelRequest.json" "properties/jobId/$ref"
     (fun _ -> `String "./JobId.json")
@@ -1006,5 +1031,6 @@ let () =
      whose arguments are not its method's parameters, a reply's list neither \
      bounded nor named, an offset whose unit is unsaid, a job protocol that \
      disagrees with itself, an Archivist stated short, an id nothing checks, a \
-     client type that disagrees with what restates it, or a protocol fact left \
-     to the code; and it reads each value as the type its schema states"
+     client type that disagrees with what restates it, a control schema named \
+     by other than its $id, or a protocol fact left to the code; and it reads \
+     each value as the type its schema states"

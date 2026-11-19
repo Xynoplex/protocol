@@ -699,6 +699,7 @@ let load root =
   in
   let client_types_rules = Client_types_rules.refusals ~ids ~files ~read_json in
   let protocol_rules = Protocol_rules.refusals ~ids ~read_json in
+  let control_rules = Control_rules.refusals ~ids tables.control_methods in
   let path_item_names =
     List.filter_map
       (fun (file, item) ->
@@ -811,7 +812,7 @@ let load root =
     @ component_files @ listed_names @ shared_responses @ empty_services
     @ validation @ public_api @ client_surface @ reply_bounds @ offset_units
     @ registry_rules @ jobs_rules @ archivist_rules @ identifiers_rules
-    @ client_types_rules @ protocol_rules
+    @ client_types_rules @ protocol_rules @ control_rules
   in
   match (schemas, census) with
   | Ok schemas, [] ->

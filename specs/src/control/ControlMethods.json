@@ -9,8 +9,8 @@
     },
     "apiVersion": {
       "type": "string",
-      "pattern": "^\\./[A-Z][A-Za-z]*\\.json$",
-      "description": "A schema of control/, by its path from there."
+      "pattern": "^https://xynolog\\.org/protocol/[A-Z][A-Za-z]*\\.json$",
+      "description": "A schema of control/, by its $id."
     },
     "errorData": {
       "$ref": "#/properties/apiVersion"
