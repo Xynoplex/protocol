@@ -3,14 +3,30 @@
   "elements": {
     "score": {
       "type": "object",
-      "properties": { "candidate": { "type": "number" }, "score": { "type": "number" } },
-      "required": ["candidate", "score"],
+      "properties": {
+        "candidate": {
+          "type": "number"
+        },
+        "score": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "candidate",
+        "score"
+      ],
       "additionalProperties": false
     },
     "reference-suggestions": {
       "type": "object",
-      "properties": { "suggestion": { "type": "string" } },
-      "required": ["suggestion"],
+      "properties": {
+        "suggestion": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "suggestion"
+      ],
       "additionalProperties": false
     }
   },
@@ -25,7 +41,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -42,9 +62,26 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-zeus", "name": "Zeus", "entityTypes": ["Person", "Deity"] },
-          { "id": "res-olympus", "name": "Mount Olympus", "entityTypes": ["Place"] },
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-zeus",
+            "name": "Zeus",
+            "entityTypes": [
+              "Person",
+              "Deity"
+            ]
+          },
+          {
+            "id": "res-olympus",
+            "name": "Mount Olympus",
+            "entityTypes": [
+              "Place"
+            ]
+          },
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"the thunderer\"\nSearch term: \"the thunderer\"\nAnnotation motivation: linking\nSource resource: Greek Myths\n\nCandidates:\n1. \"Zeus\" (id: res-zeus, types: Person, Deity)\n2. \"Mount Olympus\" (id: res-olympus, types: Place)\n3. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -61,7 +98,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"king of the gods\"\nSearch term: \"king of the gods\"\nAnnotation motivation: linking\nSource resource: Greek Myths\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -79,7 +120,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus — king of the gods\"\nSearch term: \"Zeus king of the gods\"\nAnnotation motivation: linking\nSource resource: Greek Myths\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -97,7 +142,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: commenting\nSource resource: Greek Myths\nComment: Is this the Zeus of Hesiod?\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -115,7 +164,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: assessing\nSource resource: Greek Myths\nAssessment: The dating given here is doubtful.\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -132,7 +185,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: commenting\nSource resource: Greek Myths\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -150,7 +207,11 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -164,10 +225,17 @@
         "selected": "Zeus",
         "motivation": "linking",
         "source": "Greek Myths",
-        "entityTypes": ["Person", "Deity"],
+        "entityTypes": [
+          "Person",
+          "Deity"
+        ],
         "connected": [],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\nAnnotation entity types: Person, Deity\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -182,9 +250,16 @@
         "motivation": "linking",
         "source": "Greek Myths",
         "entityTypes": [],
-        "connected": ["Mount Olympus", "Hera"],
+        "connected": [
+          "Mount Olympus",
+          "Hera"
+        ],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\nConnected resources: Mount Olympus, Hera\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -199,9 +274,20 @@
         "motivation": "linking",
         "source": "Greek Myths",
         "entityTypes": [],
-        "connected": ["Hera", "Poseidon", "Hades", "Demeter", "Hestia", "Athena"],
+        "connected": [
+          "Hera",
+          "Poseidon",
+          "Hades",
+          "Demeter",
+          "Hestia",
+          "Athena"
+        ],
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\nConnected resources: Hera, Poseidon, Hades, Demeter, Hestia\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -219,7 +305,11 @@
         "connected": [],
         "relationship": "The passage names a god. A resource about that god would resolve it.",
         "candidates": [
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\nRelationship context: The passage names a god. A resource about that god would resolve it.\n\nCandidates:\n1. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -235,13 +325,35 @@
         "motivation": "commenting",
         "source": "Greek Myths",
         "body": "Which Zeus is meant?",
-        "entityTypes": ["Deity"],
-        "connected": ["Hera", "Mount Olympus"],
+        "entityTypes": [
+          "Deity"
+        ],
+        "connected": [
+          "Hera",
+          "Mount Olympus"
+        ],
         "relationship": "The passage names a god. A resource about that god would resolve it.",
         "candidates": [
-          { "id": "res-zeus", "name": "Zeus", "entityTypes": ["Deity", "Person"] },
-          { "id": "res-crete", "name": "Crete", "entityTypes": ["Place"] },
-          { "id": "res-theogony", "name": "Theogony", "entityTypes": [] }
+          {
+            "id": "res-zeus",
+            "name": "Zeus",
+            "entityTypes": [
+              "Deity",
+              "Person"
+            ]
+          },
+          {
+            "id": "res-crete",
+            "name": "Crete",
+            "entityTypes": [
+              "Place"
+            ]
+          },
+          {
+            "id": "res-theogony",
+            "name": "Theogony",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus — king of the gods\"\nSearch term: \"Zeus king of the gods\"\nAnnotation motivation: commenting\nSource resource: Greek Myths\nComment: Which Zeus is meant?\nAnnotation entity types: Deity\nConnected resources: Hera, Mount Olympus\nRelationship context: The passage names a god. A resource about that god would resolve it.\n\nCandidates:\n1. \"Zeus\" (id: res-zeus, types: Deity, Person)\n2. \"Crete\" (id: res-crete, types: Place)\n3. \"Theogony\" (id: res-theogony, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -258,27 +370,111 @@
         "entityTypes": [],
         "connected": [],
         "candidates": [
-          { "id": "cand-1", "name": "Candidate 1", "entityTypes": [] },
-          { "id": "cand-2", "name": "Candidate 2", "entityTypes": [] },
-          { "id": "cand-3", "name": "Candidate 3", "entityTypes": [] },
-          { "id": "cand-4", "name": "Candidate 4", "entityTypes": [] },
-          { "id": "cand-5", "name": "Candidate 5", "entityTypes": [] },
-          { "id": "cand-6", "name": "Candidate 6", "entityTypes": [] },
-          { "id": "cand-7", "name": "Candidate 7", "entityTypes": [] },
-          { "id": "cand-8", "name": "Candidate 8", "entityTypes": [] },
-          { "id": "cand-9", "name": "Candidate 9", "entityTypes": [] },
-          { "id": "cand-10", "name": "Candidate 10", "entityTypes": [] },
-          { "id": "cand-11", "name": "Candidate 11", "entityTypes": [] },
-          { "id": "cand-12", "name": "Candidate 12", "entityTypes": [] },
-          { "id": "cand-13", "name": "Candidate 13", "entityTypes": [] },
-          { "id": "cand-14", "name": "Candidate 14", "entityTypes": [] },
-          { "id": "cand-15", "name": "Candidate 15", "entityTypes": [] },
-          { "id": "cand-16", "name": "Candidate 16", "entityTypes": [] },
-          { "id": "cand-17", "name": "Candidate 17", "entityTypes": [] },
-          { "id": "cand-18", "name": "Candidate 18", "entityTypes": [] },
-          { "id": "cand-19", "name": "Candidate 19", "entityTypes": [] },
-          { "id": "cand-20", "name": "Candidate 20", "entityTypes": [] },
-          { "id": "cand-21", "name": "Candidate 21", "entityTypes": [] }
+          {
+            "id": "cand-1",
+            "name": "Candidate 1",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-2",
+            "name": "Candidate 2",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-3",
+            "name": "Candidate 3",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-4",
+            "name": "Candidate 4",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-5",
+            "name": "Candidate 5",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-6",
+            "name": "Candidate 6",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-7",
+            "name": "Candidate 7",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-8",
+            "name": "Candidate 8",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-9",
+            "name": "Candidate 9",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-10",
+            "name": "Candidate 10",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-11",
+            "name": "Candidate 11",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-12",
+            "name": "Candidate 12",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-13",
+            "name": "Candidate 13",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-14",
+            "name": "Candidate 14",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-15",
+            "name": "Candidate 15",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-16",
+            "name": "Candidate 16",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-17",
+            "name": "Candidate 17",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-18",
+            "name": "Candidate 18",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-19",
+            "name": "Candidate 19",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-20",
+            "name": "Candidate 20",
+            "entityTypes": []
+          },
+          {
+            "id": "cand-21",
+            "name": "Candidate 21",
+            "entityTypes": []
+          }
         ]
       },
       "text": "Given this passage and context, score each candidate resource's semantic relevance on a scale of 0.0 to 1.0.\n\nPassage: \"Zeus\"\nSearch term: \"Zeus\"\nAnnotation motivation: linking\nSource resource: Greek Myths\n\nCandidates:\n1. \"Candidate 1\" (id: cand-1, types: none)\n2. \"Candidate 2\" (id: cand-2, types: none)\n3. \"Candidate 3\" (id: cand-3, types: none)\n4. \"Candidate 4\" (id: cand-4, types: none)\n5. \"Candidate 5\" (id: cand-5, types: none)\n6. \"Candidate 6\" (id: cand-6, types: none)\n7. \"Candidate 7\" (id: cand-7, types: none)\n8. \"Candidate 8\" (id: cand-8, types: none)\n9. \"Candidate 9\" (id: cand-9, types: none)\n10. \"Candidate 10\" (id: cand-10, types: none)\n11. \"Candidate 11\" (id: cand-11, types: none)\n12. \"Candidate 12\" (id: cand-12, types: none)\n13. \"Candidate 13\" (id: cand-13, types: none)\n14. \"Candidate 14\" (id: cand-14, types: none)\n15. \"Candidate 15\" (id: cand-15, types: none)\n16. \"Candidate 16\" (id: cand-16, types: none)\n17. \"Candidate 17\" (id: cand-17, types: none)\n18. \"Candidate 18\" (id: cand-18, types: none)\n19. \"Candidate 19\" (id: cand-19, types: none)\n20. \"Candidate 20\" (id: cand-20, types: none)\n\nAnswer with one element for each candidate: its number as `candidate` and its score as `score`.",
@@ -304,7 +500,10 @@
       "prompt": "relationship",
       "from": {
         "passage": "the treaty of 1804",
-        "connected": ["Black Hawk", "Treaty of St. Louis"],
+        "connected": [
+          "Black Hawk",
+          "Treaty of St. Louis"
+        ],
         "citedBy": [],
         "siblingEntityTypes": [],
         "entityTypes": []
@@ -319,7 +518,10 @@
       "from": {
         "passage": "the treaty of 1804",
         "connected": [],
-        "citedBy": ["Sauk History", "Illinois Territory"],
+        "citedBy": [
+          "Sauk History",
+          "Illinois Territory"
+        ],
         "siblingEntityTypes": [],
         "entityTypes": []
       },
@@ -334,7 +536,10 @@
         "passage": "the treaty of 1804",
         "connected": [],
         "citedBy": [],
-        "siblingEntityTypes": ["Person", "Place"],
+        "siblingEntityTypes": [
+          "Person",
+          "Place"
+        ],
         "entityTypes": []
       },
       "text": "Given this annotation passage and its knowledge graph neighborhood, write a 1-2 sentence summary of how this passage relates to its surrounding resources and what kind of resource would best resolve this reference.\n\nPassage: \"the treaty of 1804\"\nSibling entity types: Person, Place\n\nSummary:",
@@ -349,7 +554,10 @@
         "connected": [],
         "citedBy": [],
         "siblingEntityTypes": [],
-        "entityTypes": ["Event", "Treaty"]
+        "entityTypes": [
+          "Event",
+          "Treaty"
+        ]
       },
       "text": "Given this annotation passage and its knowledge graph neighborhood, write a 1-2 sentence summary of how this passage relates to its surrounding resources and what kind of resource would best resolve this reference.\n\nPassage: \"the treaty of 1804\"\nAnnotation entity types: Event, Treaty\n\nSummary:",
       "maxTokens": 150,
@@ -360,10 +568,22 @@
       "prompt": "relationship",
       "from": {
         "passage": "the treaty of 1804",
-        "connected": ["Black Hawk", "Treaty of St. Louis"],
-        "citedBy": ["Sauk History", "Illinois Territory"],
-        "siblingEntityTypes": ["Person", "Place"],
-        "entityTypes": ["Event", "Treaty"]
+        "connected": [
+          "Black Hawk",
+          "Treaty of St. Louis"
+        ],
+        "citedBy": [
+          "Sauk History",
+          "Illinois Territory"
+        ],
+        "siblingEntityTypes": [
+          "Person",
+          "Place"
+        ],
+        "entityTypes": [
+          "Event",
+          "Treaty"
+        ]
       },
       "text": "Given this annotation passage and its knowledge graph neighborhood, write a 1-2 sentence summary of how this passage relates to its surrounding resources and what kind of resource would best resolve this reference.\n\nPassage: \"the treaty of 1804\"\nConnected resources: Black Hawk, Treaty of St. Louis\nCited by: Sauk History, Illinois Territory\nSibling entity types: Person, Place\nAnnotation entity types: Event, Treaty\n\nSummary:",
       "maxTokens": 150,
@@ -374,7 +594,19 @@
       "prompt": "relationship",
       "from": {
         "passage": "the treaty of 1804",
-        "connected": ["Peer 1", "Peer 2", "Peer 3", "Peer 4", "Peer 5", "Peer 6", "Peer 7", "Peer 8", "Peer 9", "Peer 10", "Peer 11"],
+        "connected": [
+          "Peer 1",
+          "Peer 2",
+          "Peer 3",
+          "Peer 4",
+          "Peer 5",
+          "Peer 6",
+          "Peer 7",
+          "Peer 8",
+          "Peer 9",
+          "Peer 10",
+          "Peer 11"
+        ],
         "citedBy": [],
         "siblingEntityTypes": [],
         "entityTypes": []
@@ -389,7 +621,14 @@
       "from": {
         "passage": "the treaty of 1804",
         "connected": [],
-        "citedBy": ["Citer 1", "Citer 2", "Citer 3", "Citer 4", "Citer 5", "Citer 6"],
+        "citedBy": [
+          "Citer 1",
+          "Citer 2",
+          "Citer 3",
+          "Citer 4",
+          "Citer 5",
+          "Citer 6"
+        ],
         "siblingEntityTypes": [],
         "entityTypes": []
       },
@@ -404,7 +643,19 @@
         "passage": "the treaty of 1804",
         "connected": [],
         "citedBy": [],
-        "siblingEntityTypes": ["Person", "Place", "Event", "Treaty", "Tribe", "River", "Fort", "Law", "Date", "Army", "Town"],
+        "siblingEntityTypes": [
+          "Person",
+          "Place",
+          "Event",
+          "Treaty",
+          "Tribe",
+          "River",
+          "Fort",
+          "Law",
+          "Date",
+          "Army",
+          "Town"
+        ],
         "entityTypes": []
       },
       "text": "Given this annotation passage and its knowledge graph neighborhood, write a 1-2 sentence summary of how this passage relates to its surrounding resources and what kind of resource would best resolve this reference.\n\nPassage: \"the treaty of 1804\"\nSibling entity types: Person, Place, Event, Treaty, Tribe, River, Fort, Law, Date, Army\n\nSummary:",
@@ -419,7 +670,19 @@
         "connected": [],
         "citedBy": [],
         "siblingEntityTypes": [],
-        "entityTypes": ["Person", "Place", "Event", "Treaty", "Tribe", "River", "Fort", "Law", "Date", "Army", "Town"]
+        "entityTypes": [
+          "Person",
+          "Place",
+          "Event",
+          "Treaty",
+          "Tribe",
+          "River",
+          "Fort",
+          "Law",
+          "Date",
+          "Army",
+          "Town"
+        ]
       },
       "text": "Given this annotation passage and its knowledge graph neighborhood, write a 1-2 sentence summary of how this passage relates to its surrounding resources and what kind of resource would best resolve this reference.\n\nPassage: \"the treaty of 1804\"\nAnnotation entity types: Person, Place, Event, Treaty, Tribe, River, Fort, Law, Date, Army, Town\n\nSummary:",
       "maxTokens": 150,
@@ -431,7 +694,10 @@
       "from": {
         "name": "Black Hawk War",
         "content": "The Black Hawk War was fought in 1832 between the United States and a band led by Black Hawk.",
-        "entityTypes": ["Event", "War"]
+        "entityTypes": [
+          "Event",
+          "War"
+        ]
       },
       "text": "Create a brief, intelligent summary of this resource titled \"Black Hawk War\".\nKey entity types: Event, War\n\nResource content:\nThe Black Hawk War was fought in 1832 between the United States and a band led by Black Hawk.\n\nWrite a 2-3 sentence summary that captures the key points and would help someone understand what this resource contains.",
       "maxTokens": 150,
@@ -454,12 +720,23 @@
       "prompt": "resource-summary",
       "from": {
         "name": "Black Hawk War",
-        "content": [{ "repeat": "a", "times": 1999 }, "B"],
-        "entityTypes": ["Event"]
+        "content": [
+          {
+            "repeat": "a",
+            "times": 1999
+          },
+          "B"
+        ],
+        "entityTypes": [
+          "Event"
+        ]
       },
       "text": [
         "Create a brief, intelligent summary of this resource titled \"Black Hawk War\".\nKey entity types: Event\n\nResource content:\n",
-        { "repeat": "a", "times": 1999 },
+        {
+          "repeat": "a",
+          "times": 1999
+        },
         "B\n\nWrite a 2-3 sentence summary that captures the key points and would help someone understand what this resource contains."
       ],
       "maxTokens": 150,
@@ -470,12 +747,23 @@
       "prompt": "resource-summary",
       "from": {
         "name": "Black Hawk War",
-        "content": [{ "repeat": "a", "times": 1999 }, "BC"],
-        "entityTypes": ["Event"]
+        "content": [
+          {
+            "repeat": "a",
+            "times": 1999
+          },
+          "BC"
+        ],
+        "entityTypes": [
+          "Event"
+        ]
       },
       "text": [
         "Create a brief, intelligent summary of this resource titled \"Black Hawk War\".\nKey entity types: Event\n\nResource content:\n",
-        { "repeat": "a", "times": 1999 },
+        {
+          "repeat": "a",
+          "times": 1999
+        },
         "B...\n\nWrite a 2-3 sentence summary that captures the key points and would help someone understand what this resource contains."
       ],
       "maxTokens": 150,
@@ -552,11 +840,20 @@
       "prompt": "reference-suggestions",
       "from": {
         "title": "Black Hawk",
-        "stub": [{ "repeat": "s", "times": 499 }, "T"]
+        "stub": [
+          {
+            "repeat": "s",
+            "times": 499
+          },
+          "T"
+        ]
       },
       "text": [
         "For a reference titled \"Black Hawk\" with current stub: \"",
-        { "repeat": "s", "times": 499 },
+        {
+          "repeat": "s",
+          "times": 499
+        },
         "T\", suggest 3 specific, actionable next steps or related topics to explore.\n\nAnswer with at most three elements, each one suggestion."
       ],
       "maxTokens": 200,
@@ -567,11 +864,20 @@
       "prompt": "reference-suggestions",
       "from": {
         "title": "Black Hawk",
-        "stub": [{ "repeat": "s", "times": 499 }, "TU"]
+        "stub": [
+          {
+            "repeat": "s",
+            "times": 499
+          },
+          "TU"
+        ]
       },
       "text": [
         "For a reference titled \"Black Hawk\" with current stub: \"",
-        { "repeat": "s", "times": 499 },
+        {
+          "repeat": "s",
+          "times": 499
+        },
         "T\", suggest 3 specific, actionable next steps or related topics to explore.\n\nAnswer with at most three elements, each one suggestion."
       ],
       "maxTokens": 200,
@@ -585,7 +891,10 @@
         "before": "In the spring he crossed the river, breaking ",
         "selected": "the treaty of 1804",
         "after": ", and the militia was called out.",
-        "entityTypes": ["Event", "Treaty"]
+        "entityTypes": [
+          "Event",
+          "Treaty"
+        ]
       },
       "text": "Summarize this text in context:\n\nContext before: \"In the spring he crossed the river, breaking \"\nSelected exact: \"the treaty of 1804\"\nContext after: \", and the militia was called out.\"\n\nResource: Black Hawk War\nEntity types: Event, Treaty",
       "maxTokens": 500,
@@ -613,7 +922,9 @@
         "before": "",
         "selected": "the treaty of 1804",
         "after": "",
-        "entityTypes": ["Treaty"]
+        "entityTypes": [
+          "Treaty"
+        ]
       },
       "text": "Summarize this text in context:\n\nContext before: \"\"\nSelected exact: \"the treaty of 1804\"\nContext after: \"\"\n\nResource: Black Hawk War\nEntity types: Treaty",
       "maxTokens": 500,
@@ -624,16 +935,34 @@
       "prompt": "annotation-summary",
       "from": {
         "resource": "Black Hawk War",
-        "before": [{ "repeat": "b", "times": 200 }],
+        "before": [
+          {
+            "repeat": "b",
+            "times": 200
+          }
+        ],
         "selected": "the treaty of 1804",
-        "after": [{ "repeat": "c", "times": 200 }],
-        "entityTypes": ["Treaty"]
+        "after": [
+          {
+            "repeat": "c",
+            "times": 200
+          }
+        ],
+        "entityTypes": [
+          "Treaty"
+        ]
       },
       "text": [
         "Summarize this text in context:\n\nContext before: \"",
-        { "repeat": "b", "times": 200 },
+        {
+          "repeat": "b",
+          "times": 200
+        },
         "\"\nSelected exact: \"the treaty of 1804\"\nContext after: \"",
-        { "repeat": "c", "times": 200 },
+        {
+          "repeat": "c",
+          "times": 200
+        },
         "\"\n\nResource: Black Hawk War\nEntity types: Treaty"
       ],
       "maxTokens": 500,
@@ -644,16 +973,36 @@
       "prompt": "annotation-summary",
       "from": {
         "resource": "Black Hawk War",
-        "before": ["a", { "repeat": "b", "times": 200 }],
+        "before": [
+          "a",
+          {
+            "repeat": "b",
+            "times": 200
+          }
+        ],
         "selected": "the treaty of 1804",
-        "after": [{ "repeat": "c", "times": 200 }, "d"],
-        "entityTypes": ["Treaty"]
+        "after": [
+          {
+            "repeat": "c",
+            "times": 200
+          },
+          "d"
+        ],
+        "entityTypes": [
+          "Treaty"
+        ]
       },
       "text": [
         "Summarize this text in context:\n\nContext before: \"",
-        { "repeat": "b", "times": 200 },
+        {
+          "repeat": "b",
+          "times": 200
+        },
         "\"\nSelected exact: \"the treaty of 1804\"\nContext after: \"",
-        { "repeat": "c", "times": 200 },
+        {
+          "repeat": "c",
+          "times": 200
+        },
         "\"\n\nResource: Black Hawk War\nEntity types: Treaty"
       ],
       "maxTokens": 500,
@@ -664,16 +1013,42 @@
       "prompt": "annotation-summary",
       "from": {
         "resource": "Black Hawk War",
-        "before": [{ "repeat": "a", "times": 100 }, { "repeat": "b", "times": 200 }],
+        "before": [
+          {
+            "repeat": "a",
+            "times": 100
+          },
+          {
+            "repeat": "b",
+            "times": 200
+          }
+        ],
         "selected": "the treaty of 1804",
-        "after": [{ "repeat": "c", "times": 200 }, { "repeat": "d", "times": 100 }],
-        "entityTypes": ["Treaty"]
+        "after": [
+          {
+            "repeat": "c",
+            "times": 200
+          },
+          {
+            "repeat": "d",
+            "times": 100
+          }
+        ],
+        "entityTypes": [
+          "Treaty"
+        ]
       },
       "text": [
         "Summarize this text in context:\n\nContext before: \"",
-        { "repeat": "b", "times": 200 },
+        {
+          "repeat": "b",
+          "times": 200
+        },
         "\"\nSelected exact: \"the treaty of 1804\"\nContext after: \"",
-        { "repeat": "c", "times": 200 },
+        {
+          "repeat": "c",
+          "times": 200
+        },
         "\"\n\nResource: Black Hawk War\nEntity types: Treaty"
       ],
       "maxTokens": 500,

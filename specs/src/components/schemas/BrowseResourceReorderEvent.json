@@ -9,5 +9,8 @@
       "type": "integer"
     }
   },
-  "required": ["oldIndex", "newIndex"]
+  "required": [
+    "oldIndex",
+    "newIndex"
+  ]
 }

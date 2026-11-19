@@ -20,6 +20,10 @@
       "description": "The generated password, returned once so the operator can share it with the user. Absent when the operator supplied the password."
     }
   },
-  "required": ["email", "identity", "created"],
+  "required": [
+    "email",
+    "identity",
+    "created"
+  ],
   "additionalProperties": false
 }

@@ -154,8 +154,12 @@
                       },
                       "context": {
                         "anyOf": [
-                          { "$ref": "#/properties/cases/items/oneOf/0/properties/around/oneOf/0/properties/context" },
-                          { "type": "null" }
+                          {
+                            "$ref": "#/properties/cases/items/oneOf/0/properties/around/oneOf/0/properties/context"
+                          },
+                          {
+                            "type": "null"
+                          }
                         ]
                       }
                     },

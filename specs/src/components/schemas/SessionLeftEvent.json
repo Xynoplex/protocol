@@ -11,5 +11,8 @@
       "description": "The connectionId announced by the matching session:joined."
     }
   },
-  "required": ["participant", "connectionId"]
+  "required": [
+    "participant",
+    "connectionId"
+  ]
 }

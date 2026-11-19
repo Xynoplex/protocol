@@ -4,7 +4,10 @@
     "title": "SessionEndReason",
     "type": "string",
     "description": "Why a session ended: `expired`, the issuer refused to renew its token; `refused`, the gateway refused a token its issuer had just issued.",
-    "enum": ["expired", "refused"]
+    "enum": [
+      "expired",
+      "refused"
+    ]
   },
   "refreshSchedule": [
     {

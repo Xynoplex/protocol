@@ -142,8 +142,12 @@
           },
           "context": {
             "anyOf": [
-              { "$ref": "../components/schemas/GatheredContext.json" },
-              { "type": "null" }
+              {
+                "$ref": "../components/schemas/GatheredContext.json"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
           "resourceIds": {

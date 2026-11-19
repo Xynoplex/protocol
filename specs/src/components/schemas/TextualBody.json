@@ -3,7 +3,9 @@
   "properties": {
     "type": {
       "type": "string",
-      "enum": ["TextualBody"]
+      "enum": [
+        "TextualBody"
+      ]
     },
     "value": {
       "type": "string",

@@ -9,8 +9,13 @@
     "items": {
       "type": "array",
       "description": "Positioned runs indexing `text`, roughly one per word.",
-      "items": { "$ref": "./PdfTextItem.json" }
+      "items": {
+        "$ref": "./PdfTextItem.json"
+      }
     }
   },
-  "required": ["text", "items"]
+  "required": [
+    "text",
+    "items"
+  ]
 }

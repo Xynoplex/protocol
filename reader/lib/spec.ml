@@ -515,6 +515,11 @@ let load root =
   let registry_rules = Registry_rules.refusals ~read_json tables.bus_registry in
   let jobs_rules = Jobs_rules.refusals ~read_json in
   let archivist_rules = Archivist_rules.refusals ~read_json in
+  let identifiers_rules =
+    Identifiers_rules.refusals ~read_json files tables.identifiers_kinds
+  in
+  let client_types_rules = Client_types_rules.refusals ~read_json in
+  let protocol_rules = Protocol_rules.refusals ~read_json in
   let services = Places.service_schemas root in
   let empty_services =
     List.filter_map
@@ -534,7 +539,8 @@ let load root =
   let census =
     census @ stray_case_tables @ orphan_schemas @ empty_services @ validation
     @ public_api @ client_surface @ reply_bounds @ offset_units @ registry_rules
-    @ jobs_rules @ archivist_rules
+    @ jobs_rules @ archivist_rules @ identifiers_rules @ client_types_rules
+    @ protocol_rules
   in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->

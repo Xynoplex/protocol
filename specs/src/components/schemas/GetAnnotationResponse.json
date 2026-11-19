@@ -6,14 +6,22 @@
     },
     "resource": {
       "anyOf": [
-        { "$ref": "./ResourceDescriptor.json" },
-        { "type": "null" }
+        {
+          "$ref": "./ResourceDescriptor.json"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "resolvedResource": {
       "anyOf": [
-        { "$ref": "./ResourceDescriptor.json" },
-        { "type": "null" }
+        {
+          "$ref": "./ResourceDescriptor.json"
+        },
+        {
+          "type": "null"
+        }
       ]
     }
   },

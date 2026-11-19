@@ -2,7 +2,12 @@
   "type": "object",
   "description": "Payload for yield:representation-removed domain event",
   "properties": {
-    "checksum": { "type": "string", "description": "Checksum of the representation to remove" }
+    "checksum": {
+      "type": "string",
+      "description": "Checksum of the representation to remove"
+    }
   },
-  "required": ["checksum"]
+  "required": [
+    "checksum"
+  ]
 }

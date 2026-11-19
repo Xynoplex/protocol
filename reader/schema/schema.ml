@@ -446,7 +446,13 @@ and schema cursor =
       let unique_items = Decode.optional o "uniqueItems" Decode.bool in
       let min_length = Decode.optional o "minLength" Decode.int in
       let max_length = Decode.optional o "maxLength" Decode.int in
-      let pattern = Decode.optional o "pattern" Decode.string in
+      let pattern =
+        Decode.optional o "pattern" (fun cursor ->
+            let pattern = Decode.string cursor in
+            match Pattern.refusal pattern with
+            | None -> pattern
+            | Some why -> Decode.refuse cursor ("the pattern " ^ why))
+      in
       let minimum = Decode.optional o "minimum" Decode.number in
       let maximum = Decode.optional o "maximum" Decode.number in
       let all_of = Decode.optional o "allOf" (Decode.non_empty_list decode) in

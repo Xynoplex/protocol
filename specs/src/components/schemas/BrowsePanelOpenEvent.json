@@ -12,5 +12,7 @@
       "$ref": "./Motivation.json"
     }
   },
-  "required": ["panel"]
+  "required": [
+    "panel"
+  ]
 }

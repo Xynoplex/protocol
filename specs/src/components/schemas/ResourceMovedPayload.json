@@ -2,8 +2,17 @@
   "type": "object",
   "description": "Payload for yield:moved domain event",
   "properties": {
-    "fromUri": { "type": "string", "description": "Previous file:// URI" },
-    "toUri": { "type": "string", "description": "New file:// URI" }
+    "fromUri": {
+      "type": "string",
+      "description": "Previous file:// URI"
+    },
+    "toUri": {
+      "type": "string",
+      "description": "New file:// URI"
+    }
   },
-  "required": ["fromUri", "toUri"]
+  "required": [
+    "fromUri",
+    "toUri"
+  ]
 }

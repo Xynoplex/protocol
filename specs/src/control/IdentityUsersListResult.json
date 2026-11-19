@@ -11,6 +11,8 @@
       "description": "Accounts, sorted by sign-in name."
     }
   },
-  "required": ["users"],
+  "required": [
+    "users"
+  ],
   "additionalProperties": false
 }

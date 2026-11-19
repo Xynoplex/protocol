@@ -10,6 +10,9 @@
       "$ref": "./IdentityLocalTarget.json"
     }
   },
-  "required": ["apiVersion", "target"],
+  "required": [
+    "apiVersion",
+    "target"
+  ],
   "additionalProperties": false
 }

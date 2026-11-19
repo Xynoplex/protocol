@@ -6,5 +6,7 @@
       "type": "string"
     }
   },
-  "required": ["panel"]
+  "required": [
+    "panel"
+  ]
 }

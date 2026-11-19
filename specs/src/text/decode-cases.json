@@ -89,19 +89,19 @@
       "why": "white space before the equals sign is part of the name, which is then not charset: none is stated",
       "contentType": "text/plain; charset =iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "a name that only ends in charset is another parameter",
       "contentType": "text/plain; xcharset=iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "and so is a name that only begins with it",
       "contentType": "text/plain; charsets=iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "of two charsets the first is the one stated",
@@ -113,7 +113,7 @@
       "why": "of two charsets the first is the one stated, the other way round",
       "contentType": "text/plain; charset=utf-8; charset=iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "a charset with nothing after its equals sign is no parameter: none is stated",
@@ -149,19 +149,19 @@
       "why": "an empty quoted value is a parameter, and so the first of two: none is stated",
       "contentType": "text/plain; charset=\"\"; charset=iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "a content type with no subtype is no MIME type, and states nothing",
       "contentType": "text/; charset=iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "nor is one whose subtype has a space in it",
       "contentType": "text/pl ain; charset=iso-8859-1",
       "bytes": "e9",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "iso-8859-1 is a label of windows-1252: 93 and 94 are quotation marks, not controls",
@@ -173,7 +173,7 @@
       "why": "the five bytes windows-1252 gives no character of its own are the controls of the same number, not U+FFFD",
       "contentType": "text/plain; charset=windows-1252",
       "bytes": "81 8d 8f 90 9d",
-      "text": "\u0081\u008d\u008f\u0090\u009d"
+      "text": ""
     },
     {
       "why": "iso-8859-9 is a label of windows-1254",
@@ -203,7 +203,7 @@
       "why": "x-user-defined: a byte from 80 up is the private-use character from U+F780 up",
       "contentType": "text/plain; charset=x-user-defined",
       "bytes": "41 80 ff",
-      "text": "A\uf780\uf7ff"
+      "text": "A"
     },
     {
       "why": "a charset that is no label of the standard is refused, and nothing is read as UTF-8 in its place",
@@ -371,19 +371,19 @@
       "why": "a mark that is not leading is a character of the text",
       "contentType": "text/plain",
       "bytes": "61 ef bb bf 62",
-      "text": "a\ufeffb"
+      "text": "a﻿b"
     },
     {
       "why": "a mark that is not leading is a character of the text, in UTF-16LE",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "68 00 ff fe 69 00",
-      "text": "h\ufeffi"
+      "text": "h﻿i"
     },
     {
       "why": "two marks at the start: the first is left out, and the second is a character of the text",
       "contentType": "text/plain",
       "bytes": "ef bb bf ef bb bf 78",
-      "text": "\ufeffx"
+      "text": "﻿x"
     },
     {
       "why": "nothing but a mark is the empty text",
@@ -401,13 +401,13 @@
       "why": "after one encoding's mark, another's is no mark: these two bytes are nothing UTF-8 has",
       "contentType": "text/plain",
       "bytes": "ef bb bf ff fe",
-      "text": "\ufffd\ufffd"
+      "text": "��"
     },
     {
       "why": "two of the three bytes of UTF-8's mark are no mark: a sequence cut short",
       "contentType": "text/plain",
       "bytes": "ef bb 68",
-      "text": "\ufffdh"
+      "text": "�h"
     },
     {
       "why": "with no mark and no charset the bytes are UTF-8, whatever they look like",
@@ -419,67 +419,67 @@
       "why": "UTF-8: a byte that can begin nothing is one U+FFFD, and the reading goes on",
       "contentType": "text/plain; charset=utf-8",
       "bytes": "61 ff 62",
-      "text": "a\ufffdb"
+      "text": "a�b"
     },
     {
       "why": "UTF-8: a sequence cut short by the next character is one U+FFFD, not one for each of its bytes",
       "contentType": "text/plain; charset=utf-8",
       "bytes": "61 e2 82 62",
-      "text": "a\ufffdb"
+      "text": "a�b"
     },
     {
       "why": "UTF-8: a sequence cut short by the end is one U+FFFD",
       "contentType": "text/plain",
       "bytes": "61 f0 9f 98",
-      "text": "a\ufffd"
+      "text": "a�"
     },
     {
       "why": "UTF-8: what is whole after a sequence cut short is read",
       "contentType": "text/plain",
       "bytes": "e2 82 e2 82 ac",
-      "text": "\ufffd€"
+      "text": "�€"
     },
     {
       "why": "UTF-8: a continuation byte with nothing to continue is one U+FFFD each",
       "contentType": "text/plain",
       "bytes": "61 80 bf 62",
-      "text": "a\ufffd\ufffdb"
+      "text": "a��b"
     },
     {
       "why": "UTF-8: an overlong form of two bytes is two U+FFFD, and not the character it spells",
       "contentType": "text/plain",
       "bytes": "c0 af",
-      "text": "\ufffd\ufffd"
+      "text": "��"
     },
     {
       "why": "UTF-8: an overlong form of three bytes is three",
       "contentType": "text/plain",
       "bytes": "e0 80 af",
-      "text": "\ufffd\ufffd\ufffd"
+      "text": "���"
     },
     {
       "why": "UTF-8: a surrogate is three U+FFFD",
       "contentType": "text/plain",
       "bytes": "ed a0 80",
-      "text": "\ufffd\ufffd\ufffd"
+      "text": "���"
     },
     {
       "why": "UTF-8: a code point past U+10FFFF is four",
       "contentType": "text/plain",
       "bytes": "f4 90 80 80",
-      "text": "\ufffd\ufffd\ufffd\ufffd"
+      "text": "����"
     },
     {
       "why": "UTF-8: a five-byte form is five",
       "contentType": "text/plain",
       "bytes": "f8 88 80 80 80",
-      "text": "\ufffd\ufffd\ufffd\ufffd\ufffd"
+      "text": "�����"
     },
     {
       "why": "UTF-8: every kind of fault in one text",
       "contentType": "text/plain",
       "bytes": "61 f1 80 80 e1 80 c2 62 80 63 80 bf 64",
-      "text": "a\ufffd\ufffd\ufffdb\ufffdc\ufffd\ufffdd"
+      "text": "a���b�c��d"
     },
     {
       "why": "UTF-16LE: a character outside the basic plane is two units and one character",
@@ -491,49 +491,49 @@
       "why": "UTF-16LE: an odd last byte is one U+FFFD",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "68 00 69",
-      "text": "h\ufffd"
+      "text": "h�"
     },
     {
       "why": "UTF-16LE: a leading surrogate with no trailing one is one U+FFFD, and the unit after it is read",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "3d d8 68 00",
-      "text": "\ufffdh"
+      "text": "�h"
     },
     {
       "why": "UTF-16LE: a trailing surrogate with no leading one is one U+FFFD",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "00 dc 68 00",
-      "text": "\ufffdh"
+      "text": "�h"
     },
     {
       "why": "UTF-16LE: a leading surrogate at the end is one U+FFFD",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "68 00 3d d8",
-      "text": "h\ufffd"
+      "text": "h�"
     },
     {
       "why": "UTF-16LE: a leading surrogate and then an odd last byte are one U+FFFD between them",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "3d d8 41",
-      "text": "\ufffd"
+      "text": "�"
     },
     {
       "why": "UTF-16LE: a leading surrogate before a whole pair is one U+FFFD, and the pair is read",
       "contentType": "text/plain; charset=utf-16le",
       "bytes": "3d d8 3d d8 00 de",
-      "text": "\ufffd😀"
+      "text": "�😀"
     },
     {
       "why": "UTF-16BE: a leading surrogate with no trailing one is one U+FFFD, and the unit after it is read",
       "contentType": "text/plain; charset=utf-16be",
       "bytes": "d8 3d 00 68",
-      "text": "\ufffdh"
+      "text": "�h"
     },
     {
       "why": "UTF-16BE: an odd last byte is one U+FFFD",
       "contentType": "text/plain; charset=utf-16be",
       "bytes": "00 68 00",
-      "text": "h\ufffd"
+      "text": "h�"
     },
     {
       "why": "a media type the registry lists as decoded is read, though it is no text/ type: JSON",

@@ -108,8 +108,7 @@
           "only": "when the host OpenTelemetry API supplies its runtime thread identity"
         }
       ]
-    }
-,
+    },
     {
       "name": "content.get_annotations",
       "transport": "content",

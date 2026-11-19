@@ -16,6 +16,10 @@
       "description": "Whether the identity provider currently allows this account to sign in."
     }
   },
-  "required": ["email", "identity", "enabled"],
+  "required": [
+    "email",
+    "identity",
+    "enabled"
+  ],
   "additionalProperties": false
 }

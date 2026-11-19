@@ -1,7 +1,11 @@
 {
   "oneOf": [
-    { "$ref": "./FileEntry.json" },
-    { "$ref": "./DirEntry.json" }
+    {
+      "$ref": "./FileEntry.json"
+    },
+    {
+      "$ref": "./DirEntry.json"
+    }
   ],
   "discriminator": {
     "propertyName": "type",

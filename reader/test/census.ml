@@ -542,6 +542,298 @@ let () =
     (fun _ -> `Assoc [ ("type", `String "string") ])
     "/properties/declined: AnchoredTextEntry's declined is not \
      ExtractionDeclined's";
+  changed specs ~why:"names a kind with no schema" "identifiers/kinds.json"
+    "kinds/2/schema"
+    (fun _ -> `String "TaskId")
+    "/kinds/2/schema: TaskId has no schema: components/schemas/TaskId.json";
+  changed specs ~why:"gives a kind's schema more than its rule"
+    "components/schemas/ResourceId.json" ""
+    (members (fun m -> m @ [ ("minLength", `Int 1) ]))
+    "/: ResourceId must be exactly a string with a pattern and a description; \
+     it has [description,minLength,pattern,type]";
+  changed specs ~why:"has a kind accept what its pattern does not"
+    "identifiers/kinds.json" "kinds/0/accepts"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [ `Assoc [ ("id", `String "a b"); ("why", `String "a break") ] ])
+      | _ -> failwith "not a list")
+    "/kinds/0/accepts/4/id: ResourceId accepts \"a b\" (a break), and its \
+     pattern ^[A-Za-z0-9_-]{1,128}$ does not";
+  changed specs ~why:"has a kind refuse what its pattern accepts"
+    "identifiers/kinds.json" "kinds/0/refuses"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [ `Assoc [ ("id", `String "abc"); ("why", `String "a break") ] ])
+      | _ -> failwith "not a list")
+    "/kinds/0/refuses/14/id: ResourceId refuses \"abc\" (a break), and its \
+     pattern ^[A-Za-z0-9_-]{1,128}$ accepts it";
+  changed specs ~why:"has a kind accept a DID with a no-break space"
+    "identifiers/kinds.json" "kinds/3/accepts"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [
+                `Assoc
+                  [
+                    ("id", `String "did:web:x:a b"); ("why", `String "a break");
+                  ];
+              ])
+      | _ -> failwith "not a list")
+    "/kinds/3/accepts/4/id: UserId accepts \"did:web:x:a b\" (a break), and \
+     its pattern ^did:\\S+$ does not";
+  changed specs ~why:"names a property for two kinds" "identifiers/kinds.json"
+    "kinds/2/properties"
+    (function
+      | `List l -> `List (l @ [ `String "resourceId" ])
+      | _ -> failwith "not a list")
+    "/kinds/2/properties/1: resourceId is named for two kinds: ResourceId and \
+     JobId";
+  changed specs ~why:"has a property among others that is named for a kind"
+    "identifiers/kinds.json" "others"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [
+                `Assoc
+                  [
+                    ("property", `String "resourceId");
+                    ("docs", `String "a break");
+                  ];
+              ])
+      | _ -> failwith "not a list")
+    "/others/14/property: resourceId is among `others` and is named for \
+     ResourceId";
+  changed specs ~why:"has a resource's id refer to an annotation's"
+    "components/schemas/BeckonFocusEvent.json" "properties/resourceId/$ref"
+    (fun _ -> `String "./AnnotationId.json")
+    "/properties/resourceId: resourceId must refer to ResourceId, and refers \
+     to AnnotationId";
+  changed specs
+    ~why:"has a property named like an id that is classified nowhere"
+    "components/schemas/BeckonFocusEvent.json" "properties"
+    (members (fun m ->
+         m @ [ ("widgetId", `Assoc [ ("type", `String "string") ]) ]))
+    "/properties/widgetId: widgetId is named like an id and is classified \
+     nowhere: name it for a kind, or among `others`, in \
+     specs/src/identifiers/kinds.json";
+  changed specs ~why:"has a property among others refer to a kind"
+    "components/schemas/SessionJoinedEvent.json" "properties/connectionId"
+    (fun _ -> `Assoc [ ("$ref", `String "./ResourceId.json") ])
+    "/properties/connectionId: connectionId is among `others` and refers to \
+     ResourceId";
+  changed specs ~why:"names a property no schema has" "identifiers/kinds.json"
+    "kinds/0/properties"
+    (function
+      | `List l -> `List (l @ [ `String "ghostResourceId" ])
+      | _ -> failwith "not a list")
+    "/: names ghostResourceId, which no schema of the spec has";
+  changed specs ~why:"has a path parameter refer to no kind"
+    "archivist/paths/events_{resourceId}.json" "get/parameters/0/schema"
+    (fun _ -> `Assoc [ ("type", `String "string") ])
+    "/get/parameters/0: the path parameter {resourceId} must refer to a kind \
+     of id";
+  changed specs ~why:"has a pattern ECMA-262 and ocaml-re read apart"
+    "components/schemas/ResourceId.json" "pattern"
+    (fun _ -> `String "^\\p{L}+$")
+    "/pattern: the pattern escapes p, which ECMA-262 and ocaml-re read apart";
+  changed specs ~why:"lists anchor methods that are not AnchorMethod's"
+    "service-telemetry/telemetry.json" "metrics/27/attributes/1/values"
+    (function
+      | `List l -> `List (List.filteri (fun i _ -> i < List.length l - 1) l)
+      | _ -> failwith "not a list")
+    "/metrics/27/attributes/1/values: lists anchor.method values \
+     [\"unique-match\",\"context-recovered\",\"first-of-many\"], not \
+     AnchorMethod's \
+     [\"unique-match\",\"context-recovered\",\"first-of-many\",\"fuzzy-match\"]";
+  changed specs ~why:"has a fuzzy match name no search"
+    "annotations/reconcile-cases.json" "cases/22/reconciled"
+    (members (List.remove_assoc "matchQuality"))
+    "/cases/22/reconciled: is a fuzzy match, and names no search";
+  changed specs ~why:"names a refusal reason no frame is refused for"
+    "client/types/FrameRefusalReason.json" "enum"
+    (function
+      | `List l -> `List (l @ [ `String "stale" ]) | _ -> failwith "not a list")
+    "/enum/2: FrameRefusalReason names \"stale\", and no case of \
+     frame-cases.json is refused for it";
+  refused specs ~why:"has the surface lose a reader the cases read"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "client/surface.json")
+        (update [ "modules"; "0"; "members"; "3"; "member" ] (fun _ ->
+             `String "commentBody")))
+    "annotations/reader-cases.json: /readers/9: names the reader \
+     \"commentText\", which client/surface.json's annotations module does not \
+     have";
+  changed specs ~why:"lists the builders out of order"
+    "annotations/builder-cases.json" "builders"
+    (function `List l -> `List (List.rev l) | _ -> failwith "not a list")
+    "/builders: builders \
+     [\"annotationOfResource\",\"annotationOfSpan\",\"reconcile\"] are not \
+     client/surface.json's other annotations functions \
+     [\"reconcile\",\"annotationOfSpan\",\"annotationOfResource\"]";
+  changed specs ~why:"gives DeviceCode a member UserAction does not carry"
+    "client/types/DeviceCode.json" "properties"
+    (members (fun m ->
+         m @ [ ("interval", `Assoc [ ("type", `String "integer") ]) ]))
+    "/properties: DeviceCode's members \
+     [\"userCode\",\"verificationUri\",\"verificationUriComplete\",\"expiresIn\",\"interval\"] \
+     are not UserAction's less requestId \
+     [\"verificationUri\",\"verificationUriComplete\",\"userCode\",\"expiresIn\"]";
+  changed specs ~why:"types a DeviceCode member otherwise"
+    "client/types/DeviceCode.json" "properties/userCode/type"
+    (fun _ -> `String "integer")
+    "/properties/userCode: DeviceCode's userCode is \"integer\", and \
+     UserAction's userCode is \"string\"";
+  changed specs ~why:"has DeviceCode require less than UserAction"
+    "client/types/DeviceCode.json" "required"
+    (function
+      | `List l -> `List (List.filter (( <> ) (`String "expiresIn")) l)
+      | _ -> failwith "not a list")
+    "/required: DeviceCode requires [\"userCode\",\"verificationUri\"], and \
+     UserAction, less requestId, requires \
+     [\"expiresIn\",\"userCode\",\"verificationUri\"]";
+  changed specs ~why:"lists the method shapes out of order"
+    "client/ClientSurface.json"
+    "properties/namespaces/items/properties/methods/items/properties/shape/enum"
+    (function `List l -> `List (List.rev l) | _ -> failwith "not a list")
+    "/properties/namespaces/items/properties/methods/items/properties/shape/enum: \
+     the method shapes \
+     [\"claims\",\"events\",\"count\",\"signal\",\"cache\",\"upload\",\"delegation\",\"stream\",\"promise\"] \
+     are not, in order, the shapes it states \
+     [\"promise\",\"stream\",\"delegation\",\"upload\",\"cache\",\"signal\",\"count\",\"events\",\"claims\"]";
+  changed specs ~why:"keeps another value for a persisted query"
+    "session/SessionCacheCases.json"
+    "properties/cases/items/oneOf/0/properties/kept/items/properties/value/$ref"
+    (fun _ -> `String "../components/schemas/Annotation.json")
+    "/properties/cases/items/oneOf/0/properties/kept/items/properties/value: \
+     keeps {\"$ref\":\"../components/schemas/Annotation.json\"} for \
+     \"resource\", and refresh.json's value is \
+     {\"$ref\":\"../components/schemas/ResourceDescriptor.json\"}";
+  changed specs ~why:"leaves a security scheme undescribed" "openapi.json"
+    "components/securitySchemes/bearerAuth/description"
+    (fun _ -> `String " ")
+    "/components/securitySchemes/bearerAuth: securitySchemes.bearerAuth: has \
+     no description — the claims a credential must carry are protocol";
+  changed specs ~why:"names a security scheme nothing defines"
+    "paths/bus_emit.json" "post/security"
+    (fun _ -> `List [ `Assoc [ ("nobody", `List []) ] ])
+    "/post/security: POST /bus/emit: names security scheme \"nobody\", which \
+     components.securitySchemes does not define";
+  changed specs ~why:"declares no 500" "paths/bus_emit.json" "post/responses"
+    (members (List.remove_assoc "500"))
+    "/post/responses: POST /bus/emit: declares no 500";
+  changed specs ~why:"takes a body and declares no 400" "paths/bus_emit.json"
+    "post/responses"
+    (members (List.remove_assoc "400"))
+    "/post/responses: POST /bus/emit: takes a request body and declares no 400";
+  changed specs ~why:"leaves a JSON body unbounded" "paths/bus_emit.json"
+    "post/x-xynolog-limits"
+    (members (List.remove_assoc "maxBodyBytes"))
+    "/post: POST /bus/emit: takes a JSON body and states no \
+     x-xynolog-limits.maxBodyBytes";
+  changed specs ~why:"takes a JSON body and declares no 413"
+    "paths/bus_emit.json" "post/responses"
+    (members (List.remove_assoc "413"))
+    "/post/responses: POST /bus/emit: takes a JSON body and declares no 413";
+  changed specs ~why:"protects an operation and declares no 401"
+    "paths/bus_emit.json" "post/responses"
+    (members (List.remove_assoc "401"))
+    "/post/responses: POST /bus/emit: is protected and declares no 401";
+  refused specs ~why:"challenges no one"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "components/responses/Unauthorized.json")
+        (update [] (members (List.remove_assoc "headers"))))
+    "paths/bus_emit.json: /post/responses/401: POST /bus/emit 401: carries no \
+     WWW-Authenticate header";
+  refused specs ~why:"refuses a caller without saying when to come back"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "components/responses/TooManyRequests.json")
+        (update [] (members (List.remove_assoc "headers"))))
+    "paths/bus_emit.json: /post/responses/429: POST /bus/emit 429: carries no \
+     Retry-After header";
+  changed specs ~why:"gives an error no body" "paths/bus_emit.json"
+    "post/responses/400"
+    (members (List.remove_assoc "content"))
+    "/post/responses/400: POST /bus/emit 400: declares no body";
+  changed specs ~why:"gives an error a body that is not JSON"
+    "paths/bus_emit.json" "post/responses/400/content"
+    (members (List.map (fun (_, media) -> ("text/plain", media))))
+    "/post/responses/400: POST /bus/emit 400: an error body is text/plain, not \
+     application/json";
+  refused specs ~why:"gives an error a body that is not ErrorResponse"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "paths/bus_emit.json")
+        (update
+           [
+             "post";
+             "responses";
+             "400";
+             "content";
+             "application/json";
+             "schema";
+             "$ref";
+           ] (fun _ -> `String "../components/schemas/BusEmitRequest.json")))
+    "paths/bus_emit.json: /post/responses/400: POST /bus/emit 400: an error \
+     body is not ErrorResponse, or a refinement of it";
+  refused specs ~why:"writes a stream's event names nowhere"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "components/schemas/BusStreamMessage.json")
+        (update []
+           (members
+              (List.map (fun (k, v) ->
+                   ((if k = "oneOf" then "anyOf" else k), v))))))
+    "paths/bus_subscribe.json: /post/responses/200: POST /bus/subscribe 200 \
+     text/event-stream: the stream schema is not a oneOf of its messages, so \
+     its event names are written nowhere";
+  changed specs ~why:"gives a role a coefficient shaped otherwise"
+    "paths/bus_emit.json"
+    "post/x-xynolog-limits/emitsPerPrincipal/roles/xynolog-service"
+    (fun _ -> `Int 5)
+    "/post/x-xynolog-limits/emitsPerPrincipal/roles/xynolog-service: POST \
+     /bus/emit: x-xynolog-limits.emitsPerPrincipal.roles.xynolog-service is 5, \
+     neither \"unlimited\" nor shaped like the baseline";
+  changed specs ~why:"states a limit that is not positive" "openapi.json"
+    "x-xynolog-limits/requestHeadSeconds"
+    (fun _ -> `Int 0)
+    "/x-xynolog-limits/requestHeadSeconds: the document: \
+     x-xynolog-limits.requestHeadSeconds is 0, not a positive integer or a \
+     baseline with coefficients by role";
+  refused specs ~why:"holds a read longer than its caller waits"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied
+           "archivist/paths/resources_{id}_anchored-text.json")
+        (update [ "get"; "x-xynolog-limits"; "settleWaitSeconds" ] (fun _ ->
+             `Int 1000)))
+    "archivist/openapi.json: /: waits that nest: settleWaitSeconds (1000) is \
+     not shorter than readSeconds (20): a caller stops waiting before the \
+     Archivist answers a read it holds";
+  changed specs ~why:"calls the Archivist longer than a client waits"
+    "archivist/openapi.json" "x-xynolog-limits/connectSeconds"
+    (fun _ -> `Int 1000)
+    "/: waits that nest: connectSeconds (1000) and readSeconds (20) together \
+     are not shorter than client/timing.json httpRequestTimeoutMs (30000): a \
+     client stops waiting before the gateway answers a read the Archivist does \
+     not";
+  refused specs ~why:"forgets an emit's key before its attempts end"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "paths/bus_emit.json")
+        (update [ "post"; "x-xynolog-limits"; "idempotencySeconds" ] (fun _ ->
+             `Int 1)))
+    "openapi.json: /paths/~1bus~1emit: POST /bus/emit: holds a key for 1 s, \
+     and a client's attempts at one emit may span 377.5 s (two emitRetry \
+     budgets and a refreshRetry, specs/src/client/timing.json)";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
@@ -552,5 +844,6 @@ let () =
      Archivist's own schema among the components, a client surface case whose \
      arguments are not its method's parameters, a reply's list neither bounded \
      nor named, an offset whose unit is unsaid, a job protocol that disagrees \
-     with itself, or an Archivist stated short; and it reads each value as the \
-     type its schema states"
+     with itself, an Archivist stated short, an id nothing checks, a client \
+     type that disagrees with what restates it, or a protocol fact left to the \
+     code; and it reads each value as the type its schema states"

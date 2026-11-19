@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := validate
 
-.PHONY: help install conformance-install bundle lint check conformance-typecheck conformance-fixtures reader validate
+.PHONY: help install conformance-install bundle lint conformance-typecheck conformance-fixtures reader validate
 
 # `make help` prints the `##` lines below, in order (build-tools/make-help.awk).
 # Every target runs its npm task in a Node container (scripts/make-target.sh).
@@ -12,7 +12,7 @@ help:
 	@awk -f build-tools/make-help.awk Makefile Makefile
 
 ##@ Validate
-## validate: Read the specifications with the reader, then install, bundle, lint, check, type-check the conformance harness and run its fixtures
+## validate: Read the specifications with the reader, then install, bundle, lint, type-check the conformance harness and run its fixtures
 validate:
 	bash scripts/make-target.sh validate
 
@@ -33,10 +33,6 @@ bundle:
 lint:
 	bash scripts/make-target.sh lint
 
-## check: The protocol's consistency gates, the ownership inventory among them
-check:
-	bash scripts/make-target.sh check
-
 ## conformance-typecheck: Bundle, then type-check the conformance harness
 conformance-typecheck:
 	bash scripts/make-target.sh conformance-typecheck
@@ -45,6 +41,6 @@ conformance-typecheck:
 conformance-fixtures:
 	bash scripts/make-target.sh conformance-fixtures
 
-## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives, and the contract documents that name what they state
+## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives, the contract documents that name what they state, the bus registry's spelling and the ownership inventory
 reader:
 	bash scripts/make-target.sh reader

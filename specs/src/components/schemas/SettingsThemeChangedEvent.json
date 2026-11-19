@@ -4,8 +4,14 @@
   "properties": {
     "theme": {
       "type": "string",
-      "enum": ["light", "dark", "system"]
+      "enum": [
+        "light",
+        "dark",
+        "system"
+      ]
     }
   },
-  "required": ["theme"]
+  "required": [
+    "theme"
+  ]
 }

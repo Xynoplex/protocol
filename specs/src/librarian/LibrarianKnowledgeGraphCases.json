@@ -39,8 +39,12 @@
                     "description": "What the store answers each time it is asked for the resource, in order: its description, or null where it does not hold it yet.",
                     "items": {
                       "anyOf": [
-                        { "$ref": "../components/schemas/ResourceDescriptor.json" },
-                        { "type": "null" }
+                        {
+                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                        },
+                        {
+                          "type": "null"
+                        }
                       ]
                     }
                   },

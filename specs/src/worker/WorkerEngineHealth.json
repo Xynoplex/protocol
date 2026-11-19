@@ -14,27 +14,42 @@
       }
     },
     "lastQueuedEventAt": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "date-time",
       "description": "When a `job:queued` last reached it, or null."
     },
     "lastClaimAt": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "date-time",
       "description": "When it was last handed a job, or null. A claim answered with none pending is not one."
     },
     "lastFinishedAt": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "date-time",
       "description": "When a job it held last settled, or null."
     },
     "lastActivityAt": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "date-time",
       "description": "When it was last active, or null."
     },
     "activeJob": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "The job it holds, or null.",
       "properties": {
         "jobId": {

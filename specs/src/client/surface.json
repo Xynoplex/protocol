@@ -27,13 +27,23 @@
           "@context": "https://schema.org",
           "@id": "res-1",
           "name": "A resource",
-          "representations": [{ "mediaType": "text/plain" }]
+          "representations": [
+            {
+              "mediaType": "text/plain"
+            }
+          ]
         }
       },
-      "graph": { "nodes": [], "edges": [] },
+      "graph": {
+        "nodes": [],
+        "edges": []
+      },
       "metadata": {}
     },
-    "selector": { "type": "TextQuoteSelector", "exact": "hello" }
+    "selector": {
+      "type": "TextQuoteSelector",
+      "exact": "hello"
+    }
   },
   "namespaces": [
     {
@@ -43,40 +53,103 @@
         {
           "method": "addEntityType",
           "shape": "promise",
-          "via": { "request": "frame:add-entity-type" },
+          "via": {
+            "request": "frame:add-entity-type"
+          },
           "parameters": [
-            { "parameter": "type", "schema": { "$ref": "../components/schemas/FrameAddEntityTypeCommand.json#/properties/tag" }, "required": true }
+            {
+              "parameter": "type",
+              "schema": {
+                "$ref": "../components/schemas/FrameAddEntityTypeCommand.json#/properties/tag"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "type": "Person" }, "sends": { "tag": "Person" } }]
+          "cases": [
+            {
+              "args": {
+                "type": "Person"
+              },
+              "sends": {
+                "tag": "Person"
+              }
+            }
+          ]
         },
         {
           "method": "addEntityTypes",
           "shape": "promise",
-          "via": { "request": "frame:add-entity-type" },
+          "via": {
+            "request": "frame:add-entity-type"
+          },
           "parameters": [
-            { "parameter": "types", "schema": { "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes" }, "required": true }
+            {
+              "parameter": "types",
+              "schema": {
+                "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
               "why": "one request per type, in order, each awaited",
-              "args": { "types": ["Person", "Place"] },
-              "sends": { "tag": "Person" },
+              "args": {
+                "types": [
+                  "Person",
+                  "Place"
+                ]
+              },
+              "sends": {
+                "tag": "Person"
+              },
               "answers": null,
-              "then": [{ "request": "frame:add-entity-type", "sends": { "tag": "Place" } }]
+              "then": [
+                {
+                  "request": "frame:add-entity-type",
+                  "sends": {
+                    "tag": "Place"
+                  }
+                }
+              ]
             }
           ]
         },
         {
           "method": "addTagSchema",
           "shape": "promise",
-          "via": { "request": "frame:add-tag-schema" },
+          "via": {
+            "request": "frame:add-tag-schema"
+          },
           "parameters": [
-            { "parameter": "schema", "schema": { "$ref": "../components/schemas/TagSchema.json" }, "required": true }
+            {
+              "parameter": "schema",
+              "schema": {
+                "$ref": "../components/schemas/TagSchema.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "schema": { "id": "s1", "name": "Structure", "description": "Parts of an argument", "domain": "legal", "tags": [] } },
-              "sends": { "schema": { "id": "s1", "name": "Structure", "description": "Parts of an argument", "domain": "legal", "tags": [] } }
+              "args": {
+                "schema": {
+                  "id": "s1",
+                  "name": "Structure",
+                  "description": "Parts of an argument",
+                  "domain": "legal",
+                  "tags": []
+                }
+              },
+              "sends": {
+                "schema": {
+                  "id": "s1",
+                  "name": "Structure",
+                  "description": "Parts of an argument",
+                  "domain": "legal",
+                  "tags": []
+                }
+              }
             }
           ]
         }
@@ -89,191 +162,539 @@
         {
           "method": "resource",
           "shape": "cache",
-          "via": { "request": "browse:resource-requested" },
+          "via": {
+            "request": "browse:resource-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resources",
           "shape": "cache",
-          "via": { "request": "browse:resources-requested" },
+          "via": {
+            "request": "browse:resources-requested"
+          },
           "parameters": [
-            { "parameter": "filters", "schema": { "$ref": "../components/schemas/BrowseResourcesRequest.json" }, "required": false }
+            {
+              "parameter": "filters",
+              "schema": {
+                "$ref": "../components/schemas/BrowseResourcesRequest.json"
+              },
+              "required": false
+            }
           ],
           "cases": [
-            { "why": "no filters: the first hundred", "args": {}, "sends": { "limit": 100, "offset": 0 } },
             {
-              "args": { "filters": { "archived": false, "entityType": "Person", "limit": 5 } },
-              "sends": { "archived": false, "entityType": "Person", "limit": 5, "offset": 0 }
+              "why": "no filters: the first hundred",
+              "args": {},
+              "sends": {
+                "limit": 100,
+                "offset": 0
+              }
+            },
+            {
+              "args": {
+                "filters": {
+                  "archived": false,
+                  "entityType": "Person",
+                  "limit": 5
+                }
+              },
+              "sends": {
+                "archived": false,
+                "entityType": "Person",
+                "limit": 5,
+                "offset": 0
+              }
             },
             {
               "why": "a page further on: the resources before it are passed over",
-              "args": { "filters": { "limit": 50, "offset": 100 } },
-              "sends": { "limit": 50, "offset": 100 }
+              "args": {
+                "filters": {
+                  "limit": 50,
+                  "offset": 100
+                }
+              },
+              "sends": {
+                "limit": 50,
+                "offset": 100
+              }
             }
           ]
         },
         {
           "method": "annotations",
           "shape": "cache",
-          "via": { "content": "getAnnotations" },
+          "via": {
+            "content": "getAnnotations"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "annotation",
           "shape": "cache",
-          "via": { "request": "browse:annotation-requested" },
+          "via": {
+            "request": "browse:annotation-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "resourceId": "res-1", "annotationId": "ann-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              }
+            }
+          ]
         },
         {
           "method": "entityTypes",
           "shape": "cache",
-          "via": { "request": "browse:entity-types-requested" },
+          "via": {
+            "request": "browse:entity-types-requested"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         },
         {
           "method": "tagSchemas",
           "shape": "cache",
-          "via": { "request": "browse:tag-schemas-requested" },
+          "via": {
+            "request": "browse:tag-schemas-requested"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         },
         {
           "method": "engines",
           "shape": "cache",
-          "via": { "request": "browse:engines-requested" },
+          "via": {
+            "request": "browse:engines-requested"
+          },
           "parameters": [],
-          "cases": [{ "why": "the engines are asked for first; each key holder's limits after it", "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "why": "the engines are asked for first; each key holder's limits after it",
+              "args": {},
+              "sends": {}
+            }
+          ]
         },
         {
           "method": "events",
           "shape": "cache",
-          "via": { "request": "browse:events-requested" },
+          "via": {
+            "request": "browse:events-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceContent",
           "shape": "promise",
-          "via": { "content": "getBinary" },
+          "via": {
+            "content": "getBinary"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceGraph",
           "shape": "promise",
-          "via": { "content": "getResourceGraph" },
+          "via": {
+            "content": "getResourceGraph"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceAnchoredText",
           "shape": "promise",
-          "via": { "content": "getAnchoredText" },
+          "via": {
+            "content": "getAnchoredText"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceRepresentation",
           "shape": "promise",
-          "via": { "content": "getBinary" },
+          "via": {
+            "content": "getBinary"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceRepresentationStream",
           "shape": "promise",
-          "via": { "content": "getBinaryStream" },
+          "via": {
+            "content": "getBinaryStream"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceEvents",
           "shape": "promise",
-          "via": { "request": "browse:events-requested" },
+          "via": {
+            "request": "browse:events-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "annotationHistory",
           "shape": "promise",
-          "via": { "request": "browse:annotation-history-requested" },
+          "via": {
+            "request": "browse:annotation-history-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "resourceId": "res-1", "annotationId": "ann-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              }
+            }
+          ]
         },
         {
           "method": "files",
           "shape": "promise",
-          "via": { "request": "browse:directory-requested" },
+          "via": {
+            "request": "browse:directory-requested"
+          },
           "parameters": [
-            { "parameter": "dirPath", "schema": { "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/path" }, "required": false },
-            { "parameter": "sort", "schema": { "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/sort" }, "required": false }
+            {
+              "parameter": "dirPath",
+              "schema": {
+                "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/path"
+              },
+              "required": false
+            },
+            {
+              "parameter": "sort",
+              "schema": {
+                "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/sort"
+              },
+              "required": false
+            }
           ],
           "cases": [
-            { "why": "no arguments: the root, by name", "args": {}, "sends": { "path": ".", "sort": "name" } },
-            { "args": { "dirPath": "docs", "sort": "mtime" }, "sends": { "path": "docs", "sort": "mtime" } }
+            {
+              "why": "no arguments: the root, by name",
+              "args": {},
+              "sends": {
+                "path": ".",
+                "sort": "name"
+              }
+            },
+            {
+              "args": {
+                "dirPath": "docs",
+                "sort": "mtime"
+              },
+              "sends": {
+                "path": "docs",
+                "sort": "mtime"
+              }
+            }
           ]
         },
         {
           "method": "kb",
           "shape": "promise",
-          "via": { "request": "browse:kb-requested" },
+          "via": {
+            "request": "browse:kb-requested"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         },
         {
           "method": "click",
           "shape": "signal",
-          "via": { "local": "browse:click" },
+          "via": {
+            "local": "browse:click"
+          },
           "parameters": [
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
+          "cases": [
+            {
+              "args": {
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1"
+              }
+            }
+          ]
         },
         {
           "method": "openResource",
           "shape": "signal",
-          "via": { "local": "browse:resource-open" },
+          "via": {
+            "local": "browse:resource-open"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "resourceViewed",
           "shape": "signal",
-          "via": { "emit": "browse:resource-viewed" },
+          "via": {
+            "emit": "browse:resource-viewed"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "why": "a report, so it goes over the wire", "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "why": "a report, so it goes over the wire",
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         }
       ]
     },
@@ -284,137 +705,428 @@
         {
           "method": "annotation",
           "shape": "promise",
-          "via": { "request": "mark:create-request" },
+          "via": {
+            "request": "mark:create-request"
+          },
           "parameters": [
-            { "parameter": "input", "schema": { "$ref": "../components/schemas/CreateAnnotationRequest.json" }, "required": true }
+            {
+              "parameter": "input",
+              "schema": {
+                "$ref": "../components/schemas/CreateAnnotationRequest.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
               "why": "the resource is the annotation's target",
-              "args": { "input": { "motivation": "highlighting", "target": { "source": "res-1" } } },
-              "sends": { "resourceId": "res-1", "request": { "motivation": "highlighting", "target": { "source": "res-1" } } }
+              "args": {
+                "input": {
+                  "motivation": "highlighting",
+                  "target": {
+                    "source": "res-1"
+                  }
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "request": {
+                  "motivation": "highlighting",
+                  "target": {
+                    "source": "res-1"
+                  }
+                }
+              }
             }
           ]
         },
         {
           "method": "delete",
           "shape": "promise",
-          "via": { "request": "mark:delete" },
+          "via": {
+            "request": "mark:delete"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1", "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1",
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "archive",
           "shape": "promise",
-          "via": { "request": "mark:archive" },
+          "via": {
+            "request": "mark:archive"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "unarchive",
           "shape": "promise",
-          "via": { "request": "mark:unarchive" },
+          "via": {
+            "request": "mark:unarchive"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "updateEntityTypes",
           "shape": "promise",
-          "via": { "request": "mark:update-entity-types" },
+          "via": {
+            "request": "mark:update-entity-types"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "current", "schema": { "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/currentEntityTypes" }, "required": true },
-            { "parameter": "updated", "schema": { "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/updatedEntityTypes" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "current",
+              "schema": {
+                "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/currentEntityTypes"
+              },
+              "required": true
+            },
+            {
+              "parameter": "updated",
+              "schema": {
+                "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/updatedEntityTypes"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "resourceId": "res-1", "current": ["Person"], "updated": ["Person", "Place"] },
-              "sends": { "resourceId": "res-1", "currentEntityTypes": ["Person"], "updatedEntityTypes": ["Person", "Place"] }
+              "args": {
+                "resourceId": "res-1",
+                "current": [
+                  "Person"
+                ],
+                "updated": [
+                  "Person",
+                  "Place"
+                ]
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "currentEntityTypes": [
+                  "Person"
+                ],
+                "updatedEntityTypes": [
+                  "Person",
+                  "Place"
+                ]
+              }
             }
           ]
         },
         {
           "method": "delegate",
           "shape": "delegation",
-          "via": { "request": "job:create" },
+          "via": {
+            "request": "job:create"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "params", "schema": { "$ref": "../components/schemas/MarkJobParams.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "params",
+              "schema": {
+                "$ref": "../components/schemas/MarkJobParams.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
               "why": "the namespace is the verb, so the job is a mark job; its parameters state its motivation",
-              "args": { "resourceId": "res-1", "params": { "motivation": "highlighting" } },
-              "sends": { "jobType": "mark", "resourceId": "res-1", "params": { "motivation": "highlighting" } }
+              "args": {
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "highlighting"
+                }
+              },
+              "sends": {
+                "jobType": "mark",
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "highlighting"
+                }
+              }
             },
             {
-              "args": { "resourceId": "res-1", "params": { "motivation": "linking", "entityTypes": ["Person"], "includeDescriptiveReferences": true } },
-              "sends": { "jobType": "mark", "resourceId": "res-1", "params": { "motivation": "linking", "entityTypes": ["Person"], "includeDescriptiveReferences": true } }
+              "args": {
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "linking",
+                  "entityTypes": [
+                    "Person"
+                  ],
+                  "includeDescriptiveReferences": true
+                }
+              },
+              "sends": {
+                "jobType": "mark",
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "linking",
+                  "entityTypes": [
+                    "Person"
+                  ],
+                  "includeDescriptiveReferences": true
+                }
+              }
             },
             {
               "why": "a tagging job is given what a tagging job takes, each parameter under its own name",
-              "args": { "resourceId": "res-1", "params": { "motivation": "tagging", "schemaId": "s1", "categories": ["claim"], "language": "en", "sourceLanguage": "fr" } },
-              "sends": { "jobType": "mark", "resourceId": "res-1", "params": { "motivation": "tagging", "schemaId": "s1", "categories": ["claim"], "language": "en", "sourceLanguage": "fr" } }
+              "args": {
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "tagging",
+                  "schemaId": "s1",
+                  "categories": [
+                    "claim"
+                  ],
+                  "language": "en",
+                  "sourceLanguage": "fr"
+                }
+              },
+              "sends": {
+                "jobType": "mark",
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "tagging",
+                  "schemaId": "s1",
+                  "categories": [
+                    "claim"
+                  ],
+                  "language": "en",
+                  "sourceLanguage": "fr"
+                }
+              }
             },
             {
               "why": "an assessing job is given what an assessing job takes",
-              "args": { "resourceId": "res-1", "params": { "motivation": "assessing", "instructions": "be brief", "tone": "critical", "density": 2.5, "language": "en", "sourceLanguage": "fr" } },
-              "sends": { "jobType": "mark", "resourceId": "res-1", "params": { "motivation": "assessing", "instructions": "be brief", "tone": "critical", "density": 2.5, "language": "en", "sourceLanguage": "fr" } }
+              "args": {
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "assessing",
+                  "instructions": "be brief",
+                  "tone": "critical",
+                  "density": 2.5,
+                  "language": "en",
+                  "sourceLanguage": "fr"
+                }
+              },
+              "sends": {
+                "jobType": "mark",
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "assessing",
+                  "instructions": "be brief",
+                  "tone": "critical",
+                  "density": 2.5,
+                  "language": "en",
+                  "sourceLanguage": "fr"
+                }
+              }
             },
             {
-              "args": { "resourceId": "res-1", "params": { "motivation": "commenting", "tone": "scholarly" } },
-              "sends": { "jobType": "mark", "resourceId": "res-1", "params": { "motivation": "commenting", "tone": "scholarly" } }
+              "args": {
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "commenting",
+                  "tone": "scholarly"
+                }
+              },
+              "sends": {
+                "jobType": "mark",
+                "resourceId": "res-1",
+                "params": {
+                  "motivation": "commenting",
+                  "tone": "scholarly"
+                }
+              }
             }
           ]
         },
         {
           "method": "request",
           "shape": "signal",
-          "via": { "local": "mark:requested" },
+          "via": {
+            "local": "mark:requested"
+          },
           "parameters": [
-            { "parameter": "source", "schema": { "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/source" }, "required": true },
-            { "parameter": "selector", "schema": { "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/selector" }, "required": true },
-            { "parameter": "motivation", "schema": { "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/motivation" }, "required": true }
+            {
+              "parameter": "source",
+              "schema": {
+                "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/source"
+              },
+              "required": true
+            },
+            {
+              "parameter": "selector",
+              "schema": {
+                "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/selector"
+              },
+              "required": true
+            },
+            {
+              "parameter": "motivation",
+              "schema": {
+                "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/motivation"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "source": "res-1", "selector": { "$fixture": "selector" }, "motivation": "highlighting" },
-              "sends": { "source": "res-1", "selector": { "$fixture": "selector" }, "motivation": "highlighting" }
+              "args": {
+                "source": "res-1",
+                "selector": {
+                  "$fixture": "selector"
+                },
+                "motivation": "highlighting"
+              },
+              "sends": {
+                "source": "res-1",
+                "selector": {
+                  "$fixture": "selector"
+                },
+                "motivation": "highlighting"
+              }
             }
           ]
         },
         {
           "method": "submit",
           "shape": "signal",
-          "via": { "local": "mark:submit" },
+          "via": {
+            "local": "mark:submit"
+          },
           "parameters": [
-            { "parameter": "input", "schema": { "$ref": "../components/schemas/MarkSubmitEvent.json" }, "required": true }
+            {
+              "parameter": "input",
+              "schema": {
+                "$ref": "../components/schemas/MarkSubmitEvent.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "input": { "source": "res-1", "motivation": "highlighting", "selector": { "$fixture": "selector" } } },
-              "sends": { "source": "res-1", "motivation": "highlighting", "selector": { "$fixture": "selector" } }
+              "args": {
+                "input": {
+                  "source": "res-1",
+                  "motivation": "highlighting",
+                  "selector": {
+                    "$fixture": "selector"
+                  }
+                }
+              },
+              "sends": {
+                "source": "res-1",
+                "motivation": "highlighting",
+                "selector": {
+                  "$fixture": "selector"
+                }
+              }
             }
           ]
         },
         {
           "method": "reportDeleteError",
           "shape": "signal",
-          "via": { "local": "mark:delete-error" },
+          "via": {
+            "local": "mark:delete-error"
+          },
           "parameters": [
-            { "parameter": "input", "schema": { "$ref": "../components/schemas/ResourceErrorEvent.json" }, "required": true }
+            {
+              "parameter": "input",
+              "schema": {
+                "$ref": "../components/schemas/ResourceErrorEvent.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "input": { "resourceId": "res-1", "message": "the delete was refused" } },
-              "sends": { "resourceId": "res-1", "message": "the delete was refused" }
+              "args": {
+                "input": {
+                  "resourceId": "res-1",
+                  "message": "the delete was refused"
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "message": "the delete was refused"
+              }
             }
           ]
         }
@@ -427,44 +1139,120 @@
         {
           "method": "body",
           "shape": "promise",
-          "via": { "request": "bind:update-body" },
+          "via": {
+            "request": "bind:update-body"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true },
-            { "parameter": "operations", "schema": { "$ref": "../components/schemas/BindUpdateBodyCommand.json#/properties/operations" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "operations",
+              "schema": {
+                "$ref": "../components/schemas/BindUpdateBodyCommand.json#/properties/operations"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "resourceId": "res-1", "annotationId": "ann-1", "operations": [{ "op": "remove" }] },
-              "sends": { "annotationId": "ann-1", "resourceId": "res-1", "operations": [{ "op": "remove" }] }
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1",
+                "operations": [
+                  {
+                    "op": "remove"
+                  }
+                ]
+              },
+              "sends": {
+                "annotationId": "ann-1",
+                "resourceId": "res-1",
+                "operations": [
+                  {
+                    "op": "remove"
+                  }
+                ]
+              }
             }
           ]
         },
         {
           "method": "initiate",
           "shape": "signal",
-          "via": { "local": "bind:initiate" },
+          "via": {
+            "local": "bind:initiate"
+          },
           "parameters": [
-            { "parameter": "input", "schema": { "$ref": "../components/schemas/BindInitiateCommand.json" }, "required": true }
+            {
+              "parameter": "input",
+              "schema": {
+                "$ref": "../components/schemas/BindInitiateCommand.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "input": { "annotationId": "ann-1", "resourceId": "res-1", "defaultTitle": "A title", "entityTypes": ["Person"] } },
-              "sends": { "annotationId": "ann-1", "resourceId": "res-1", "defaultTitle": "A title", "entityTypes": ["Person"] }
+              "args": {
+                "input": {
+                  "annotationId": "ann-1",
+                  "resourceId": "res-1",
+                  "defaultTitle": "A title",
+                  "entityTypes": [
+                    "Person"
+                  ]
+                }
+              },
+              "sends": {
+                "annotationId": "ann-1",
+                "resourceId": "res-1",
+                "defaultTitle": "A title",
+                "entityTypes": [
+                  "Person"
+                ]
+              }
             }
           ]
         },
         {
           "method": "reportBodyError",
           "shape": "signal",
-          "via": { "local": "bind:body-error" },
+          "via": {
+            "local": "bind:body-error"
+          },
           "parameters": [
-            { "parameter": "input", "schema": { "$ref": "../components/schemas/ResourceErrorEvent.json" }, "required": true }
+            {
+              "parameter": "input",
+              "schema": {
+                "$ref": "../components/schemas/ResourceErrorEvent.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "input": { "resourceId": "res-1", "message": "the link was refused" } },
-              "sends": { "resourceId": "res-1", "message": "the link was refused" }
+              "args": {
+                "input": {
+                  "resourceId": "res-1",
+                  "message": "the link was refused"
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "message": "the link was refused"
+              }
             }
           ]
         }
@@ -477,29 +1265,81 @@
         {
           "method": "annotation",
           "shape": "stream",
-          "via": { "request": "gather:requested" },
+          "via": {
+            "request": "gather:requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true },
-            { "parameter": "options", "schema": { "$ref": "../components/schemas/GatherAnnotationOptions.json" }, "required": false }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "options",
+              "schema": {
+                "$ref": "../components/schemas/GatherAnnotationOptions.json"
+              },
+              "required": false
+            }
           ],
           "cases": [
             {
               "why": "no options: a window of two thousand characters",
-              "args": { "resourceId": "res-1", "annotationId": "ann-1" },
-              "sends": { "annotationId": "ann-1", "resourceId": "res-1", "options": { "contextWindow": 2000 } }
-            },
-            {
-              "args": { "resourceId": "res-1", "annotationId": "ann-1", "options": { "contextWindow": 500 } },
-              "sends": { "annotationId": "ann-1", "resourceId": "res-1", "options": { "contextWindow": 500 } }
-            },
-            {
-              "why": "a context asked for or left out is sent as stated, false as well as true; the window not stated is two thousand",
-              "args": { "resourceId": "res-1", "annotationId": "ann-1", "options": { "includeSourceContext": false, "includeTargetContext": true } },
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              },
               "sends": {
                 "annotationId": "ann-1",
                 "resourceId": "res-1",
-                "options": { "includeSourceContext": false, "includeTargetContext": true, "contextWindow": 2000 }
+                "options": {
+                  "contextWindow": 2000
+                }
+              }
+            },
+            {
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1",
+                "options": {
+                  "contextWindow": 500
+                }
+              },
+              "sends": {
+                "annotationId": "ann-1",
+                "resourceId": "res-1",
+                "options": {
+                  "contextWindow": 500
+                }
+              }
+            },
+            {
+              "why": "a context asked for or left out is sent as stated, false as well as true; the window not stated is two thousand",
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1",
+                "options": {
+                  "includeSourceContext": false,
+                  "includeTargetContext": true
+                }
+              },
+              "sends": {
+                "annotationId": "ann-1",
+                "resourceId": "res-1",
+                "options": {
+                  "includeSourceContext": false,
+                  "includeTargetContext": true,
+                  "contextWindow": 2000
+                }
               }
             }
           ]
@@ -507,36 +1347,112 @@
         {
           "method": "resource",
           "shape": "promise",
-          "via": { "request": "gather:resource-requested" },
+          "via": {
+            "request": "gather:resource-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "options", "schema": { "$ref": "types/GatherResourceOptions.json" }, "required": false }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "options",
+              "schema": {
+                "$ref": "types/GatherResourceOptions.json"
+              },
+              "required": false
+            }
           ],
           "cases": [
             {
               "why": "no options: two hops, ten resources, their content and no summary",
-              "args": { "resourceId": "res-1" },
-              "sends": { "resourceId": "res-1", "options": { "depth": 2, "maxResources": 10, "includeContent": true, "includeSummary": false } }
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "options": {
+                  "depth": 2,
+                  "maxResources": 10,
+                  "includeContent": true,
+                  "includeSummary": false
+                }
+              }
             },
             {
-              "args": { "resourceId": "res-1", "options": { "depth": 1, "maxResources": 3, "includeContent": false, "includeSummary": true, "excludeEntityTypes": ["Question"] } },
-              "sends": { "resourceId": "res-1", "options": { "depth": 1, "maxResources": 3, "includeContent": false, "includeSummary": true, "excludeEntityTypes": ["Question"] } }
+              "args": {
+                "resourceId": "res-1",
+                "options": {
+                  "depth": 1,
+                  "maxResources": 3,
+                  "includeContent": false,
+                  "includeSummary": true,
+                  "excludeEntityTypes": [
+                    "Question"
+                  ]
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "options": {
+                  "depth": 1,
+                  "maxResources": 3,
+                  "includeContent": false,
+                  "includeSummary": true,
+                  "excludeEntityTypes": [
+                    "Question"
+                  ]
+                }
+              }
             },
             {
               "why": "an empty exclusion is no exclusion, and is not sent",
-              "args": { "resourceId": "res-1", "options": { "excludeEntityTypes": [] } },
-              "sends": { "resourceId": "res-1", "options": { "depth": 2, "maxResources": 10, "includeContent": true, "includeSummary": false } }
+              "args": {
+                "resourceId": "res-1",
+                "options": {
+                  "excludeEntityTypes": []
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "options": {
+                  "depth": 2,
+                  "maxResources": 10,
+                  "includeContent": true,
+                  "includeSummary": false
+                }
+              }
             }
           ]
         },
         {
           "method": "referencedBy",
           "shape": "cache",
-          "via": { "request": "gather:referenced-by-requested" },
+          "via": {
+            "request": "gather:referenced-by-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         }
       ]
     },
@@ -547,38 +1463,125 @@
         {
           "method": "search",
           "shape": "stream",
-          "via": { "request": "match:search-requested" },
+          "via": {
+            "request": "match:search-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "referenceId", "schema": { "$ref": "../components/schemas/MatchSearchRequest.json#/properties/referenceId" }, "required": true },
-            { "parameter": "context", "schema": { "$ref": "../components/schemas/MatchSearchRequest.json#/properties/context" }, "required": true },
-            { "parameter": "options", "schema": { "$ref": "types/MatchSearchOptions.json" }, "required": false }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "referenceId",
+              "schema": {
+                "$ref": "../components/schemas/MatchSearchRequest.json#/properties/referenceId"
+              },
+              "required": true
+            },
+            {
+              "parameter": "context",
+              "schema": {
+                "$ref": "../components/schemas/MatchSearchRequest.json#/properties/context"
+              },
+              "required": true
+            },
+            {
+              "parameter": "options",
+              "schema": {
+                "$ref": "types/MatchSearchOptions.json"
+              },
+              "required": false
+            }
           ],
           "cases": [
             {
               "why": "no options: ten candidates, scored semantically",
-              "args": { "resourceId": "res-1", "referenceId": "ann-1", "context": { "$fixture": "context" } },
-              "sends": { "resourceId": "res-1", "referenceId": "ann-1", "context": { "$fixture": "context" }, "limit": 10, "useSemanticScoring": true }
+              "args": {
+                "resourceId": "res-1",
+                "referenceId": "ann-1",
+                "context": {
+                  "$fixture": "context"
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "referenceId": "ann-1",
+                "context": {
+                  "$fixture": "context"
+                },
+                "limit": 10,
+                "useSemanticScoring": true
+              }
             },
             {
-              "args": { "resourceId": "res-1", "referenceId": "ann-1", "context": { "$fixture": "context" }, "options": { "limit": 3, "useSemanticScoring": false } },
-              "sends": { "resourceId": "res-1", "referenceId": "ann-1", "context": { "$fixture": "context" }, "limit": 3, "useSemanticScoring": false }
+              "args": {
+                "resourceId": "res-1",
+                "referenceId": "ann-1",
+                "context": {
+                  "$fixture": "context"
+                },
+                "options": {
+                  "limit": 3,
+                  "useSemanticScoring": false
+                }
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "referenceId": "ann-1",
+                "context": {
+                  "$fixture": "context"
+                },
+                "limit": 3,
+                "useSemanticScoring": false
+              }
             }
           ]
         },
         {
           "method": "requestSearch",
           "shape": "signal",
-          "via": { "local": "match:search-requested" },
+          "via": {
+            "local": "match:search-requested"
+          },
           "parameters": [
-            { "parameter": "input", "schema": { "$ref": "../components/schemas/MatchSearchRequest.json" }, "required": true },
-            { "parameter": "correlationId", "schema": { "$ref": "../components/schemas/BusFrame.json#/properties/correlationId" }, "required": true }
+            {
+              "parameter": "input",
+              "schema": {
+                "$ref": "../components/schemas/MatchSearchRequest.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "correlationId",
+              "schema": {
+                "$ref": "../components/schemas/BusFrame.json#/properties/correlationId"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
               "why": "the caller's key rides the envelope, never the payload",
-              "args": { "input": { "resourceId": "res-1", "referenceId": "ann-1", "context": { "$fixture": "context" } }, "correlationId": "cid-1" },
-              "sends": { "resourceId": "res-1", "referenceId": "ann-1", "context": { "$fixture": "context" } },
+              "args": {
+                "input": {
+                  "resourceId": "res-1",
+                  "referenceId": "ann-1",
+                  "context": {
+                    "$fixture": "context"
+                  }
+                },
+                "correlationId": "cid-1"
+              },
+              "sends": {
+                "resourceId": "res-1",
+                "referenceId": "ann-1",
+                "context": {
+                  "$fixture": "context"
+                }
+              },
               "correlationId": "cid-1"
             }
           ]
@@ -586,21 +1589,68 @@
         {
           "method": "resources",
           "shape": "cache",
-          "via": { "request": "match:resources-requested" },
+          "via": {
+            "request": "match:resources-requested"
+          },
           "parameters": [
-            { "parameter": "search", "schema": { "$ref": "../components/schemas/MatchResourcesRequest.json#/properties/search" }, "required": true },
-            { "parameter": "filters", "schema": { "$ref": "types/ResourceSearchFilters.json" }, "required": false }
+            {
+              "parameter": "search",
+              "schema": {
+                "$ref": "../components/schemas/MatchResourcesRequest.json#/properties/search"
+              },
+              "required": true
+            },
+            {
+              "parameter": "filters",
+              "schema": {
+                "$ref": "types/ResourceSearchFilters.json"
+              },
+              "required": false
+            }
           ],
           "cases": [
-            { "why": "no filters: the first hundred", "args": { "search": "cat" }, "sends": { "search": "cat", "limit": 100, "offset": 0 } },
             {
-              "args": { "search": "cat", "filters": { "archived": false, "entityType": "Person", "limit": 5 } },
-              "sends": { "search": "cat", "archived": false, "entityType": "Person", "limit": 5, "offset": 0 }
+              "why": "no filters: the first hundred",
+              "args": {
+                "search": "cat"
+              },
+              "sends": {
+                "search": "cat",
+                "limit": 100,
+                "offset": 0
+              }
+            },
+            {
+              "args": {
+                "search": "cat",
+                "filters": {
+                  "archived": false,
+                  "entityType": "Person",
+                  "limit": 5
+                }
+              },
+              "sends": {
+                "search": "cat",
+                "archived": false,
+                "entityType": "Person",
+                "limit": 5,
+                "offset": 0
+              }
             },
             {
               "why": "a page further on: the resources before it are passed over",
-              "args": { "search": "cat", "filters": { "limit": 50, "offset": 100 } },
-              "sends": { "search": "cat", "limit": 50, "offset": 100 }
+              "args": {
+                "search": "cat",
+                "filters": {
+                  "limit": 50,
+                  "offset": 100
+                }
+              },
+              "sends": {
+                "search": "cat",
+                "limit": 50,
+                "offset": 100
+              }
             }
           ]
         }
@@ -613,92 +1663,272 @@
         {
           "method": "resource",
           "shape": "upload",
-          "via": { "content": "putBinary" },
+          "via": {
+            "content": "putBinary"
+          },
           "parameters": [
-            { "parameter": "data", "schema": { "$ref": "types/PutBinaryRequest.json" }, "required": true }
+            {
+              "parameter": "data",
+              "schema": {
+                "$ref": "types/PutBinaryRequest.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
-              "args": { "data": { "name": "Notes", "file": "hello", "format": "text/plain", "storageUri": "file://notes.txt" } },
-              "sends": { "name": "Notes", "content": "hello", "format": "text/plain", "storageUri": "file://notes.txt" }
+              "args": {
+                "data": {
+                  "name": "Notes",
+                  "file": "hello",
+                  "format": "text/plain",
+                  "storageUri": "file://notes.txt"
+                }
+              },
+              "sends": {
+                "name": "Notes",
+                "content": "hello",
+                "format": "text/plain",
+                "storageUri": "file://notes.txt"
+              }
             }
           ]
         },
         {
           "method": "delegate",
           "shape": "delegation",
-          "via": { "request": "job:create" },
+          "via": {
+            "request": "job:create"
+          },
           "parameters": [
-            { "parameter": "params", "schema": { "$ref": "../components/schemas/GenerationJobParams.json" }, "required": true },
-            { "parameter": "stallDeadlineMs", "schema": { "type": "integer", "minimum": 0, "description": "How long the followed generation may say nothing, in milliseconds, before it is given up on. The follower's own, never sent: left out, it grows with the generation's `maxTokens` as client/timing.json's generationStall timings say." }, "required": false }
+            {
+              "parameter": "params",
+              "schema": {
+                "$ref": "../components/schemas/GenerationJobParams.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "stallDeadlineMs",
+              "schema": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "How long the followed generation may say nothing, in milliseconds, before it is given up on. The follower's own, never sent: left out, it grows with the generation's `maxTokens` as client/timing.json's generationStall timings say."
+              },
+              "required": false
+            }
           ],
           "cases": [
             {
               "why": "the namespace is the verb, so the job is a yield job; it names no resource: its context's focus does",
-              "args": { "params": { "title": "A summary", "storageUri": "file://a-summary.md", "context": { "$fixture": "context" } } },
-              "sends": { "jobType": "yield", "params": { "title": "A summary", "storageUri": "file://a-summary.md", "context": { "$fixture": "context" } } }
+              "args": {
+                "params": {
+                  "title": "A summary",
+                  "storageUri": "file://a-summary.md",
+                  "context": {
+                    "$fixture": "context"
+                  }
+                }
+              },
+              "sends": {
+                "jobType": "yield",
+                "params": {
+                  "title": "A summary",
+                  "storageUri": "file://a-summary.md",
+                  "context": {
+                    "$fixture": "context"
+                  }
+                }
+              }
             },
             {
               "why": "how long the follower waits is the client's own: it is given beside the job's parameters, and is not sent",
-              "args": { "params": { "title": "A summary", "storageUri": "file://a-summary.md", "prompt": "in one line", "maxTokens": 200, "context": { "$fixture": "context" } }, "stallDeadlineMs": 5000 },
-              "sends": { "jobType": "yield", "params": { "title": "A summary", "storageUri": "file://a-summary.md", "prompt": "in one line", "maxTokens": 200, "context": { "$fixture": "context" } } }
+              "args": {
+                "params": {
+                  "title": "A summary",
+                  "storageUri": "file://a-summary.md",
+                  "prompt": "in one line",
+                  "maxTokens": 200,
+                  "context": {
+                    "$fixture": "context"
+                  }
+                },
+                "stallDeadlineMs": 5000
+              },
+              "sends": {
+                "jobType": "yield",
+                "params": {
+                  "title": "A summary",
+                  "storageUri": "file://a-summary.md",
+                  "prompt": "in one line",
+                  "maxTokens": 200,
+                  "context": {
+                    "$fixture": "context"
+                  }
+                }
+              }
             }
           ]
         },
         {
           "method": "cloneToken",
           "shape": "promise",
-          "via": { "request": "yield:clone-token-requested" },
+          "via": {
+            "request": "yield:clone-token-requested"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "fromToken",
           "shape": "promise",
-          "via": { "request": "yield:clone-resource-requested" },
+          "via": {
+            "request": "yield:clone-resource-requested"
+          },
           "parameters": [
-            { "parameter": "token", "schema": { "$ref": "../components/schemas/YieldCloneResourceRequest.json#/properties/token" }, "required": true }
+            {
+              "parameter": "token",
+              "schema": {
+                "$ref": "../components/schemas/YieldCloneResourceRequest.json#/properties/token"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "token": "tok-1" }, "sends": { "token": "tok-1" } }]
+          "cases": [
+            {
+              "args": {
+                "token": "tok-1"
+              },
+              "sends": {
+                "token": "tok-1"
+              }
+            }
+          ]
         },
         {
           "method": "createFromToken",
           "shape": "promise",
-          "via": { "request": "yield:clone-resource-requested" },
+          "via": {
+            "request": "yield:clone-resource-requested"
+          },
           "parameters": [
-            { "parameter": "options", "schema": { "$ref": "types/CreateFromTokenOptions.json" }, "required": true }
+            {
+              "parameter": "options",
+              "schema": {
+                "$ref": "types/CreateFromTokenOptions.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
               "why": "the source is read first; the clone is uploaded in a format its source's allows, under a name made from its own",
-              "args": { "options": { "token": "tok-1", "name": "A Copy", "content": "hello" } },
-              "sends": { "token": "tok-1" },
+              "args": {
+                "options": {
+                  "token": "tok-1",
+                  "name": "A Copy",
+                  "content": "hello"
+                }
+              },
+              "sends": {
+                "token": "tok-1"
+              },
               "answers": {
-                "sourceResource": { "@context": "https://schema.org", "@id": "res-1", "name": "A resource", "representations": [{ "mediaType": "text/markdown" }] },
+                "sourceResource": {
+                  "@context": "https://schema.org",
+                  "@id": "res-1",
+                  "name": "A resource",
+                  "representations": [
+                    {
+                      "mediaType": "text/markdown"
+                    }
+                  ]
+                },
                 "expiresAt": "2030-01-01T00:00:00.000Z"
               },
-              "then": [{ "content": "putBinary", "sends": { "name": "A Copy", "content": "hello", "format": "text/markdown", "storageUri": "file://a-copy.md", "cloneToken": "tok-1" } }]
+              "then": [
+                {
+                  "content": "putBinary",
+                  "sends": {
+                    "name": "A Copy",
+                    "content": "hello",
+                    "format": "text/markdown",
+                    "storageUri": "file://a-copy.md",
+                    "cloneToken": "tok-1"
+                  }
+                }
+              ]
             },
             {
               "why": "a source in a format nobody authors is cloned as plain text",
-              "args": { "options": { "token": "tok-1", "name": "A Copy", "content": "hello" } },
-              "sends": { "token": "tok-1" },
+              "args": {
+                "options": {
+                  "token": "tok-1",
+                  "name": "A Copy",
+                  "content": "hello"
+                }
+              },
+              "sends": {
+                "token": "tok-1"
+              },
               "answers": {
-                "sourceResource": { "@context": "https://schema.org", "@id": "res-1", "name": "A resource", "representations": [{ "mediaType": "application/pdf" }] },
+                "sourceResource": {
+                  "@context": "https://schema.org",
+                  "@id": "res-1",
+                  "name": "A resource",
+                  "representations": [
+                    {
+                      "mediaType": "application/pdf"
+                    }
+                  ]
+                },
                 "expiresAt": "2030-01-01T00:00:00.000Z"
               },
-              "then": [{ "content": "putBinary", "sends": { "name": "A Copy", "content": "hello", "format": "text/plain", "storageUri": "file://a-copy.txt", "cloneToken": "tok-1" } }]
+              "then": [
+                {
+                  "content": "putBinary",
+                  "sends": {
+                    "name": "A Copy",
+                    "content": "hello",
+                    "format": "text/plain",
+                    "storageUri": "file://a-copy.txt",
+                    "cloneToken": "tok-1"
+                  }
+                }
+              ]
             }
           ]
         },
         {
           "method": "clone",
           "shape": "signal",
-          "via": { "local": "yield:clone" },
+          "via": {
+            "local": "yield:clone"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         }
       ]
     },
@@ -709,63 +1939,185 @@
         {
           "method": "attention",
           "shape": "count",
-          "via": { "emit": "beckon:focus" },
+          "via": {
+            "emit": "beckon:focus"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/BeckonFocusEvent.json#/properties/annotationId" }, "required": false }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/BeckonFocusEvent.json#/properties/annotationId"
+              },
+              "required": false
+            }
           ],
           "cases": [
-            { "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1", "resourceId": "res-1" } },
-            { "why": "no annotation: the focus is on the resource as a whole, and names none", "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }
+            {
+              "args": {
+                "resourceId": "res-1",
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1",
+                "resourceId": "res-1"
+              }
+            },
+            {
+              "why": "no annotation: the focus is on the resource as a whole, and names none",
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
           ]
         },
         {
           "method": "click",
           "shape": "count",
-          "via": { "emit": "browse:click" },
+          "via": {
+            "emit": "browse:click"
+          },
           "parameters": [
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
+          "cases": [
+            {
+              "args": {
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1"
+              }
+            }
+          ]
         },
         {
           "method": "openResource",
           "shape": "count",
-          "via": { "emit": "browse:resource-open" },
+          "via": {
+            "emit": "browse:resource-open"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "sparkleAll",
           "shape": "count",
-          "via": { "emit": "beckon:sparkle" },
+          "via": {
+            "emit": "beckon:sparkle"
+          },
           "parameters": [
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
+          "cases": [
+            {
+              "args": {
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1"
+              }
+            }
+          ]
         },
         {
           "method": "hover",
           "shape": "signal",
-          "via": { "local": "beckon:hover" },
+          "via": {
+            "local": "beckon:hover"
+          },
           "parameters": [
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/BeckonHoverEvent.json#/properties/annotationId" }, "required": true }
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/BeckonHoverEvent.json#/properties/annotationId"
+              },
+              "required": true
+            }
           ],
           "cases": [
-            { "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } },
-            { "why": "nothing is hovered: the field says so", "args": { "annotationId": null }, "sends": { "annotationId": null } }
+            {
+              "args": {
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1"
+              }
+            },
+            {
+              "why": "nothing is hovered: the field says so",
+              "args": {
+                "annotationId": null
+              },
+              "sends": {
+                "annotationId": null
+              }
+            }
           ]
         },
         {
           "method": "sparkle",
           "shape": "signal",
-          "via": { "local": "beckon:sparkle" },
+          "via": {
+            "local": "beckon:sparkle"
+          },
           "parameters": [
-            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+            {
+              "parameter": "annotationId",
+              "schema": {
+                "$ref": "../components/schemas/AnnotationId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
+          "cases": [
+            {
+              "args": {
+                "annotationId": "ann-1"
+              },
+              "sends": {
+                "annotationId": "ann-1"
+              }
+            }
+          ]
         }
       ]
     },
@@ -776,83 +2128,238 @@
         {
           "method": "queued",
           "shape": "events",
-          "via": { "observes": "job:queued" },
+          "via": {
+            "observes": "job:queued"
+          },
           "parameters": [],
           "cases": [
             {
               "why": "a yield job is announced with what it is asked to make, and without its context",
               "args": {},
-              "sends": { "jobId": "job-1", "jobType": "yield", "resourceId": "res-1", "userId": "did:web:example.org:users:alice", "params": { "title": "A summary", "storageUri": "file://a-summary.md" } }
+              "sends": {
+                "jobId": "job-1",
+                "jobType": "yield",
+                "resourceId": "res-1",
+                "userId": "did:web:example.org:users:alice",
+                "params": {
+                  "title": "A summary",
+                  "storageUri": "file://a-summary.md"
+                }
+              }
             },
             {
               "why": "a mark job is announced with its parameters, its motivation among them",
               "args": {},
-              "sends": { "jobId": "job-2", "jobType": "mark", "resourceId": "res-1", "userId": "did:web:example.org:users:alice", "params": { "motivation": "tagging", "schemaId": "s1", "categories": ["claim"] } }
+              "sends": {
+                "jobId": "job-2",
+                "jobType": "mark",
+                "resourceId": "res-1",
+                "userId": "did:web:example.org:users:alice",
+                "params": {
+                  "motivation": "tagging",
+                  "schemaId": "s1",
+                  "categories": [
+                    "claim"
+                  ]
+                }
+              }
             }
           ]
         },
         {
           "method": "progress",
           "shape": "events",
-          "via": { "observes": "job:report-progress" },
+          "via": {
+            "observes": "job:report-progress"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": { "resourceId": "res-1", "jobId": "job-1", "jobType": "yield", "percentage": 12.5 } }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {
+                "resourceId": "res-1",
+                "jobId": "job-1",
+                "jobType": "yield",
+                "percentage": 12.5
+              }
+            }
+          ]
         },
         {
           "method": "complete",
           "shape": "events",
-          "via": { "observes": "job:complete" },
+          "via": {
+            "observes": "job:complete"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": { "resourceId": "res-1", "jobId": "job-1", "jobType": "yield" } }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {
+                "resourceId": "res-1",
+                "jobId": "job-1",
+                "jobType": "yield"
+              }
+            }
+          ]
         },
         {
           "method": "fail",
           "shape": "events",
-          "via": { "observes": "job:fail" },
+          "via": {
+            "observes": "job:fail"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": { "resourceId": "res-1", "jobId": "job-1", "jobType": "yield", "error": "the model refused" } }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {
+                "resourceId": "res-1",
+                "jobId": "job-1",
+                "jobType": "yield",
+                "error": "the model refused"
+              }
+            }
+          ]
         },
         {
           "method": "status",
           "shape": "promise",
-          "via": { "request": "job:status-requested" },
+          "via": {
+            "request": "job:status-requested"
+          },
           "parameters": [
-            { "parameter": "jobId", "schema": { "$ref": "../components/schemas/JobId.json" }, "required": true }
+            {
+              "parameter": "jobId",
+              "schema": {
+                "$ref": "../components/schemas/JobId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "jobId": "job-1" }, "sends": { "jobId": "job-1" } }]
+          "cases": [
+            {
+              "args": {
+                "jobId": "job-1"
+              },
+              "sends": {
+                "jobId": "job-1"
+              }
+            }
+          ]
         },
         {
           "method": "pollUntilComplete",
           "shape": "promise",
-          "via": { "request": "job:status-requested" },
+          "via": {
+            "request": "job:status-requested"
+          },
           "parameters": [
-            { "parameter": "jobId", "schema": { "$ref": "../components/schemas/JobId.json" }, "required": true },
-            { "parameter": "options", "schema": { "$ref": "types/JobPollOptions.json" }, "required": false },
-            { "parameter": "onStatus", "calls": { "$ref": "../components/schemas/JobStatusResponse.json" }, "required": false }
+            {
+              "parameter": "jobId",
+              "schema": {
+                "$ref": "../components/schemas/JobId.json"
+              },
+              "required": true
+            },
+            {
+              "parameter": "options",
+              "schema": {
+                "$ref": "types/JobPollOptions.json"
+              },
+              "required": false
+            },
+            {
+              "parameter": "onStatus",
+              "calls": {
+                "$ref": "../components/schemas/JobStatusResponse.json"
+              },
+              "required": false
+            }
           ],
-          "cases": [{ "args": { "jobId": "job-1" }, "sends": { "jobId": "job-1" } }]
+          "cases": [
+            {
+              "args": {
+                "jobId": "job-1"
+              },
+              "sends": {
+                "jobId": "job-1"
+              }
+            }
+          ]
         },
         {
           "method": "cancel",
           "shape": "promise",
-          "via": { "request": "job:cancel-requested" },
+          "via": {
+            "request": "job:cancel-requested"
+          },
           "parameters": [
-            { "parameter": "jobId", "schema": { "$ref": "../components/schemas/JobId.json" }, "required": true }
+            {
+              "parameter": "jobId",
+              "schema": {
+                "$ref": "../components/schemas/JobId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "jobId": "job-1" }, "sends": { "jobId": "job-1" } }]
+          "cases": [
+            {
+              "args": {
+                "jobId": "job-1"
+              },
+              "sends": {
+                "jobId": "job-1"
+              }
+            }
+          ]
         },
         {
           "method": "claim",
           "shape": "claims",
-          "via": { "request": "job:claim" },
+          "via": {
+            "request": "job:claim"
+          },
           "parameters": [
-            { "parameter": "options", "schema": { "$ref": "types/ClaimOptions.json" }, "required": true }
+            {
+              "parameter": "options",
+              "schema": {
+                "$ref": "types/ClaimOptions.json"
+              },
+              "required": true
+            }
           ],
           "cases": [
             {
               "why": "a claim carries the filters of the jobs the worker takes, as it was given them",
-              "args": { "options": { "accepts": [{ "jobType": "mark", "params": { "motivation": "tagging" } }, { "jobType": "yield" }] } },
-              "sends": { "accepts": [{ "jobType": "mark", "params": { "motivation": "tagging" } }, { "jobType": "yield" }] }
+              "args": {
+                "options": {
+                  "accepts": [
+                    {
+                      "jobType": "mark",
+                      "params": {
+                        "motivation": "tagging"
+                      }
+                    },
+                    {
+                      "jobType": "yield"
+                    }
+                  ]
+                }
+              },
+              "sends": {
+                "accepts": [
+                  {
+                    "jobType": "mark",
+                    "params": {
+                      "motivation": "tagging"
+                    }
+                  },
+                  {
+                    "jobType": "yield"
+                  }
+                ]
+              }
             }
           ]
         }
@@ -865,25 +2372,56 @@
         {
           "method": "me",
           "shape": "promise",
-          "via": { "gateway": "getCurrentUser" },
+          "via": {
+            "gateway": "getCurrentUser"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         },
         {
           "method": "mediaToken",
           "shape": "promise",
-          "via": { "gateway": "getMediaToken" },
+          "via": {
+            "gateway": "getMediaToken"
+          },
           "parameters": [
-            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+            {
+              "parameter": "resourceId",
+              "schema": {
+                "$ref": "../components/schemas/ResourceId.json"
+              },
+              "required": true
+            }
           ],
-          "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
+          "cases": [
+            {
+              "args": {
+                "resourceId": "res-1"
+              },
+              "sends": {
+                "resourceId": "res-1"
+              }
+            }
+          ]
         },
         {
           "method": "protectedResourceMetadata",
           "shape": "promise",
-          "via": { "gateway": "getProtectedResourceMetadata" },
+          "via": {
+            "gateway": "getProtectedResourceMetadata"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         }
       ]
     },
@@ -894,16 +2432,30 @@
         {
           "method": "healthCheck",
           "shape": "promise",
-          "via": { "gateway": "healthCheck" },
+          "via": {
+            "gateway": "healthCheck"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         },
         {
           "method": "status",
           "shape": "promise",
-          "via": { "gateway": "getStatus" },
+          "via": {
+            "gateway": "getStatus"
+          },
           "parameters": [],
-          "cases": [{ "args": {}, "sends": {} }]
+          "cases": [
+            {
+              "args": {},
+              "sends": {}
+            }
+          ]
         }
       ]
     }
@@ -916,17 +2468,32 @@
         {
           "member": "next",
           "named": {
-            "go": { "name": "All", "why": "The claims are ranged over, `for job, err := range claims.All()`, and Go's standard library names the method that gives a sequence of every element `All` (`maps.All`, `slices.All`)." }
+            "go": {
+              "name": "All",
+              "why": "The claims are ranged over, `for job, err := range claims.All()`, and Go's standard library names the method that gives a sequence of every element `All` (`maps.All`, `slices.All`)."
+            }
           }
         },
-        { "member": "refused" },
-        { "member": "stalled" },
-        { "member": "vitals" },
+        {
+          "member": "refused"
+        },
+        {
+          "member": "stalled"
+        },
+        {
+          "member": "vitals"
+        },
         {
           "member": "stop",
           "named": {
-            "python": { "name": "aclose", "why": "Python closes an asynchronous iterator with `aclose`: it is what an asynchronous generator has, and what `contextlib.aclosing` calls." },
-            "go": { "name": "Close", "why": "Go stops what is held with `Close`, the name `io.Closer` gives it and what a `defer` calls." }
+            "python": {
+              "name": "aclose",
+              "why": "Python closes an asynchronous iterator with `aclose`: it is what an asynchronous generator has, and what `contextlib.aclosing` calls."
+            },
+            "go": {
+              "name": "Close",
+              "why": "Go stops what is held with `Close`, the name `io.Closer` gives it and what a `defer` calls."
+            }
           }
         }
       ]
@@ -935,26 +2502,70 @@
       "handed": "heldJob",
       "docs": "A job a worker holds, from its claim until it settles it. A held job is its verb's, `mark` or `yield`. A member with `takes` is one a held job has as its verb's, and it takes what that verb's entry names; every other member is the same for both verbs, and a job held as either verb's has it without its verb being asked.",
       "members": [
-        { "member": "jobId" },
-        { "member": "jobType" },
-        { "member": "resourceId" },
-        { "member": "params" },
-        { "member": "completedUnits" },
-        { "member": "unitCursors" },
-        { "member": "retryCount" },
-        { "member": "maxRetries" },
-        { "member": "attempt" },
-        { "member": "annotationId" },
-        { "member": "trace" },
-        { "member": "cancelled" },
-        { "member": "settled" },
-        { "member": "start" },
-        { "member": "progress" },
-        { "member": "checkpoint" },
-        { "member": "commit" },
-        { "member": "complete", "takes": { "mark": "MarkJobResult", "yield": "YieldJobResult" } },
-        { "member": "fail" },
-        { "member": "cancel" }
+        {
+          "member": "jobId"
+        },
+        {
+          "member": "jobType"
+        },
+        {
+          "member": "resourceId"
+        },
+        {
+          "member": "params"
+        },
+        {
+          "member": "completedUnits"
+        },
+        {
+          "member": "unitCursors"
+        },
+        {
+          "member": "retryCount"
+        },
+        {
+          "member": "maxRetries"
+        },
+        {
+          "member": "attempt"
+        },
+        {
+          "member": "annotationId"
+        },
+        {
+          "member": "trace"
+        },
+        {
+          "member": "cancelled"
+        },
+        {
+          "member": "settled"
+        },
+        {
+          "member": "start"
+        },
+        {
+          "member": "progress"
+        },
+        {
+          "member": "checkpoint"
+        },
+        {
+          "member": "commit"
+        },
+        {
+          "member": "complete",
+          "takes": {
+            "mark": "MarkJobResult",
+            "yield": "YieldJobResult"
+          }
+        },
+        {
+          "member": "fail"
+        },
+        {
+          "member": "cancel"
+        }
       ]
     }
   ],
@@ -962,146 +2573,420 @@
     {
       "unit": "mark",
       "docs": "The composing and delegating of annotations on one resource: the annotation being composed, the delegated job's motivation, its progress and what that progress is of, why the last job ended without completing, and the job's id. A request and a submission reach it as the signals the mark namespace publishes, which name its resource; a delegation, the cancelling of the annotation being composed and the dismissing of a job's progress are asked of the unit itself, so none reaches a unit of another resource.",
-      "made": {"ocaml": "Mark", "csharp": "MarkStateUnit", "typescript": "MarkStateUnit", "rust": "MarkStateUnit", "python": "MarkStateUnit", "go": "MarkStateUnit", "kotlin": "MarkStateUnit", "swift": "MarkStateUnit", "haskell": "MarkStateUnit"},
-      "madeBy": {"typescript": "createMarkStateUnit", "go": "NewMarkStateUnit", "haskell": "newMarkStateUnit"},
+      "made": {
+        "ocaml": "Mark",
+        "csharp": "MarkStateUnit",
+        "typescript": "MarkStateUnit",
+        "rust": "MarkStateUnit",
+        "python": "MarkStateUnit",
+        "go": "MarkStateUnit",
+        "kotlin": "MarkStateUnit",
+        "swift": "MarkStateUnit",
+        "haskell": "MarkStateUnit"
+      },
+      "madeBy": {
+        "typescript": "createMarkStateUnit",
+        "go": "NewMarkStateUnit",
+        "haskell": "newMarkStateUnit"
+      },
       "members": [
-        { "member": "pendingAnnotation" },
-        { "member": "delegatingMotivation" },
-        { "member": "progress" },
-        { "member": "progressMotivation" },
-        { "member": "failure" },
-        { "member": "jobId" },
-        { "member": "requestDelegate" },
-        { "member": "cancelPending" },
-        { "member": "dismissProgress" }
+        {
+          "member": "pendingAnnotation"
+        },
+        {
+          "member": "delegatingMotivation"
+        },
+        {
+          "member": "progress"
+        },
+        {
+          "member": "progressMotivation"
+        },
+        {
+          "member": "failure"
+        },
+        {
+          "member": "jobId"
+        },
+        {
+          "member": "requestDelegate"
+        },
+        {
+          "member": "cancelPending"
+        },
+        {
+          "member": "dismissProgress"
+        }
       ]
     },
     {
       "unit": "yield",
       "docs": "A generation: whether a run is under way, its progress, what the finished run produced, why the last run ended without a result, and the job's id. It is moved by its own methods.",
-      "made": {"ocaml": "Yield", "csharp": "YieldStateUnit", "typescript": "YieldStateUnit", "rust": "YieldStateUnit", "python": "YieldStateUnit", "go": "YieldStateUnit", "kotlin": "YieldStateUnit", "swift": "YieldStateUnit", "haskell": "YieldStateUnit"},
-      "madeBy": {"typescript": "createYieldStateUnit", "go": "NewYieldStateUnit", "haskell": "newYieldStateUnit"},
+      "made": {
+        "ocaml": "Yield",
+        "csharp": "YieldStateUnit",
+        "typescript": "YieldStateUnit",
+        "rust": "YieldStateUnit",
+        "python": "YieldStateUnit",
+        "go": "YieldStateUnit",
+        "kotlin": "YieldStateUnit",
+        "swift": "YieldStateUnit",
+        "haskell": "YieldStateUnit"
+      },
+      "madeBy": {
+        "typescript": "createYieldStateUnit",
+        "go": "NewYieldStateUnit",
+        "haskell": "newYieldStateUnit"
+      },
       "members": [
-        { "member": "isGenerating" },
-        { "member": "progress" },
-        { "member": "outcome" },
-        { "member": "failure" },
-        { "member": "jobId" },
-        { "member": "generate" },
-        { "member": "dismissProgress" }
+        {
+          "member": "isGenerating"
+        },
+        {
+          "member": "progress"
+        },
+        {
+          "member": "outcome"
+        },
+        {
+          "member": "failure"
+        },
+        {
+          "member": "jobId"
+        },
+        {
+          "member": "generate"
+        },
+        {
+          "member": "dismissProgress"
+        }
       ]
     },
     {
       "unit": "gather",
       "docs": "The context gathered around one resource: for the annotation last asked about and for the resource last asked about, the context, whether it is loading and why it failed. Each gather is asked of the unit itself, so none reaches a unit of another resource.",
-      "made": {"ocaml": "Gather", "csharp": "GatherStateUnit", "typescript": "GatherStateUnit", "rust": "GatherStateUnit", "python": "GatherStateUnit", "go": "GatherStateUnit", "kotlin": "GatherStateUnit", "swift": "GatherStateUnit", "haskell": "GatherStateUnit"},
-      "madeBy": {"typescript": "createGatherStateUnit", "go": "NewGatherStateUnit", "haskell": "newGatherStateUnit"},
+      "made": {
+        "ocaml": "Gather",
+        "csharp": "GatherStateUnit",
+        "typescript": "GatherStateUnit",
+        "rust": "GatherStateUnit",
+        "python": "GatherStateUnit",
+        "go": "GatherStateUnit",
+        "kotlin": "GatherStateUnit",
+        "swift": "GatherStateUnit",
+        "haskell": "GatherStateUnit"
+      },
+      "madeBy": {
+        "typescript": "createGatherStateUnit",
+        "go": "NewGatherStateUnit",
+        "haskell": "newGatherStateUnit"
+      },
       "members": [
-        { "member": "context" },
-        { "member": "loading" },
-        { "member": "error" },
-        { "member": "annotationId" },
-        { "member": "resourceContext" },
-        { "member": "resourceLoading" },
-        { "member": "resourceError" },
-        { "member": "gatherAnnotation" },
-        { "member": "gatherResource" }
+        {
+          "member": "context"
+        },
+        {
+          "member": "loading"
+        },
+        {
+          "member": "error"
+        },
+        {
+          "member": "annotationId"
+        },
+        {
+          "member": "resourceContext"
+        },
+        {
+          "member": "resourceLoading"
+        },
+        {
+          "member": "resourceError"
+        },
+        {
+          "member": "gatherAnnotation"
+        },
+        {
+          "member": "gatherResource"
+        }
       ]
     },
     {
       "unit": "match",
       "docs": "Matching, run for whoever asks on the client's own bus: a search asked for by a signal is run and answered under the asker's correlation id. It holds no state: what it found is what it said.",
-      "made": {"ocaml": "Match", "csharp": "MatchStateUnit", "typescript": "MatchStateUnit", "rust": "MatchStateUnit", "python": "MatchStateUnit", "go": "MatchStateUnit", "kotlin": "MatchStateUnit", "swift": "MatchStateUnit", "haskell": "MatchStateUnit"},
-      "madeBy": {"typescript": "createMatchStateUnit", "go": "NewMatchStateUnit", "haskell": "newMatchStateUnit"},
+      "made": {
+        "ocaml": "Match",
+        "csharp": "MatchStateUnit",
+        "typescript": "MatchStateUnit",
+        "rust": "MatchStateUnit",
+        "python": "MatchStateUnit",
+        "go": "MatchStateUnit",
+        "kotlin": "MatchStateUnit",
+        "swift": "MatchStateUnit",
+        "haskell": "MatchStateUnit"
+      },
+      "madeBy": {
+        "typescript": "createMatchStateUnit",
+        "go": "NewMatchStateUnit",
+        "haskell": "newMatchStateUnit"
+      },
       "members": []
     },
     {
       "unit": "beckon",
       "docs": "Attention on one resource: the annotation this participant hovers, a sparkle for one the moment it is hovered, and a focus, naming the unit's resource, for one clicked here or by another participant.",
-      "made": {"ocaml": "Beckon", "csharp": "BeckonStateUnit", "typescript": "BeckonStateUnit", "rust": "BeckonStateUnit", "python": "BeckonStateUnit", "go": "BeckonStateUnit", "kotlin": "BeckonStateUnit", "swift": "BeckonStateUnit", "haskell": "BeckonStateUnit"},
-      "madeBy": {"typescript": "createBeckonStateUnit", "go": "NewBeckonStateUnit", "haskell": "newBeckonStateUnit"},
+      "made": {
+        "ocaml": "Beckon",
+        "csharp": "BeckonStateUnit",
+        "typescript": "BeckonStateUnit",
+        "rust": "BeckonStateUnit",
+        "python": "BeckonStateUnit",
+        "go": "BeckonStateUnit",
+        "kotlin": "BeckonStateUnit",
+        "swift": "BeckonStateUnit",
+        "haskell": "BeckonStateUnit"
+      },
+      "madeBy": {
+        "typescript": "createBeckonStateUnit",
+        "go": "NewBeckonStateUnit",
+        "haskell": "newBeckonStateUnit"
+      },
       "members": [
-        { "member": "hoveredAnnotationId" },
-        { "member": "focus" }
+        {
+          "member": "hoveredAnnotationId"
+        },
+        {
+          "member": "focus"
+        }
       ]
     },
     {
       "unit": "hoverDwell",
       "docs": "A pointer's rest: an annotation is said to be hovered once the pointer has rested on it for a delay, and none at once when it leaves.",
-      "made": {"ocaml": "Hover_dwell", "csharp": "HoverDwell", "typescript": "HoverDwell", "rust": "HoverDwell", "python": "HoverDwell", "go": "HoverDwell", "kotlin": "HoverDwell", "swift": "HoverDwell", "haskell": "HoverDwell"},
-      "madeBy": {"typescript": "createHoverDwell", "go": "NewHoverDwell", "haskell": "newHoverDwell"},
+      "made": {
+        "ocaml": "Hover_dwell",
+        "csharp": "HoverDwell",
+        "typescript": "HoverDwell",
+        "rust": "HoverDwell",
+        "python": "HoverDwell",
+        "go": "HoverDwell",
+        "kotlin": "HoverDwell",
+        "swift": "HoverDwell",
+        "haskell": "HoverDwell"
+      },
+      "madeBy": {
+        "typescript": "createHoverDwell",
+        "go": "NewHoverDwell",
+        "haskell": "newHoverDwell"
+      },
       "members": [
-        { "member": "enter" },
-        { "member": "leave" }
+        {
+          "member": "enter"
+        },
+        {
+          "member": "leave"
+        }
       ]
     },
     {
       "unit": "search",
       "docs": "A search that follows a query as it is typed: the query as last set, and the results of the query it last settled on, once that query has stayed the same for a debounce.",
-      "made": {"ocaml": "Search", "csharp": "SearchPipeline", "typescript": "SearchPipeline", "rust": "SearchPipeline", "python": "SearchPipeline", "go": "SearchPipeline", "kotlin": "SearchPipeline", "swift": "SearchPipeline", "haskell": "SearchPipeline"},
-      "madeBy": {"typescript": "createSearchPipeline", "go": "NewSearchPipeline", "haskell": "newSearchPipeline"},
+      "made": {
+        "ocaml": "Search",
+        "csharp": "SearchPipeline",
+        "typescript": "SearchPipeline",
+        "rust": "SearchPipeline",
+        "python": "SearchPipeline",
+        "go": "SearchPipeline",
+        "kotlin": "SearchPipeline",
+        "swift": "SearchPipeline",
+        "haskell": "SearchPipeline"
+      },
+      "madeBy": {
+        "typescript": "createSearchPipeline",
+        "go": "NewSearchPipeline",
+        "haskell": "newSearchPipeline"
+      },
       "members": [
-        { "member": "query" },
-        { "member": "state" },
-        { "member": "setQuery" }
+        {
+          "member": "query"
+        },
+        {
+          "member": "state"
+        },
+        {
+          "member": "setQuery"
+        }
       ]
     },
     {
       "unit": "sessionSignals",
       "docs": "What a host shows about a session, apart from the session: that it ended and why, that a request was refused for lack of permission, and that a different knowledge base answers at a registered address. Each is a notice while something is raised and none once it is acknowledged; raising it again is a new occurrence, told to every reader even when the notice equals the last. A host builds one beside each live session and wires the session's failures into it.",
-      "made": {"ocaml": "Session_signals", "csharp": "SessionSignals", "typescript": "SessionSignals", "rust": "SessionSignals", "python": "SessionSignals", "go": "SessionSignals", "kotlin": "SessionSignals", "swift": "SessionSignals", "haskell": "SessionSignals"},
-      "madeBy": {"typescript": "createSessionSignals", "go": "NewSessionSignals", "haskell": "newSessionSignals"},
+      "made": {
+        "ocaml": "Session_signals",
+        "csharp": "SessionSignals",
+        "typescript": "SessionSignals",
+        "rust": "SessionSignals",
+        "python": "SessionSignals",
+        "go": "SessionSignals",
+        "kotlin": "SessionSignals",
+        "swift": "SessionSignals",
+        "haskell": "SessionSignals"
+      },
+      "madeBy": {
+        "typescript": "createSessionSignals",
+        "go": "NewSessionSignals",
+        "haskell": "newSessionSignals"
+      },
       "members": [
-        { "member": "sessionEnded" },
-        { "member": "permissionDenied" },
-        { "member": "kbIdentityConflict" },
-        { "member": "notifySessionEnded" },
-        { "member": "notifyPermissionDenied" },
-        { "member": "notifyKbIdentityConflict" },
-        { "member": "acknowledgeSessionEnded" },
-        { "member": "acknowledgePermissionDenied" },
-        { "member": "acknowledgeKbIdentityConflict" }
+        {
+          "member": "sessionEnded"
+        },
+        {
+          "member": "permissionDenied"
+        },
+        {
+          "member": "kbIdentityConflict"
+        },
+        {
+          "member": "notifySessionEnded"
+        },
+        {
+          "member": "notifyPermissionDenied"
+        },
+        {
+          "member": "notifyKbIdentityConflict"
+        },
+        {
+          "member": "acknowledgeSessionEnded"
+        },
+        {
+          "member": "acknowledgePermissionDenied"
+        },
+        {
+          "member": "acknowledgeKbIdentityConflict"
+        }
       ]
     },
     {
       "unit": "cache",
       "docs": "Values the knowledge base answers with, kept by key and held as state: each key's state (pending, ready with its value, or failed), fetched when first observed and again when invalidated, and set, removed or invalidated by its methods. What it does is held by the cache's own tables (specs/src/client/refresh.json and the cache's rules in each SDK), not by the behaviour table.",
-      "made": {"ocaml": "Cache", "csharp": "Cache", "typescript": "Cache", "rust": "Cache", "python": "Cache", "go": "Cache", "kotlin": "Cache", "swift": "Cache", "haskell": "Cache"},
-      "madeBy": {"typescript": "createCache", "go": "NewCache", "haskell": "newCache"},
+      "made": {
+        "ocaml": "Cache",
+        "csharp": "Cache",
+        "typescript": "Cache",
+        "rust": "Cache",
+        "python": "Cache",
+        "go": "Cache",
+        "kotlin": "Cache",
+        "swift": "Cache",
+        "haskell": "Cache"
+      },
+      "madeBy": {
+        "typescript": "createCache",
+        "go": "NewCache",
+        "haskell": "newCache"
+      },
       "members": [
-        { "member": "observe" },
-        { "member": "fetch" },
-        { "member": "get" },
-        { "member": "known" },
-        { "member": "keys" },
-        { "member": "invalidate" },
-        { "member": "invalidateAll" },
-        { "member": "remove" },
-        { "member": "set" },
-        { "member": "patch" },
-        { "member": "persistencePending" },
-        { "member": "keptFetching" },
-        { "member": "attach" },
-        { "member": "query" }
+        {
+          "member": "observe"
+        },
+        {
+          "member": "fetch"
+        },
+        {
+          "member": "get"
+        },
+        {
+          "member": "known"
+        },
+        {
+          "member": "keys"
+        },
+        {
+          "member": "invalidate"
+        },
+        {
+          "member": "invalidateAll"
+        },
+        {
+          "member": "remove"
+        },
+        {
+          "member": "set"
+        },
+        {
+          "member": "patch"
+        },
+        {
+          "member": "persistencePending"
+        },
+        {
+          "member": "keptFetching"
+        },
+        {
+          "member": "attach"
+        },
+        {
+          "member": "query"
+        }
       ]
     },
     {
       "unit": "session",
       "docs": "A session with one knowledge base: the token its client's transport sends and who is signed in, the token renewed before it expires and when the gateway refuses it. It writes its token and who is signed in, so it ends them; it only uses its client, so it never ends it, and whoever made the client and the session ends both. Its `errors` are its one stream of what went wrong: its own errors (a SessionError: its sign-in could not be checked or renewed, the gateway refused a token just issued, what its client keeps could not be kept, its storage refused a write of it) and its transport's failures, each said once; a session takes no callback for them. They end when the session ends. Whoever ends both closes the client first, waiting for its closing flush, and then ends the session, so what that flush meets is said before the errors end; what the client meets once its session has ended is said nowhere. What it does is held by the session's own table (specs/src/session/cases.json), not by the behaviour table.",
-      "made": {"ocaml": "Session", "csharp": "XynologSession", "typescript": "XynologSession", "rust": "XynologSession", "python": "XynologSession", "go": "Session", "kotlin": "XynologSession", "swift": "XynologSession", "haskell": "Session"},
-      "madeBy": {"go": "StartSession", "kotlin": "sessionFromKept", "swift": "sessionFromKept", "csharp": "FromKeptAsync", "haskell": "newSession"},
+      "made": {
+        "ocaml": "Session",
+        "csharp": "XynologSession",
+        "typescript": "XynologSession",
+        "rust": "XynologSession",
+        "python": "XynologSession",
+        "go": "Session",
+        "kotlin": "XynologSession",
+        "swift": "XynologSession",
+        "haskell": "Session"
+      },
+      "madeBy": {
+        "go": "StartSession",
+        "kotlin": "sessionFromKept",
+        "swift": "sessionFromKept",
+        "csharp": "FromKeptAsync",
+        "haskell": "newSession"
+      },
       "members": [
-        { "member": "id" },
-        { "member": "kb" },
-        { "member": "client" },
-        { "member": "token" },
-        { "member": "user" },
-        { "member": "streamState" },
-        { "member": "errors" },
-        { "member": "ready" },
-        { "member": "expiresAt" },
-        { "member": "refresh" },
-        { "member": "renewer" }
+        {
+          "member": "id"
+        },
+        {
+          "member": "kb"
+        },
+        {
+          "member": "client"
+        },
+        {
+          "member": "token"
+        },
+        {
+          "member": "user"
+        },
+        {
+          "member": "streamState"
+        },
+        {
+          "member": "errors"
+        },
+        {
+          "member": "ready"
+        },
+        {
+          "member": "expiresAt"
+        },
+        {
+          "member": "refresh"
+        },
+        {
+          "member": "renewer"
+        }
       ]
     }
   ],
@@ -1119,24 +3004,58 @@
       "kotlin": "Bus"
     },
     "members": [
-      { "member": "emit" },
-      { "member": "frames" },
-      { "member": "framesOf" },
-      { "member": "request" },
-      { "member": "emitOn" },
-      { "member": "framesOn" },
-      { "member": "requestOf" }
+      {
+        "member": "emit"
+      },
+      {
+        "member": "frames"
+      },
+      {
+        "member": "framesOf"
+      },
+      {
+        "member": "request"
+      },
+      {
+        "member": "emitOn"
+      },
+      {
+        "member": "framesOn"
+      },
+      {
+        "member": "requestOf"
+      }
     ]
   },
   "storage": {
     "docs": "Where a client keeps what must outlive it: text under a key, in a store the application supplies (a file, a browser's storage, a platform's store), so nothing above it knows where it runs. A client's sessions, its registry of knowledge bases and its kept caches keep what they keep there. More than one context can write one store, two windows or two processes: what is written from what was read goes through `update`, which a store makes one step, so one writer's change is never lost under another's; and `subscribe` hears what another context writes, and is null where no other context writes.",
-    "made": {"ocaml": "Storage", "haskell": "SessionStorage", "csharp": "ISessionStorage", "typescript": "SessionStorage", "rust": "SessionStorage", "python": "SessionStorage", "go": "SessionStorage", "kotlin": "SessionStorage", "swift": "SessionStorage"},
+    "made": {
+      "ocaml": "Storage",
+      "haskell": "SessionStorage",
+      "csharp": "ISessionStorage",
+      "typescript": "SessionStorage",
+      "rust": "SessionStorage",
+      "python": "SessionStorage",
+      "go": "SessionStorage",
+      "kotlin": "SessionStorage",
+      "swift": "SessionStorage"
+    },
     "members": [
-      { "member": "get" },
-      { "member": "set" },
-      { "member": "delete" },
-      { "member": "update" },
-      { "member": "subscribe" }
+      {
+        "member": "get"
+      },
+      {
+        "member": "set"
+      },
+      {
+        "member": "delete"
+      },
+      {
+        "member": "update"
+      },
+      {
+        "member": "subscribe"
+      }
     ]
   },
   "modules": [
@@ -1144,9 +3063,15 @@
       "module": "annotations",
       "docs": "The readers of an annotation, its builders, and the reconciling of a quote: what a program that reads or makes annotations is given, so that none parses or builds one by hand. Held by specs/src/annotations's tables.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/annotations.mli"],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Annotations.hs"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Annotations"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/annotations.mli"
+        ],
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Annotations.hs"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Annotations"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Annotations/Readers.swift",
           "sdk/swift/sdk/Sources/Xynolog/Annotations/Spans.swift",
@@ -1299,7 +3224,9 @@
         },
         {
           "member": "SpanRefusal",
-          "named": {"haskell": "SpanRefusalCode"},
+          "named": {
+            "haskell": "SpanRefusalCode"
+          },
           "kind": "type"
         },
         {
@@ -1320,11 +3247,15 @@
       "module": "jobFilter",
       "docs": "Whether a job matches a filter: asked by the dispatcher choosing a claim's next job, and by a worker checking an announcement against its claim. Held by specs/src/jobs/filter-cases.json.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/job_filter.mli"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/job_filter.mli"
+        ],
         "csharp": [
           "sdk/csharp/sdk/src/Xynolog/Jobs"
         ],
-        "swift": ["sdk/swift/sdk/Sources/Xynolog/Worker/Claims.swift"],
+        "swift": [
+          "sdk/swift/sdk/Sources/Xynolog/Worker/Claims.swift"
+        ],
         "typescript": [
           "sdk/typescript/core/src/job-filter.ts"
         ],
@@ -1340,7 +3271,9 @@
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/jobs"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/JobFilter.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/JobFilter.hs"
+        ]
       },
       "whole": [
         "rust",
@@ -1361,7 +3294,9 @@
         "csharp": [
           "sdk/csharp/sdk/src/Xynolog/Jobs"
         ],
-        "swift": ["sdk/swift/sdk/Sources/Xynolog/Worker/Claims.swift"],
+        "swift": [
+          "sdk/swift/sdk/Sources/Xynolog/Worker/Claims.swift"
+        ],
         "typescript": [
           "sdk/typescript/sdk/src/claims.ts"
         ],
@@ -1377,10 +3312,16 @@
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/jobs"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Claims.hs"],
-        "ocaml": ["sdk/ocaml/sdk/lib/claims.mli"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Claims.hs"
+        ],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/claims.mli"
+        ]
       },
-      "whole": ["haskell"],
+      "whole": [
+        "haskell"
+      ],
       "members": [
         {
           "member": "jobClaimChannels",
@@ -1400,8 +3341,12 @@
       "module": "retry",
       "docs": "Doing work again by a backoff, until it succeeds, it fails as nothing can mend, or the attempts run out.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/retry.mli"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Http"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/retry.mli"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Http"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Transport/Retry.swift"
         ],
@@ -1420,7 +3365,9 @@
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/retry"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Retry.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Retry.hs"
+        ]
       },
       "members": [
         {
@@ -1433,8 +3380,12 @@
       "module": "hostName",
       "docs": "Whether a host is one a knowledge base's HTTP endpoint may name. Held by specs/src/session/gateway-url-cases.json.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/host_name.mli"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Session"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/host_name.mli"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Session"
+        ],
         "typescript": [
           "sdk/typescript/sdk/src/session/storage.ts"
         ],
@@ -1453,9 +3404,13 @@
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Session/Identity.swift"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/HostName.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/HostName.hs"
+        ]
       },
-      "whole": ["haskell"],
+      "whole": [
+        "haskell"
+      ],
       "members": [
         {
           "member": "isValidHostname",
@@ -1467,9 +3422,15 @@
       "module": "tokens",
       "docs": "What a session reads of an access token: a claim it names as text, when it expires, whether it has, and when to renew it. Held by specs/src/session/cases.json.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/tokens.mli"],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Tokens.hs"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Session"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/tokens.mli"
+        ],
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Tokens.hs"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Session"
+        ],
         "typescript": [
           "sdk/typescript/sdk/src/session/storage.ts"
         ],
@@ -1526,9 +3487,15 @@
       "module": "storagePersister",
       "docs": "Where a client keeps its queries' values: a session storage, one key for each query it keeps for the person signed in, each kept within a size.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/storage_persister.mli"],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/StoragePersister.hs"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/storage_persister.mli"
+        ],
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/StoragePersister.hs"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/CachePersistence.swift"
         ],
@@ -1563,8 +3530,12 @@
       "module": "bus",
       "docs": "What the bus's registry gives a program beside its channels: the reply channels of given operations, the refusal of a request whose replies cannot arrive, and the channels whose events the record keeps; and what a transport delivers in place of a frame it refuses, and why it refuses it.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/bus.ml"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/bus.ml"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Bus/Bus.swift",
           "sdk/swift/sdk/Sources/Xynolog/Bus/Typed.swift"
@@ -1591,7 +3562,9 @@
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/bus",
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/transport"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Bus.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Bus.hs"
+        ]
       },
       "members": [
         {
@@ -1612,7 +3585,9 @@
         },
         {
           "member": "FrameRefusalReason",
-          "named": {"haskell": "FaultReason"},
+          "named": {
+            "haskell": "FaultReason"
+          },
           "kind": "type"
         },
         {
@@ -1625,8 +3600,12 @@
       "module": "registry",
       "docs": "What an application holds beside its knowledge bases: the list it has registered, which one is active and its session, what a person has open in each, and what it keeps in its storage, under which keys. Sessions are built by a factory it is given; one over HTTP reaches a knowledge base at its gateway. A person's sign-in by a page redirect lands on the entry for the knowledge base that answered. The registry is the one reader of each session's errors, from the first thing the session said: each of the session's own it says on its own errors; a refusal for lack of permission is said through the session's signals; a refusal for want of a valid token, and a failure of its transport for any other reason, it does nothing with. It renews no session: the transport that met such a refusal renews the token it sent (contract/TRANSPORT-CONTRACT.md § A refused credential). A factory reads none of them, so a session built by a factory a host writes is read the same way.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/registry.mli"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Registry"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/registry.mli"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Registry"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Registry/OpenResources.swift",
           "sdk/swift/sdk/Sources/Xynolog/Registry/XynologBrowser.swift",
@@ -1662,7 +3641,9 @@
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/registry",
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Registry.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Registry.hs"
+        ]
       },
       "whole": [
         "go"
@@ -1684,7 +3665,9 @@
           "member": "SignedIn",
           "kind": "type",
           "fieldsNamed": {
-            "go": { "kbId": "KbID" }
+            "go": {
+              "kbId": "KbID"
+            }
           }
         },
         {
@@ -1710,7 +3693,11 @@
         {
           "member": "SessionFactoryOptions",
           "kind": "type",
-          "fields": ["kb", "storage", "signals"]
+          "fields": [
+            "kb",
+            "storage",
+            "signals"
+          ]
         },
         {
           "member": "HttpSessionFactory",
@@ -1820,28 +3807,59 @@
       "module": "sessionNotices",
       "docs": "What a session's signals raise: that a session ended and why, that a request was refused for lack of permission, and that a different knowledge base answers at a registered address. specs/src/client/state-units.json's `notices` states each one.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/session_notices.ml"],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/State/SessionSignals.hs"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/State"],
-        "swift": ["sdk/swift/sdk/Sources/Xynolog/State/SessionSignals.swift"],
-        "typescript": ["sdk/typescript/sdk/src/session/session-signals.ts"],
-        "rust": ["sdk/rust/sdk/src/session/signals.rs"],
-        "python": ["sdk/python/sdk/src/xynolog/session_signals.py"],
-        "go": ["sdk/go"],
-        "kotlin": ["sdk/kotlin/sdk/src/main/kotlin/xynolog/session"]
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/session_notices.ml"
+        ],
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/State/SessionSignals.hs"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/State"
+        ],
+        "swift": [
+          "sdk/swift/sdk/Sources/Xynolog/State/SessionSignals.swift"
+        ],
+        "typescript": [
+          "sdk/typescript/sdk/src/session/session-signals.ts"
+        ],
+        "rust": [
+          "sdk/rust/sdk/src/session/signals.rs"
+        ],
+        "python": [
+          "sdk/python/sdk/src/xynolog/session_signals.py"
+        ],
+        "go": [
+          "sdk/go"
+        ],
+        "kotlin": [
+          "sdk/kotlin/sdk/src/main/kotlin/xynolog/session"
+        ]
       },
       "members": [
-        { "member": "SessionEnded", "kind": "type" },
-        { "member": "PermissionDenied", "kind": "type" },
-        { "member": "KbIdentityConflict", "kind": "type" }
+        {
+          "member": "SessionEnded",
+          "kind": "type"
+        },
+        {
+          "member": "PermissionDenied",
+          "kind": "type"
+        },
+        {
+          "member": "KbIdentityConflict",
+          "kind": "type"
+        }
       ]
     },
     {
       "module": "redirectSignIn",
       "docs": "A person's sign-in by a page redirect: the authorization-code grant with PKCE, its pending record kept across the trip to the issuer and back, and the question a completed sign-in asks the knowledge base, who it is.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/redirect_sign_in.ml"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Authorization"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/redirect_sign_in.ml"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Authorization"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Registry/RedirectSignIn.swift",
           "sdk/swift/sdk/Sources/Xynolog/Registry/Stored.swift"
@@ -1869,7 +3887,11 @@
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http",
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/errors"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Issuer.hs", "sdk/haskell/sdk/src/Xynolog/Registry/Identity.hs", "sdk/haskell/sdk/src/Xynolog/Registry/Stored.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Issuer.hs",
+          "sdk/haskell/sdk/src/Xynolog/Registry/Identity.hs",
+          "sdk/haskell/sdk/src/Xynolog/Registry/Stored.hs"
+        ]
       },
       "members": [
         {
@@ -1920,12 +3942,18 @@
       "module": "serviceToken",
       "docs": "A service account's token, which a process holds for its own account at the issuer a knowledge base trusts: the issuer's token endpoint discovered once, through the HTTP client the token was made with, one client-credentials grant at a time, the token held until it is due for renewal, and the `Authorization` header's value it gives (`authorization`).",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/service_token.mli"],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/ServiceToken.hs"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/service_token.mli"
+        ],
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/ServiceToken.hs"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/SignIn/ServiceToken.swift"
         ],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/SignIn"],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/SignIn"
+        ],
         "typescript": [
           "sdk/typescript/core/src/service-account.ts"
         ],
@@ -1953,7 +3981,9 @@
       "module": "signInStore",
       "docs": "The sign-ins `xynolog login` keeps, as specs/src/sign-in-store states them: the store, whose every change holds the lock every writer takes, and where the launcher's state home is on each system. Held by sign-in-store/cases.json.",
       "where": {
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/SignIn"],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/SignIn"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/SignIn/SignInStore.swift",
           "sdk/swift/sdk/Sources/Xynolog/SignIn/Kept.swift"
@@ -1973,14 +4003,20 @@
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/signin"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/SignInStore.hs"],
-        "ocaml": ["sdk/ocaml/sdk/lib/sign_in_store.mli"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/SignInStore.hs"
+        ],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/sign_in_store.mli"
+        ]
       },
       "members": [
         {
           "member": "SignInStore",
           "kind": "type",
-          "named": { "ocaml": "t" }
+          "named": {
+            "ocaml": "t"
+          }
         },
         {
           "member": "stateDir",
@@ -2038,7 +4074,9 @@
           "sdk/python/sdk/src/xynolog/http/session.py",
           "sdk/python/sdk/src/xynolog/http/oauth.py"
         ],
-        "go": ["sdk/go"],
+        "go": [
+          "sdk/go"
+        ],
         "kotlin": [
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/signin",
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http"
@@ -2048,7 +4086,9 @@
           "sdk/swift/sdk/Sources/Xynolog/SignIn/Issuer.swift",
           "sdk/swift/sdk/Sources/Xynolog/Session/SessionFromKept.swift"
         ],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/SignIn"],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/SignIn"
+        ],
         "haskell": [
           "sdk/haskell/sdk/src/Xynolog/SignIn.hs",
           "sdk/haskell/sdk/src/Xynolog/Session.hs"
@@ -2058,7 +4098,10 @@
         {
           "member": "SignInKept",
           "kind": "type",
-          "named": { "csharp": "ISignInKept", "haskell": "KeptSignIn" }
+          "named": {
+            "csharp": "ISignInKept",
+            "haskell": "KeptSignIn"
+          }
         },
         {
           "member": "MemorySignIn",
@@ -2067,12 +4110,16 @@
         {
           "member": "signInDevice",
           "kind": "function",
-          "named": { "go": "SignInWithDevice" }
+          "named": {
+            "go": "SignInWithDevice"
+          }
         },
         {
           "member": "sessionFromKept",
           "kind": "function",
-          "named": { "haskell": "fromKeptSession" }
+          "named": {
+            "haskell": "fromKeptSession"
+          }
         },
         {
           "member": "renewKept",
@@ -2088,8 +4135,12 @@
       "module": "discovery",
       "docs": "The knowledge bases a launcher manages, as it publishes them: its document read whole or not at all, absent told from empty, entries told apart by address, and what changed since it was last read.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/discovery.mli"],
-        "csharp": ["sdk/csharp/sdk/src/Xynolog/Discovery"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/discovery.mli"
+        ],
+        "csharp": [
+          "sdk/csharp/sdk/src/Xynolog/Discovery"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/Xynolog/Registry/Discovery.swift"
         ],
@@ -2111,7 +4162,10 @@
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/discovery",
           "sdk/kotlin/sdk/src/main/kotlin/xynolog/http"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Discovery.hs", "sdk/haskell/sdk/src/Xynolog/Http/Discovery.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Discovery.hs",
+          "sdk/haskell/sdk/src/Xynolog/Http/Discovery.hs"
+        ]
       },
       "whole": [
         "go",
@@ -2125,7 +4179,9 @@
         {
           "member": "DiscoveryAbsentReason",
           "kind": "type",
-          "named": {"haskell": "DiscoveryAbsentCode"}
+          "named": {
+            "haskell": "DiscoveryAbsentCode"
+          }
         },
         {
           "member": "DiscoveryRead",
@@ -2180,7 +4236,9 @@
       "module": "testing",
       "docs": "What a consumer's tests hold a composition and a registry to: the liveness axioms, that under any behaviour of the wire something is eventually said and every event is delivered exactly once; a real session over test doubles; a factory of scripted sessions for a registry; and a storage several contexts share.",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/testing.mli"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/testing.mli"
+        ],
         "swift": [
           "sdk/swift/sdk/Sources/XynologTesting/Liveness.swift",
           "sdk/swift/sdk/Sources/XynologTesting/ScriptedTransport.swift",
@@ -2211,7 +4269,9 @@
         "csharp": [
           "sdk/csharp/sdk/src/Xynolog/Testing"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Testing.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Testing.hs"
+        ]
       },
       "members": [
         {
@@ -2306,7 +4366,9 @@
       "module": "refusals",
       "docs": "The first fault a body has as a component schema, and what every SDK says of it as it refuses it (`it has no `x``, `its `x` is malformed`, `it is malformed`): for an SDK whose HTTP transport is a package of its own, which reads its answers and holds its stream's frames by them. Held by the table of what each schema requires (the consumer-owned generator).",
       "where": {
-        "ocaml": ["sdk/ocaml/sdk/lib/refusals.ml"],
+        "ocaml": [
+          "sdk/ocaml/sdk/lib/refusals.ml"
+        ],
         "typescript": [
           "sdk/typescript/core/src/required.ts"
         ],
@@ -2328,7 +4390,9 @@
         "csharp": [
           "sdk/csharp/sdk/src/Xynolog"
         ],
-        "haskell": ["sdk/haskell/sdk/src/Xynolog/Bus.hs"]
+        "haskell": [
+          "sdk/haskell/sdk/src/Xynolog/Bus.hs"
+        ]
       },
       "members": [
         {
@@ -2354,7 +4418,13 @@
     {
       "source": "clock",
       "docs": "What every wait an SDK makes, and every interval it measures, keeps the time of: a clock its caller controls, so a caller who moves it sees each wait end when specs/src/client/clock-cases.json says. Where the runtime owns time, the caller moves the runtime's clock from outside the SDK, which takes none (`outside`). Where the ecosystem's waits take a clock, every public maker of something that waits takes one, its system clock when none is given, unless it is handed something that already carries one, whose clock it keeps; and what it makes keeps its clock (`takes`). A reading of the wall clock, which compares now with an instant a server stated or stamps a record, is no part of it.",
-      "typeWords": ["Clock", "TimeSource", "TimeProvider", "Scheduler", "EventLoop"],
+      "typeWords": [
+        "Clock",
+        "TimeSource",
+        "TimeProvider",
+        "Scheduler",
+        "EventLoop"
+      ],
       "outside": {
         "typescript": "A test runner's fake timers, which fake every timer global and Date: every wait the SDK makes is a timer global.",
         "rust": "Tokio's paused clock: every wait and interval is tokio::time's, reqwest's request deadline among them.",
@@ -2362,181 +4432,671 @@
         "go": "testing/synctest: every wait is package time's, on goroutines the caller's call starts."
       },
       "takes": {
-        "ocaml": { "Clock.make": ["Eio.Time.Mono.t", "Eio.Time.clock"], "Subscription.start": ["Clock.t"], "Session.start": ["Clock.t"], "Http_wire.make": ["Clock.t"], "Live_query.make": ["Clock.t"] },
+        "ocaml": {
+          "Clock.make": [
+            "Eio.Time.Mono.t",
+            "Eio.Time.clock"
+          ],
+          "Subscription.start": [
+            "Clock.t"
+          ],
+          "Session.start": [
+            "Clock.t"
+          ],
+          "Http_wire.make": [
+            "Clock.t"
+          ],
+          "Live_query.make": [
+            "Clock.t"
+          ]
+        },
         "kotlin": {
-          "XynologClient": ["CoroutineContext", "TimeSource"],
-          "TestClient": ["CoroutineContext", "TimeSource"],
-          "HttpTransport": ["CoroutineContext", "TimeSource"],
-          "Bus": ["CoroutineContext", "TimeSource"],
-          "request": ["TimeSource"],
-          "HoverDwell": ["CoroutineContext"],
-          "SearchPipeline": ["CoroutineContext"],
-          "Cache": ["CoroutineContext"],
-          "httpDiscovery": ["CoroutineContext"],
-          "FaultyTransport": ["CoroutineContext"],
-          "ServiceToken": ["CoroutineContext", "TimeSource"],
-          "AgentToken": ["CoroutineContext"],
-          "signInDevice": ["TimeSource"],
-          "describeConnection": ["TimeSource"],
-          "TestSessionOptions": ["CoroutineContext", "TimeSource"],
-          "LivenessSpec": ["CoroutineContext"],
-          "sessionFromKept": ["CoroutineContext", "TimeSource"],
-          "HttpSessionFactory": ["CoroutineContext", "TimeSource"],
-          "XynologBrowserConfig": ["CoroutineContext", "TimeSource"],
-          "ScriptedSessions": ["CoroutineContext", "TimeSource"],
-          "requestFuture": ["CoroutineContext", "TimeSource"],
-          "retryWithBackoffFuture": ["CoroutineContext"],
-          "renewKeptFuture": ["CoroutineContext"],
-          "signInDeviceFuture": ["CoroutineContext", "TimeSource"],
-          "signOutFuture": ["CoroutineContext"],
-          "beginAuthorizationFuture": ["CoroutineContext"],
-          "completeAuthorizationFuture": ["CoroutineContext"],
-          "describeConnectionFuture": ["CoroutineContext", "TimeSource"],
-          "sessionFromKeptFuture": ["CoroutineContext", "TimeSource"],
-          "createTestSessionFuture": ["CoroutineContext"]
+          "XynologClient": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "TestClient": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "HttpTransport": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "Bus": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "request": [
+            "TimeSource"
+          ],
+          "HoverDwell": [
+            "CoroutineContext"
+          ],
+          "SearchPipeline": [
+            "CoroutineContext"
+          ],
+          "Cache": [
+            "CoroutineContext"
+          ],
+          "httpDiscovery": [
+            "CoroutineContext"
+          ],
+          "FaultyTransport": [
+            "CoroutineContext"
+          ],
+          "ServiceToken": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "AgentToken": [
+            "CoroutineContext"
+          ],
+          "signInDevice": [
+            "TimeSource"
+          ],
+          "describeConnection": [
+            "TimeSource"
+          ],
+          "TestSessionOptions": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "LivenessSpec": [
+            "CoroutineContext"
+          ],
+          "sessionFromKept": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "HttpSessionFactory": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "XynologBrowserConfig": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "ScriptedSessions": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "requestFuture": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "retryWithBackoffFuture": [
+            "CoroutineContext"
+          ],
+          "renewKeptFuture": [
+            "CoroutineContext"
+          ],
+          "signInDeviceFuture": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "signOutFuture": [
+            "CoroutineContext"
+          ],
+          "beginAuthorizationFuture": [
+            "CoroutineContext"
+          ],
+          "completeAuthorizationFuture": [
+            "CoroutineContext"
+          ],
+          "describeConnectionFuture": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "sessionFromKeptFuture": [
+            "CoroutineContext",
+            "TimeSource"
+          ],
+          "createTestSessionFuture": [
+            "CoroutineContext"
+          ]
         },
         "swift": {
-          "XynologClient": ["Clock"],
-          "HttpTransport": ["Clock"],
-          "Bus": ["Clock"],
-          "Cache": ["Clock"],
-          "HoverDwell": ["Clock"],
-          "SearchPipeline": ["Clock"],
-          "subscribeDiscovery": ["Clock"],
-          "httpDiscovery": ["Clock"],
-          "retryWithBackoff": ["Clock"],
-          "signInDevice": ["Clock"],
-          "renewKept": ["Clock"],
-          "ServiceToken": ["Clock"],
-          "AgentToken": ["Clock"],
-          "StoragePersister": ["Clock"],
-          "sessionFromKept": ["Clock"],
-          "HttpSessionFactory": ["Clock"],
-          "XynologBrowserConfig": ["Clock"],
-          "XynologClient.fromHttp": ["Clock"],
-          "signOut": ["Clock"],
-          "whoAmI": ["Clock"],
-          "beginAuthorization": ["Clock"],
-          "completeAuthorization": ["Clock"],
-          "describeConnection": ["Clock"],
-          "ScriptedTransport": ["Clock"],
-          "ScriptedSessions": ["Clock"],
-          "TestSessionOptions": ["Clock"],
-          "LivenessSpec": ["Clock"]
+          "XynologClient": [
+            "Clock"
+          ],
+          "HttpTransport": [
+            "Clock"
+          ],
+          "Bus": [
+            "Clock"
+          ],
+          "Cache": [
+            "Clock"
+          ],
+          "HoverDwell": [
+            "Clock"
+          ],
+          "SearchPipeline": [
+            "Clock"
+          ],
+          "subscribeDiscovery": [
+            "Clock"
+          ],
+          "httpDiscovery": [
+            "Clock"
+          ],
+          "retryWithBackoff": [
+            "Clock"
+          ],
+          "signInDevice": [
+            "Clock"
+          ],
+          "renewKept": [
+            "Clock"
+          ],
+          "ServiceToken": [
+            "Clock"
+          ],
+          "AgentToken": [
+            "Clock"
+          ],
+          "StoragePersister": [
+            "Clock"
+          ],
+          "sessionFromKept": [
+            "Clock"
+          ],
+          "HttpSessionFactory": [
+            "Clock"
+          ],
+          "XynologBrowserConfig": [
+            "Clock"
+          ],
+          "XynologClient.fromHttp": [
+            "Clock"
+          ],
+          "signOut": [
+            "Clock"
+          ],
+          "whoAmI": [
+            "Clock"
+          ],
+          "beginAuthorization": [
+            "Clock"
+          ],
+          "completeAuthorization": [
+            "Clock"
+          ],
+          "describeConnection": [
+            "Clock"
+          ],
+          "ScriptedTransport": [
+            "Clock"
+          ],
+          "ScriptedSessions": [
+            "Clock"
+          ],
+          "TestSessionOptions": [
+            "Clock"
+          ],
+          "LivenessSpec": [
+            "Clock"
+          ]
         },
         "csharp": {
-          "XynologClient": ["TimeProvider"],
-          "HttpTransport": ["TimeProvider"],
-          "Issuer": ["TimeProvider"],
-          "ServiceToken": ["TimeProvider"],
-          "AgentToken": ["TimeProvider"],
-          "FromKeptAsync": ["TimeProvider"],
-          "SignInStore": ["TimeProvider"],
-          "Cache": ["TimeProvider"],
-          "HoverDwell": ["TimeProvider"],
-          "SearchPipeline": ["TimeProvider"],
-          "HttpDiscovery": ["TimeProvider"],
-          "SubscribeDiscovery": ["TimeProvider"],
-          "GetCurrentUserAsync": ["TimeProvider"],
-          "HttpSessionFactory": ["TimeProvider"],
-          "XynologBrowserConfig": ["TimeProvider"],
-          "FaultyTransport": ["TimeProvider"],
-          "TestSessionOptions": ["TimeProvider"],
-          "ScriptedSessions": ["TimeProvider"],
-          "BeginAuthorizationAsync": ["TimeProvider"],
-          "CompleteAuthorizationAsync": ["TimeProvider"],
-          "DescribeConnectionAsync": ["TimeProvider"],
-          "LivenessSpec": ["TimeProvider"],
-          "RetryWithBackoffAsync": ["TimeProvider"]
+          "XynologClient": [
+            "TimeProvider"
+          ],
+          "HttpTransport": [
+            "TimeProvider"
+          ],
+          "Issuer": [
+            "TimeProvider"
+          ],
+          "ServiceToken": [
+            "TimeProvider"
+          ],
+          "AgentToken": [
+            "TimeProvider"
+          ],
+          "FromKeptAsync": [
+            "TimeProvider"
+          ],
+          "SignInStore": [
+            "TimeProvider"
+          ],
+          "Cache": [
+            "TimeProvider"
+          ],
+          "HoverDwell": [
+            "TimeProvider"
+          ],
+          "SearchPipeline": [
+            "TimeProvider"
+          ],
+          "HttpDiscovery": [
+            "TimeProvider"
+          ],
+          "SubscribeDiscovery": [
+            "TimeProvider"
+          ],
+          "GetCurrentUserAsync": [
+            "TimeProvider"
+          ],
+          "HttpSessionFactory": [
+            "TimeProvider"
+          ],
+          "XynologBrowserConfig": [
+            "TimeProvider"
+          ],
+          "FaultyTransport": [
+            "TimeProvider"
+          ],
+          "TestSessionOptions": [
+            "TimeProvider"
+          ],
+          "ScriptedSessions": [
+            "TimeProvider"
+          ],
+          "BeginAuthorizationAsync": [
+            "TimeProvider"
+          ],
+          "CompleteAuthorizationAsync": [
+            "TimeProvider"
+          ],
+          "DescribeConnectionAsync": [
+            "TimeProvider"
+          ],
+          "LivenessSpec": [
+            "TimeProvider"
+          ],
+          "RetryWithBackoffAsync": [
+            "TimeProvider"
+          ]
         },
-        "haskell": {"newClient": ["BusOptions"], "fromHttp": ["HttpOptions"], "newHttpTransport": ["HttpOptions"], "HttpOptions": ["RetryOptions"], "newCache": ["CacheOptions"], "newClaims": ["WorkerOptions"], "WorkerOptions": ["BusOptions"], "newBus": ["BusOptions"], "newJob": ["BusOptions"], "subscribeDiscovery": ["DiscoveryOptions"], "retryWithBackoff": ["RetryOptions"], "newSession": ["RetryOptions"], "fromIssuedSession": ["HttpOptions"], "signInDevice": ["HttpOptions"], "IssuerOptions": ["RetryOptions"], "newServiceTokenSecret": ["IssuerOptions"], "newServiceTokenKey": ["IssuerOptions"], "signInAgent": ["HttpOptions"], "fromKeptSession": ["HttpOptions"], "pollUntilComplete": ["JobNamespace"], "httpDiscovery": ["RetryOptions"], "newSignInStore": ["SignInStoreOptions"], "SignInStoreOptions": ["RetryOptions"], "newHttpSessionFactory": ["HttpOptions"], "XynologBrowserConfig": ["HttpOptions"], "describeConnection": ["HttpOptions"], "newHoverDwell": ["RetryOptions"], "newSearchPipeline": ["RetryOptions"], "newMarkStateUnit": ["RetryOptions"], "newFaultyTransport": ["RetryOptions"], "newScriptedSessions": ["RetryOptions"], "createTestSession": ["TestSessionOptions"], "TestSessionOptions": ["RetryOptions"], "assertLivenessAxioms": ["LivenessSpec"], "LivenessSpec": ["RetryOptions"]}
+        "haskell": {
+          "newClient": [
+            "BusOptions"
+          ],
+          "fromHttp": [
+            "HttpOptions"
+          ],
+          "newHttpTransport": [
+            "HttpOptions"
+          ],
+          "HttpOptions": [
+            "RetryOptions"
+          ],
+          "newCache": [
+            "CacheOptions"
+          ],
+          "newClaims": [
+            "WorkerOptions"
+          ],
+          "WorkerOptions": [
+            "BusOptions"
+          ],
+          "newBus": [
+            "BusOptions"
+          ],
+          "newJob": [
+            "BusOptions"
+          ],
+          "subscribeDiscovery": [
+            "DiscoveryOptions"
+          ],
+          "retryWithBackoff": [
+            "RetryOptions"
+          ],
+          "newSession": [
+            "RetryOptions"
+          ],
+          "fromIssuedSession": [
+            "HttpOptions"
+          ],
+          "signInDevice": [
+            "HttpOptions"
+          ],
+          "IssuerOptions": [
+            "RetryOptions"
+          ],
+          "newServiceTokenSecret": [
+            "IssuerOptions"
+          ],
+          "newServiceTokenKey": [
+            "IssuerOptions"
+          ],
+          "signInAgent": [
+            "HttpOptions"
+          ],
+          "fromKeptSession": [
+            "HttpOptions"
+          ],
+          "pollUntilComplete": [
+            "JobNamespace"
+          ],
+          "httpDiscovery": [
+            "RetryOptions"
+          ],
+          "newSignInStore": [
+            "SignInStoreOptions"
+          ],
+          "SignInStoreOptions": [
+            "RetryOptions"
+          ],
+          "newHttpSessionFactory": [
+            "HttpOptions"
+          ],
+          "XynologBrowserConfig": [
+            "HttpOptions"
+          ],
+          "describeConnection": [
+            "HttpOptions"
+          ],
+          "newHoverDwell": [
+            "RetryOptions"
+          ],
+          "newSearchPipeline": [
+            "RetryOptions"
+          ],
+          "newMarkStateUnit": [
+            "RetryOptions"
+          ],
+          "newFaultyTransport": [
+            "RetryOptions"
+          ],
+          "newScriptedSessions": [
+            "RetryOptions"
+          ],
+          "createTestSession": [
+            "TestSessionOptions"
+          ],
+          "TestSessionOptions": [
+            "RetryOptions"
+          ],
+          "assertLivenessAxioms": [
+            "LivenessSpec"
+          ],
+          "LivenessSpec": [
+            "RetryOptions"
+          ]
+        }
       }
     },
     {
       "source": "random",
       "docs": "What every jitter an SDK draws draws from: a random source its caller controls, so a caller can make each draw the lowest the source gives, as specs/src/client/clock-cases.json does. Where every draw can already be reached from outside the SDK, the caller reaches it there, and the SDK takes none (`outside`). Elsewhere every public maker of something that backs off, and every public function that draws a jitter, takes one, the system's source when none is given, unless it is handed something that already carries one, whose source it keeps; and what it makes keeps its source (`takes`). The randomness of a secret, a PKCE verifier, a nonce or a client assertion's `jti`, stays the platform's cryptographic source, and is no part of it.",
-      "typeWords": ["Random", "Rng"],
+      "typeWords": [
+        "Random",
+        "Rng"
+      ],
       "outside": {
         "typescript": "Math.random, which a test replaces: every jitter draws from it.",
         "python": "The random module, which a test seeds or patches: every jitter draws random.random()."
       },
       "takes": {
-        "ocaml": { "Clock.make": ["Random.State.t"], "Subscription.start": ["Clock.t"], "Session.start": ["Clock.t"], "Http_wire.make": ["Clock.t"], "Live_query.make": ["Clock.t"] },
+        "ocaml": {
+          "Clock.make": [
+            "Random.State.t"
+          ],
+          "Subscription.start": [
+            "Clock.t"
+          ],
+          "Session.start": [
+            "Clock.t"
+          ],
+          "Http_wire.make": [
+            "Clock.t"
+          ],
+          "Live_query.make": [
+            "Clock.t"
+          ]
+        },
         "rust": {
-          "HttpTransportConfig": ["Rng"],
-          "XynologSessionConfig": ["Rng"],
-          "retry_with_backoff": ["Rng"],
-          "SessionFromKept": ["Rng"],
-          "AgentToken::sign_in": ["Rng"],
-          "equal_jitter": ["Rng"],
-          "HttpSession": ["Rng"],
-          "HttpSessionFactory::new": ["Rng"],
-          "describe_connection": ["Rng"],
-          "complete_sign_in": ["Rng"],
-          "ScriptedSessions::new": ["Rng"],
-          "ScriptedSessions::answering": ["Rng"]
+          "HttpTransportConfig": [
+            "Rng"
+          ],
+          "XynologSessionConfig": [
+            "Rng"
+          ],
+          "retry_with_backoff": [
+            "Rng"
+          ],
+          "SessionFromKept": [
+            "Rng"
+          ],
+          "AgentToken::sign_in": [
+            "Rng"
+          ],
+          "equal_jitter": [
+            "Rng"
+          ],
+          "HttpSession": [
+            "Rng"
+          ],
+          "HttpSessionFactory::new": [
+            "Rng"
+          ],
+          "describe_connection": [
+            "Rng"
+          ],
+          "complete_sign_in": [
+            "Rng"
+          ],
+          "ScriptedSessions::new": [
+            "Rng"
+          ],
+          "ScriptedSessions::answering": [
+            "Rng"
+          ]
         },
         "go": {
-          "HTTPTransportConfig": ["rand.Rand"],
-          "SessionConfig": ["rand.Rand"],
-          "ResumeConfig": ["rand.Rand"],
-          "SessionFromKeptConfig": ["rand.Rand"],
-          "Issuer": ["rand.Rand"],
-          "AgentConfig": ["rand.Rand"],
-          "HttpSessionFactory": ["rand.Rand"],
-          "CompleteSignIn": ["rand.Rand"],
-          "DescribeConnection": ["rand.Rand"],
-          "NewScriptedSessions": ["rand.Rand"],
-          "RetryWithBackoff": ["rand.Rand"],
-          "EqualJitter": ["rand.Rand"]
+          "HTTPTransportConfig": [
+            "rand.Rand"
+          ],
+          "SessionConfig": [
+            "rand.Rand"
+          ],
+          "ResumeConfig": [
+            "rand.Rand"
+          ],
+          "SessionFromKeptConfig": [
+            "rand.Rand"
+          ],
+          "Issuer": [
+            "rand.Rand"
+          ],
+          "AgentConfig": [
+            "rand.Rand"
+          ],
+          "HttpSessionFactory": [
+            "rand.Rand"
+          ],
+          "CompleteSignIn": [
+            "rand.Rand"
+          ],
+          "DescribeConnection": [
+            "rand.Rand"
+          ],
+          "NewScriptedSessions": [
+            "rand.Rand"
+          ],
+          "RetryWithBackoff": [
+            "rand.Rand"
+          ],
+          "EqualJitter": [
+            "rand.Rand"
+          ]
         },
         "kotlin": {
-          "HttpTransport": ["Random"],
-          "AgentToken": ["Random"],
-          "sessionFromKept": ["Random"],
-          "HttpSessionFactory": ["Random"],
-          "XynologBrowserConfig": ["Random"],
-          "ScriptedSessions": ["Random"],
-          "retryWithBackoff": ["Random"],
-          "equalJitter": ["Random"],
-          "describeConnection": ["Random"],
-          "renewKept": ["Random"],
-          "TestSessionOptions": ["Random"],
-          "retryWithBackoffFuture": ["Random"],
-          "renewKeptFuture": ["Random"],
-          "sessionFromKeptFuture": ["Random"],
-          "describeConnectionFuture": ["Random"]
+          "HttpTransport": [
+            "Random"
+          ],
+          "AgentToken": [
+            "Random"
+          ],
+          "sessionFromKept": [
+            "Random"
+          ],
+          "HttpSessionFactory": [
+            "Random"
+          ],
+          "XynologBrowserConfig": [
+            "Random"
+          ],
+          "ScriptedSessions": [
+            "Random"
+          ],
+          "retryWithBackoff": [
+            "Random"
+          ],
+          "equalJitter": [
+            "Random"
+          ],
+          "describeConnection": [
+            "Random"
+          ],
+          "renewKept": [
+            "Random"
+          ],
+          "TestSessionOptions": [
+            "Random"
+          ],
+          "retryWithBackoffFuture": [
+            "Random"
+          ],
+          "renewKeptFuture": [
+            "Random"
+          ],
+          "sessionFromKeptFuture": [
+            "Random"
+          ],
+          "describeConnectionFuture": [
+            "Random"
+          ]
         },
         "swift": {
-          "HttpTransport": ["RandomNumberGenerator"],
-          "retryWithBackoff": ["RandomNumberGenerator"],
-          "renewKept": ["RandomNumberGenerator"],
-          "AgentToken": ["RandomNumberGenerator"],
-          "sessionFromKept": ["RandomNumberGenerator"],
-          "HttpSessionFactory": ["RandomNumberGenerator"],
-          "XynologBrowserConfig": ["RandomNumberGenerator"],
-          "XynologClient.fromHttp": ["RandomNumberGenerator"],
-          "describeConnection": ["RandomNumberGenerator"],
-          "ScriptedSessions": ["RandomNumberGenerator"],
-          "TestSessionOptions": ["RandomNumberGenerator"]
+          "HttpTransport": [
+            "RandomNumberGenerator"
+          ],
+          "retryWithBackoff": [
+            "RandomNumberGenerator"
+          ],
+          "renewKept": [
+            "RandomNumberGenerator"
+          ],
+          "AgentToken": [
+            "RandomNumberGenerator"
+          ],
+          "sessionFromKept": [
+            "RandomNumberGenerator"
+          ],
+          "HttpSessionFactory": [
+            "RandomNumberGenerator"
+          ],
+          "XynologBrowserConfig": [
+            "RandomNumberGenerator"
+          ],
+          "XynologClient.fromHttp": [
+            "RandomNumberGenerator"
+          ],
+          "describeConnection": [
+            "RandomNumberGenerator"
+          ],
+          "ScriptedSessions": [
+            "RandomNumberGenerator"
+          ],
+          "TestSessionOptions": [
+            "RandomNumberGenerator"
+          ]
         },
         "csharp": {
-          "XynologClient": ["Random"],
-          "HttpTransport": ["Random"],
-          "Issuer": ["Random"],
-          "ServiceToken": ["Random"],
-          "FromKeptAsync": ["Random"],
-          "SignInStore": ["Random"],
-          "HttpSessionFactory": ["Random"],
-          "XynologBrowserConfig": ["Random"],
-          "TestSessionOptions": ["Random"],
-          "ScriptedSessions": ["Random"],
-          "BeginAuthorizationAsync": ["Random"],
-          "CompleteAuthorizationAsync": ["Random"],
-          "DescribeConnectionAsync": ["Random"],
-          "RetryWithBackoffAsync": ["Random"]
+          "XynologClient": [
+            "Random"
+          ],
+          "HttpTransport": [
+            "Random"
+          ],
+          "Issuer": [
+            "Random"
+          ],
+          "ServiceToken": [
+            "Random"
+          ],
+          "FromKeptAsync": [
+            "Random"
+          ],
+          "SignInStore": [
+            "Random"
+          ],
+          "HttpSessionFactory": [
+            "Random"
+          ],
+          "XynologBrowserConfig": [
+            "Random"
+          ],
+          "TestSessionOptions": [
+            "Random"
+          ],
+          "ScriptedSessions": [
+            "Random"
+          ],
+          "BeginAuthorizationAsync": [
+            "Random"
+          ],
+          "CompleteAuthorizationAsync": [
+            "Random"
+          ],
+          "DescribeConnectionAsync": [
+            "Random"
+          ],
+          "RetryWithBackoffAsync": [
+            "Random"
+          ]
         },
-        "haskell": {"newHttpTransport": ["HttpOptions"], "HttpOptions": ["RetryOptions"], "fromHttp": ["HttpOptions"], "retryWithBackoff": ["RetryOptions"], "newSession": ["RetryOptions"], "fromIssuedSession": ["HttpOptions"], "signInDevice": ["HttpOptions"], "IssuerOptions": ["RetryOptions"], "newServiceTokenSecret": ["IssuerOptions"], "newServiceTokenKey": ["IssuerOptions"], "signInAgent": ["HttpOptions"], "fromKeptSession": ["HttpOptions"], "newHttpSessionFactory": ["HttpOptions"], "XynologBrowserConfig": ["HttpOptions"], "describeConnection": ["HttpOptions"]}
+        "haskell": {
+          "newHttpTransport": [
+            "HttpOptions"
+          ],
+          "HttpOptions": [
+            "RetryOptions"
+          ],
+          "fromHttp": [
+            "HttpOptions"
+          ],
+          "retryWithBackoff": [
+            "RetryOptions"
+          ],
+          "newSession": [
+            "RetryOptions"
+          ],
+          "fromIssuedSession": [
+            "HttpOptions"
+          ],
+          "signInDevice": [
+            "HttpOptions"
+          ],
+          "IssuerOptions": [
+            "RetryOptions"
+          ],
+          "newServiceTokenSecret": [
+            "IssuerOptions"
+          ],
+          "newServiceTokenKey": [
+            "IssuerOptions"
+          ],
+          "signInAgent": [
+            "HttpOptions"
+          ],
+          "fromKeptSession": [
+            "HttpOptions"
+          ],
+          "newHttpSessionFactory": [
+            "HttpOptions"
+          ],
+          "XynologBrowserConfig": [
+            "HttpOptions"
+          ],
+          "describeConnection": [
+            "HttpOptions"
+          ]
+        }
       }
     }
   ]

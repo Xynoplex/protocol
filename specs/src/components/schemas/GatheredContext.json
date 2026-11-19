@@ -11,7 +11,9 @@
           "properties": {
             "kind": {
               "type": "string",
-              "enum": ["annotation"]
+              "enum": [
+                "annotation"
+              ]
             },
             "annotation": {
               "$ref": "./Annotation.json",
@@ -38,7 +40,9 @@
                   "description": "Text appearing after the selected passage"
                 }
               },
-              "required": ["text"]
+              "required": [
+                "text"
+              ]
             },
             "userHint": {
               "type": "string",
@@ -59,10 +63,16 @@
                   "type": "string"
                 }
               },
-              "required": ["content"]
+              "required": [
+                "content"
+              ]
             }
           },
-          "required": ["kind", "annotation", "sourceResource"]
+          "required": [
+            "kind",
+            "annotation",
+            "sourceResource"
+          ]
         },
         {
           "type": "object",
@@ -70,7 +80,9 @@
           "properties": {
             "kind": {
               "type": "string",
-              "enum": ["resource"]
+              "enum": [
+                "resource"
+              ]
             },
             "resource": {
               "$ref": "./ResourceDescriptor.json",
@@ -81,7 +93,9 @@
             },
             "suggestedReferences": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": {
+                "type": "string"
+              }
             },
             "content": {
               "type": "object",
@@ -93,13 +107,18 @@
                 },
                 "related": {
                   "type": "object",
-                  "additionalProperties": { "type": "string" },
+                  "additionalProperties": {
+                    "type": "string"
+                  },
                   "description": "Map of related resource IDs to their content"
                 }
               }
             }
           },
-          "required": ["kind", "resource"]
+          "required": [
+            "kind",
+            "resource"
+          ]
         }
       ]
     },
@@ -120,11 +139,15 @@
         },
         "excludedEntityTypes": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Entity types excluded from this recall — a record of how `similar` was filtered (e.g. ['Question'] so answer-generation never surfaces prior questions). Absent when no exclusion was applied."
         }
       },
-      "required": ["similar"]
+      "required": [
+        "similar"
+      ]
     },
     "metadata": {
       "type": "object",
@@ -159,5 +182,9 @@
       "description": "LLM-generated summary of the focal anchor's relationships in the knowledge graph"
     }
   },
-  "required": ["focus", "graph", "metadata"]
+  "required": [
+    "focus",
+    "graph",
+    "metadata"
+  ]
 }

@@ -6,5 +6,7 @@
       "type": "integer"
     }
   },
-  "required": ["hoverDelayMs"]
+  "required": [
+    "hoverDelayMs"
+  ]
 }

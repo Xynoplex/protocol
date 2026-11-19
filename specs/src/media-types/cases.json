@@ -76,7 +76,7 @@
     },
     {
       "why": "lower case is Unicode's: the Kelvin sign is a k",
-      "name": "\u212a2",
+      "name": "K2",
       "format": "text/plain",
       "fileName": "k2.txt"
     }
