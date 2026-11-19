@@ -1,5 +1,5 @@
 {
-  "$comment": "The schemas of the services' own areas that the suites read: their configuration documents and health answers, and Archivist's anchored-text entry. Each is a schema at the top of an area of specs/src, found there by its name; the gateway's document lists none of them. harness/services-document.ts writes harness/generated/services.openapi.json from this list: openapi-typescript types it (harness/generated/services-types.ts), and the harness's servicesSpec() validates against it.",
+  "$comment": "The schemas at the top of specs/src's areas that the suites read: the services' configuration documents and health answers, Archivist's anchored-text entry, and the telemetry tables' schemas. Each is found by its name at the top of an area; the gateway's document lists none of them. harness/services-document.ts writes harness/generated/services.openapi.json from this list: openapi-typescript types it (harness/generated/services-types.ts), and the harness's servicesSpec() validates against it.",
   "schemas": [
     "AnchoredTextEntry",
     "ArchivistConfig",
@@ -10,6 +10,8 @@
     "Neo4jGraphConfig",
     "OllamaEmbeddingConfig",
     "QdrantVectorsConfig",
+    "SdkTelemetryTelemetry",
+    "ServiceTelemetryTelemetry",
     "SmelterConfig",
     "WeaverConfig",
     "WorkerConfig",
