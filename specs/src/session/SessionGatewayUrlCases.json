@@ -20,7 +20,10 @@
             "$ref": "../components/schemas/HttpEndpoint.json"
           },
           "origin": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The gateway's origin, or null when the host is refused."
           }
         },

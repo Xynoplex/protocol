@@ -10,154 +10,297 @@
     {
       "kind": "budget",
       "why": "one window for prompt and reply: a third of what the scaffold leaves is text and the rest is reply, and the window then holds no more text than the opening size",
-      "limits": { "contextTokens": 8192, "maxOutputTokens": 8192 },
+      "limits": {
+        "contextTokens": 8192,
+        "maxOutputTokens": 8192
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 1,
-      "budget": { "size": 2564, "overlap": 64, "floor": 128, "ceiling": 2564, "outputBudget": 5128 }
+      "budget": {
+        "size": 2564,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 2564,
+        "outputBudget": 5128
+      }
     },
     {
       "kind": "budget",
       "why": "a provider that states no rate is held to 108,000 output tokens an hour: half the ten-minute bound is 9,000 tokens of reply, the text shrinks by the same factor, and the window leaves the text far more room than it opens with",
-      "limits": { "contextTokens": 262144, "maxOutputTokens": 262144 },
+      "limits": {
+        "contextTokens": 262144,
+        "maxOutputTokens": 262144
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 1,
-      "budget": { "size": 4499, "overlap": 64, "floor": 128, "ceiling": 252644, "outputBudget": 9000 }
+      "budget": {
+        "size": 4499,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 252644,
+        "outputBudget": 9000
+      }
     },
     {
       "kind": "budget",
       "why": "the text shrinks by a quotient taken first and in double precision: a third of what this scaffold leaves is exactly half the rest, so whole-number arithmetic would answer 4,500, but 9,000 over 66,254 is a hair under its true value in double precision, and its product with 33,127 rounds down to 4,499",
-      "limits": { "contextTokens": 100000, "maxOutputTokens": 100000 },
+      "limits": {
+        "contextTokens": 100000,
+        "maxOutputTokens": 100000
+      },
       "scaffoldTokens": 619,
       "typesPerCall": 1,
-      "budget": { "size": 4499, "overlap": 64, "floor": 128, "ceiling": 90381, "outputBudget": 9000 }
+      "budget": {
+        "size": 4499,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 90381,
+        "outputBudget": 9000
+      }
     },
     {
       "kind": "budget",
       "why": "a reply ceiling of its own, and a stated rate: the reply is capped at that rate (10,666 tokens), and the text is at most half the reply whatever the window could hold",
-      "limits": { "contextTokens": 200000, "maxOutputTokens": 64000, "outputTokensPerHour": 128000 },
+      "limits": {
+        "contextTokens": 200000,
+        "maxOutputTokens": 64000,
+        "outputTokensPerHour": 128000
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 1,
-      "budget": { "size": 5333, "overlap": 64, "floor": 128, "ceiling": 188834, "outputBudget": 10666 }
+      "budget": {
+        "size": 5333,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 188834,
+        "outputBudget": 10666
+      }
     },
     {
       "kind": "budget",
       "why": "a reply ceiling already under the duration cap stands as it is",
-      "limits": { "contextTokens": 200000, "maxOutputTokens": 8000 },
+      "limits": {
+        "contextTokens": 200000,
+        "maxOutputTokens": 8000
+      },
       "scaffoldTokens": 1000,
       "typesPerCall": 1,
-      "budget": { "size": 4000, "overlap": 64, "floor": 128, "ceiling": 191000, "outputBudget": 8000 }
+      "budget": {
+        "size": 4000,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 191000,
+        "outputBudget": 8000
+      }
     },
     {
       "kind": "budget",
       "why": "a reply ceiling that leaves the text nothing falls back to the shared split",
-      "limits": { "contextTokens": 10000, "maxOutputTokens": 9900 },
+      "limits": {
+        "contextTokens": 10000,
+        "maxOutputTokens": 9900
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 1,
-      "budget": { "size": 3166, "overlap": 64, "floor": 128, "ceiling": 3166, "outputBudget": 6334 }
+      "budget": {
+        "size": 3166,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 3166,
+        "outputBudget": 6334
+      }
     },
     {
       "kind": "budget",
       "why": "a call that asks for three families of span at once has a third of the text to ask about: the reply it needs grows with each",
-      "limits": { "contextTokens": 200000, "maxOutputTokens": 64000, "outputTokensPerHour": 128000 },
+      "limits": {
+        "contextTokens": 200000,
+        "maxOutputTokens": 64000,
+        "outputTokensPerHour": 128000
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 3,
-      "budget": { "size": 1777, "overlap": 64, "floor": 128, "ceiling": 188834, "outputBudget": 10666 }
+      "budget": {
+        "size": 1777,
+        "overlap": 64,
+        "floor": 128,
+        "ceiling": 188834,
+        "outputBudget": 10666
+      }
     },
     {
       "kind": "budget",
       "why": "a cramped window: the floor is never above the opening size",
-      "limits": { "contextTokens": 1000, "maxOutputTokens": 1000 },
+      "limits": {
+        "contextTokens": 1000,
+        "maxOutputTokens": 1000
+      },
       "scaffoldTokens": 700,
       "typesPerCall": 1,
-      "budget": { "size": 100, "overlap": 64, "floor": 100, "ceiling": 100, "outputBudget": 200 }
+      "budget": {
+        "size": 100,
+        "overlap": 64,
+        "floor": 100,
+        "ceiling": 100,
+        "outputBudget": 200
+      }
     },
     {
       "kind": "budget",
       "why": "65 tokens of text is the least a window may leave",
-      "limits": { "contextTokens": 695, "maxOutputTokens": 695 },
+      "limits": {
+        "contextTokens": 695,
+        "maxOutputTokens": 695
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 1,
-      "budget": { "size": 65, "overlap": 64, "floor": 65, "ceiling": 65, "outputBudget": 130 }
+      "budget": {
+        "size": 65,
+        "overlap": 64,
+        "floor": 65,
+        "ceiling": 65,
+        "outputBudget": 130
+      }
     },
     {
       "kind": "budget",
       "why": "64 tokens of text is one overlap, and a piece of it would read nothing new: the window is refused, with a failure no retry is spent on",
-      "limits": { "contextTokens": 694, "maxOutputTokens": 694 },
+      "limits": {
+        "contextTokens": 694,
+        "maxOutputTokens": 694
+      },
       "scaffoldTokens": 500,
       "typesPerCall": 1,
-      "refused": { "name": "DeterministicJobError" }
+      "refused": {
+        "name": "DeterministicJobError"
+      }
     },
-
     {
       "kind": "step",
       "why": "39% of the budget used: the piece left room, and the next one grows",
       "size": 5000,
-      "outcome": { "outputTokens": 3900 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 3900
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 7500
     },
     {
       "kind": "step",
       "why": "92% used: near the edge, the next piece eases off before one is cut off",
       "size": 6001,
-      "outcome": { "outputTokens": 9200 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 9200
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 4200
     },
     {
       "kind": "step",
       "why": "65% used: inside the band, the size holds",
       "size": 6000,
-      "outcome": { "outputTokens": 6500 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 6500
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 6000
     },
     {
       "kind": "step",
       "why": "exactly half used is not under half: the size holds",
       "size": 6000,
-      "outcome": { "outputTokens": 5000 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 5000
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 6000
     },
     {
       "kind": "step",
       "why": "exactly 80% used is not over it: the size holds",
       "size": 6000,
-      "outcome": { "outputTokens": 8000 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 8000
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 6000
     },
     {
       "kind": "step",
       "why": "a size failure answers the size its descent recovered at, whatever was counted, even nothing used at all",
       "size": 801,
-      "outcome": { "recovered": 200, "outputTokens": 0 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "recovered": 200,
+        "outputTokens": 0
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 200
     },
     {
       "kind": "step",
       "why": "a piece its descent accepted uncut recovered at the size it was cut at, and the next piece is cut at it again, whatever was counted",
       "size": 801,
-      "outcome": { "recovered": "uncut", "outputTokens": 9500 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "recovered": "uncut",
+        "outputTokens": 9500
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 801
     },
     {
       "kind": "step",
       "why": "a size failure needs no count to say what fits",
       "size": 1001,
-      "outcome": { "recovered": 250 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "recovered": 250
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 250
     },
     {
       "kind": "step",
       "why": "a recovery under the floor is brought up to it",
       "size": 1001,
-      "outcome": { "recovered": 50 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "recovered": 50
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 96
     },
     {
@@ -165,47 +308,81 @@
       "why": "no count is not a count of zero: nothing was measured, and the size holds",
       "size": 1000,
       "outcome": {},
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 1000
     },
     {
       "kind": "step",
       "why": "a count of zero is a measurement: none of the budget was used, and the next piece grows",
       "size": 1000,
-      "outcome": { "outputTokens": 0 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 0
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 1500
     },
     {
       "kind": "step",
       "why": "growth rounds down",
       "size": 333,
-      "outcome": { "outputTokens": 100 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 100
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 499
     },
     {
       "kind": "step",
       "why": "the product is a floating-point one: 90 x 0.7 is a hair under 63 in double precision and rounds down to 62, where whole-number arithmetic would answer 63",
       "size": 90,
-      "outcome": { "outputTokens": 9000 },
-      "bounds": { "floor": 16, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 9000
+      },
+      "bounds": {
+        "floor": 16,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 62
     },
     {
       "kind": "step",
       "why": "growth stops at the ceiling",
       "size": 30000,
-      "outcome": { "outputTokens": 10 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 10
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 40000
     },
     {
       "kind": "step",
       "why": "shrinking stops at the floor",
       "size": 121,
-      "outcome": { "outputTokens": 9500 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "outcome": {
+        "outputTokens": 9500
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 96
     },
     {
@@ -213,28 +390,50 @@
       "why": "a size outside the bounds, as a cursor written under another budget may carry, is brought inside them even where it holds",
       "size": 50000,
       "outcome": {},
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 10000 },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 10000
+      },
       "nextSize": 40000
     },
     {
       "kind": "step",
       "why": "with no output budget there is nothing to measure a count against: the size holds",
       "size": 6000,
-      "outcome": { "outputTokens": 0 },
-      "bounds": { "floor": 96, "ceiling": 40000, "outputBudget": 0 },
+      "outcome": {
+        "outputTokens": 0
+      },
+      "bounds": {
+        "floor": 96,
+        "ceiling": 40000,
+        "outputBudget": 0
+      },
       "nextSize": 6000
     },
-
     {
       "kind": "walk",
       "why": "a text within the opening size is one piece, and one call",
       "text": "a123456789b12345",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
-        { "outputTokens": 1 }
+        {
+          "outputTokens": 1
+        }
       ],
       "pieces": [
-        { "at": 0, "to": 16, "size": 5, "next": 16 }
+        {
+          "at": 0,
+          "to": 16,
+          "size": 5,
+          "next": 16
+        }
       ],
       "completes": true
     },
@@ -242,7 +441,13 @@
       "kind": "walk",
       "why": "an empty text asks nothing",
       "text": "",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [],
       "pieces": [],
       "completes": true
@@ -251,7 +456,13 @@
       "kind": "walk",
       "why": "a provider that counts nothing holds the opening size from end to end, each piece starting one overlap before the last one ended",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
         {},
         {},
@@ -259,10 +470,30 @@
         {}
       ],
       "pieces": [
-        { "at": 0, "to": 20, "size": 5, "next": 16 },
-        { "at": 16, "to": 36, "size": 5, "next": 32 },
-        { "at": 32, "to": 52, "size": 5, "next": 48 },
-        { "at": 48, "to": 60, "size": 5, "next": 60 }
+        {
+          "at": 0,
+          "to": 20,
+          "size": 5,
+          "next": 16
+        },
+        {
+          "at": 16,
+          "to": 36,
+          "size": 5,
+          "next": 32
+        },
+        {
+          "at": 32,
+          "to": 52,
+          "size": 5,
+          "next": 48
+        },
+        {
+          "at": 48,
+          "to": 60,
+          "size": 5,
+          "next": 60
+        }
       ],
       "completes": true
     },
@@ -270,16 +501,43 @@
       "kind": "walk",
       "why": "each piece that leaves the output budget unused grows the next: 5, then 7, then 10",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
-        { "outputTokens": 10 },
-        { "outputTokens": 10 },
-        { "outputTokens": 10 }
+        {
+          "outputTokens": 10
+        },
+        {
+          "outputTokens": 10
+        },
+        {
+          "outputTokens": 10
+        }
       ],
       "pieces": [
-        { "at": 0, "to": 20, "size": 5, "next": 16 },
-        { "at": 16, "to": 44, "size": 7, "next": 40 },
-        { "at": 40, "to": 60, "size": 10, "next": 60 }
+        {
+          "at": 0,
+          "to": 20,
+          "size": 5,
+          "next": 16
+        },
+        {
+          "at": 16,
+          "to": 44,
+          "size": 7,
+          "next": 40
+        },
+        {
+          "at": 40,
+          "to": 60,
+          "size": 10,
+          "next": 60
+        }
       ],
       "completes": true
     },
@@ -287,22 +545,71 @@
       "kind": "walk",
       "why": "a piece near the budget's edge eases the next off, a size failure answers the size its descent recovered at, the floor stops a recovery under it, and a piece inside the band holds: 10, 7, 5, then 3 to the end",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789g123456789h123456789i123456789j123456789",
-      "budget": { "size": 10, "overlap": 1, "floor": 3, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 10,
+        "overlap": 1,
+        "floor": 3,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
-        { "outputTokens": 90 },
-        { "recovered": 5 },
-        { "recovered": 2, "outputTokens": 5 },
-        { "outputTokens": 60 },
-        { "outputTokens": 60 },
-        { "outputTokens": 60 }
+        {
+          "outputTokens": 90
+        },
+        {
+          "recovered": 5
+        },
+        {
+          "recovered": 2,
+          "outputTokens": 5
+        },
+        {
+          "outputTokens": 60
+        },
+        {
+          "outputTokens": 60
+        },
+        {
+          "outputTokens": 60
+        }
       ],
       "pieces": [
-        { "at": 0, "to": 40, "size": 10, "next": 36 },
-        { "at": 36, "to": 64, "size": 7, "next": 60 },
-        { "at": 60, "to": 80, "size": 5, "next": 76 },
-        { "at": 76, "to": 88, "size": 3, "next": 84 },
-        { "at": 84, "to": 96, "size": 3, "next": 92 },
-        { "at": 92, "to": 100, "size": 3, "next": 100 }
+        {
+          "at": 0,
+          "to": 40,
+          "size": 10,
+          "next": 36
+        },
+        {
+          "at": 36,
+          "to": 64,
+          "size": 7,
+          "next": 60
+        },
+        {
+          "at": 60,
+          "to": 80,
+          "size": 5,
+          "next": 76
+        },
+        {
+          "at": 76,
+          "to": 88,
+          "size": 3,
+          "next": 84
+        },
+        {
+          "at": 84,
+          "to": 96,
+          "size": 3,
+          "next": 92
+        },
+        {
+          "at": 92,
+          "to": 100,
+          "size": 3,
+          "next": 100
+        }
       ],
       "completes": true
     },
@@ -310,26 +617,88 @@
       "kind": "walk",
       "why": "a dense stretch costs one size failure, at its start: the next piece is cut at the size its descent recovered at and holds there while pieces fit (4), sparse pieces grow it again by half each (6, 9, 13), and the next dense stretch is one size failure again (5); nothing the walk saw of the first is kept",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789g123456789h123456789i123456789j123456789k123456789l123456789m123456789n123456789o123456789p123456789q123456789r123456789s123456789t1",
-      "budget": { "size": 10, "overlap": 1, "floor": 3, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 10,
+        "overlap": 1,
+        "floor": 3,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
-        { "recovered": 4 },
-        { "outputTokens": 70 },
-        { "outputTokens": 70 },
-        { "outputTokens": 20 },
-        { "outputTokens": 20 },
-        { "outputTokens": 20 },
-        { "recovered": 5 },
-        { "outputTokens": 70 }
+        {
+          "recovered": 4
+        },
+        {
+          "outputTokens": 70
+        },
+        {
+          "outputTokens": 70
+        },
+        {
+          "outputTokens": 20
+        },
+        {
+          "outputTokens": 20
+        },
+        {
+          "outputTokens": 20
+        },
+        {
+          "recovered": 5
+        },
+        {
+          "outputTokens": 70
+        }
       ],
       "pieces": [
-        { "at": 0, "to": 40, "size": 10, "next": 36 },
-        { "at": 36, "to": 52, "size": 4, "next": 48 },
-        { "at": 48, "to": 64, "size": 4, "next": 60 },
-        { "at": 60, "to": 76, "size": 4, "next": 72 },
-        { "at": 72, "to": 96, "size": 6, "next": 92 },
-        { "at": 92, "to": 128, "size": 9, "next": 124 },
-        { "at": 124, "to": 176, "size": 13, "next": 172 },
-        { "at": 172, "to": 192, "size": 5, "next": 192 }
+        {
+          "at": 0,
+          "to": 40,
+          "size": 10,
+          "next": 36
+        },
+        {
+          "at": 36,
+          "to": 52,
+          "size": 4,
+          "next": 48
+        },
+        {
+          "at": 48,
+          "to": 64,
+          "size": 4,
+          "next": 60
+        },
+        {
+          "at": 60,
+          "to": 76,
+          "size": 4,
+          "next": 72
+        },
+        {
+          "at": 72,
+          "to": 96,
+          "size": 6,
+          "next": 92
+        },
+        {
+          "at": 92,
+          "to": 128,
+          "size": 9,
+          "next": 124
+        },
+        {
+          "at": 124,
+          "to": 176,
+          "size": 13,
+          "next": 172
+        },
+        {
+          "at": 172,
+          "to": 192,
+          "size": 5,
+          "next": 192
+        }
       ],
       "completes": true
     },
@@ -337,15 +706,41 @@
       "kind": "walk",
       "why": "a resumed unit starts where its cursor stands, one shrink step under the cursor's size (14 gives 9), neither at the opening size nor at the size that died, and adapts from there as any walk does",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789g123456789h123456789i123456789j123456789",
-      "budget": { "size": 10, "overlap": 1, "floor": 3, "ceiling": 20, "outputBudget": 100 },
-      "resume": { "next": 36, "size": 14, "found": 4, "emitted": 3, "errors": 1 },
+      "budget": {
+        "size": 10,
+        "overlap": 1,
+        "floor": 3,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
+      "resume": {
+        "next": 36,
+        "size": 14,
+        "found": 4,
+        "emitted": 3,
+        "errors": 1
+      },
       "outcomes": [
-        { "outputTokens": 10 },
-        { "outputTokens": 10 }
+        {
+          "outputTokens": 10
+        },
+        {
+          "outputTokens": 10
+        }
       ],
       "pieces": [
-        { "at": 36, "to": 72, "size": 9, "next": 68 },
-        { "at": 68, "to": 100, "size": 13, "next": 100 }
+        {
+          "at": 36,
+          "to": 72,
+          "size": 9,
+          "next": 68
+        },
+        {
+          "at": 68,
+          "to": 100,
+          "size": 13,
+          "next": 100
+        }
       ],
       "completes": true
     },
@@ -353,8 +748,20 @@
       "kind": "walk",
       "why": "a cursor at the end of the text is a unit that finished its last piece and died before it could say so: resuming it asks nothing",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789g123456789h123456789i123456789j123456789",
-      "budget": { "size": 10, "overlap": 1, "floor": 3, "ceiling": 20, "outputBudget": 100 },
-      "resume": { "next": 100, "size": 10, "found": 9, "emitted": 9, "errors": 0 },
+      "budget": {
+        "size": 10,
+        "overlap": 1,
+        "floor": 3,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
+      "resume": {
+        "next": 100,
+        "size": 10,
+        "found": 9,
+        "emitted": 9,
+        "errors": 0
+      },
       "outcomes": [],
       "pieces": [],
       "completes": true
@@ -363,14 +770,30 @@
       "kind": "walk",
       "why": "an overlap that would not move the walk forward is given up: the next piece starts where the last one ended",
       "text": "a123456789b12345",
-      "budget": { "size": 2, "overlap": 2, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 2,
+        "overlap": 2,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
         {},
         {}
       ],
       "pieces": [
-        { "at": 0, "to": 8, "size": 2, "next": 8 },
-        { "at": 8, "to": 16, "size": 2, "next": 16 }
+        {
+          "at": 0,
+          "to": 8,
+          "size": 2,
+          "next": 8
+        },
+        {
+          "at": 8,
+          "to": 16,
+          "size": 2,
+          "next": 16
+        }
       ],
       "completes": true
     },
@@ -378,14 +801,32 @@
       "kind": "walk",
       "why": "a piece whose work fails stops the walk where it stands: nothing is cut past it, and the cursor still says what it said after the piece before",
       "text": "a123456789b123456789c123456789d123456789e123456789f123456789",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
         {},
-        { "fails": true }
+        {
+          "fails": true
+        }
       ],
       "pieces": [
-        { "at": 0, "to": 20, "size": 5, "next": 16 },
-        { "at": 16, "to": 36, "size": 5, "next": 32 }
+        {
+          "at": 0,
+          "to": 20,
+          "size": 5,
+          "next": 16
+        },
+        {
+          "at": 16,
+          "to": 36,
+          "size": 5,
+          "next": 32
+        }
       ],
       "completes": false
     },
@@ -393,7 +834,13 @@
       "kind": "walk",
       "why": "a text with characters outside the Basic Multilingual Plane is walked by its code points: sixty of them here, six being emoji, so four pieces at the opening size, and the walk ends where the fourth reaches the sixtieth, with no piece cut after it",
       "text": "😀a23456789😀b23456789😀c23456789😀d23456789😀e23456789😀f23456789",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
       "outcomes": [
         {},
         {},
@@ -401,10 +848,30 @@
         {}
       ],
       "pieces": [
-        { "at": 0, "to": 20, "size": 5, "next": 16 },
-        { "at": 16, "to": 36, "size": 5, "next": 32 },
-        { "at": 32, "to": 52, "size": 5, "next": 48 },
-        { "at": 48, "to": 60, "size": 5, "next": 60 }
+        {
+          "at": 0,
+          "to": 20,
+          "size": 5,
+          "next": 16
+        },
+        {
+          "at": 16,
+          "to": 36,
+          "size": 5,
+          "next": 32
+        },
+        {
+          "at": 32,
+          "to": 52,
+          "size": 5,
+          "next": 48
+        },
+        {
+          "at": 48,
+          "to": 60,
+          "size": 5,
+          "next": 60
+        }
       ],
       "completes": true
     },
@@ -412,15 +879,41 @@
       "kind": "walk",
       "why": "a cursor in such a text stands at a count of code points: resumed at 36, one shrink step under the cursor's size, the unit is cut from the thirty-sixth code point and adapts from there",
       "text": "😀a23456789😀b23456789😀c23456789😀d23456789😀e23456789😀f23456789😀g23456789😀h23456789😀i23456789😀j23456789",
-      "budget": { "size": 10, "overlap": 1, "floor": 3, "ceiling": 20, "outputBudget": 100 },
-      "resume": { "next": 36, "size": 14, "found": 4, "emitted": 3, "errors": 1 },
+      "budget": {
+        "size": 10,
+        "overlap": 1,
+        "floor": 3,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
+      "resume": {
+        "next": 36,
+        "size": 14,
+        "found": 4,
+        "emitted": 3,
+        "errors": 1
+      },
       "outcomes": [
-        { "outputTokens": 10 },
-        { "outputTokens": 10 }
+        {
+          "outputTokens": 10
+        },
+        {
+          "outputTokens": 10
+        }
       ],
       "pieces": [
-        { "at": 36, "to": 72, "size": 9, "next": 68 },
-        { "at": 68, "to": 100, "size": 13, "next": 100 }
+        {
+          "at": 36,
+          "to": 72,
+          "size": 9,
+          "next": 68
+        },
+        {
+          "at": 68,
+          "to": 100,
+          "size": 13,
+          "next": 100
+        }
       ],
       "completes": true
     },
@@ -428,23 +921,51 @@
       "kind": "walk",
       "why": "the end of such a text is its length in code points: a cursor at 60 in a text of sixty code points is a unit that finished, though the text is sixty-six UTF-16 code units long, and resuming it asks nothing",
       "text": "😀a23456789😀b23456789😀c23456789😀d23456789😀e23456789😀f23456789",
-      "budget": { "size": 5, "overlap": 1, "floor": 2, "ceiling": 20, "outputBudget": 100 },
-      "resume": { "next": 60, "size": 5, "found": 9, "emitted": 9, "errors": 0 },
+      "budget": {
+        "size": 5,
+        "overlap": 1,
+        "floor": 2,
+        "ceiling": 20,
+        "outputBudget": 100
+      },
+      "resume": {
+        "next": 60,
+        "size": 5,
+        "found": 9,
+        "emitted": 9,
+        "errors": 0
+      },
       "outcomes": [],
       "pieces": [],
       "completes": true
     },
-
     {
       "kind": "descent",
       "why": "a reply that answers is accepted as it is: one call, nothing size-failed, and no count of output where the provider gave none",
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "items": ["x", "y"] }
+        {
+          "items": [
+            "x",
+            "y"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }],
-      "result": { "items": ["x", "y"], "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "x",
+          "y"
+        ],
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -452,10 +973,30 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "items": ["x"], "outputTokens": 30, "counted": 7 }
+        {
+          "items": [
+            "x"
+          ],
+          "outputTokens": 30,
+          "counted": 7
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }],
-      "result": { "items": ["x"], "outputTokens": 30, "counted": [7], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "x"
+        ],
+        "outputTokens": 30,
+        "counted": [
+          7
+        ],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -463,13 +1004,56 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } },
-        { "items": ["p"], "outputTokens": 5 },
-        { "items": ["q"], "outputTokens": 6 },
-        { "items": [], "outputTokens": 1 }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ],
+          "outputTokens": 5
+        },
+        {
+          "items": [
+            "q"
+          ],
+          "outputTokens": 6
+        },
+        {
+          "items": [],
+          "outputTokens": 1
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 20 }, { "from": 16, "to": 36 }, { "from": 32, "to": 40 }],
-      "result": { "items": ["p", "q"], "recovered": 5, "outputTokens": 12, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 20
+        },
+        {
+          "from": 16,
+          "to": 36
+        },
+        {
+          "from": 32,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "p",
+          "q"
+        ],
+        "recovered": 5,
+        "outputTokens": 12,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -477,13 +1061,54 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } },
-        { "items": ["p"], "outputTokens": 5 },
-        { "items": ["q"] },
-        { "items": [], "outputTokens": 1 }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ],
+          "outputTokens": 5
+        },
+        {
+          "items": [
+            "q"
+          ]
+        },
+        {
+          "items": [],
+          "outputTokens": 1
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 20 }, { "from": 16, "to": 36 }, { "from": 32, "to": 40 }],
-      "result": { "items": ["p", "q"], "recovered": 5, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 20
+        },
+        {
+          "from": 16,
+          "to": 36
+        },
+        {
+          "from": 32,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "p",
+          "q"
+        ],
+        "recovered": 5,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -491,11 +1116,36 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } },
-        { "fails": { "name": "InferenceTimeoutError" } },
-        { "fails": { "name": "InferenceTimeoutError" } }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        },
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        },
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 20 }, { "from": 0, "to": 8 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 20
+        },
+        {
+          "from": 0,
+          "to": 8
+        }
+      ],
       "raises": 2
     },
     {
@@ -504,17 +1154,90 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "StructuredReadError", "stopReason": "end_turn" } },
-        { "items": ["p"] },
-        { "fails": { "name": "StructuredReadError", "stopReason": "end_turn" } },
-        { "items": ["q"] },
-        { "items": [] },
-        { "items": [] },
-        { "items": ["r"] },
-        { "items": ["s"] }
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "end_turn"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ]
+        },
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "end_turn"
+          }
+        },
+        {
+          "items": [
+            "q"
+          ]
+        },
+        {
+          "items": []
+        },
+        {
+          "items": []
+        },
+        {
+          "items": [
+            "r"
+          ]
+        },
+        {
+          "items": [
+            "s"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 20 }, { "from": 16, "to": 36 }, { "from": 16, "to": 24 }, { "from": 20, "to": 28 }, { "from": 24, "to": 32 }, { "from": 28, "to": 36 }, { "from": 32, "to": 40 }],
-      "result": { "items": ["p", "q", "r", "s"], "recovered": 2, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 20
+        },
+        {
+          "from": 16,
+          "to": 36
+        },
+        {
+          "from": 16,
+          "to": 24
+        },
+        {
+          "from": 20,
+          "to": 28
+        },
+        {
+          "from": 24,
+          "to": 32
+        },
+        {
+          "from": 28,
+          "to": 36
+        },
+        {
+          "from": 32,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "p",
+          "q",
+          "r",
+          "s"
+        ],
+        "recovered": 2,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -522,9 +1245,18 @@
       "piece": "a123",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 4 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 4
+        }
+      ],
       "raises": 0
     },
     {
@@ -533,13 +1265,55 @@
       "piece": "a123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } },
-        { "items": ["p"] },
-        { "items": ["q"] },
-        { "items": ["r"] }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ]
+        },
+        {
+          "items": [
+            "q"
+          ]
+        },
+        {
+          "items": [
+            "r"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 10 }, { "from": 0, "to": 4 }, { "from": 4, "to": 8 }, { "from": 8, "to": 10 }],
-      "result": { "items": ["p", "q", "r"], "recovered": 1, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 10
+        },
+        {
+          "from": 0,
+          "to": 4
+        },
+        {
+          "from": 4,
+          "to": 8
+        },
+        {
+          "from": 8,
+          "to": 10
+        }
+      ],
+      "result": {
+        "items": [
+          "p",
+          "q",
+          "r"
+        ],
+        "recovered": 1,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -547,11 +1321,35 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "DeterministicJobError" } },
-        { "items": ["x"] }
+        {
+          "fails": {
+            "name": "DeterministicJobError"
+          }
+        },
+        {
+          "items": [
+            "x"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 40 }],
-      "result": { "items": ["x"], "recovered": "uncut", "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "x"
+        ],
+        "recovered": "uncut",
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -559,10 +1357,29 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "StructuredReadError", "stopReason": "max_tokens" } },
-        { "fails": { "name": "StructuredReadError", "stopReason": "max_tokens" } }
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "max_tokens"
+          }
+        },
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "max_tokens"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 40 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
       "raises": 1
     },
     {
@@ -571,9 +1388,19 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "StructuredReadError", "stopReason": "unknown" } }
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "unknown"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
       "raises": 0
     },
     {
@@ -582,15 +1409,40 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "YieldCollapseError", "salvage": ["x"], "verdict": { "found": 1, "counted": 4, "pieceChars": 40 } } }
+        {
+          "fails": {
+            "name": "YieldCollapseError",
+            "salvage": [
+              "x"
+            ],
+            "verdict": {
+              "found": 1,
+              "counted": 4,
+              "pieceChars": 40
+            }
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
       "result": {
-        "items": ["x"],
+        "items": [
+          "x"
+        ],
         "recovered": "uncut",
-        "counted": [4],
+        "counted": [
+          4
+        ],
         "underReported": [
-          { "found": 1, "counted": 4, "pieceChars": 40 }
+          {
+            "found": 1,
+            "counted": 4,
+            "pieceChars": 40
+          }
         ]
       }
     },
@@ -600,9 +1452,18 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "Error" } }
+        {
+          "fails": {
+            "name": "Error"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
       "raises": 0
     },
     {
@@ -611,9 +1472,19 @@
       "piece": "a123456789b123456789c123456789d123456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "StructuredReadError", "stopReason": "stop_sequence" } }
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "stop_sequence"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        }
+      ],
       "raises": 0
     },
     {
@@ -622,19 +1493,86 @@
       "piece": "000abcdefg001abcdefg002abcdefg003abcdefg004abcdefg005abcdefg006abcdefg007abcdefg008abcdefg009abcdefg010abcdefg011abcdefg012abcdefg013abcdefg014abcdefg015abcdefg016abcdefg017abcdefg018abcdefg019abcdefg020abcdefg021abcdefg022abcdefg023abcdefg024abcdefg025abcdefg026abcdefg027abcdefg028abcdefg029abcdefg030abcdefg031abcdefg032abcdefg033abcdefg034abcdefg035abcdefg036abcdefg037abcdefg038abcdefg039abcdefg040abcdefg041abcdefg042abcdefg043abcdefg044abcdefg045abcdefg046abcdefg047abcdefg048abcdefg049abcdefg050abcdefg051abcdefg052abcdefg053abcdefg054abcdefg055abcdefg056abcdefg057abcdefg058abcdefg059abcdefg060abcdefg061abcdefg062abcdefg063abcdefg064abcdefg065abcdefg066abcdefg067abcdefg068abcdefg069abcdefg070abcdefg071abcdefg072abcdefg073abcdefg074abcdefg075abcdefg076abcdefg077abcdefg078abcdefg079abcdefg080abcdefg081abcdefg082abcdefg083abcdefg084abcdefg085abcdefg086abcdefg087abcdefg088abcdefg089abcdefg090abcdefg091abcdefg092abcdefg093abcdefg094abcdefg095abcdefg096abcdefg097abcdefg098abcdefg099abcdefg100abcdefg101abcdefg102abcdefg103abcdefg",
       "overlap": 16,
       "replies": [
-        { "fails": { "name": "YieldCollapseError", "salvage": ["old"], "verdict": { "found": 1, "counted": 50, "pieceChars": 1040 } } },
-        { "items": ["p", "q"], "outputTokens": 40, "counted": 5 },
-        { "items": ["s"], "outputTokens": 10, "counted": 2 },
-        { "fails": { "name": "YieldCollapseError", "salvage": ["r"], "verdict": { "found": 1, "counted": 3, "pieceChars": 128 } } }
+        {
+          "fails": {
+            "name": "YieldCollapseError",
+            "salvage": [
+              "old"
+            ],
+            "verdict": {
+              "found": 1,
+              "counted": 50,
+              "pieceChars": 1040
+            }
+          }
+        },
+        {
+          "items": [
+            "p",
+            "q"
+          ],
+          "outputTokens": 40,
+          "counted": 5
+        },
+        {
+          "items": [
+            "s"
+          ],
+          "outputTokens": 10,
+          "counted": 2
+        },
+        {
+          "fails": {
+            "name": "YieldCollapseError",
+            "salvage": [
+              "r"
+            ],
+            "verdict": {
+              "found": 1,
+              "counted": 3,
+              "pieceChars": 128
+            }
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 1040 }, { "from": 0, "to": 520 }, { "from": 456, "to": 976 }, { "from": 912, "to": 1040 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 1040
+        },
+        {
+          "from": 0,
+          "to": 520
+        },
+        {
+          "from": 456,
+          "to": 976
+        },
+        {
+          "from": 912,
+          "to": 1040
+        }
+      ],
       "result": {
-        "items": ["p", "q", "s", "r"],
+        "items": [
+          "p",
+          "q",
+          "s",
+          "r"
+        ],
         "recovered": 130,
         "outputTokens": 50,
-        "counted": [5, 2, 3],
+        "counted": [
+          5,
+          2,
+          3
+        ],
         "underReported": [
-          { "found": 1, "counted": 3, "pieceChars": 128 }
+          {
+            "found": 1,
+            "counted": 3,
+            "pieceChars": 128
+          }
         ]
       }
     },
@@ -644,13 +1582,56 @@
       "piece": "000abcdefg001abcdefg002abcdefg003abcdefg004abcdefg005abcdefg006abcdefg007abcdefg008abcdefg009abcdefg010abcdefg011abcdefg012abcdefg013abcdefg014abcdefg015abcdefg016abcdefg017abcdefg018abcdefg019abcdefg020abcdefg021abcdefg022abcdefg023abcdefg024abcdefg025abcdefg026abcdefg027abcdefg028abcdefg029abcdefg030abcdefg031abcdefg032abcdefg033abcdefg034abcdefg035abcdefg036abcdefg037abcdefg038abcdefg039abcdefg040abcdefg041abcdefg042abcdefg043abcdefg044abcdefg045abcdefg046abcdefg047abcdefg048abcdefg049abcdefg050abcdefg051abcdefg052abcdefg053abcdefg054abcdefg055abcdefg056abcdefg057abcdefg058abcdefg059abcdefg060abcdefg061abcdefg062abcdefg063abcdefg064abcdefg065abcdefg066abcdefg067abcdefg068abcdefg069abcdefg070abcdefg071abcdefg072abcdefg073abcdefg074abcdefg075abcdefg076abcdefg077abcdefg078abcdefg079abcdefg080abcdefg081abcdefg082abcdefg083abcdefg084abcdefg085abcdefg086abcdefg087abcdefg088abcdefg089abcdefg090abcdefg091abcdefg092abcdefg093abcdefg094abcdefg095abcdefg096abcdefg097abcdefg098abcdefg099abcdefg100abcdefg101abcdefg102abcdefg",
       "overlap": 16,
       "replies": [
-        { "fails": { "name": "StructuredReadError", "stopReason": "max_tokens" } },
-        { "items": ["p"] },
-        { "items": ["q"] },
-        { "items": ["r"] }
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "max_tokens"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ]
+        },
+        {
+          "items": [
+            "q"
+          ]
+        },
+        {
+          "items": [
+            "r"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 1030 }, { "from": 0, "to": 516 }, { "from": 452, "to": 968 }, { "from": 904, "to": 1030 }],
-      "result": { "items": ["p", "q", "r"], "recovered": 129, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 1030
+        },
+        {
+          "from": 0,
+          "to": 516
+        },
+        {
+          "from": 452,
+          "to": 968
+        },
+        {
+          "from": 904,
+          "to": 1030
+        }
+      ],
+      "result": {
+        "items": [
+          "p",
+          "q",
+          "r"
+        ],
+        "recovered": 129,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -658,11 +1639,36 @@
       "piece": "000abcdefg001abcdefg002abcdefg003abcdefg004abcdefg005abcdefg006abcdefg007abcdefg008abcdefg009abcdefg010abcdefg011abcdefg012abcdefg013abcdefg014abcdefg015abcdefg016abcdefg017abcdefg018abcdefg019abcdefg020abcdefg021abcdefg022abcdefg023abcdefg024abcdefg025abcdefg026abcdefg027abcdefg028abcdefg029abcdefg030abcdefg031abcdefg032abcdefg033abcdefg034abcdefg035abcdefg036abcdefg037abcdefg038abcdefg039abcdefg040abcdefg041abcdefg042abcdefg043abcdefg044abcdefg045abcdefg046abcdefg047abcdefg048abcdefg049abcdefg050abcdefg051abcdefg052abcdefg053abcdefg054abcdefg055abcdefg056abcdefg057abcdefg058abcdefg059abcdefg060abcdefg061abcdefg062abcdefg063abcdefg064abcdefg065abcdefg066abcdefg067abcdefg068abcdefg069abcdefg070abcdefg071abcdefg072abcdefg073abcdefg074abcdefg075abcdefg076abcdefg077abcdefg078abcdefg079abcdefg080abcdefg081abcdefg082abcdefg083abcdefg084abcdefg085abcdefg086abcdefg087abcdefg088abcdefg089abcdefg090abcdefg091abcdefg092abcdefg093abcdefg094abcdefg095abcdefg096abcdefg097abcdefg098abcdefg099abcdefg100abcdefg101abcdefg102abcde",
       "overlap": 16,
       "replies": [
-        { "fails": { "name": "StructuredReadError", "stopReason": "max_tokens" } },
-        { "items": ["p"] }
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "max_tokens"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 1028 }, { "from": 0, "to": 1028 }],
-      "result": { "items": ["p"], "recovered": "uncut", "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 1028
+        },
+        {
+          "from": 0,
+          "to": 1028
+        }
+      ],
+      "result": {
+        "items": [
+          "p"
+        ],
+        "recovered": "uncut",
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -670,20 +1676,125 @@
       "piece": "000abcdefg001abcdefg002abcdefg003abcdefg004abcdefg005abcdefg006abcdefg007abcdefg008abcdefg009abcdefg010abcdefg011abcdefg012abcdefg013abcdefg014abcdefg015abcdefg016abcdefg017abcdefg018abcdefg019abcdefg020abcdefg021abcdefg022abcdefg023abcdefg024abcdefg025abcdefg026abcdefg027abcdefg028abcdefg029abcdefg030abcdefg031abcdefg032abcdefg033abcdefg034abcdefg035abcdefg036abcdefg037abcdefg038abcdefg039abcdefg040abcdefg041abcdefg042abcdefg043abcdefg044abcdefg045abcdefg046abcdefg047abcdefg048abcdefg049abcdefg050abcdefg051abcdefg052abcdefg053abcdefg054abcdefg055abcdefg056abcdefg057abcdefg058abcdefg059abcdefg060abcdefg061abcdefg062abcdefg063abcdefg064abcdefg065abcdefg066abcdefg067abcdefg068abcdefg069abcdefg070abcdefg071abcdefg072abcdefg073abcdefg074abcdefg075abcdefg076abcdefg077abcdefg078abcdefg079abcdefg080abcdefg081abcdefg082abcdefg083abcdefg084abcdefg085abcdefg086abcdefg087abcdefg088abcdefg089abcdefg090abcdefg091abcdefg092abcdefg093abcdefg094abcdefg095abcdefg096abcdefg097abcdefg098abcdefg099abcdefg100abcdefg101abcdefg102abcdefg103abcdefg104abcdefg105abcdefg106abcdefg107abcdefg108abcdefg109abcdefg110abcdefg111abcdefg112abcdefg113abcdefg114abcdefg115abcdefg116abcdefg117abcdefg118abcdefg119abcdefg120abcdefg121abcdefg122abcdefg123abcdefg124abcdefg125abcdefg126abcdefg127abcdefg128abcdefg129abcdefg130abcdefg131abcdefg132abcdefg133abcdefg134abcdefg135abcdefg136abcdefg137abcdefg138abcdefg139abcdefg140abcdefg141abcdefg142abcdefg143abcdefg144abcdefg145abcdefg146abcdefg147abcdefg148abcdefg149abcdefg150abcdefg151abcdefg152abcdefg153abcdefg154abcdefg155abcdefg156abcdefg157abcdefg158abcdefg159abcdefg160abcdefg161abcdefg162abcdefg163abcdefg164abcdefg165abcdefg166abcdefg167abcdefg168abcdefg169abcdefg170abcdefg171abcdefg172abcdefg173abcdefg174abcdefg175abcdefg176abcdefg177abcdefg178abcdefg179abcdefg180abcdefg181abcdefg182abcdefg183abcdefg184abcdefg185abcdefg186abcdefg187abcdefg188abcdefg189abcdefg190abcdefg191abcdefg192abcdefg193abcdefg194abcdefg195abcdefg196abcdefg197abcdefg198abcdefg199abcdefg200abcdefg201abcdefg202abcdefg203abcdefg204abcdefg205abcdefg206abcdefg207abcdefg208abcdefg209abcdefg210abcdefg211abcdefg212abcdefg213abcdefg214abcdefg215abcdefg216abcdefg217abcdefg218abcdefg219abcdefg220abcdefg221abcdefg222abcdefg223abcdefg224abcdefg225abcdefg226abcdefg227abcdefg228abcdefg229abcdefg230abcdefg231abcdefg232abcdefg233abcdefg234abcdefg235abcdefg236abcdefg237abcdefg238abcdefg239abcdefg240abcdefg241abcdefg242abcdefg243abcdefg244abcdefg245abcdefg246abcdefg247abcdefg248abcdefg249abcdefg250abcdefg251abcdefg252abcdefg253abcdefg254abcdefg255abcdefg256abcdefg257abcdefg258abcdefg259abcdefg260abcdefg261abcdefg262abcdefg263abcdefg264abcdefg265abcdefg266abcdefg267abcdefg268abcdefg269abcdefg270abcdefg271abcdefg272abcdefg273abcdefg274abcdefg275abcdefg276abcdefg277abcdefg278abcdefg279abcdefg280abcdefg281abcdefg282abcdefg283abcdefg284abcdefg285abcdefg286abcdefg287abcdefg288abcdefg289abcdefg290abcdefg291abcdefg292abcdefg293abcdefg294abcdefg295abcdefg296abcdefg297abcdefg298abcdefg299abcdefg300abcdefg301abcdefg302abcdefg303abcdefg304abcdefg305abcdefg306abcdefg307abcdefg308abcdefg309abcdefg310abcdefg311abcdefg312abcdefg313abcdefg314abcdefg315abcdefg316abcdefg317abcdefg318abcdefg319abcdefg320abcdefg321abcdefg322abcdefg323abcdefg324abcdefg325abcdefg326abcdefg327abcdefg328abcdefg329abcdefg330abcdefg331abcdefg332abcdefg333abcdefg334abcdefg335abcdefg336abcdefg337abcdefg338abcdefg339abcdefg340abcdefg341abcdefg342abcdefg343abcdefg344abcdefg345abcdefg346abcdefg347abcdefg348abcdefg349abcdefg350abcdefg351abcdefg352abcdefg353abcdefg354abcdefg355abcdefg356abcdefg357abcdefg358abcdefg359abcdefg360abcdefg361abcdefg362abcdefg363abcdefg364abcdefg365abcdefg366abcdefg367abcdefg368abcdefg369abcdefg370abcdefg371abcdefg372abcdefg373abcdefg374abcdefg375abcdefg376abcdefg377abcdefg378abcdefg379abcdefg380abcdefg381abcdefg382abcdefg383abcdefg384abcdefg385abcdefg386abcdefg387abcdefg388abcdefg389abcdefg390abcdefg391abcdefg392abcdefg393abcdefg394abcdefg395abcdefg396abcdefg397abcdefg398abcdefg399abcdefg400abcdefg401abcdefg402abcdefg403abcdefg404abcdefg405abcdefg406abcdefg407abcdefg408abcdefg409abcdefg410abcdefg411abcdefg412abcdefg413abcdefg414abcdefg415abcdefg",
       "overlap": 16,
       "replies": [
-        { "fails": { "name": "DeterministicJobError" } },
-        { "fails": { "name": "StructuredReadError", "stopReason": "max_tokens" } },
-        { "fails": { "name": "StructuredReadError", "stopReason": "unknown" } },
-        { "items": ["a"] },
-        { "fails": { "name": "StructuredReadError", "stopReason": "max_tokens" } },
-        { "items": ["b"] },
-        { "items": ["c"] },
-        { "items": ["d"] },
-        { "items": ["e"] },
-        { "items": ["f"] },
-        { "items": ["g"] }
+        {
+          "fails": {
+            "name": "DeterministicJobError"
+          }
+        },
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "max_tokens"
+          }
+        },
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "unknown"
+          }
+        },
+        {
+          "items": [
+            "a"
+          ]
+        },
+        {
+          "fails": {
+            "name": "StructuredReadError",
+            "stopReason": "max_tokens"
+          }
+        },
+        {
+          "items": [
+            "b"
+          ]
+        },
+        {
+          "items": [
+            "c"
+          ]
+        },
+        {
+          "items": [
+            "d"
+          ]
+        },
+        {
+          "items": [
+            "e"
+          ]
+        },
+        {
+          "items": [
+            "f"
+          ]
+        },
+        {
+          "items": [
+            "g"
+          ]
+        }
       ],
-      "asked": [{ "from": 0, "to": 4160 }, { "from": 0, "to": 2080 }, { "from": 0, "to": 1040 }, { "from": 0, "to": 520 }, { "from": 456, "to": 976 }, { "from": 456, "to": 976 }, { "from": 912, "to": 1040 }, { "from": 976, "to": 2016 }, { "from": 1952, "to": 2080 }, { "from": 2016, "to": 4096 }, { "from": 4032, "to": 4160 }],
-      "result": { "items": ["a", "b", "c", "d", "e", "f", "g"], "recovered": 130, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 4160
+        },
+        {
+          "from": 0,
+          "to": 2080
+        },
+        {
+          "from": 0,
+          "to": 1040
+        },
+        {
+          "from": 0,
+          "to": 520
+        },
+        {
+          "from": 456,
+          "to": 976
+        },
+        {
+          "from": 456,
+          "to": 976
+        },
+        {
+          "from": 912,
+          "to": 1040
+        },
+        {
+          "from": 976,
+          "to": 2016
+        },
+        {
+          "from": 1952,
+          "to": 2080
+        },
+        {
+          "from": 2016,
+          "to": 4096
+        },
+        {
+          "from": 4032,
+          "to": 4160
+        }
+      ],
+      "result": {
+        "items": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g"
+        ],
+        "recovered": 130,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -691,13 +1802,56 @@
       "piece": "😀a23456789😀b23456789😀c23456789😀d23456789",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } },
-        { "items": ["p"], "outputTokens": 5 },
-        { "items": ["q"], "outputTokens": 6 },
-        { "items": [], "outputTokens": 1 }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        },
+        {
+          "items": [
+            "p"
+          ],
+          "outputTokens": 5
+        },
+        {
+          "items": [
+            "q"
+          ],
+          "outputTokens": 6
+        },
+        {
+          "items": [],
+          "outputTokens": 1
+        }
       ],
-      "asked": [{ "from": 0, "to": 40 }, { "from": 0, "to": 20 }, { "from": 16, "to": 36 }, { "from": 32, "to": 40 }],
-      "result": { "items": ["p", "q"], "recovered": 5, "outputTokens": 12, "counted": [], "underReported": [] }
+      "asked": [
+        {
+          "from": 0,
+          "to": 40
+        },
+        {
+          "from": 0,
+          "to": 20
+        },
+        {
+          "from": 16,
+          "to": 36
+        },
+        {
+          "from": 32,
+          "to": 40
+        }
+      ],
+      "result": {
+        "items": [
+          "p",
+          "q"
+        ],
+        "recovered": 5,
+        "outputTokens": 12,
+        "counted": [],
+        "underReported": []
+      }
     },
     {
       "kind": "descent",
@@ -705,9 +1859,18 @@
       "piece": "😀a😀b",
       "overlap": 1,
       "replies": [
-        { "fails": { "name": "InferenceTimeoutError" } }
+        {
+          "fails": {
+            "name": "InferenceTimeoutError"
+          }
+        }
       ],
-      "asked": [{ "from": 0, "to": 4 }],
+      "asked": [
+        {
+          "from": 0,
+          "to": 4
+        }
+      ],
       "raises": 0
     }
   ]

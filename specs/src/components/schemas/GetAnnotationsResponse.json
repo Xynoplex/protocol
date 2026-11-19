@@ -13,8 +13,12 @@
     },
     "motivation": {
       "anyOf": [
-        { "$ref": "./Motivation.json" },
-        { "type": "null" }
+        {
+          "$ref": "./Motivation.json"
+        },
+        {
+          "type": "null"
+        }
       ],
       "description": "Motivation filter applied (if any)"
     }

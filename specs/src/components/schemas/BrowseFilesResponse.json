@@ -1,6 +1,9 @@
 {
   "type": "object",
-  "required": ["path", "entries"],
+  "required": [
+    "path",
+    "entries"
+  ],
   "properties": {
     "path": {
       "type": "string",
@@ -8,7 +11,9 @@
     },
     "entries": {
       "type": "array",
-      "items": { "$ref": "./DirectoryEntry.json" }
+      "items": {
+        "$ref": "./DirectoryEntry.json"
+      }
     }
   },
   "additionalProperties": false

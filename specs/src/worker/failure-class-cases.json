@@ -3,112 +3,163 @@
   "cases": [
     {
       "why": "the worker's own mark on a failure it knows cannot succeed a second time: a reply cut off despite the derived budget, a media type with nothing to extract",
-      "failure": { "name": "DeterministicJobError" },
+      "failure": {
+        "name": "DeterministicJobError"
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "a yield collapse is a kind of DeterministicJobError: it was measured identical across retries, so a retry is spent for nothing",
-      "failure": { "name": "YieldCollapseError" },
+      "failure": {
+        "name": "YieldCollapseError"
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "the worker's own bound on a model call ran out: a stall says nothing about the request",
-      "failure": { "name": "InferenceTimeoutError" },
+      "failure": {
+        "name": "InferenceTimeoutError"
+      },
       "failureClass": "transient"
     },
     {
       "why": "a structured generation asked of a model not known to hold a reply to a schema: the driver refuses it with no request made, and no attempt changes what is known of the model",
-      "failure": { "name": "StructuredUnsupportedError" },
+      "failure": {
+        "name": "StructuredUnsupportedError"
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "a reply that could not be read because the output budget cut it off: the same text is cut off the same way",
-      "failure": { "name": "StructuredReadError", "stopReason": "max_tokens" },
+      "failure": {
+        "name": "StructuredReadError",
+        "stopReason": "max_tokens"
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "a model that finished and still could not be read stays retryable, and unclassified rather than transient: a resumed unit re-cuts the piece at another size, so the next attempt reads different input, which is neither weather nor the same request",
-      "failure": { "name": "StructuredReadError", "stopReason": "end_turn" },
+      "failure": {
+        "name": "StructuredReadError",
+        "stopReason": "end_turn"
+      },
       "failureClass": null
     },
     {
       "why": "an unreadable reply whose stop reason the provider did not state: not provably repeatable, and a server that is really broken deserves its retry budget",
-      "failure": { "name": "StructuredReadError", "stopReason": "unknown" },
+      "failure": {
+        "name": "StructuredReadError",
+        "stopReason": "unknown"
+      },
       "failureClass": null
     },
     {
       "why": "only max_tokens says the reply was cut off: any other stop reason leaves an unreadable reply unclassified",
-      "failure": { "name": "StructuredReadError", "stopReason": "stop_sequence" },
+      "failure": {
+        "name": "StructuredReadError",
+        "stopReason": "stop_sequence"
+      },
       "failureClass": null
     },
     {
       "why": "an answer the provider withheld, by a refusal or a filter, is classed as that and not as a failure of the job: the same request is withheld again",
-      "failure": { "name": "ProviderWithheldError" },
+      "failure": {
+        "name": "ProviderWithheldError"
+      },
       "failureClass": "withheld"
     },
     {
       "why": "an abort: the worker's own bound or shutdown tore the call down, and nothing was judged",
-      "failure": { "aborted": true },
+      "failure": {
+        "aborted": true
+      },
       "failureClass": "transient"
     },
     {
       "why": "an abort is asked about before a status: whatever status rides an abort, no server gave it as a verdict",
-      "failure": { "aborted": true, "status": 400 },
+      "failure": {
+        "aborted": true,
+        "status": 400
+      },
       "failureClass": "transient"
     },
     {
       "why": "408 is a timeout, which the job rule retries",
-      "failure": { "status": 408 },
+      "failure": {
+        "status": 408
+      },
       "failureClass": "transient"
     },
     {
       "why": "429 is the provider saying not now",
-      "failure": { "status": 429 },
+      "failure": {
+        "status": 429
+      },
       "failureClass": "transient"
     },
     {
       "why": "500 is retried by the job rule: the alternative is discarding paid work",
-      "failure": { "status": 500 },
+      "failure": {
+        "status": 500
+      },
       "failureClass": "transient"
     },
     {
       "why": "503 is a promise to recover: a driver's ProviderStatusError carries the status its provider refused with",
-      "failure": { "name": "ProviderStatusError", "status": 503 },
+      "failure": {
+        "name": "ProviderStatusError",
+        "status": 503
+      },
       "failureClass": "transient"
     },
     {
       "why": "every status from 500 up, a provider's own 529 (overloaded) among them",
-      "failure": { "status": 529 },
+      "failure": {
+        "status": 529
+      },
       "failureClass": "transient"
     },
     {
       "why": "400 is a rejected request, a provider's as any other: sent again unchanged it is rejected again",
-      "failure": { "name": "ProviderStatusError", "status": 400 },
+      "failure": {
+        "name": "ProviderStatusError",
+        "status": 400
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "401 will be refused again",
-      "failure": { "status": 401 },
+      "failure": {
+        "status": 401
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "404: bytes that are not there will not be there on a second identical read",
-      "failure": { "status": 404 },
+      "failure": {
+        "status": 404
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "413 is not weather: a payload too large is too large again, though an HTTP client's own rule would retry it",
-      "failure": { "status": 413 },
+      "failure": {
+        "status": 413
+      },
       "failureClass": "deterministic"
     },
     {
       "why": "a status below 400 refused nothing, and decides nothing",
-      "failure": { "status": 302 },
+      "failure": {
+        "status": 302
+      },
       "failureClass": null
     },
     {
       "why": "a status is a number: text that looks like one is not read as one",
-      "failure": { "status": "503" },
+      "failure": {
+        "status": "503"
+      },
       "failureClass": null
     },
     {

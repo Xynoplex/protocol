@@ -33,12 +33,26 @@
   "additionalProperties": false,
   "oneOf": [
     {
-      "required": ["password"],
-      "properties": {"generatePassword": {"const": false}}
+      "required": [
+        "password"
+      ],
+      "properties": {
+        "generatePassword": {
+          "const": false
+        }
+      }
     },
     {
-      "properties": {"generatePassword": {"const": true}},
-      "not": {"required": ["password"]}
+      "properties": {
+        "generatePassword": {
+          "const": true
+        }
+      },
+      "not": {
+        "required": [
+          "password"
+        ]
+      }
     }
   ]
 }

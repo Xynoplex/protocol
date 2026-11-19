@@ -326,8 +326,12 @@
                                   "properties": {
                                     "answers": {
                                       "anyOf": [
-                                        { "$ref": "../components/schemas/ResourceDescriptor.json" },
-                                        { "type": "null" }
+                                        {
+                                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
                                       ]
                                     }
                                   },
@@ -366,8 +370,12 @@
                                   "properties": {
                                     "answers": {
                                       "anyOf": [
-                                        { "$ref": "../components/schemas/ResourceView.json" },
-                                        { "type": "null" }
+                                        {
+                                          "$ref": "../components/schemas/ResourceView.json"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
                                       ]
                                     }
                                   },

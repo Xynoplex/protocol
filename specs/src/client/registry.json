@@ -16,7 +16,10 @@
           "description": "What it says of itself."
         }
       },
-      "required": ["did", "description"]
+      "required": [
+        "did",
+        "description"
+      ]
     },
     "SignedIn": {
       "title": "SignedIn",
@@ -49,7 +52,11 @@
           "description": "The name of what the person believed they clicked. Absent when they named nothing."
         }
       },
-      "required": ["endpoint", "description", "session"]
+      "required": [
+        "endpoint",
+        "description",
+        "session"
+      ]
     },
     "Expected": {
       "title": "Expected",
@@ -66,7 +73,9 @@
           "description": "The name they believed it has. Absent when they had none."
         }
       },
-      "required": ["did"]
+      "required": [
+        "did"
+      ]
     },
     "SignInOutcome": {
       "title": "SignInOutcome",
@@ -83,34 +92,62 @@
           "description": "What the person believed they were signing in to. Absent when they named nothing."
         }
       },
-      "required": ["kb"]
+      "required": [
+        "kb"
+      ]
     },
     "KbReadKind": {
       "title": "KbReadKind",
       "type": "string",
       "description": "What reading the active knowledge base against its entry concluded.",
-      "enum": ["recorded", "conflict", "no-verdict"]
+      "enum": [
+        "recorded",
+        "conflict",
+        "no-verdict"
+      ]
     },
     "KbReadVerdict": {
       "title": "KbReadVerdict",
       "description": "What a knowledge base said when it was asked to describe itself, read against the entry it was asked as.",
-      "discriminator": { "propertyName": "kind" },
+      "discriminator": {
+        "propertyName": "kind"
+      },
       "oneOf": [
         {
           "type": "object",
           "description": "It answered as that entry, and its name and branch are on the entry now.",
           "additionalProperties": false,
           "properties": {
-            "kind": { "allOf": [{ "$ref": "#/types/KbReadKind" }], "enum": ["recorded"] }
+            "kind": {
+              "allOf": [
+                {
+                  "$ref": "#/types/KbReadKind"
+                }
+              ],
+              "enum": [
+                "recorded"
+              ]
+            }
           },
-          "required": ["kind"]
+          "required": [
+            "kind"
+          ]
         },
         {
           "type": "object",
           "description": "A different knowledge base answered. Its did and the name it gave itself are here and nowhere else: the entry is as it was.",
           "additionalProperties": false,
           "properties": {
-            "kind": { "allOf": [{ "$ref": "#/types/KbReadKind" }], "enum": ["conflict"] },
+            "kind": {
+              "allOf": [
+                {
+                  "$ref": "#/types/KbReadKind"
+                }
+              ],
+              "enum": [
+                "conflict"
+              ]
+            },
             "observedDid": {
               "type": "string",
               "description": "The did the knowledge base that answered reported."
@@ -120,16 +157,31 @@
               "description": "The name the knowledge base that answered gave itself."
             }
           },
-          "required": ["kind", "observedDid", "observedName"]
+          "required": [
+            "kind",
+            "observedDid",
+            "observedName"
+          ]
         },
         {
           "type": "object",
           "description": "It did not answer, or could not say who it is. Evidence of nothing.",
           "additionalProperties": false,
           "properties": {
-            "kind": { "allOf": [{ "$ref": "#/types/KbReadKind" }], "enum": ["no-verdict"] }
+            "kind": {
+              "allOf": [
+                {
+                  "$ref": "#/types/KbReadKind"
+                }
+              ],
+              "enum": [
+                "no-verdict"
+              ]
+            }
           },
-          "required": ["kind"]
+          "required": [
+            "kind"
+          ]
         }
       ]
     },
@@ -137,28 +189,54 @@
       "title": "TabVerdict",
       "type": "string",
       "description": "What checking an open resource against its knowledge base concluded.",
-      "enum": ["gone", "ready", "unknown"]
+      "enum": [
+        "gone",
+        "ready",
+        "unknown"
+      ]
     },
     "TabCheck": {
       "title": "TabCheck",
       "description": "What checking one open resource against its knowledge base concluded. `gone` is the only verdict that closes it, and it means the knowledge base said the resource does not exist, not that the check failed: a failed transport, a timeout and a peer that is down are each `unknown`, and an unknown resource stays open.",
-      "discriminator": { "propertyName": "verdict" },
+      "discriminator": {
+        "propertyName": "verdict"
+      },
       "oneOf": [
         {
           "type": "object",
           "description": "The knowledge base said the resource does not exist.",
           "additionalProperties": false,
           "properties": {
-            "verdict": { "allOf": [{ "$ref": "#/types/TabVerdict" }], "enum": ["gone"] }
+            "verdict": {
+              "allOf": [
+                {
+                  "$ref": "#/types/TabVerdict"
+                }
+              ],
+              "enum": [
+                "gone"
+              ]
+            }
           },
-          "required": ["verdict"]
+          "required": [
+            "verdict"
+          ]
         },
         {
           "type": "object",
           "description": "The knowledge base has the resource, and said what it is called now.",
           "additionalProperties": false,
           "properties": {
-            "verdict": { "allOf": [{ "$ref": "#/types/TabVerdict" }], "enum": ["ready"] },
+            "verdict": {
+              "allOf": [
+                {
+                  "$ref": "#/types/TabVerdict"
+                }
+              ],
+              "enum": [
+                "ready"
+              ]
+            },
             "name": {
               "type": "string",
               "description": "The name the knowledge base gave the resource."
@@ -168,16 +246,30 @@
               "description": "The media type of its primary representation. Absent when it said none."
             }
           },
-          "required": ["verdict", "name"]
+          "required": [
+            "verdict",
+            "name"
+          ]
         },
         {
           "type": "object",
           "description": "The check found out nothing.",
           "additionalProperties": false,
           "properties": {
-            "verdict": { "allOf": [{ "$ref": "#/types/TabVerdict" }], "enum": ["unknown"] }
+            "verdict": {
+              "allOf": [
+                {
+                  "$ref": "#/types/TabVerdict"
+                }
+              ],
+              "enum": [
+                "unknown"
+              ]
+            }
           },
-          "required": ["verdict"]
+          "required": [
+            "verdict"
+          ]
         }
       ]
     },
@@ -185,7 +277,11 @@
       "title": "KbSessionStatus",
       "type": "string",
       "description": "What the credential stored for a knowledge base says, read without asking anyone: `authenticated`, a token is stored and has not expired; `expired`, a token is stored and has expired; `signed-out`, nothing is stored.",
-      "enum": ["authenticated", "expired", "signed-out"]
+      "enum": [
+        "authenticated",
+        "expired",
+        "signed-out"
+      ]
     }
   }
 }

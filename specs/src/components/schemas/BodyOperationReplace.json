@@ -3,7 +3,9 @@
   "properties": {
     "op": {
       "type": "string",
-      "enum": ["replace"]
+      "enum": [
+        "replace"
+      ]
     },
     "oldItem": {
       "$ref": "./AnnotationBody.json"

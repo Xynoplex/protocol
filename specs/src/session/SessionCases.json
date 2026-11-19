@@ -50,7 +50,10 @@
             "description": "The time, in seconds."
           },
           "delay": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 0,
             "description": "How long to wait before renewing, in seconds; null for no renewal."
           }
@@ -78,7 +81,10 @@
             "description": "The token."
           },
           "exp": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "description": "Its `exp`, or null when none can be read."
           }
         },
@@ -156,15 +162,23 @@
           },
           "told": {
             "anyOf": [
-              { "$ref": "cases.json#/told" },
-              { "type": "null" }
+              {
+                "$ref": "cases.json#/told"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The reason the session gives `onAuthFailed`, one of the table's `told`; null for none."
           },
           "error": {
             "anyOf": [
-              { "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code" },
-              { "type": "null" }
+              {
+                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The code the session reports, of errors/codes.json's `session`; null for none."
           },
@@ -286,15 +300,23 @@
           },
           "told": {
             "anyOf": [
-              { "$ref": "cases.json#/told" },
-              { "type": "null" }
+              {
+                "$ref": "cases.json#/told"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The reason the session gives `onAuthFailed`, one of the table's `told`; null for none."
           },
           "error": {
             "anyOf": [
-              { "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code" },
-              { "type": "null" }
+              {
+                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The code the session reports, of errors/codes.json's `session`; null for none."
           },

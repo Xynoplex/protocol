@@ -30,10 +30,19 @@
           "description": "The port the Browser is published on, on this machine's loopback: where a person opens it, and the origin the issuer's realm allows its sign-in from."
         }
       },
-      "required": ["image", "resources", "port"],
+      "required": [
+        "image",
+        "resources",
+        "port"
+      ],
       "additionalProperties": false
     }
   },
-  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
   "additionalProperties": false
 }

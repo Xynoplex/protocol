@@ -36,8 +36,12 @@
             "properties": {
               "bodySource": {
                 "anyOf": [
-                  { "$ref": "../components/schemas/ResourceId.json" },
-                  { "type": "null" }
+                  {
+                    "$ref": "../components/schemas/ResourceId.json"
+                  },
+                  {
+                    "type": "null"
+                  }
                 ]
               },
               "isBodyResolved": {
@@ -48,8 +52,12 @@
               },
               "targetSelector": {
                 "anyOf": [
-                  { "$ref": "../components/schemas/AnnotationSelector.json" },
-                  { "type": "null" }
+                  {
+                    "$ref": "../components/schemas/AnnotationSelector.json"
+                  },
+                  {
+                    "type": "null"
+                  }
                 ]
               },
               "isHighlight": {
@@ -68,7 +76,10 @@
                 "type": "boolean"
               },
               "commentText": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "isStubReference": {
                 "type": "boolean"
@@ -84,8 +95,12 @@
               },
               "textQuoteSelector": {
                 "anyOf": [
-                  { "$ref": "../components/schemas/TextQuoteSelector.json" },
-                  { "type": "null" }
+                  {
+                    "$ref": "../components/schemas/TextQuoteSelector.json"
+                  },
+                  {
+                    "type": "null"
+                  }
                 ]
               },
               "entityTypes": {
@@ -95,12 +110,19 @@
                 }
               },
               "tagCategory": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "tagSchemaId": {
                 "anyOf": [
-                  { "$ref": "../components/schemas/TaggingJobParams.json#/properties/schemaId" },
-                  { "type": "null" }
+                  {
+                    "$ref": "../components/schemas/TaggingJobParams.json#/properties/schemaId"
+                  },
+                  {
+                    "type": "null"
+                  }
                 ]
               }
             },

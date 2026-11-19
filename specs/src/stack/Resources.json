@@ -13,10 +13,14 @@
           "description": "The memory ceiling: a whole number of gigabytes or megabytes, `8G` or `512M`."
         }
       },
-      "required": ["memory"],
+      "required": [
+        "memory"
+      ],
       "additionalProperties": false
     }
   },
-  "required": ["limits"],
+  "required": [
+    "limits"
+  ],
   "additionalProperties": false
 }

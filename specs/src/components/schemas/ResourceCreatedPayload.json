@@ -23,7 +23,7 @@
     },
     "storageUri": {
       "type": "string",
-      "description": "The creating instruction's URI, recorded on the event. Append-only, so this value never changes \u2014 the LOCATION the projection serves is maintained across moves and lives on the resource's primary Representation, relocated by yield:moved. Optional: a resource may have no bytes. Working-tree URI, only file:// is supported (e.g. file://docs/overview.md)."
+      "description": "The creating instruction's URI, recorded on the event. Append-only, so this value never changes — the LOCATION the projection serves is maintained across moves and lives on the resource's primary Representation, relocated by yield:moved. Optional: a resource may have no bytes. Working-tree URI, only file:// is supported (e.g. file://docs/overview.md)."
     },
     "language": {
       "type": "string"

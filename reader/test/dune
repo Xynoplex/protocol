@@ -50,3 +50,10 @@
   %{project_root}/contract/ARCHIVIST.md)
  (action
   (run %{test} %{project_root})))
+
+(test
+ (name repository)
+ (modules repository)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol alcotest))

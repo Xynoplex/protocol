@@ -2,8 +2,15 @@
   "type": "object",
   "description": "Payload for yield:updated domain event",
   "properties": {
-    "contentChecksum": { "type": "string", "description": "SHA-256 of new content" },
-    "contentByteSize": { "type": "integer" }
+    "contentChecksum": {
+      "type": "string",
+      "description": "SHA-256 of new content"
+    },
+    "contentByteSize": {
+      "type": "integer"
+    }
   },
-  "required": ["contentChecksum"]
+  "required": [
+    "contentChecksum"
+  ]
 }

@@ -9,8 +9,15 @@
       "pdfClass": "A",
       "method": "pdf-text-layer",
       "pagesWithItems": 1,
-      "words": ["known", "phrase", "from", "fixture"],
-      "onPage": { "known": 1 }
+      "words": [
+        "known",
+        "phrase",
+        "from",
+        "fixture"
+      ],
+      "onPage": {
+        "known": 1
+      }
     },
     {
       "why": "three lines on one page are all read, each line's words are in an item on that page, and the end of one line is not glued to the start of the next",
@@ -18,9 +25,21 @@
       "pdfClass": "A",
       "method": "pdf-text-layer",
       "pagesWithItems": 1,
-      "words": ["first", "second", "third", "line", "text"],
-      "onPage": { "first": 1, "second": 1, "third": 1 },
-      "absent": ["textsecond"]
+      "words": [
+        "first",
+        "second",
+        "third",
+        "line",
+        "text"
+      ],
+      "onPage": {
+        "first": 1,
+        "second": 1,
+        "third": 1
+      },
+      "absent": [
+        "textsecond"
+      ]
     },
     {
       "why": "text on two pages is read from both and no page is left unread: the word only the first page has is in an item on the first page, and the second page's is in an item on the second",
@@ -28,8 +47,16 @@
       "pdfClass": "A",
       "method": "pdf-text-layer",
       "pagesWithItems": 2,
-      "words": ["content", "page", "one", "two"],
-      "onPage": { "one": 1, "two": 2 }
+      "words": [
+        "content",
+        "page",
+        "one",
+        "two"
+      ],
+      "onPage": {
+        "one": 1,
+        "two": 2
+      }
     },
     {
       "why": "two columns of prose are prose and no grid: the words of both columns are read as text, in an order this table does not state, and the end of one line is not glued to the start of another",
@@ -37,8 +64,17 @@
       "pdfClass": "A",
       "method": "pdf-text-layer",
       "pagesWithItems": 1,
-      "words": ["left", "right", "column", "line", "one", "two"],
-      "absent": ["oneleft"]
+      "words": [
+        "left",
+        "right",
+        "column",
+        "line",
+        "one",
+        "two"
+      ],
+      "absent": [
+        "oneleft"
+      ]
     },
     {
       "why": "a page of four rows of three cells is a grid, and is got as a table: each row's cells are on one line of the text, in their order, and a cell's words are in an item on its page",
@@ -46,13 +82,40 @@
       "pdfClass": "D",
       "method": "table",
       "pagesWithItems": 1,
-      "words": ["Treatment", "Responders", "p-value", "Drug", "12%", "0.03", "Placebo", "0.88"],
-      "onPage": { "Drug": 1 },
+      "words": [
+        "Treatment",
+        "Responders",
+        "p-value",
+        "Drug",
+        "12%",
+        "0.03",
+        "Placebo",
+        "0.88"
+      ],
+      "onPage": {
+        "Drug": 1
+      },
       "rows": [
-        ["Treatment", "Responders", "p-value"],
-        ["Drug A", "12%", "0.03"],
-        ["Drug B", "9%", "0.21"],
-        ["Placebo", "4%", "0.88"]
+        [
+          "Treatment",
+          "Responders",
+          "p-value"
+        ],
+        [
+          "Drug A",
+          "12%",
+          "0.03"
+        ],
+        [
+          "Drug B",
+          "9%",
+          "0.21"
+        ],
+        [
+          "Placebo",
+          "4%",
+          "0.88"
+        ]
       ]
     },
     {
@@ -61,19 +124,39 @@
       "pdfClass": "E",
       "method": "form",
       "pagesWithItems": 1,
-      "words": ["Policy", "Application", "Ada", "Lovelace", "$250,000", "NY"],
-      "onPage": { "Ada": 1, "Lovelace": 1 },
-      "absent": ["policy.notes"]
+      "words": [
+        "Policy",
+        "Application",
+        "Ada",
+        "Lovelace",
+        "$250,000",
+        "NY"
+      ],
+      "onPage": {
+        "Ada": 1,
+        "Lovelace": 1
+      },
+      "absent": [
+        "policy.notes"
+      ]
     },
     {
       "why": "a page of text and a page that is a picture of no characters: the first is read, the second is named as unread, and the method stays the first page's, OCR having read nothing",
       "fixture": "mixed.pdf",
       "pdfClass": "C",
       "method": "pdf-text-layer",
-      "unreadPages": [2],
+      "unreadPages": [
+        2
+      ],
       "pagesWithItems": 1,
-      "words": ["native", "page", "text"],
-      "onPage": { "native": 1 }
+      "words": [
+        "native",
+        "page",
+        "text"
+      ],
+      "onPage": {
+        "native": 1
+      }
     },
     {
       "why": "an empty page, with no text and no image, is declined as having no text layer",
@@ -102,12 +185,16 @@
     },
     {
       "why": "bytes that are no PDF are declined as corrupt",
-      "bytes": { "utf8": "not a pdf at all" },
+      "bytes": {
+        "utf8": "not a pdf at all"
+      },
       "declined": "corrupt"
     },
     {
       "why": "a document one byte over the bound is declined as too large, by its size alone",
-      "bytes": { "length": 209715201 },
+      "bytes": {
+        "length": 209715201
+      },
       "declined": "too-large"
     }
   ]

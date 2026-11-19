@@ -93,13 +93,19 @@
                 "type": "string",
                 "description": "Something thrown that is text."
               },
-              { "type": "null" }
+              {
+                "type": "null"
+              }
             ]
           },
           "failureClass": {
             "anyOf": [
-              { "$ref": "../components/schemas/FailureClass.json" },
-              { "type": "null" }
+              {
+                "$ref": "../components/schemas/FailureClass.json"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         },

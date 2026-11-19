@@ -16,9 +16,16 @@
     },
     "entityTypes": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Entity types to associate with the annotation"
     }
   },
-  "required": ["annotationId", "resourceId", "defaultTitle", "entityTypes"]
+  "required": [
+    "annotationId",
+    "resourceId",
+    "defaultTitle",
+    "entityTypes"
+  ]
 }

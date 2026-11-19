@@ -6,52 +6,181 @@
       "anchored": {
         "text": "Hello world again",
         "items": [
-          { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-          { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-          { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 }
+          {
+            "start": 0,
+            "end": 5,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "page": 1,
+            "x": 106,
+            "y": 700,
+            "width": 32,
+            "height": 12
+          },
+          {
+            "start": 12,
+            "end": 17,
+            "page": 1,
+            "x": 142,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 6, "end": 11 },
+      "span": {
+        "start": 6,
+        "end": 11
+      },
       "overlapping": [
-        { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 }
+        {
+          "start": 6,
+          "end": 11,
+          "page": 1,
+          "x": 106,
+          "y": 700,
+          "width": 32,
+          "height": 12
+        }
       ],
       "rects": [
-        { "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 }
+        {
+          "page": 1,
+          "x": 106,
+          "y": 700,
+          "width": 32,
+          "height": 12
+        }
       ],
-      "fragments": ["page=1&viewrect=106,700,32,12"]
+      "fragments": [
+        "page=1&viewrect=106,700,32,12"
+      ]
     },
     {
       "why": "the items of one line make one rectangle, from the left edge of the first to the right edge of the last (142 + 30), not a rectangle each",
       "anchored": {
         "text": "Hello world again",
         "items": [
-          { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-          { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-          { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 }
+          {
+            "start": 0,
+            "end": 5,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "page": 1,
+            "x": 106,
+            "y": 700,
+            "width": 32,
+            "height": 12
+          },
+          {
+            "start": 12,
+            "end": 17,
+            "page": 1,
+            "x": 142,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 0, "end": 17 },
+      "span": {
+        "start": 0,
+        "end": 17
+      },
       "overlapping": [
-        { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-        { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-        { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 }
+        {
+          "start": 0,
+          "end": 5,
+          "page": 1,
+          "x": 72,
+          "y": 700,
+          "width": 30,
+          "height": 12
+        },
+        {
+          "start": 6,
+          "end": 11,
+          "page": 1,
+          "x": 106,
+          "y": 700,
+          "width": 32,
+          "height": 12
+        },
+        {
+          "start": 12,
+          "end": 17,
+          "page": 1,
+          "x": 142,
+          "y": 700,
+          "width": 30,
+          "height": 12
+        }
       ],
       "rects": [
-        { "page": 1, "x": 72, "y": 700, "width": 100, "height": 12 }
+        {
+          "page": 1,
+          "x": 72,
+          "y": 700,
+          "width": 100,
+          "height": 12
+        }
       ],
-      "fragments": ["page=1&viewrect=72,700,100,12"]
+      "fragments": [
+        "page=1&viewrect=72,700,100,12"
+      ]
     },
     {
       "why": "a span that touches no item is located nowhere: the one character between two items is in neither, since an item's `end` is not one of its characters",
       "anchored": {
         "text": "Hello world again",
         "items": [
-          { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-          { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-          { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 }
+          {
+            "start": 0,
+            "end": 5,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "page": 1,
+            "x": 106,
+            "y": 700,
+            "width": 32,
+            "height": 12
+          },
+          {
+            "start": 12,
+            "end": 17,
+            "page": 1,
+            "x": 142,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 5, "end": 6 },
+      "span": {
+        "start": 5,
+        "end": 6
+      },
       "overlapping": [],
       "rects": [],
       "fragments": []
@@ -61,12 +190,39 @@
       "anchored": {
         "text": "Hello world again",
         "items": [
-          { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-          { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-          { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 }
+          {
+            "start": 0,
+            "end": 5,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "page": 1,
+            "x": 106,
+            "y": 700,
+            "width": 32,
+            "height": 12
+          },
+          {
+            "start": 12,
+            "end": 17,
+            "page": 1,
+            "x": 142,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 3, "end": 3 },
+      "span": {
+        "start": 3,
+        "end": 3
+      },
       "overlapping": [],
       "rects": [],
       "fragments": []
@@ -76,12 +232,39 @@
       "anchored": {
         "text": "Hello world again",
         "items": [
-          { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-          { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-          { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 }
+          {
+            "start": 0,
+            "end": 5,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "page": 1,
+            "x": 106,
+            "y": 700,
+            "width": 32,
+            "height": 12
+          },
+          {
+            "start": 12,
+            "end": 17,
+            "page": 1,
+            "x": 142,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 5, "end": 5 },
+      "span": {
+        "start": 5,
+        "end": 5
+      },
       "overlapping": [],
       "rects": [],
       "fragments": []
@@ -91,25 +274,126 @@
       "anchored": {
         "text": "Hello world again\nSecond line\nElsewhere",
         "items": [
-          { "start": 0, "end": 5, "page": 1, "x": 72, "y": 700, "width": 30, "height": 12 },
-          { "start": 6, "end": 11, "page": 1, "x": 106, "y": 700, "width": 32, "height": 12 },
-          { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 },
-          { "start": 18, "end": 24, "page": 1, "x": 72, "y": 680, "width": 38, "height": 12 },
-          { "start": 25, "end": 29, "page": 1, "x": 114, "y": 680, "width": 22, "height": 12 },
-          { "start": 30, "end": 39, "page": 2, "x": 72, "y": 700, "width": 50, "height": 12 }
+          {
+            "start": 0,
+            "end": 5,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "page": 1,
+            "x": 106,
+            "y": 700,
+            "width": 32,
+            "height": 12
+          },
+          {
+            "start": 12,
+            "end": 17,
+            "page": 1,
+            "x": 142,
+            "y": 700,
+            "width": 30,
+            "height": 12
+          },
+          {
+            "start": 18,
+            "end": 24,
+            "page": 1,
+            "x": 72,
+            "y": 680,
+            "width": 38,
+            "height": 12
+          },
+          {
+            "start": 25,
+            "end": 29,
+            "page": 1,
+            "x": 114,
+            "y": 680,
+            "width": 22,
+            "height": 12
+          },
+          {
+            "start": 30,
+            "end": 39,
+            "page": 2,
+            "x": 72,
+            "y": 700,
+            "width": 50,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 12, "end": 39 },
+      "span": {
+        "start": 12,
+        "end": 39
+      },
       "overlapping": [
-        { "start": 12, "end": 17, "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 },
-        { "start": 18, "end": 24, "page": 1, "x": 72, "y": 680, "width": 38, "height": 12 },
-        { "start": 25, "end": 29, "page": 1, "x": 114, "y": 680, "width": 22, "height": 12 },
-        { "start": 30, "end": 39, "page": 2, "x": 72, "y": 700, "width": 50, "height": 12 }
+        {
+          "start": 12,
+          "end": 17,
+          "page": 1,
+          "x": 142,
+          "y": 700,
+          "width": 30,
+          "height": 12
+        },
+        {
+          "start": 18,
+          "end": 24,
+          "page": 1,
+          "x": 72,
+          "y": 680,
+          "width": 38,
+          "height": 12
+        },
+        {
+          "start": 25,
+          "end": 29,
+          "page": 1,
+          "x": 114,
+          "y": 680,
+          "width": 22,
+          "height": 12
+        },
+        {
+          "start": 30,
+          "end": 39,
+          "page": 2,
+          "x": 72,
+          "y": 700,
+          "width": 50,
+          "height": 12
+        }
       ],
       "rects": [
-        { "page": 1, "x": 142, "y": 700, "width": 30, "height": 12 },
-        { "page": 1, "x": 72, "y": 680, "width": 64, "height": 12 },
-        { "page": 2, "x": 72, "y": 700, "width": 50, "height": 12 }
+        {
+          "page": 1,
+          "x": 142,
+          "y": 700,
+          "width": 30,
+          "height": 12
+        },
+        {
+          "page": 1,
+          "x": 72,
+          "y": 680,
+          "width": 64,
+          "height": 12
+        },
+        {
+          "page": 2,
+          "x": 72,
+          "y": 700,
+          "width": 50,
+          "height": 12
+        }
       ],
       "fragments": [
         "page=1&viewrect=142,700,30,12",
@@ -122,22 +406,101 @@
       "anchored": {
         "text": "note below\nTitle above",
         "items": [
-          { "start": 0, "end": 4, "page": 1, "x": 72, "y": 100, "width": 24, "height": 10 },
-          { "start": 5, "end": 10, "page": 1, "x": 100, "y": 100, "width": 30, "height": 10 },
-          { "start": 11, "end": 16, "page": 1, "x": 72, "y": 700, "width": 40, "height": 16 },
-          { "start": 17, "end": 22, "page": 1, "x": 118, "y": 700, "width": 44, "height": 16 }
+          {
+            "start": 0,
+            "end": 4,
+            "page": 1,
+            "x": 72,
+            "y": 100,
+            "width": 24,
+            "height": 10
+          },
+          {
+            "start": 5,
+            "end": 10,
+            "page": 1,
+            "x": 100,
+            "y": 100,
+            "width": 30,
+            "height": 10
+          },
+          {
+            "start": 11,
+            "end": 16,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 40,
+            "height": 16
+          },
+          {
+            "start": 17,
+            "end": 22,
+            "page": 1,
+            "x": 118,
+            "y": 700,
+            "width": 44,
+            "height": 16
+          }
         ]
       },
-      "span": { "start": 0, "end": 22 },
+      "span": {
+        "start": 0,
+        "end": 22
+      },
       "overlapping": [
-        { "start": 0, "end": 4, "page": 1, "x": 72, "y": 100, "width": 24, "height": 10 },
-        { "start": 5, "end": 10, "page": 1, "x": 100, "y": 100, "width": 30, "height": 10 },
-        { "start": 11, "end": 16, "page": 1, "x": 72, "y": 700, "width": 40, "height": 16 },
-        { "start": 17, "end": 22, "page": 1, "x": 118, "y": 700, "width": 44, "height": 16 }
+        {
+          "start": 0,
+          "end": 4,
+          "page": 1,
+          "x": 72,
+          "y": 100,
+          "width": 24,
+          "height": 10
+        },
+        {
+          "start": 5,
+          "end": 10,
+          "page": 1,
+          "x": 100,
+          "y": 100,
+          "width": 30,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 16,
+          "page": 1,
+          "x": 72,
+          "y": 700,
+          "width": 40,
+          "height": 16
+        },
+        {
+          "start": 17,
+          "end": 22,
+          "page": 1,
+          "x": 118,
+          "y": 700,
+          "width": 44,
+          "height": 16
+        }
       ],
       "rects": [
-        { "page": 1, "x": 72, "y": 700, "width": 90, "height": 16 },
-        { "page": 1, "x": 72, "y": 100, "width": 58, "height": 10 }
+        {
+          "page": 1,
+          "x": 72,
+          "y": 700,
+          "width": 90,
+          "height": 16
+        },
+        {
+          "page": 1,
+          "x": 72,
+          "y": 100,
+          "width": 58,
+          "height": 10
+        }
       ],
       "fragments": [
         "page=1&viewrect=72,700,90,16",
@@ -149,39 +512,145 @@
       "anchored": {
         "text": "ab",
         "items": [
-          { "start": 0, "end": 1, "page": 1, "x": 72, "y": 700, "width": 10, "height": 12 },
-          { "start": 1, "end": 2, "page": 1, "x": 90, "y": 698, "width": 10, "height": 12 }
+          {
+            "start": 0,
+            "end": 1,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 10,
+            "height": 12
+          },
+          {
+            "start": 1,
+            "end": 2,
+            "page": 1,
+            "x": 90,
+            "y": 698,
+            "width": 10,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 0, "end": 2 },
+      "span": {
+        "start": 0,
+        "end": 2
+      },
       "overlapping": [
-        { "start": 0, "end": 1, "page": 1, "x": 72, "y": 700, "width": 10, "height": 12 },
-        { "start": 1, "end": 2, "page": 1, "x": 90, "y": 698, "width": 10, "height": 12 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 72,
+          "y": 700,
+          "width": 10,
+          "height": 12
+        },
+        {
+          "start": 1,
+          "end": 2,
+          "page": 1,
+          "x": 90,
+          "y": 698,
+          "width": 10,
+          "height": 12
+        }
       ],
       "rects": [
-        { "page": 1, "x": 72, "y": 698, "width": 28, "height": 14 }
+        {
+          "page": 1,
+          "x": 72,
+          "y": 698,
+          "width": 28,
+          "height": 14
+        }
       ],
-      "fragments": ["page=1&viewrect=72,698,28,14"]
+      "fragments": [
+        "page=1&viewrect=72,698,28,14"
+      ]
     },
     {
       "why": "a line is measured from its first item, not from the item before: the third item is 1.5 below the second but 3 below the first, so it begins a new line; and a number that is not whole is written with its fraction",
       "anchored": {
         "text": "abc",
         "items": [
-          { "start": 0, "end": 1, "page": 1, "x": 72, "y": 700, "width": 10, "height": 12 },
-          { "start": 1, "end": 2, "page": 1, "x": 90, "y": 698.5, "width": 10, "height": 12 },
-          { "start": 2, "end": 3, "page": 1, "x": 108, "y": 697, "width": 10, "height": 12 }
+          {
+            "start": 0,
+            "end": 1,
+            "page": 1,
+            "x": 72,
+            "y": 700,
+            "width": 10,
+            "height": 12
+          },
+          {
+            "start": 1,
+            "end": 2,
+            "page": 1,
+            "x": 90,
+            "y": 698.5,
+            "width": 10,
+            "height": 12
+          },
+          {
+            "start": 2,
+            "end": 3,
+            "page": 1,
+            "x": 108,
+            "y": 697,
+            "width": 10,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 0, "end": 3 },
+      "span": {
+        "start": 0,
+        "end": 3
+      },
       "overlapping": [
-        { "start": 0, "end": 1, "page": 1, "x": 72, "y": 700, "width": 10, "height": 12 },
-        { "start": 1, "end": 2, "page": 1, "x": 90, "y": 698.5, "width": 10, "height": 12 },
-        { "start": 2, "end": 3, "page": 1, "x": 108, "y": 697, "width": 10, "height": 12 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 72,
+          "y": 700,
+          "width": 10,
+          "height": 12
+        },
+        {
+          "start": 1,
+          "end": 2,
+          "page": 1,
+          "x": 90,
+          "y": 698.5,
+          "width": 10,
+          "height": 12
+        },
+        {
+          "start": 2,
+          "end": 3,
+          "page": 1,
+          "x": 108,
+          "y": 697,
+          "width": 10,
+          "height": 12
+        }
       ],
       "rects": [
-        { "page": 1, "x": 72, "y": 698.5, "width": 28, "height": 13.5 },
-        { "page": 1, "x": 108, "y": 697, "width": 10, "height": 12 }
+        {
+          "page": 1,
+          "x": 72,
+          "y": 698.5,
+          "width": 28,
+          "height": 13.5
+        },
+        {
+          "page": 1,
+          "x": 108,
+          "y": 697,
+          "width": 10,
+          "height": 12
+        }
       ],
       "fragments": [
         "page=1&viewrect=72,698.5,28,13.5",
@@ -193,56 +662,189 @@
       "anchored": {
         "text": "abcdefgh",
         "items": [
-          { "start": 0, "end": 8, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 }
+          {
+            "start": 0,
+            "end": 8,
+            "page": 1,
+            "x": 100,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          }
         ]
       },
-      "span": { "start": 2, "end": 6 },
+      "span": {
+        "start": 2,
+        "end": 6
+      },
       "overlapping": [
-        { "start": 0, "end": 8, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 }
+        {
+          "start": 0,
+          "end": 8,
+          "page": 1,
+          "x": 100,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        }
       ],
       "rects": [
-        { "page": 1, "x": 120, "y": 700, "width": 40, "height": 10 }
+        {
+          "page": 1,
+          "x": 120,
+          "y": 700,
+          "width": 40,
+          "height": 10
+        }
       ],
-      "fragments": ["page=1&viewrect=120,700,40,10"]
+      "fragments": [
+        "page=1&viewrect=120,700,40,10"
+      ]
     },
     {
       "why": "only the items at the span's two ends are cut: the first loses its first six characters of eight (its left edge moves to 160), the last keeps its first two (its right edge is 288), and the item between them is whole",
       "anchored": {
         "text": "abcdefgh ijklmnop qrstuvwx",
         "items": [
-          { "start": 0, "end": 8, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 },
-          { "start": 9, "end": 17, "page": 1, "x": 184, "y": 700, "width": 80, "height": 10 },
-          { "start": 18, "end": 26, "page": 1, "x": 268, "y": 700, "width": 80, "height": 10 }
+          {
+            "start": 0,
+            "end": 8,
+            "page": 1,
+            "x": 100,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          },
+          {
+            "start": 9,
+            "end": 17,
+            "page": 1,
+            "x": 184,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          },
+          {
+            "start": 18,
+            "end": 26,
+            "page": 1,
+            "x": 268,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          }
         ]
       },
-      "span": { "start": 6, "end": 20 },
+      "span": {
+        "start": 6,
+        "end": 20
+      },
       "overlapping": [
-        { "start": 0, "end": 8, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 },
-        { "start": 9, "end": 17, "page": 1, "x": 184, "y": 700, "width": 80, "height": 10 },
-        { "start": 18, "end": 26, "page": 1, "x": 268, "y": 700, "width": 80, "height": 10 }
+        {
+          "start": 0,
+          "end": 8,
+          "page": 1,
+          "x": 100,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        },
+        {
+          "start": 9,
+          "end": 17,
+          "page": 1,
+          "x": 184,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        },
+        {
+          "start": 18,
+          "end": 26,
+          "page": 1,
+          "x": 268,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        }
       ],
       "rects": [
-        { "page": 1, "x": 160, "y": 700, "width": 128, "height": 10 }
+        {
+          "page": 1,
+          "x": 160,
+          "y": 700,
+          "width": 128,
+          "height": 10
+        }
       ],
-      "fragments": ["page=1&viewrect=160,700,128,10"]
+      "fragments": [
+        "page=1&viewrect=160,700,128,10"
+      ]
     },
     {
       "why": "a span that starts inside one line and ends inside the next cuts the first on its left only and the second on its right only",
       "anchored": {
         "text": "abcdefgh\nijklmnop",
         "items": [
-          { "start": 0, "end": 8, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 },
-          { "start": 9, "end": 17, "page": 1, "x": 100, "y": 686, "width": 80, "height": 10 }
+          {
+            "start": 0,
+            "end": 8,
+            "page": 1,
+            "x": 100,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          },
+          {
+            "start": 9,
+            "end": 17,
+            "page": 1,
+            "x": 100,
+            "y": 686,
+            "width": 80,
+            "height": 10
+          }
         ]
       },
-      "span": { "start": 4, "end": 11 },
+      "span": {
+        "start": 4,
+        "end": 11
+      },
       "overlapping": [
-        { "start": 0, "end": 8, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 },
-        { "start": 9, "end": 17, "page": 1, "x": 100, "y": 686, "width": 80, "height": 10 }
+        {
+          "start": 0,
+          "end": 8,
+          "page": 1,
+          "x": 100,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        },
+        {
+          "start": 9,
+          "end": 17,
+          "page": 1,
+          "x": 100,
+          "y": 686,
+          "width": 80,
+          "height": 10
+        }
       ],
       "rects": [
-        { "page": 1, "x": 140, "y": 700, "width": 40, "height": 10 },
-        { "page": 1, "x": 100, "y": 686, "width": 20, "height": 10 }
+        {
+          "page": 1,
+          "x": 140,
+          "y": 700,
+          "width": 40,
+          "height": 10
+        },
+        {
+          "page": 1,
+          "x": 100,
+          "y": 686,
+          "width": 20,
+          "height": 10
+        }
       ],
       "fragments": [
         "page=1&viewrect=140,700,40,10",
@@ -254,55 +856,168 @@
       "anchored": {
         "text": "margin note",
         "items": [
-          { "start": 0, "end": 6, "page": 3, "x": -5, "y": -12, "width": 24, "height": 18 },
-          { "start": 7, "end": 11, "page": 3, "x": 23, "y": -12, "width": 16, "height": 18 }
+          {
+            "start": 0,
+            "end": 6,
+            "page": 3,
+            "x": -5,
+            "y": -12,
+            "width": 24,
+            "height": 18
+          },
+          {
+            "start": 7,
+            "end": 11,
+            "page": 3,
+            "x": 23,
+            "y": -12,
+            "width": 16,
+            "height": 18
+          }
         ]
       },
-      "span": { "start": 0, "end": 11 },
+      "span": {
+        "start": 0,
+        "end": 11
+      },
       "overlapping": [
-        { "start": 0, "end": 6, "page": 3, "x": -5, "y": -12, "width": 24, "height": 18 },
-        { "start": 7, "end": 11, "page": 3, "x": 23, "y": -12, "width": 16, "height": 18 }
+        {
+          "start": 0,
+          "end": 6,
+          "page": 3,
+          "x": -5,
+          "y": -12,
+          "width": 24,
+          "height": 18
+        },
+        {
+          "start": 7,
+          "end": 11,
+          "page": 3,
+          "x": 23,
+          "y": -12,
+          "width": 16,
+          "height": 18
+        }
       ],
       "rects": [
-        { "page": 3, "x": -5, "y": -12, "width": 44, "height": 18 }
+        {
+          "page": 3,
+          "x": -5,
+          "y": -12,
+          "width": 44,
+          "height": 18
+        }
       ],
-      "fragments": ["page=3&viewrect=-5,-12,44,18"]
+      "fragments": [
+        "page=3&viewrect=-5,-12,44,18"
+      ]
     },
     {
       "why": "a coordinate is written as the shortest decimal that reads back as it: 72.3 and 700.44, not their seventeen digits; and the width and height, which come out whole, are written as 30 and 12",
       "anchored": {
         "text": "decimal",
         "items": [
-          { "start": 0, "end": 7, "page": 1, "x": 72.3, "y": 700.44, "width": 30, "height": 12 }
+          {
+            "start": 0,
+            "end": 7,
+            "page": 1,
+            "x": 72.3,
+            "y": 700.44,
+            "width": 30,
+            "height": 12
+          }
         ]
       },
-      "span": { "start": 0, "end": 7 },
+      "span": {
+        "start": 0,
+        "end": 7
+      },
       "overlapping": [
-        { "start": 0, "end": 7, "page": 1, "x": 72.3, "y": 700.44, "width": 30, "height": 12 }
+        {
+          "start": 0,
+          "end": 7,
+          "page": 1,
+          "x": 72.3,
+          "y": 700.44,
+          "width": 30,
+          "height": 12
+        }
       ],
       "rects": [
-        { "page": 1, "x": 72.3, "y": 700.44, "width": 30, "height": 12 }
+        {
+          "page": 1,
+          "x": 72.3,
+          "y": 700.44,
+          "width": 30,
+          "height": 12
+        }
       ],
-      "fragments": ["page=1&viewrect=72.3,700.44,30,12"]
+      "fragments": [
+        "page=1&viewrect=72.3,700.44,30,12"
+      ]
     },
     {
       "why": "an item's offsets and its number of code points are counted in code points: the first item is four mathematical letters, each outside the Basic Multilingual Plane, and a span that starts after two of them cuts it at half its width, not at a quarter as its eight UTF-16 code units would",
       "anchored": {
         "text": "𝑎𝑏𝑐𝑑 efgh",
         "items": [
-          { "start": 0, "end": 4, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 },
-          { "start": 5, "end": 9, "page": 1, "x": 184, "y": 700, "width": 80, "height": 10 }
+          {
+            "start": 0,
+            "end": 4,
+            "page": 1,
+            "x": 100,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          },
+          {
+            "start": 5,
+            "end": 9,
+            "page": 1,
+            "x": 184,
+            "y": 700,
+            "width": 80,
+            "height": 10
+          }
         ]
       },
-      "span": { "start": 2, "end": 7 },
+      "span": {
+        "start": 2,
+        "end": 7
+      },
       "overlapping": [
-        { "start": 0, "end": 4, "page": 1, "x": 100, "y": 700, "width": 80, "height": 10 },
-        { "start": 5, "end": 9, "page": 1, "x": 184, "y": 700, "width": 80, "height": 10 }
+        {
+          "start": 0,
+          "end": 4,
+          "page": 1,
+          "x": 100,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        },
+        {
+          "start": 5,
+          "end": 9,
+          "page": 1,
+          "x": 184,
+          "y": 700,
+          "width": 80,
+          "height": 10
+        }
       ],
       "rects": [
-        { "page": 1, "x": 140, "y": 700, "width": 84, "height": 10 }
+        {
+          "page": 1,
+          "x": 140,
+          "y": 700,
+          "width": 84,
+          "height": 10
+        }
       ],
-      "fragments": ["page=1&viewrect=140,700,84,10"]
+      "fragments": [
+        "page=1&viewrect=140,700,84,10"
+      ]
     }
   ],
   "claims": [
@@ -310,55 +1025,104 @@
       "why": "a claim that is on one line is found where it is",
       "text": "The quick brown fox jumps over the lazy dog.",
       "claim": "brown fox jumps",
-      "spans": [{ "start": 10, "end": 25 }]
+      "spans": [
+        {
+          "start": 10,
+          "end": 25
+        }
+      ]
     },
     {
       "why": "the rendered text breaks the line inside the claim, with a space before the break: the strict search finds it, and the span takes in the break as the text has it (`brown \\nfox`)",
       "text": "The quick brown \nfox jumps high.",
       "claim": "brown fox",
-      "spans": [{ "start": 10, "end": 20 }]
+      "spans": [
+        {
+          "start": 10,
+          "end": 20
+        }
+      ]
     },
     {
       "why": "the claim's own white space is collapsed and trimmed before it is looked for",
       "text": "The quick brown \nfox jumps high.",
       "claim": "  brown\n\tfox ",
-      "spans": [{ "start": 10, "end": 20 }]
+      "spans": [
+        {
+          "start": 10,
+          "end": 20
+        }
+      ]
     },
     {
       "why": "the offsets are the text's own: the white space the text begins with and the runs of it before and inside the claim are all counted",
       "text": " \n  Title:  the  quick\tbrown fox.",
       "claim": "the quick brown",
-      "spans": [{ "start": 12, "end": 28 }]
+      "spans": [
+        {
+          "start": 12,
+          "end": 28
+        }
+      ]
     },
     {
       "why": "every place, in the text's order, and case matters: the capital `A fox` that begins the text is not one of them",
       "text": "A fox and a fox and a fox.",
       "claim": "a fox",
-      "spans": [{ "start": 10, "end": 15 }, { "start": 20, "end": 25 }]
+      "spans": [
+        {
+          "start": 10,
+          "end": 15
+        },
+        {
+          "start": 20,
+          "end": 25
+        }
+      ]
     },
     {
       "why": "a word hyphenated at a line end is rendered as its two halves with no hyphen: the strict search misses, and the break-aware one finds the claim around the break",
       "text": "It is extraor \ndinarily complicated today.",
       "claim": "extraordinarily complicated",
-      "spans": [{ "start": 6, "end": 35 }]
+      "spans": [
+        {
+          "start": 6,
+          "end": 35
+        }
+      ]
     },
     {
       "why": "the break may have its one space after it instead of before",
       "text": "An under\n standing was reached.",
       "claim": "understanding",
-      "spans": [{ "start": 3, "end": 18 }]
+      "spans": [
+        {
+          "start": 3,
+          "end": 18
+        }
+      ]
     },
     {
       "why": "a claim hyphenated in one place and wrapped between words in another: the claim's space is the text's space, and the break comes after it",
       "text": "It is extraor \ndinarily complicated \ntoday.",
       "claim": "extraordinarily complicated today",
-      "spans": [{ "start": 6, "end": 42 }]
+      "spans": [
+        {
+          "start": 6,
+          "end": 42
+        }
+      ]
     },
     {
       "why": "the line may break between two words with no space beside the break: the claim's space is then the break itself, and a claim hyphenated elsewhere is found across it",
       "text": "It is extraor \ndinarily complicated\ntoday.",
       "claim": "extraordinarily complicated today",
-      "spans": [{ "start": 6, "end": 41 }]
+      "spans": [
+        {
+          "start": 6,
+          "end": 41
+        }
+      ]
     },
     {
       "why": "only a line break is taken for a space of the claim, and no other white space: a tab between the two words is not",
@@ -370,13 +1134,27 @@
       "why": "a place either search finds is a place of the claim: the word broken at a line's end and the unbroken one later in the text are both places, in the text's order",
       "text": "The under \nstanding was that an understanding existed.",
       "claim": "understanding",
-      "spans": [{ "start": 4, "end": 19 }, { "start": 32, "end": 45 }]
+      "spans": [
+        {
+          "start": 4,
+          "end": 19
+        },
+        {
+          "start": 32,
+          "end": 45
+        }
+      ]
     },
     {
       "why": "the claim's characters are taken for themselves in the break-aware search: brackets, a full stop, a dollar sign and a plus are not a pattern",
       "text": "Total cost (est.) is $5.00+ per quar \nter [net].",
       "claim": "cost (est.) is $5.00+ per quarter [net]",
-      "spans": [{ "start": 6, "end": 47 }]
+      "spans": [
+        {
+          "start": 6,
+          "end": 47
+        }
+      ]
     },
     {
       "why": "only a line break may come between two characters of the claim, never a space on its own: `abc` is not `a b c`",
@@ -406,31 +1184,56 @@
       "why": "a character outside the Basic Multilingual Plane is one code point: the claim after it starts at 12, where a count of UTF-16 code units says 13",
       "text": "🎉 The quick brown fox jumps over the lazy dog.",
       "claim": "brown fox jumps",
-      "spans": [{ "start": 12, "end": 27 }]
+      "spans": [
+        {
+          "start": 12,
+          "end": 27
+        }
+      ]
     },
     {
       "why": "a claim that ends with such a character ends just after it, five code points on from its start",
       "text": "We see 🎉 now.",
       "claim": "see 🎉",
-      "spans": [{ "start": 3, "end": 8 }]
+      "spans": [
+        {
+          "start": 3,
+          "end": 8
+        }
+      ]
     },
     {
       "why": "the strict search over a line break, after such a character: the span is counted in the text as it is, its code points and its white space alike",
       "text": "Result 𝑥 holds: the quick brown \nfox jumps high.",
       "claim": "brown fox",
-      "spans": [{ "start": 26, "end": 36 }]
+      "spans": [
+        {
+          "start": 26,
+          "end": 36
+        }
+      ]
     },
     {
       "why": "the break-aware search, with one such character before the claim and one inside it: the span is in code points here too",
       "text": "📄 It is extraor \ndinarily 𝑥-complicated today.",
       "claim": "extraordinarily 𝑥-complicated",
-      "spans": [{ "start": 8, "end": 39 }]
+      "spans": [
+        {
+          "start": 8,
+          "end": 39
+        }
+      ]
     },
     {
       "why": "a line broken between two words, after a character outside the Basic Multilingual Plane and in a claim that ends with one: the span is in code points",
       "text": "📄 An under \nstanding was\nreached 🎉 today.",
       "claim": "understanding was reached 🎉",
-      "spans": [{ "start": 5, "end": 34 }]
+      "spans": [
+        {
+          "start": 5,
+          "end": 34
+        }
+      ]
     }
   ],
   "landing": [
@@ -438,192 +1241,860 @@
       "why": "the citation landed at the end of the second of two places on one line: the second is the span",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 80, "y": 100 },
-      "span": { "start": 11, "end": 16 }
+      "landed": {
+        "page": 1,
+        "x": 80,
+        "y": 100
+      },
+      "span": {
+        "start": 11,
+        "end": 16
+      }
     },
     {
       "why": "and where it landed at the end of the first, the first is",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 33, "y": 100 },
-      "span": { "start": 0, "end": 5 }
+      "landed": {
+        "page": 1,
+        "x": 33,
+        "y": 100
+      },
+      "span": {
+        "start": 0,
+        "end": 5
+      }
     },
     {
       "why": "the same text on two pages: the page it landed on decides",
       "text": "Radiant Matter\nRadiant Matter\n",
       "items": [
-        { "start": 0, "end": 7, "page": 1, "x": 40, "y": 700, "width": 36, "height": 10 },
-        { "start": 8, "end": 14, "page": 1, "x": 79, "y": 700, "width": 32, "height": 10 },
-        { "start": 15, "end": 22, "page": 2, "x": 40, "y": 700, "width": 36, "height": 10 },
-        { "start": 23, "end": 29, "page": 2, "x": 79, "y": 700, "width": 32, "height": 10 }
+        {
+          "start": 0,
+          "end": 7,
+          "page": 1,
+          "x": 40,
+          "y": 700,
+          "width": 36,
+          "height": 10
+        },
+        {
+          "start": 8,
+          "end": 14,
+          "page": 1,
+          "x": 79,
+          "y": 700,
+          "width": 32,
+          "height": 10
+        },
+        {
+          "start": 15,
+          "end": 22,
+          "page": 2,
+          "x": 40,
+          "y": 700,
+          "width": 36,
+          "height": 10
+        },
+        {
+          "start": 23,
+          "end": 29,
+          "page": 2,
+          "x": 79,
+          "y": 700,
+          "width": 32,
+          "height": 10
+        }
       ],
       "claim": "Radiant Matter",
-      "landed": { "page": 2, "x": 111, "y": 700 },
-      "span": { "start": 15, "end": 29 }
+      "landed": {
+        "page": 2,
+        "x": 111,
+        "y": 700
+      },
+      "span": {
+        "start": 15,
+        "end": 29
+      }
     },
     {
       "why": "a claim broken at a line's end is found where it landed, though the unbroken word later on the line is a place of it too",
       "text": "The under \nstanding was an understanding.\n",
       "items": [
-        { "start": 0, "end": 3, "page": 1, "x": 10, "y": 100, "width": 20, "height": 10 },
-        { "start": 4, "end": 9, "page": 1, "x": 34, "y": 100, "width": 30, "height": 10 },
-        { "start": 11, "end": 19, "page": 1, "x": 10, "y": 86, "width": 40, "height": 10 },
-        { "start": 20, "end": 23, "page": 1, "x": 54, "y": 86, "width": 18, "height": 10 },
-        { "start": 24, "end": 26, "page": 1, "x": 76, "y": 86, "width": 12, "height": 10 },
-        { "start": 27, "end": 41, "page": 1, "x": 92, "y": 86, "width": 70, "height": 10 }
+        {
+          "start": 0,
+          "end": 3,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 20,
+          "height": 10
+        },
+        {
+          "start": 4,
+          "end": 9,
+          "page": 1,
+          "x": 34,
+          "y": 100,
+          "width": 30,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 19,
+          "page": 1,
+          "x": 10,
+          "y": 86,
+          "width": 40,
+          "height": 10
+        },
+        {
+          "start": 20,
+          "end": 23,
+          "page": 1,
+          "x": 54,
+          "y": 86,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 24,
+          "end": 26,
+          "page": 1,
+          "x": 76,
+          "y": 86,
+          "width": 12,
+          "height": 10
+        },
+        {
+          "start": 27,
+          "end": 41,
+          "page": 1,
+          "x": 92,
+          "y": 86,
+          "width": 70,
+          "height": 10
+        }
       ],
       "claim": "understanding",
-      "landed": { "page": 1, "x": 50, "y": 86 },
-      "span": { "start": 4, "end": 19 }
+      "landed": {
+        "page": 1,
+        "x": 50,
+        "y": 86
+      },
+      "span": {
+        "start": 4,
+        "end": 19
+      }
     },
     {
       "why": "and the unbroken one is found where it landed, inside its word: the full stop after the claim is the word's, not the claim's",
       "text": "The under \nstanding was an understanding.\n",
       "items": [
-        { "start": 0, "end": 3, "page": 1, "x": 10, "y": 100, "width": 20, "height": 10 },
-        { "start": 4, "end": 9, "page": 1, "x": 34, "y": 100, "width": 30, "height": 10 },
-        { "start": 11, "end": 19, "page": 1, "x": 10, "y": 86, "width": 40, "height": 10 },
-        { "start": 20, "end": 23, "page": 1, "x": 54, "y": 86, "width": 18, "height": 10 },
-        { "start": 24, "end": 26, "page": 1, "x": 76, "y": 86, "width": 12, "height": 10 },
-        { "start": 27, "end": 41, "page": 1, "x": 92, "y": 86, "width": 70, "height": 10 }
+        {
+          "start": 0,
+          "end": 3,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 20,
+          "height": 10
+        },
+        {
+          "start": 4,
+          "end": 9,
+          "page": 1,
+          "x": 34,
+          "y": 100,
+          "width": 30,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 19,
+          "page": 1,
+          "x": 10,
+          "y": 86,
+          "width": 40,
+          "height": 10
+        },
+        {
+          "start": 20,
+          "end": 23,
+          "page": 1,
+          "x": 54,
+          "y": 86,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 24,
+          "end": 26,
+          "page": 1,
+          "x": 76,
+          "y": 86,
+          "width": 12,
+          "height": 10
+        },
+        {
+          "start": 27,
+          "end": 41,
+          "page": 1,
+          "x": 92,
+          "y": 86,
+          "width": 70,
+          "height": 10
+        }
       ],
       "claim": "understanding",
-      "landed": { "page": 1, "x": 158, "y": 86 },
-      "span": { "start": 27, "end": 40 }
+      "landed": {
+        "page": 1,
+        "x": 158,
+        "y": 86
+      },
+      "span": {
+        "start": 27,
+        "end": 40
+      }
     },
     {
       "why": "a claim that ends before a comma in its word: the citation landed inside the word, before the comma",
       "text": "described in On Radiant Matter, and more.\n",
       "items": [
-        { "start": 0, "end": 9, "page": 1, "x": 10, "y": 100, "width": 44, "height": 10 },
-        { "start": 10, "end": 12, "page": 1, "x": 57, "y": 100, "width": 10, "height": 10 },
-        { "start": 13, "end": 15, "page": 1, "x": 70, "y": 100, "width": 13, "height": 10 },
-        { "start": 16, "end": 23, "page": 1, "x": 86, "y": 100, "width": 36, "height": 10 },
-        { "start": 24, "end": 31, "page": 1, "x": 125, "y": 100, "width": 35, "height": 10 },
-        { "start": 32, "end": 35, "page": 1, "x": 163, "y": 100, "width": 17, "height": 10 },
-        { "start": 36, "end": 41, "page": 1, "x": 183, "y": 100, "width": 26, "height": 10 }
+        {
+          "start": 0,
+          "end": 9,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 44,
+          "height": 10
+        },
+        {
+          "start": 10,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 10,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 15,
+          "page": 1,
+          "x": 70,
+          "y": 100,
+          "width": 13,
+          "height": 10
+        },
+        {
+          "start": 16,
+          "end": 23,
+          "page": 1,
+          "x": 86,
+          "y": 100,
+          "width": 36,
+          "height": 10
+        },
+        {
+          "start": 24,
+          "end": 31,
+          "page": 1,
+          "x": 125,
+          "y": 100,
+          "width": 35,
+          "height": 10
+        },
+        {
+          "start": 32,
+          "end": 35,
+          "page": 1,
+          "x": 163,
+          "y": 100,
+          "width": 17,
+          "height": 10
+        },
+        {
+          "start": 36,
+          "end": 41,
+          "page": 1,
+          "x": 183,
+          "y": 100,
+          "width": 26,
+          "height": 10
+        }
       ],
       "claim": "On Radiant Matter",
-      "landed": { "page": 1, "x": 157.5, "y": 100 },
-      "span": { "start": 13, "end": 30 }
+      "landed": {
+        "page": 1,
+        "x": 157.5,
+        "y": 100
+      },
+      "span": {
+        "start": 13,
+        "end": 30
+      }
     },
     {
       "why": "a landing a quarter of a point past the end of the word is at the word: half a point is allowed either side",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 80.25, "y": 100 },
-      "span": { "start": 11, "end": 16 }
+      "landed": {
+        "page": 1,
+        "x": 80.25,
+        "y": 100
+      },
+      "span": {
+        "start": 11,
+        "end": 16
+      }
     },
     {
       "why": "a landing two points past the end of every place's word is at none of them: a citation is never anchored in the wrong place",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 82, "y": 100 },
+      "landed": {
+        "page": 1,
+        "x": 82,
+        "y": 100
+      },
       "span": null
     },
     {
       "why": "a landing on the line of a place but at another word is at no place",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 45, "y": 100 },
+      "landed": {
+        "page": 1,
+        "x": 45,
+        "y": 100
+      },
       "span": null
     },
     {
       "why": "a landing on the line above, more than half the word's height from its baseline, is at no place",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 80, "y": 114 },
+      "landed": {
+        "page": 1,
+        "x": 80,
+        "y": 114
+      },
       "span": null
     },
     {
       "why": "a landing on a page where the text has no place of the claim is at none",
       "text": "Radiant Matter\nRadiant Matter\n",
       "items": [
-        { "start": 0, "end": 7, "page": 1, "x": 40, "y": 700, "width": 36, "height": 10 },
-        { "start": 8, "end": 14, "page": 1, "x": 79, "y": 700, "width": 32, "height": 10 },
-        { "start": 15, "end": 22, "page": 2, "x": 40, "y": 700, "width": 36, "height": 10 },
-        { "start": 23, "end": 29, "page": 2, "x": 79, "y": 700, "width": 32, "height": 10 }
+        {
+          "start": 0,
+          "end": 7,
+          "page": 1,
+          "x": 40,
+          "y": 700,
+          "width": 36,
+          "height": 10
+        },
+        {
+          "start": 8,
+          "end": 14,
+          "page": 1,
+          "x": 79,
+          "y": 700,
+          "width": 32,
+          "height": 10
+        },
+        {
+          "start": 15,
+          "end": 22,
+          "page": 2,
+          "x": 40,
+          "y": 700,
+          "width": 36,
+          "height": 10
+        },
+        {
+          "start": 23,
+          "end": 29,
+          "page": 2,
+          "x": 79,
+          "y": 700,
+          "width": 32,
+          "height": 10
+        }
       ],
       "claim": "Radiant Matter",
-      "landed": { "page": 3, "x": 111, "y": 700 },
+      "landed": {
+        "page": 3,
+        "x": 111,
+        "y": 700
+      },
       "span": null
     },
     {
       "why": "a claim the text does not have is found nowhere, wherever it landed",
       "text": "A fox ran. A fox sat.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 6, "height": 10 },
-        { "start": 2, "end": 5, "page": 1, "x": 19, "y": 100, "width": 14, "height": 10 },
-        { "start": 6, "end": 10, "page": 1, "x": 36, "y": 100, "width": 18, "height": 10 },
-        { "start": 11, "end": 12, "page": 1, "x": 57, "y": 100, "width": 6, "height": 10 },
-        { "start": 13, "end": 16, "page": 1, "x": 66, "y": 100, "width": 14, "height": 10 },
-        { "start": 17, "end": 21, "page": 1, "x": 83, "y": 100, "width": 16, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "page": 1,
+          "x": 19,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 6,
+          "end": 10,
+          "page": 1,
+          "x": 36,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "page": 1,
+          "x": 57,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "page": 1,
+          "x": 66,
+          "y": 100,
+          "width": 14,
+          "height": 10
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "page": 1,
+          "x": 83,
+          "y": 100,
+          "width": 16,
+          "height": 10
+        }
       ],
       "claim": "A cat",
-      "landed": { "page": 1, "x": 80, "y": 100 },
+      "landed": {
+        "page": 1,
+        "x": 80,
+        "y": 100
+      },
       "span": null
     },
     {
       "why": "a character outside the Basic Multilingual Plane is one code point: the second place starts at 9, where a count of UTF-16 code units says 10",
       "text": "🎉 A fox. A fox.\n",
       "items": [
-        { "start": 0, "end": 1, "page": 1, "x": 10, "y": 100, "width": 10, "height": 10 },
-        { "start": 2, "end": 3, "page": 1, "x": 23, "y": 100, "width": 6, "height": 10 },
-        { "start": 4, "end": 8, "page": 1, "x": 32, "y": 100, "width": 18, "height": 10 },
-        { "start": 9, "end": 10, "page": 1, "x": 53, "y": 100, "width": 6, "height": 10 },
-        { "start": 11, "end": 15, "page": 1, "x": 62, "y": 100, "width": 18, "height": 10 }
+        {
+          "start": 0,
+          "end": 1,
+          "page": 1,
+          "x": 10,
+          "y": 100,
+          "width": 10,
+          "height": 10
+        },
+        {
+          "start": 2,
+          "end": 3,
+          "page": 1,
+          "x": 23,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 4,
+          "end": 8,
+          "page": 1,
+          "x": 32,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        },
+        {
+          "start": 9,
+          "end": 10,
+          "page": 1,
+          "x": 53,
+          "y": 100,
+          "width": 6,
+          "height": 10
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "page": 1,
+          "x": 62,
+          "y": 100,
+          "width": 18,
+          "height": 10
+        }
       ],
       "claim": "A fox",
-      "landed": { "page": 1, "x": 79, "y": 100 },
-      "span": { "start": 9, "end": 14 }
+      "landed": {
+        "page": 1,
+        "x": 79,
+        "y": 100
+      },
+      "span": {
+        "start": 9,
+        "end": 14
+      }
     }
   ]
 }

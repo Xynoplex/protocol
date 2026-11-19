@@ -5,15 +5,53 @@
       "why": "an index nothing was written to answers nothing: no result, no stamp, no annotation, nothing remembered of a decline, and a count of 0. Nothing has made it anew, so it states no stamp of its own",
       "writes": [],
       "reads": [
-        { "read": "resourcesSearched", "embedding": [1, 0], "limit": 10, "answers": [] },
-        { "read": "annotationsSearched", "embedding": [1, 0], "limit": 10, "answers": [] },
-        { "read": "searchedByResource", "resourceId": "res-a", "limit": 10, "answers": [] },
-        { "read": "counted", "answers": 0 },
-        { "read": "stampsListed", "answers": {} },
-        { "read": "stampRead", "resourceId": "res-a" },
-        { "read": "annotationStampsListed", "answers": {} },
-        { "read": "declinedListed", "answers": {} },
-        { "read": "indexStampRead" }
+        {
+          "read": "resourcesSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "annotationsSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "searchedByResource",
+          "resourceId": "res-a",
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "counted",
+          "answers": 0
+        },
+        {
+          "read": "stampsListed",
+          "answers": {}
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-a"
+        },
+        {
+          "read": "annotationStampsListed",
+          "answers": {}
+        },
+        {
+          "read": "declinedListed",
+          "answers": {}
+        },
+        {
+          "read": "indexStampRead"
+        }
       ]
     },
     {
@@ -23,64 +61,149 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Event"],
+          "entityTypes": [
+            "Event"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         }
       ],
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the first chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.600000, "resourceId": "res-a", "text": "the second chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the first chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-a",
+              "text": "the second chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.707107, "resourceId": "res-a", "annotationId": "ann-1", "text": "quoted by ann-1", "entityTypes": ["Event"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-a",
+              "annotationId": "ann-1",
+              "text": "quoted by ann-1",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         },
-        { "read": "counted", "answers": 4 },
+        {
+          "read": "counted",
+          "answers": 4
+        },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] },
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+            "res-a": {
+              "contentChecksum": "checksum-a",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Event"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           }
         }
       ]
@@ -92,57 +215,136 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first old chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second old chunk of a", "embedding": [1, 1] },
-            { "index": 2, "text": "the third old chunk of a", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the first old chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second old chunk of a",
+              "embedding": [
+                1,
+                1
+              ]
+            },
+            {
+              "index": 2,
+              "text": "the third old chunk of a",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-a1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "machineRead": true
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the new chunk of a", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the new chunk of a",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-a2",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.600000, "resourceId": "res-a", "text": "the new chunk of a", "entityTypes": ["Event"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-a",
+              "text": "the new chunk of a",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         },
         {
           "read": "stampRead",
           "resourceId": "res-a",
-          "answers": { "contentChecksum": "checksum-a2", "mediaType": "text/markdown", "entityTypes": ["Event"] }
+          "answers": {
+            "contentChecksum": "checksum-a2",
+            "mediaType": "text/markdown",
+            "entityTypes": [
+              "Event"
+            ]
+          }
         },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a2", "mediaType": "text/markdown", "entityTypes": ["Event"] },
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+            "res-a": {
+              "contentChecksum": "checksum-a2",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Event"
+              ]
+            },
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         }
       ]
@@ -154,22 +356,47 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-a1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
@@ -177,24 +404,48 @@
           "chunks": [],
           "contentChecksum": "checksum-a2",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 1 },
+        {
+          "read": "counted",
+          "answers": 1
+        },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
-        { "read": "stampRead", "resourceId": "res-a" },
+        {
+          "read": "stampRead",
+          "resourceId": "res-a"
+        },
         {
           "read": "stampsListed",
           "answers": {
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         }
       ]
@@ -207,56 +458,91 @@
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "first quoted by ann-1",
-          "embedding": [1, 0]
+          "embedding": [
+            1,
+            0
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "linking",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "then quoted by ann-1",
-          "embedding": [0, 1],
+          "embedding": [
+            0,
+            1
+          ],
           "machineRead": true
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 1 },
+        {
+          "read": "counted",
+          "answers": 1
+        },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Person"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [0, 1],
+          "embedding": [
+            0,
+            1
+          ],
           "limit": 10,
           "answers": [
             {
-              "score": 1.000000,
+              "score": 1,
               "resourceId": "res-a",
               "annotationId": "ann-1",
               "text": "then quoted by ann-1",
-              "entityTypes": ["Person"],
+              "entityTypes": [
+                "Person"
+              ],
               "machineRead": true
             }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [0, 1],
+          "embedding": [
+            0,
+            1
+          ],
           "limit": 10,
-          "filter": { "motivation": "highlighting" },
+          "filter": {
+            "motivation": "highlighting"
+          },
           "answers": []
         },
         {
           "read": "annotationsSearched",
-          "embedding": [0, 1],
+          "embedding": [
+            0,
+            1
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ]
+          },
           "answers": []
         }
       ]
@@ -268,34 +554,71 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "machineRead": true
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
-        { "write": "entityTypesRewritten", "resourceId": "res-a", "entityTypes": ["Question", "Event"] }
+        {
+          "write": "entityTypesRewritten",
+          "resourceId": "res-a",
+          "entityTypes": [
+            "Question",
+            "Event"
+          ]
+        }
       ],
       "reads": [
         {
@@ -304,87 +627,171 @@
           "answers": {
             "contentChecksum": "checksum-a",
             "mediaType": "text/markdown",
-            "entityTypes": ["Question", "Event"],
+            "entityTypes": [
+              "Question",
+              "Event"
+            ],
             "machineRead": true
           }
         },
         {
           "read": "stampRead",
           "resourceId": "res-b",
-          "answers": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+          "answers": {
+            "contentChecksum": "checksum-b",
+            "mediaType": "text/markdown",
+            "entityTypes": [
+              "Place"
+            ]
+          }
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
             {
-              "score": 1.000000,
+              "score": 1,
               "resourceId": "res-a",
               "text": "the first chunk of a",
-              "entityTypes": ["Question", "Event"],
+              "entityTypes": [
+                "Question",
+                "Event"
+              ],
               "machineRead": true
             },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Place"] },
             {
-              "score": 0.600000,
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.6,
               "resourceId": "res-a",
               "text": "the second chunk of a",
-              "entityTypes": ["Question", "Event"],
+              "entityTypes": [
+                "Question",
+                "Event"
+              ],
               "machineRead": true
             }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Place"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Question"] },
+          "filter": {
+            "entityTypes": [
+              "Question"
+            ]
+          },
           "answers": [
             {
-              "score": 1.000000,
+              "score": 1,
               "resourceId": "res-a",
               "text": "the first chunk of a",
-              "entityTypes": ["Question", "Event"],
+              "entityTypes": [
+                "Question",
+                "Event"
+              ],
               "machineRead": true
             },
             {
-              "score": 0.600000,
+              "score": 0.6,
               "resourceId": "res-a",
               "text": "the second chunk of a",
-              "entityTypes": ["Question", "Event"],
+              "entityTypes": [
+                "Question",
+                "Event"
+              ],
               "machineRead": true
             }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "excludeEntityTypes": ["Event"] },
+          "filter": {
+            "excludeEntityTypes": [
+              "Event"
+            ]
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Place"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 0.707107, "resourceId": "res-a", "annotationId": "ann-1", "text": "quoted by ann-1", "entityTypes": ["Place"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-a",
+              "annotationId": "ann-1",
+              "text": "quoted by ann-1",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
-        { "read": "counted", "answers": 4 }
+        {
+          "read": "counted",
+          "answers": 4
+        }
       ]
     },
     {
@@ -394,28 +801,62 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
-        { "write": "entityTypesRewritten", "resourceId": "res-b", "entityTypes": ["Question"] }
+        {
+          "write": "entityTypesRewritten",
+          "resourceId": "res-b",
+          "entityTypes": [
+            "Question"
+          ]
+        }
       ],
       "reads": [
-        { "read": "counted", "answers": 1 },
-        { "read": "stampRead", "resourceId": "res-b" },
+        {
+          "read": "counted",
+          "answers": 1
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-b"
+        },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+            "res-a": {
+              "contentChecksum": "checksum-a",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Question"] },
+          "filter": {
+            "entityTypes": [
+              "Question"
+            ]
+          },
           "answers": []
         }
       ]
@@ -427,20 +868,35 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place", "Person"],
+          "entityTypes": [
+            "Place",
+            "Person"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1],
+          "embedding": [
+            1,
+            1
+          ],
           "machineRead": true
         },
         {
@@ -448,103 +904,218 @@
           "annotationId": "ann-2",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [4, 3]
+          "embedding": [
+            4,
+            3
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-3",
           "resourceId": "res-b",
           "motivation": "linking",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "quoted by ann-3",
-          "embedding": [3, 4]
+          "embedding": [
+            3,
+            4
+          ]
         },
-        { "write": "annotationEntityTypesRewritten", "annotationId": "ann-1", "entityTypes": ["Question", "Person"] }
+        {
+          "write": "annotationEntityTypesRewritten",
+          "annotationId": "ann-1",
+          "entityTypes": [
+            "Question",
+            "Person"
+          ]
+        }
       ],
       "reads": [
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Question", "Person"] },
-            "ann-2": { "resourceId": "res-a", "entityTypes": ["Place"] },
-            "ann-3": { "resourceId": "res-b", "entityTypes": ["Person"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Question",
+                "Person"
+              ]
+            },
+            "ann-2": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            "ann-3": {
+              "resourceId": "res-b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-a", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Place"] },
+            {
+              "score": 0.8,
+              "resourceId": "res-a",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Place"
+              ]
+            },
             {
               "score": 0.707107,
               "resourceId": "res-a",
               "annotationId": "ann-1",
               "text": "quoted by ann-1",
-              "entityTypes": ["Question", "Person"],
+              "entityTypes": [
+                "Question",
+                "Person"
+              ],
               "machineRead": true
             },
-            { "score": 0.600000, "resourceId": "res-b", "annotationId": "ann-3", "text": "quoted by ann-3", "entityTypes": ["Person"] }
+            {
+              "score": 0.6,
+              "resourceId": "res-b",
+              "annotationId": "ann-3",
+              "text": "quoted by ann-3",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Question"] },
+          "filter": {
+            "entityTypes": [
+              "Question"
+            ]
+          },
           "answers": [
             {
               "score": 0.707107,
               "resourceId": "res-a",
               "annotationId": "ann-1",
               "text": "quoted by ann-1",
-              "entityTypes": ["Question", "Person"],
+              "entityTypes": [
+                "Question",
+                "Person"
+              ],
               "machineRead": true
             }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-a", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Place"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-a",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "motivation": "highlighting" },
+          "filter": {
+            "motivation": "highlighting"
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-a", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Place"] },
+            {
+              "score": 0.8,
+              "resourceId": "res-a",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Place"
+              ]
+            },
             {
               "score": 0.707107,
               "resourceId": "res-a",
               "annotationId": "ann-1",
               "text": "quoted by ann-1",
-              "entityTypes": ["Question", "Person"],
+              "entityTypes": [
+                "Question",
+                "Person"
+              ],
               "machineRead": true
             }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "stampRead",
           "resourceId": "res-a",
-          "answers": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+          "answers": {
+            "contentChecksum": "checksum-a",
+            "mediaType": "text/markdown",
+            "entityTypes": [
+              "Place"
+            ]
+          }
         },
-        { "read": "counted", "answers": 4 }
+        {
+          "read": "counted",
+          "answers": 4
+        }
       ]
     },
     {
@@ -554,49 +1125,97 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
-        { "write": "annotationEntityTypesRewritten", "annotationId": "ann-2", "entityTypes": ["Question"] }
+        {
+          "write": "annotationEntityTypesRewritten",
+          "annotationId": "ann-2",
+          "entityTypes": [
+            "Question"
+          ]
+        }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Place"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Question"] },
+          "filter": {
+            "entityTypes": [
+              "Question"
+            ]
+          },
           "answers": []
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Question"] },
+          "filter": {
+            "entityTypes": [
+              "Question"
+            ]
+          },
           "answers": []
         },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+            "res-a": {
+              "contentChecksum": "checksum-a",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         }
       ]
@@ -608,74 +1227,163 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-2",
           "resourceId": "res-b",
           "motivation": "highlighting",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [3, 4]
-        },
-        { "write": "resourceDeleted", "resourceId": "res-a" }
-      ],
-      "reads": [
-        { "read": "counted", "answers": 3 },
-        {
-          "read": "resourcesSearched",
-          "embedding": [1, 0],
-          "limit": 10,
-          "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] }
+          "embedding": [
+            3,
+            4
           ]
         },
-        { "read": "stampRead", "resourceId": "res-a" },
+        {
+          "write": "resourceDeleted",
+          "resourceId": "res-a"
+        }
+      ],
+      "reads": [
+        {
+          "read": "counted",
+          "answers": 3
+        },
+        {
+          "read": "resourcesSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": [
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
+          ]
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-a"
+        },
         {
           "read": "stampsListed",
           "answers": {
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Place"] },
-            "ann-2": { "resourceId": "res-b", "entityTypes": ["Person"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            "ann-2": {
+              "resourceId": "res-b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.707107, "resourceId": "res-a", "annotationId": "ann-1", "text": "quoted by ann-1", "entityTypes": ["Place"] },
-            { "score": 0.600000, "resourceId": "res-b", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Person"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-a",
+              "annotationId": "ann-1",
+              "text": "quoted by ann-1",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-b",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         }
       ]
@@ -687,54 +1395,105 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [4, 3]
+          "embedding": [
+            4,
+            3
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-2",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
-        { "write": "annotationDeleted", "annotationId": "ann-1" }
+        {
+          "write": "annotationDeleted",
+          "annotationId": "ann-1"
+        }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-2": { "resourceId": "res-a", "entityTypes": ["Place"] }
+            "ann-2": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.707107, "resourceId": "res-a", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Place"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-a",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -746,69 +1505,131 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [4, 3]
+          "embedding": [
+            4,
+            3
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-2",
           "resourceId": "res-a",
           "motivation": "linking",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-3",
           "resourceId": "res-b",
           "motivation": "highlighting",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "quoted by ann-3",
-          "embedding": [3, 4]
+          "embedding": [
+            3,
+            4
+          ]
         },
-        { "write": "annotationsOfResourceDeleted", "resourceId": "res-a" }
+        {
+          "write": "annotationsOfResourceDeleted",
+          "resourceId": "res-a"
+        }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-3": { "resourceId": "res-b", "entityTypes": ["Person"] }
+            "ann-3": {
+              "resourceId": "res-b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.600000, "resourceId": "res-b", "annotationId": "ann-3", "text": "quoted by ann-3", "entityTypes": ["Person"] }
+            {
+              "score": 0.6,
+              "resourceId": "res-b",
+              "annotationId": "ann-3",
+              "text": "quoted by ann-3",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "stampRead",
           "resourceId": "res-a",
-          "answers": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+          "answers": {
+            "contentChecksum": "checksum-a",
+            "mediaType": "text/markdown",
+            "entityTypes": [
+              "Place"
+            ]
+          }
         }
       ]
     },
@@ -819,37 +1640,74 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
-        { "write": "resourceDeleted", "resourceId": "res-b" },
-        { "write": "annotationDeleted", "annotationId": "ann-2" },
-        { "write": "annotationsOfResourceDeleted", "resourceId": "res-b" }
+        {
+          "write": "resourceDeleted",
+          "resourceId": "res-b"
+        },
+        {
+          "write": "annotationDeleted",
+          "annotationId": "ann-2"
+        },
+        {
+          "write": "annotationsOfResourceDeleted",
+          "resourceId": "res-b"
+        }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+            "res-a": {
+              "contentChecksum": "checksum-a",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Place"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         }
       ]
@@ -861,47 +1719,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -911,23 +1813,75 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place", "Person"] },
+          "filter": {
+            "entityTypes": [
+              "Place",
+              "Person"
+            ]
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place", "Person"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place",
+                "Person"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place", "Person"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place",
+                "Person"
+              ]
+            }
           ]
         }
       ]
@@ -939,47 +1893,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -989,23 +1987,69 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "excludeEntityTypes": ["Place", "Event"] },
+          "filter": {
+            "excludeEntityTypes": [
+              "Place",
+              "Event"
+            ]
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.000000, "resourceId": "res-e", "text": "the chunk of e", "entityTypes": [] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0,
+              "resourceId": "res-e",
+              "text": "the chunk of e",
+              "entityTypes": []
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "excludeEntityTypes": ["Place"] },
+          "filter": {
+            "excludeEntityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Event"] },
-            { "score": 0.000000, "resourceId": "res-e", "text": "the chunk of e", "entityTypes": [] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Event"
+              ]
+            },
+            {
+              "score": 0,
+              "resourceId": "res-e",
+              "text": "the chunk of e",
+              "entityTypes": []
+            }
           ]
         }
       ]
@@ -1017,47 +2061,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -1067,28 +2155,106 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": [] },
+          "filter": {
+            "entityTypes": []
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place", "Person"] },
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Event"] },
-            { "score": 0.000000, "resourceId": "res-e", "text": "the chunk of e", "entityTypes": [] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place",
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Event"
+              ]
+            },
+            {
+              "score": 0,
+              "resourceId": "res-e",
+              "text": "the chunk of e",
+              "entityTypes": []
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "excludeEntityTypes": [] },
+          "filter": {
+            "excludeEntityTypes": []
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place", "Person"] },
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Event"] },
-            { "score": 0.000000, "resourceId": "res-e", "text": "the chunk of e", "entityTypes": [] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place",
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Event"
+              ]
+            },
+            {
+              "score": 0,
+              "resourceId": "res-e",
+              "text": "the chunk of e",
+              "entityTypes": []
+            }
           ]
         }
       ]
@@ -1100,60 +2266,127 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-2",
           "resourceId": "res-b",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [1, 0]
+          "embedding": [
+            1,
+            0
+          ]
         }
       ],
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "resourceId": "res-a" },
+          "filter": {
+            "resourceId": "res-a"
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the first chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.600000, "resourceId": "res-a", "text": "the second chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the first chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-a",
+              "text": "the second chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "resourceId": "res-a" },
+          "filter": {
+            "resourceId": "res-a"
+          },
           "answers": [
-            { "score": 0.707107, "resourceId": "res-a", "annotationId": "ann-1", "text": "quoted by ann-1", "entityTypes": ["Place"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-a",
+              "annotationId": "ann-1",
+              "text": "quoted by ann-1",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -1165,59 +2398,119 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-2",
           "resourceId": "res-b",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [1, 0]
+          "embedding": [
+            1,
+            0
+          ]
         }
       ],
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "excludeResourceId": "res-a" },
+          "filter": {
+            "excludeResourceId": "res-a"
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Place"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "excludeResourceId": "res-a" },
+          "filter": {
+            "excludeResourceId": "res-a"
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-b", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-b",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -1230,47 +2523,96 @@
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 0]
+          "embedding": [
+            1,
+            0
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-2",
           "resourceId": "res-a",
           "motivation": "linking",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-2",
-          "embedding": [4, 3]
+          "embedding": [
+            4,
+            3
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-3",
           "resourceId": "res-b",
           "motivation": "linking",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "quoted by ann-3",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         }
       ],
       "reads": [
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "motivation": "linking" },
+          "filter": {
+            "motivation": "linking"
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-a", "annotationId": "ann-2", "text": "quoted by ann-2", "entityTypes": ["Place"] },
-            { "score": 0.707107, "resourceId": "res-b", "annotationId": "ann-3", "text": "quoted by ann-3", "entityTypes": ["Person"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-a",
+              "annotationId": "ann-2",
+              "text": "quoted by ann-2",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-b",
+              "annotationId": "ann-3",
+              "text": "quoted by ann-3",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "motivation": "highlighting" },
+          "filter": {
+            "motivation": "highlighting"
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "annotationId": "ann-1", "text": "quoted by ann-1", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "annotationId": "ann-1",
+              "text": "quoted by ann-1",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -1282,47 +2624,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -1332,21 +2718,62 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place"], "excludeEntityTypes": ["Person"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ],
+            "excludeEntityTypes": [
+              "Person"
+            ]
+          },
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
-          "filter": { "entityTypes": ["Place", "Person"], "excludeResourceId": "res-a" },
+          "filter": {
+            "entityTypes": [
+              "Place",
+              "Person"
+            ],
+            "excludeResourceId": "res-a"
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place", "Person"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place",
+                "Person"
+              ]
+            }
           ]
         }
       ]
@@ -1358,47 +2785,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -1408,24 +2879,73 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "scoreThreshold": 0.75,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "scoreThreshold": 0.5,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place", "Person"] },
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Event"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place",
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         }
       ]
@@ -1437,47 +2957,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -1487,19 +3051,46 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 2,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 1,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -1511,47 +3102,91 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place", "Person"]
+          "entityTypes": [
+            "Place",
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-e",
           "chunks": [
-            { "index": 0, "text": "the chunk of e", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of e",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-e",
           "mediaType": "text/markdown",
@@ -1561,12 +3196,33 @@
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 2,
-          "filter": { "excludeEntityTypes": ["Place"] },
+          "filter": {
+            "excludeEntityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Event"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         }
       ]
@@ -1578,42 +3234,93 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [-1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                -1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         }
       ],
       "reads": [
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.000000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Place"] },
-            { "score": -1.000000, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": -1,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -1625,40 +3332,72 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-b",
           "motivation": "highlighting",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 0]
+          "embedding": [
+            1,
+            0
+          ]
         }
       ],
       "reads": [
@@ -1667,8 +3406,22 @@
           "resourceId": "res-a",
           "limit": 10,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Event"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         }
       ]
@@ -1680,7 +3433,14 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
@@ -1690,15 +3450,78 @@
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the first chunk of b", "embedding": [100, 1] },
-            { "index": 1, "text": "the second chunk of b", "embedding": [100, 2] },
-            { "index": 2, "text": "the third chunk of b", "embedding": [100, 3] },
-            { "index": 3, "text": "the fourth chunk of b", "embedding": [100, 4] },
-            { "index": 4, "text": "the fifth chunk of b", "embedding": [100, 5] },
-            { "index": 5, "text": "the sixth chunk of b", "embedding": [100, 6] },
-            { "index": 6, "text": "the seventh chunk of b", "embedding": [100, 7] },
-            { "index": 7, "text": "the eighth chunk of b", "embedding": [100, 8] },
-            { "index": 8, "text": "the ninth chunk of b", "embedding": [100, 9] }
+            {
+              "index": 0,
+              "text": "the first chunk of b",
+              "embedding": [
+                100,
+                1
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of b",
+              "embedding": [
+                100,
+                2
+              ]
+            },
+            {
+              "index": 2,
+              "text": "the third chunk of b",
+              "embedding": [
+                100,
+                3
+              ]
+            },
+            {
+              "index": 3,
+              "text": "the fourth chunk of b",
+              "embedding": [
+                100,
+                4
+              ]
+            },
+            {
+              "index": 4,
+              "text": "the fifth chunk of b",
+              "embedding": [
+                100,
+                5
+              ]
+            },
+            {
+              "index": 5,
+              "text": "the sixth chunk of b",
+              "embedding": [
+                100,
+                6
+              ]
+            },
+            {
+              "index": 6,
+              "text": "the seventh chunk of b",
+              "embedding": [
+                100,
+                7
+              ]
+            },
+            {
+              "index": 7,
+              "text": "the eighth chunk of b",
+              "embedding": [
+                100,
+                8
+              ]
+            },
+            {
+              "index": 8,
+              "text": "the ninth chunk of b",
+              "embedding": [
+                100,
+                9
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
@@ -1708,7 +3531,14 @@
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [5, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                5,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
@@ -1718,7 +3548,14 @@
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
@@ -1731,8 +3568,18 @@
           "resourceId": "res-a",
           "limit": 2,
           "answers": [
-            { "score": 0.999950, "resourceId": "res-b", "text": "the first chunk of b", "entityTypes": [] },
-            { "score": 0.980581, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": [] }
+            {
+              "score": 0.99995,
+              "resourceId": "res-b",
+              "text": "the first chunk of b",
+              "entityTypes": []
+            },
+            {
+              "score": 0.980581,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": []
+            }
           ]
         },
         {
@@ -1740,7 +3587,12 @@
           "resourceId": "res-a",
           "limit": 1,
           "answers": [
-            { "score": 0.999950, "resourceId": "res-b", "text": "the first chunk of b", "entityTypes": [] }
+            {
+              "score": 0.99995,
+              "resourceId": "res-b",
+              "text": "the first chunk of b",
+              "entityTypes": []
+            }
           ]
         }
       ]
@@ -1752,32 +3604,66 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b that is off the subject", "embedding": [0, 1] },
-            { "index": 1, "text": "the chunk of b that is on the subject", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b that is off the subject",
+              "embedding": [
+                0,
+                1
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the chunk of b that is on the subject",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         }
       ],
       "reads": [
@@ -1786,19 +3672,64 @@
           "resourceId": "res-a",
           "limit": 10,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b that is on the subject", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Event"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b that is on the subject",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b that is on the subject", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Event"] },
-            { "score": 0.000000, "resourceId": "res-b", "text": "the chunk of b that is off the subject", "entityTypes": ["Person"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b that is on the subject",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Event"
+              ]
+            },
+            {
+              "score": 0,
+              "resourceId": "res-b",
+              "text": "the chunk of b that is off the subject",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         }
       ]
@@ -1810,42 +3741,85 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [0, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                0,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         }
       ],
       "reads": [
@@ -1854,9 +3828,30 @@
           "resourceId": "res-a",
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Event"] },
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] },
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Event"] }
+            {
+              "score": 1,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Event"
+              ]
+            },
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            },
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         }
       ]
@@ -1868,15 +3863,29 @@
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         }
       ],
       "reads": [
-        { "read": "searchedByResource", "resourceId": "res-a", "limit": 10, "answers": [] }
+        {
+          "read": "searchedByResource",
+          "resourceId": "res-a",
+          "limit": 10,
+          "answers": []
+        }
       ]
     },
     {
@@ -1886,41 +3895,78 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Question"]
+          "entityTypes": [
+            "Question"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Question"]
+          "entityTypes": [
+            "Question"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Article"]
+          "entityTypes": [
+            "Article"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-d",
           "chunks": [
-            { "index": 0, "text": "the chunk of d", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the chunk of d",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-d",
           "mediaType": "text/markdown",
-          "entityTypes": ["Article", "Place"]
+          "entityTypes": [
+            "Article",
+            "Place"
+          ]
         }
       ],
       "reads": [
@@ -1928,19 +3974,50 @@
           "read": "searchedByResource",
           "resourceId": "res-a",
           "limit": 10,
-          "filter": { "excludeEntityTypes": ["Question"] },
+          "filter": {
+            "excludeEntityTypes": [
+              "Question"
+            ]
+          },
           "answers": [
-            { "score": 0.707107, "resourceId": "res-c", "text": "the chunk of c", "entityTypes": ["Article"] },
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Article", "Place"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-c",
+              "text": "the chunk of c",
+              "entityTypes": [
+                "Article"
+              ]
+            },
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Article",
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "searchedByResource",
           "resourceId": "res-a",
           "limit": 10,
-          "filter": { "entityTypes": ["Place"] },
+          "filter": {
+            "entityTypes": [
+              "Place"
+            ]
+          },
           "answers": [
-            { "score": 0.600000, "resourceId": "res-d", "text": "the chunk of d", "entityTypes": ["Article", "Place"] }
+            {
+              "score": 0.6,
+              "resourceId": "res-d",
+              "text": "the chunk of d",
+              "entityTypes": [
+                "Article",
+                "Place"
+              ]
+            }
           ]
         }
       ]
@@ -1952,31 +4029,58 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-c",
           "chunks": [
-            { "index": 0, "text": "the chunk of c", "embedding": [1, 1] }
+            {
+              "index": 0,
+              "text": "the chunk of c",
+              "embedding": [
+                1,
+                1
+              ]
+            }
           ],
           "contentChecksum": "checksum-c",
           "mediaType": "text/markdown",
-          "entityTypes": ["Event"]
+          "entityTypes": [
+            "Event"
+          ]
         }
       ],
       "reads": [
@@ -1986,7 +4090,14 @@
           "limit": 10,
           "scoreThreshold": 0.75,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         }
       ]
@@ -1998,20 +4109,34 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "resourceDeclined",
@@ -2023,27 +4148,76 @@
         {
           "write": "madeAnew",
           "stamp": {
-            "model": { "provider": "a-provider", "name": "a-model" },
-            "chunking": { "size": 512, "overlap": 64 },
-            "reads": ["text", "pdf"],
+            "model": {
+              "provider": "a-provider",
+              "name": "a-model"
+            },
+            "chunking": {
+              "size": 512,
+              "overlap": 64
+            },
+            "reads": [
+              "text",
+              "pdf"
+            ],
             "revision": 1
           }
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 0 },
-        { "read": "resourcesSearched", "embedding": [1, 0], "limit": 10, "answers": [] },
-        { "read": "annotationsSearched", "embedding": [1, 0], "limit": 10, "answers": [] },
-        { "read": "stampsListed", "answers": {} },
-        { "read": "stampRead", "resourceId": "res-a" },
-        { "read": "annotationStampsListed", "answers": {} },
-        { "read": "declinedListed", "answers": {} },
+        {
+          "read": "counted",
+          "answers": 0
+        },
+        {
+          "read": "resourcesSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "annotationsSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "stampsListed",
+          "answers": {}
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-a"
+        },
+        {
+          "read": "annotationStampsListed",
+          "answers": {}
+        },
+        {
+          "read": "declinedListed",
+          "answers": {}
+        },
         {
           "read": "indexStampRead",
           "answers": {
-            "model": { "provider": "a-provider", "name": "a-model" },
-            "chunking": { "size": 512, "overlap": 64 },
-            "reads": ["text", "pdf"],
+            "model": {
+              "provider": "a-provider",
+              "name": "a-model"
+            },
+            "chunking": {
+              "size": 512,
+              "overlap": 64
+            },
+            "reads": [
+              "text",
+              "pdf"
+            ],
             "revision": 1
           }
         }
@@ -2055,9 +4229,18 @@
         {
           "write": "madeAnew",
           "stamp": {
-            "model": { "provider": "a-provider", "name": "a-model" },
-            "chunking": { "size": 512, "overlap": 64 },
-            "reads": ["text", "pdf"],
+            "model": {
+              "provider": "a-provider",
+              "name": "a-model"
+            },
+            "chunking": {
+              "size": 512,
+              "overlap": 64
+            },
+            "reads": [
+              "text",
+              "pdf"
+            ],
             "revision": 1
           }
         },
@@ -2065,20 +4248,34 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "resourceDeclined",
@@ -2089,39 +4286,76 @@
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+            "res-a": {
+              "contentChecksum": "checksum-a",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Place"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
         {
           "read": "declinedListed",
           "answers": {
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "image/png", "reason": "no text was read from the image" }
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "image/png",
+              "reason": "no text was read from the image"
+            }
           }
         },
         {
           "read": "indexStampRead",
           "answers": {
-            "model": { "provider": "a-provider", "name": "a-model" },
-            "chunking": { "size": 512, "overlap": 64 },
-            "reads": ["text", "pdf"],
+            "model": {
+              "provider": "a-provider",
+              "name": "a-model"
+            },
+            "chunking": {
+              "size": 512,
+              "overlap": 64
+            },
+            "reads": [
+              "text",
+              "pdf"
+            ],
             "revision": 1
           }
         }
@@ -2133,9 +4367,18 @@
         {
           "write": "madeAnew",
           "stamp": {
-            "model": { "provider": "a-provider", "name": "a-model" },
-            "chunking": { "size": 512, "overlap": 64 },
-            "reads": ["text", "pdf"],
+            "model": {
+              "provider": "a-provider",
+              "name": "a-model"
+            },
+            "chunking": {
+              "size": 512,
+              "overlap": 64
+            },
+            "reads": [
+              "text",
+              "pdf"
+            ],
             "revision": 1
           }
         },
@@ -2143,20 +4386,34 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "resourceDeclined",
@@ -2168,25 +4425,66 @@
         {
           "write": "madeAnew",
           "stamp": {
-            "model": { "provider": "a-provider", "name": "another-model" },
-            "chunking": { "size": 256 },
+            "model": {
+              "provider": "a-provider",
+              "name": "another-model"
+            },
+            "chunking": {
+              "size": 256
+            },
             "exact": true
           }
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 0 },
-        { "read": "resourcesSearched", "embedding": [1, 0], "limit": 10, "answers": [] },
-        { "read": "annotationsSearched", "embedding": [1, 0], "limit": 10, "answers": [] },
-        { "read": "stampsListed", "answers": {} },
-        { "read": "stampRead", "resourceId": "res-a" },
-        { "read": "annotationStampsListed", "answers": {} },
-        { "read": "declinedListed", "answers": {} },
+        {
+          "read": "counted",
+          "answers": 0
+        },
+        {
+          "read": "resourcesSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "annotationsSearched",
+          "embedding": [
+            1,
+            0
+          ],
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "stampsListed",
+          "answers": {}
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-a"
+        },
+        {
+          "read": "annotationStampsListed",
+          "answers": {}
+        },
+        {
+          "read": "declinedListed",
+          "answers": {}
+        },
         {
           "read": "indexStampRead",
           "answers": {
-            "model": { "provider": "a-provider", "name": "another-model" },
-            "chunking": { "size": 256 },
+            "model": {
+              "provider": "a-provider",
+              "name": "another-model"
+            },
+            "chunking": {
+              "size": 256
+            },
             "exact": true
           }
         }
@@ -2199,50 +4497,104 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a",
           "mediaType": "text/markdown; charset=utf-8",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b, read as plain text", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b, read as plain text",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/plain",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b, read as markdown", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b, read as markdown",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "stampRead",
           "resourceId": "res-a",
-          "answers": { "contentChecksum": "checksum-a", "mediaType": "text/markdown; charset=utf-8", "entityTypes": ["Place"] }
+          "answers": {
+            "contentChecksum": "checksum-a",
+            "mediaType": "text/markdown; charset=utf-8",
+            "entityTypes": [
+              "Place"
+            ]
+          }
         },
         {
           "read": "stampRead",
           "resourceId": "res-b",
-          "answers": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+          "answers": {
+            "contentChecksum": "checksum-b",
+            "mediaType": "text/markdown",
+            "entityTypes": [
+              "Person"
+            ]
+          }
         },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a", "mediaType": "text/markdown; charset=utf-8", "entityTypes": ["Place"] },
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+            "res-a": {
+              "contentChecksum": "checksum-a",
+              "mediaType": "text/markdown; charset=utf-8",
+              "entityTypes": [
+                "Place"
+              ]
+            },
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         }
       ]
@@ -2254,31 +4606,61 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the first chunk of a", "embedding": [1, 0] },
-            { "index": 1, "text": "the second chunk of a", "embedding": [3, 4] }
+            {
+              "index": 0,
+              "text": "the first chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "text": "the second chunk of a",
+              "embedding": [
+                3,
+                4
+              ]
+            }
           ],
           "contentChecksum": "checksum-a1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
         {
           "write": "resourcePut",
           "resourceId": "res-b",
           "chunks": [
-            { "index": 0, "text": "the chunk of b", "embedding": [4, 3] }
+            {
+              "index": 0,
+              "text": "the chunk of b",
+              "embedding": [
+                4,
+                3
+              ]
+            }
           ],
           "contentChecksum": "checksum-b",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person"]
+          "entityTypes": [
+            "Person"
+          ]
         },
         {
           "write": "annotationPut",
           "annotationId": "ann-1",
           "resourceId": "res-a",
           "motivation": "highlighting",
-          "entityTypes": ["Event"],
+          "entityTypes": [
+            "Event"
+          ],
           "text": "quoted by ann-1",
-          "embedding": [1, 1]
+          "embedding": [
+            1,
+            1
+          ]
         },
         {
           "write": "resourceDeclined",
@@ -2289,41 +4671,88 @@
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 2 },
+        {
+          "read": "counted",
+          "answers": 2
+        },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.800000, "resourceId": "res-b", "text": "the chunk of b", "entityTypes": ["Person"] }
+            {
+              "score": 0.8,
+              "resourceId": "res-b",
+              "text": "the chunk of b",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           ]
         },
-        { "read": "searchedByResource", "resourceId": "res-a", "limit": 10, "answers": [] },
-        { "read": "stampRead", "resourceId": "res-a" },
+        {
+          "read": "searchedByResource",
+          "resourceId": "res-a",
+          "limit": 10,
+          "answers": []
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-a"
+        },
         {
           "read": "stampsListed",
           "answers": {
-            "res-b": { "contentChecksum": "checksum-b", "mediaType": "text/markdown", "entityTypes": ["Person"] }
+            "res-b": {
+              "contentChecksum": "checksum-b",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Person"
+              ]
+            }
           }
         },
         {
           "read": "declinedListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a2", "mediaType": "image/png", "reason": "no text was read from the image" }
+            "res-a": {
+              "contentChecksum": "checksum-a2",
+              "mediaType": "image/png",
+              "reason": "no text was read from the image"
+            }
           }
         },
         {
           "read": "annotationsSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 0.707107, "resourceId": "res-a", "annotationId": "ann-1", "text": "quoted by ann-1", "entityTypes": ["Event"] }
+            {
+              "score": 0.707107,
+              "resourceId": "res-a",
+              "annotationId": "ann-1",
+              "text": "quoted by ann-1",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           ]
         },
         {
           "read": "annotationStampsListed",
           "answers": {
-            "ann-1": { "resourceId": "res-a", "entityTypes": ["Event"] }
+            "ann-1": {
+              "resourceId": "res-a",
+              "entityTypes": [
+                "Event"
+              ]
+            }
           }
         }
       ]
@@ -2363,13 +4792,25 @@
           "write": "resourcePut",
           "resourceId": "res-a",
           "chunks": [
-            { "index": 0, "text": "the chunk of a", "embedding": [1, 0] }
+            {
+              "index": 0,
+              "text": "the chunk of a",
+              "embedding": [
+                1,
+                0
+              ]
+            }
           ],
           "contentChecksum": "checksum-a2",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         },
-        { "write": "resourceDeleted", "resourceId": "res-b" },
+        {
+          "write": "resourceDeleted",
+          "resourceId": "res-b"
+        },
         {
           "write": "resourceDeclined",
           "resourceId": "res-c",
@@ -2383,31 +4824,62 @@
           "chunks": [],
           "contentChecksum": "checksum-d2",
           "mediaType": "text/markdown",
-          "entityTypes": ["Place"]
+          "entityTypes": [
+            "Place"
+          ]
         }
       ],
       "reads": [
-        { "read": "counted", "answers": 1 },
+        {
+          "read": "counted",
+          "answers": 1
+        },
         {
           "read": "resourcesSearched",
-          "embedding": [1, 0],
+          "embedding": [
+            1,
+            0
+          ],
           "limit": 10,
           "answers": [
-            { "score": 1.000000, "resourceId": "res-a", "text": "the chunk of a", "entityTypes": ["Place"] }
+            {
+              "score": 1,
+              "resourceId": "res-a",
+              "text": "the chunk of a",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           ]
         },
         {
           "read": "stampsListed",
           "answers": {
-            "res-a": { "contentChecksum": "checksum-a2", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+            "res-a": {
+              "contentChecksum": "checksum-a2",
+              "mediaType": "text/markdown",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         },
-        { "read": "stampRead", "resourceId": "res-c" },
-        { "read": "stampRead", "resourceId": "res-d" },
+        {
+          "read": "stampRead",
+          "resourceId": "res-c"
+        },
+        {
+          "read": "stampRead",
+          "resourceId": "res-d"
+        },
         {
           "read": "declinedListed",
           "answers": {
-            "res-c": { "contentChecksum": "checksum-c2", "mediaType": "image/tiff", "reason": "no text was read from the image" }
+            "res-c": {
+              "contentChecksum": "checksum-c2",
+              "mediaType": "image/tiff",
+              "reason": "no text was read from the image"
+            }
           }
         }
       ]

@@ -24,7 +24,9 @@
       "params": "./RootsInitParams.json",
       "result": "./RootsInitResult.json",
       "exclusive": true,
-      "sends": ["notifications/progress"],
+      "sends": [
+        "notifications/progress"
+      ],
       "docs": "Create and register a new local knowledge base: xynolog init."
     },
     {
@@ -64,7 +66,9 @@
       "params": "./AuthLoginParams.json",
       "result": "./AuthLoginResult.json",
       "exclusive": true,
-      "sends": ["notifications/userAction"],
+      "sends": [
+        "notifications/userAction"
+      ],
       "docs": "Sign in at the issuer a stack's knowledge base trusts, by the device grant, and keep the session in the launcher's store: xynolog login. Exclusive while it finds the stack; the wait for the person is not."
     },
     {
@@ -96,7 +100,9 @@
       "params": "./LogsFollowParams.json",
       "result": "./LogsFollowResult.json",
       "exclusive": true,
-      "sends": ["notifications/log"],
+      "sends": [
+        "notifications/log"
+      ],
       "docs": "Follow a stack's service logs until the client cancels or every source ends: xynolog logs. Exclusive while it finds the containers; the follow is not."
     },
     {
@@ -141,9 +147,29 @@
     }
   ],
   "notifications": [
-    {"name": "notifications/progress", "from": "launcher", "params": "./Progress.json", "docs": "A line of what a request is doing."},
-    {"name": "notifications/userAction", "from": "launcher", "params": "./UserAction.json", "docs": "A sign-in waits for a person to enter a code."},
-    {"name": "notifications/log", "from": "launcher", "params": "./LogRecord.json", "docs": "A line a followed service wrote."},
-    {"name": "notifications/cancelled", "from": "client", "params": "./Cancelled.json", "docs": "The client gives up on a request."}
+    {
+      "name": "notifications/progress",
+      "from": "launcher",
+      "params": "./Progress.json",
+      "docs": "A line of what a request is doing."
+    },
+    {
+      "name": "notifications/userAction",
+      "from": "launcher",
+      "params": "./UserAction.json",
+      "docs": "A sign-in waits for a person to enter a code."
+    },
+    {
+      "name": "notifications/log",
+      "from": "launcher",
+      "params": "./LogRecord.json",
+      "docs": "A line a followed service wrote."
+    },
+    {
+      "name": "notifications/cancelled",
+      "from": "client",
+      "params": "./Cancelled.json",
+      "docs": "The client gives up on a request."
+    }
   ]
 }

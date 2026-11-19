@@ -3,7 +3,9 @@
   "properties": {
     "referencedBy": {
       "type": "array",
-      "items": { "$ref": "./GetReferencedByResponseReferencedByItem.json" }
+      "items": {
+        "$ref": "./GetReferencedByResponseReferencedByItem.json"
+      }
     }
   },
   "required": [

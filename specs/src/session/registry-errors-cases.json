@@ -4,28 +4,55 @@
     {
       "why": "a session's own error said while its factory builds it, before the registry has read anything, is said on the registry's errors",
       "while": "opening",
-      "said": [{ "own": "session.keep-failed" }],
-      "registryErrors": ["session.keep-failed"]
+      "said": [
+        {
+          "own": "session.keep-failed"
+        }
+      ],
+      "registryErrors": [
+        "session.keep-failed"
+      ]
     },
     {
       "why": "a failure of a session's transport said while its factory builds it, before the registry has read anything, is read as any other: a refusal for lack of permission is said through the session's signals",
       "while": "opening",
-      "said": [{ "transport": "forbidden", "message": "not yours to open" }],
+      "said": [
+        {
+          "transport": "forbidden",
+          "message": "not yours to open"
+        }
+      ],
       "registryErrors": [],
       "permissionDenied": "not yours to open"
     },
     {
       "why": "each of an active session's own errors is said on the registry's errors, in the order the session said them",
       "while": "active",
-      "said": [{ "own": "session.save-refused" }, { "own": "session.keep-failed" }],
-      "registryErrors": ["session.save-refused", "session.keep-failed"]
+      "said": [
+        {
+          "own": "session.save-refused"
+        },
+        {
+          "own": "session.keep-failed"
+        }
+      ],
+      "registryErrors": [
+        "session.save-refused",
+        "session.keep-failed"
+      ]
     },
     {
       "why": "a refusal for want of a valid token is its transport's to renew: the registry renews nothing for it, and says it neither on its errors nor through a signal: once a refusal for lack of permission read after it is said, nothing else has been",
       "while": "active",
       "said": [
-        { "transport": "unauthorized", "message": "the gateway refuses the token" },
-        { "transport": "forbidden", "message": "read after the refusal" }
+        {
+          "transport": "unauthorized",
+          "message": "the gateway refuses the token"
+        },
+        {
+          "transport": "forbidden",
+          "message": "read after the refusal"
+        }
       ],
       "registryErrors": [],
       "permissionDenied": "read after the refusal"
@@ -33,7 +60,12 @@
     {
       "why": "a refusal for lack of permission is said through the session's signals, with the failure's message as its detail, and is neither said on the registry's errors nor renews the session",
       "while": "active",
-      "said": [{ "transport": "forbidden", "message": "not yours to read" }],
+      "said": [
+        {
+          "transport": "forbidden",
+          "message": "not yours to read"
+        }
+      ],
       "registryErrors": [],
       "permissionDenied": "not yours to read"
     },
@@ -41,10 +73,22 @@
       "why": "a failure of the transport for any other reason is not said on the registry's errors, renews nothing and is said through no signal: once a refusal for lack of permission read after them is said, nothing else has been",
       "while": "active",
       "said": [
-        { "transport": "unavailable", "message": "the gateway cannot be reached" },
-        { "transport": "not-found", "message": "no such resource" },
-        { "transport": "error", "message": "the gateway failed" },
-        { "transport": "forbidden", "message": "read after the others" }
+        {
+          "transport": "unavailable",
+          "message": "the gateway cannot be reached"
+        },
+        {
+          "transport": "not-found",
+          "message": "no such resource"
+        },
+        {
+          "transport": "error",
+          "message": "the gateway failed"
+        },
+        {
+          "transport": "forbidden",
+          "message": "read after the others"
+        }
       ],
       "registryErrors": [],
       "permissionDenied": "read after the others"
@@ -53,11 +97,21 @@
       "why": "a session says its own errors and its transport's failures on one stream, in the order it met them: once the own error said after a refusal for lack of permission is said on the registry's errors, that refusal has been said through the session's signals, and the own error before it on the registry's errors. A client that cannot keep keeps nothing more, so its refused save comes first",
       "while": "active",
       "said": [
-        { "own": "session.save-refused" },
-        { "transport": "forbidden", "message": "between two of its own" },
-        { "own": "session.keep-failed" }
+        {
+          "own": "session.save-refused"
+        },
+        {
+          "transport": "forbidden",
+          "message": "between two of its own"
+        },
+        {
+          "own": "session.keep-failed"
+        }
       ],
-      "registryErrors": ["session.save-refused", "session.keep-failed"],
+      "registryErrors": [
+        "session.save-refused",
+        "session.keep-failed"
+      ],
       "permissionDenied": "between two of its own"
     }
   ],
@@ -65,7 +119,9 @@
     {
       "why": "a registry's close reads its active session's errors to their end: the save its client owes, still waiting out its debounce, which the storage refuses as the client's closing flush makes it once, is said on the registry's errors once before they end",
       "owed": true,
-      "registryErrors": ["session.save-refused"]
+      "registryErrors": [
+        "session.save-refused"
+      ]
     },
     {
       "why": "a registry whose active session's client owes nothing says nothing as it closes, and its errors end",

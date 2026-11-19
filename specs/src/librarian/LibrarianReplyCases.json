@@ -91,7 +91,10 @@
                 }
               },
               "suggestions": {
-                "type": ["array", "null"],
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "description": "The suggestions read, or null where none is read.",
                 "minItems": 1,
                 "maxItems": 3,

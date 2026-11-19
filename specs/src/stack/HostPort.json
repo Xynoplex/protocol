@@ -15,6 +15,9 @@
       "description": "The port it listens on."
     }
   },
-  "required": ["host", "port"],
+  "required": [
+    "host",
+    "port"
+  ],
   "additionalProperties": false
 }

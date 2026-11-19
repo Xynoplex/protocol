@@ -18,7 +18,10 @@
           "description": "The maximum number of IDs held in this Gateway's local tracking projection."
         }
       },
-      "required": ["claims", "capacity"],
+      "required": [
+        "claims",
+        "capacity"
+      ],
       "additionalProperties": false
     },
     "queue": {
@@ -46,7 +49,10 @@
           "description": "Jobs finally failed since worker start."
         }
       },
-      "required": ["pending", "running"],
+      "required": [
+        "pending",
+        "running"
+      ],
       "additionalProperties": false
     }
   },
