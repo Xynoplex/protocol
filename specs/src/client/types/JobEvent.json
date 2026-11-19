@@ -19,7 +19,8 @@
       "required": [
         "kind",
         "data"
-      ]
+      ],
+      "additionalProperties": false
     },
     {
       "type": "object",
@@ -38,7 +39,8 @@
       "required": [
         "kind",
         "data"
-      ]
+      ],
+      "additionalProperties": false
     },
     {
       "type": "object",
@@ -57,7 +59,8 @@
       "required": [
         "kind",
         "data"
-      ]
+      ],
+      "additionalProperties": false
     },
     {
       "type": "object",
@@ -88,13 +91,15 @@
             "channel",
             "member",
             "reason"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
         "kind",
         "data"
-      ]
+      ],
+      "additionalProperties": false
     },
     {
       "type": "object",
@@ -113,7 +118,8 @@
       "required": [
         "kind",
         "data"
-      ]
+      ],
+      "additionalProperties": false
     }
   ],
   "discriminator": {

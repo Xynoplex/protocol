@@ -1,22 +1,29 @@
 {
   "title": "QuotedText",
-  "type": "object",
   "description": "Words of a text, as a selection quotes them: the words themselves, and maybe the text just before and just after them, which tell apart the places they occur.",
-  "properties": {
-    "exact": {
-      "type": "string",
-      "description": "The words quoted."
-    },
-    "prefix": {
-      "type": "string",
-      "description": "The text just before them."
-    },
-    "suffix": {
-      "type": "string",
-      "description": "The text just after them."
+  "$ref": "#/$defs/Members",
+  "unevaluatedProperties": false,
+  "$defs": {
+    "Members": {
+      "type": "object",
+      "description": "QuotedText's members, open, for a schema that holds them and more of its own.",
+      "properties": {
+        "exact": {
+          "type": "string",
+          "description": "The words quoted."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "The text just before them."
+        },
+        "suffix": {
+          "type": "string",
+          "description": "The text just after them."
+        }
+      },
+      "required": [
+        "exact"
+      ]
     }
-  },
-  "required": [
-    "exact"
-  ]
+  }
 }

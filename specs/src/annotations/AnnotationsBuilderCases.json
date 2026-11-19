@@ -121,13 +121,13 @@
                     "description": "Where it is said to end, which need not be a whole number, nor at or after its start."
                   },
                   "exact": {
-                    "$ref": "../client/types/QuotedText.json#/properties/exact"
+                    "$ref": "../client/types/QuotedText.json#/$defs/Members/properties/exact"
                   },
                   "prefix": {
-                    "$ref": "../client/types/QuotedText.json#/properties/prefix"
+                    "$ref": "../client/types/QuotedText.json#/$defs/Members/properties/prefix"
                   },
                   "suffix": {
-                    "$ref": "../client/types/QuotedText.json#/properties/suffix"
+                    "$ref": "../client/types/QuotedText.json#/$defs/Members/properties/suffix"
                   }
                 },
                 "required": [

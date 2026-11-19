@@ -13,6 +13,13 @@
  (libraries xynolog_protocol_schema alcotest))
 
 (test
+ (name validate)
+ (modules validate)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol yojson alcotest))
+
+(test
  (name pattern)
  (modules pattern)
  (flags

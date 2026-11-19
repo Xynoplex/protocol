@@ -379,10 +379,10 @@ let () =
     "/properties/start: carries an offset or a length of text, and its \
      description does not say that it counts code points";
   changed specs ~why:"loses a member that carries an offset"
-    "client/types/TextSpan.json" "allOf/0/properties"
+    "client/types/TextSpan.json" "$defs/Members/allOf/0/properties"
     (members (List.remove_assoc "end"))
-    "/allOf/0/properties/end: is listed as carrying an offset or a length of \
-     text, and is not there";
+    "/$defs/Members/allOf/0/properties/end: is listed as carrying an offset \
+     or a length of text, and is not there";
   changed specs ~why:"has a new description speak of characters"
     "components/schemas/UnitCursor.json" "properties/size/description"
     (fun _ -> `String "How many characters the piece was cut at.")

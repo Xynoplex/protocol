@@ -28,8 +28,8 @@ let members =
     ("components/schemas/UnitCursor.json", "/properties/next");
     ( "components/schemas/GatherAnnotationOptions.json",
       "/properties/contextWindow" );
-    ("client/types/TextSpan.json", "/allOf/0/properties/start");
-    ("client/types/TextSpan.json", "/allOf/0/properties/end");
+    ("client/types/TextSpan.json", "/$defs/Members/allOf/0/properties/start");
+    ("client/types/TextSpan.json", "/$defs/Members/allOf/0/properties/end");
   ]
 
 let counting_tables =
