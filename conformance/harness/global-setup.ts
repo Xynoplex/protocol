@@ -1,6 +1,7 @@
 /**
  * Once per run: bundle the specs the suite checks against — the gateway's API,
- * and the Archivist's HTTP surface its stand-in Archivist is held to — and
+ * the Archivist's HTTP surface its stand-in Archivist is held to, and the
+ * services' own schemas the suites read (services-document.ts) — and
  * refuse to start when the required NATS broker is missing. Consumer commands
  * and implementations are supplied by the manifest.
  *
@@ -13,6 +14,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { TestProject } from 'vitest/node';
+import { writeServicesDocument } from './services-document';
 import type { Implementations } from './implementations';
 import { REPO_ROOT } from './paths';
 
@@ -23,6 +25,7 @@ declare module 'vitest' {
     dispatcherCommand: Implementations['dispatcher'];
     specPath: string;
     archivistSpecPath: string;
+    servicesSpecPath: string;
   }
 }
 
@@ -41,5 +44,6 @@ export default function setup(project: TestProject): () => void {
   };
   project.provide('specPath', bundle('specs/src/openapi.json', 'openapi.json'));
   project.provide('archivistSpecPath', bundle('specs/src/archivist/openapi.json', 'archivist.openapi.json'));
+  project.provide('servicesSpecPath', bundle(writeServicesDocument(), 'services.openapi.json'));
   return () => rmSync(dir, { recursive: true, force: true });
 }

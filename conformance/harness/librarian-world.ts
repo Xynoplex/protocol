@@ -29,7 +29,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import neo4j, { type Driver } from 'neo4j-driver';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import { kbDid, type Annotation, type components, type EventMap, type ResourceDescriptor } from './protocol-core';
+import { kbDid, type Annotation, type components, type EventMap, type ResourceDescriptor, type services } from './protocol-core';
 import { ArchivistWorld, sha256, unstamped, type BusClient } from './archivist-world';
 import {
   refusedLibrarianBoot,
@@ -237,13 +237,13 @@ export class LibrarianWorld {
       if (said !== undefined) signals.violations.push(`${frame.channel} carried a payload that is ${said}: ${JSON.stringify(frame.payload).slice(0, 400)}`);
     });
 
-    const graph: components['schemas']['Neo4jGraphConfig'] = { type: 'neo4j', uri: `bolt://${graphDatabase.host}:7687`, username: 'neo4j', database: 'neo4j', passwordEnv: GRAPH_PASSWORD };
+    const graph: services['schemas']['Neo4jGraphConfig'] = { type: 'neo4j', uri: `bolt://${graphDatabase.host}:7687`, username: 'neo4j', database: 'neo4j', passwordEnv: GRAPH_PASSWORD };
     const served = kb.world.served;
     const gatewayUrl = kb.world.origin;
     const issuer = kb.world.issuer.origin;
     const archivist = { host: '127.0.0.1', port: kb.settings.port };
     const did = kbDid(served.domain);
-    const vectors: components['schemas']['QdrantVectorsConfig'] = { type: 'qdrant', host: vectorDatabase.host, port: QDRANT_PORT, tokenEnv: VECTORS_TOKEN };
+    const vectors: services['schemas']['QdrantVectorsConfig'] = { type: 'qdrant', host: vectorDatabase.host, port: QDRANT_PORT, tokenEnv: VECTORS_TOKEN };
     const claims = claimsFor(did);
     const world = new LibrarianWorld({
       kb,

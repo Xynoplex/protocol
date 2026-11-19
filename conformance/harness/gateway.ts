@@ -11,7 +11,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { components } from './protocol-core';
+import type { services } from './protocol-core';
 import { inject } from 'vitest';
 import { freePort } from './net';
 import { runEnvironment } from './paths';
@@ -19,7 +19,7 @@ import { serviceEnvironment } from './spec';
 
 export type Plane = 'in-process' | 'nats';
 
-type Document = components['schemas']['GatewayConfig'];
+type Document = services['schemas']['GatewayConfig'];
 
 /** Everything a gateway is configured with: the document, with the fields a case may delete optional. */
 export interface GatewaySettings extends Omit<Document, 'kb' | 'identity' | 'archivist' | 'capacity'> {

@@ -13,13 +13,13 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { components } from './protocol-core';
+import type { services } from './protocol-core';
 import { inject } from 'vitest';
 import { call, type CallOptions, type Reply } from './http';
 import { runEnvironment } from './paths';
 import { serviceEnvironment } from './spec';
 
-export type ArchivistSettings = components['schemas']['ArchivistConfig'];
+export type ArchivistSettings = services['schemas']['ArchivistConfig'];
 
 export interface ArchivistEnvironment {
   XYNOLOG_OIDC_CLIENT_ID?: string;
