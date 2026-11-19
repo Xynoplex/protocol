@@ -17,7 +17,7 @@
     "declined": {
       "allOf": [
         {
-          "$ref": "./ExtractionDeclinedReason.json"
+          "$ref": "../components/schemas/ExtractionDeclinedReason.json"
         }
       ],
       "description": "Why extraction yielded nothing, by class."

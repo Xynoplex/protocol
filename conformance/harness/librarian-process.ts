@@ -18,7 +18,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { components } from './protocol-core';
+import type { services } from './protocol-core';
 import { collectLines } from './gateway';
 import { call } from './http';
 import { MODEL_CATALOGUE, runEnvironment } from './paths';
@@ -90,7 +90,7 @@ export interface LibrarianProcess {
 
 // ── The settings, as the document a Librarian reads ────────────────────────
 
-type LibrarianDocument = components['schemas']['LibrarianConfig'];
+type LibrarianDocument = services['schemas']['LibrarianConfig'];
 
 /** The document as a case may leave it: any member left out, and `identity` without its issuer. */
 type WrittenDocument = {

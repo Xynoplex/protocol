@@ -355,11 +355,159 @@ let load root =
               (Validate.errors schema_at schema json ""))
       tables_here
   in
+  (* D9: the gateway's document is the public API. It lists every component
+     schema and discovery's, and nothing else; a component refers to
+     components alone, and so does a gateway route; and a component only
+     Archivist's document reaches is Archivist's own. *)
+  let target reference = fst (Decode.resolve reference) in
+  let is_schema file =
+    match Hashtbl.find_opt decoded file with
+    | Some (Schema_file, _) -> true
+    | _ -> false
+  in
+  let written_in = Hashtbl.create 1024 in
+  List.iter
+    (fun (reference : Decode.reference) ->
+      Hashtbl.add written_in reference.file reference)
+    !references;
+  let refers file = Hashtbl.find_all written_in file in
+  let reach roots =
+    let seen = Hashtbl.create 256 in
+    let rec visit file =
+      if not (Hashtbl.mem seen file) then (
+        Hashtbl.replace seen file ();
+        List.iter (fun reference -> visit (target reference)) (refers file))
+    in
+    List.iter visit roots;
+    seen
+  in
+  let routes (document : Openapi.document) =
+    let items =
+      List.map (fun (_, reference) -> target reference) document.paths
+    in
+    items
+    @ List.map target
+        (component_responses document
+        @ List.concat_map
+            (fun file ->
+              match List.assoc_opt file path_items with
+              | Some item -> operation_responses item
+              | None -> [])
+            items)
+  in
+  let gateway_routes = routes gateway in
+  let listed =
+    List.map (fun (_, reference) -> target reference) gateway.components.schemas
+  in
+  let unlisted =
+    List.filter_map
+      (fun file ->
+        if
+          Places.is_component file
+          && Filename.check_suffix file ".json"
+          && not (List.mem file listed)
+        then
+          Some
+            (refusal file ""
+               "is a component schema, and the gateway's document does not \
+                list it")
+        else None)
+      files
+  in
+  let listed_elsewhere =
+    List.filter_map
+      (fun (_, (reference : Decode.reference)) ->
+        let file = target reference in
+        if
+          Places.is_component file
+          || String.starts_with ~prefix:Places.discovery file
+        then None
+        else
+          Some
+            (refused_at reference
+               (Printf.sprintf
+                  "lists %s, which is neither a component schema nor \
+                   discovery's: the gateway's document lists the public \
+                   schemas alone"
+                  reference.target)))
+      gateway.components.schemas
+  in
+  let leaves_components =
+    List.filter_map
+      (fun (reference : Decode.reference) ->
+        if
+          Places.is_component reference.file
+          && not (Places.is_component (target reference))
+        then
+          Some
+            (refused_at reference
+               (Printf.sprintf
+                  "names %s, outside components/schemas: a component schema \
+                   refers to component schemas alone"
+                  reference.target))
+        else None)
+      (List.rev !references)
+  in
+  let route_leaves =
+    List.concat_map
+      (fun file ->
+        List.filter_map
+          (fun (reference : Decode.reference) ->
+            let named = target reference in
+            if is_schema named && not (Places.is_component named) then
+              Some
+                (refused_at reference
+                   (Printf.sprintf
+                      "names %s, outside components/schemas: what a gateway \
+                       route uses is a component schema"
+                      reference.target))
+            else None)
+          (List.rev (refers file)))
+      (List.sort_uniq compare gateway_routes)
+  in
+  let bus =
+    List.concat_map
+      (fun (channel : Tables.Bus_registry.channels_item) ->
+        match channel with
+        | Schema { schema; validate; _ } | Envelope { schema; validate; _ } ->
+            schema :: Option.to_list validate
+        | Stored_event { payload; validate; _ } ->
+            payload :: Option.to_list validate
+        | Void { validate; _ } | Empty { validate; _ } ->
+            Option.to_list validate)
+      tables.bus_registry.channels
+    |> List.map (fun name -> Places.components ^ name ^ ".json")
+  in
+  let public = reach (gateway_routes @ bus) in
+  let archivists =
+    reach
+      (routes archivist
+      @ List.map
+          (fun (_, reference) -> target reference)
+          archivist.components.schemas)
+  in
+  let archivists_alone =
+    Hashtbl.fold
+      (fun file () found ->
+        if Places.is_component file && not (Hashtbl.mem public file) then
+          refusal file ""
+            "is reached by Archivist's document alone, not by a gateway route \
+             or the bus: it is Archivist's own, so its place is archivist/"
+          :: found
+        else found)
+      archivists []
+    |> List.sort compare
+  in
+  let public_api =
+    unlisted @ listed_elsewhere @ leaves_components @ route_leaves
+    @ archivists_alone
+  in
   let client_surface =
     Client_surface.refusals ~read_json ~schema_at tables.client_surface
   in
   let census =
-    census @ stray_case_tables @ orphan_schemas @ validation @ client_surface
+    census @ stray_case_tables @ orphan_schemas @ validation @ public_api
+    @ client_surface
   in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->

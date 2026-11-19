@@ -21,7 +21,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import { kbDid, type components } from './protocol-core';
+import { kbDid, type components, type services } from './protocol-core';
 import { ArchivistWorld, sha256, shardOf, unstamped, type Answer, type BusClient } from './archivist-world';
 import { eventually } from './net';
 import { startOllamaEmbed, type StandInEmbedder } from './ollama-embed';
@@ -37,7 +37,7 @@ import {
   type SmelterProcess,
   type SmelterSettings,
 } from './smelter-process';
-import { errorsOf, spec } from './spec';
+import { errorsOf, servicesSpec, spec } from './spec';
 import type { BusStream } from './stream';
 import { endCase } from './world';
 
@@ -54,7 +54,7 @@ const PERSON = 'ada';
 export type Settled = components['schemas']['SmeltSettled'];
 
 /** One entry of the anchored-text store. */
-export type AnchoredTextEntry = components['schemas']['AnchoredTextEntry'];
+export type AnchoredTextEntry = services['schemas']['AnchoredTextEntry'];
 
 /** What a case may change of how the world's Smelter is launched. */
 type Change = Partial<Pick<SmelterLaunch, 'settings' | 'env'>>;
@@ -414,7 +414,7 @@ export class SmelterWorld {
     const path = this.entryPath(checksum);
     if (!existsSync(path)) return undefined;
     const parsed: unknown = JSON.parse(readFileSync(path, 'utf8'));
-    const validate = spec().component('AnchoredTextEntry');
+    const validate = servicesSpec().component('AnchoredTextEntry');
     if (!validate(parsed)) throw new Error(`${path} is not an AnchoredTextEntry (${errorsOf(validate)})`);
     return parsed as AnchoredTextEntry;
   }
