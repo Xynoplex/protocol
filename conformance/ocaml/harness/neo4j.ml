@@ -20,12 +20,35 @@ type t = {
 let bolt_port = 7687
 let http_port = 7474
 
+(* The database that holds a knowledge base's graph: `kb-` and the first 60
+   lower-case hex digits of the SHA-256 of its DID, as
+   graph/database-cases.json says, and held to each of its cases on first
+   use. *)
+let database_arithmetic kb =
+  "kb-" ^ String.sub Digestif.SHA256.(to_hex (digest_string kb)) 0 60
+
+let databases_checked =
+  lazy
+    (List.iter
+       (fun (c : Xynolog_protocol.Tables.Graph_database_cases.cases_item) ->
+         if database_arithmetic c.kb <> c.database then
+           failwith
+             (Printf.sprintf
+                "graph/database-cases.json: \"%s\": the arithmetic gives %s, \
+                 the case says %s"
+                c.why (database_arithmetic c.kb) c.database))
+       (Protocol.tables ()).graph_database_cases.cases)
+
+let database_of kb =
+  Lazy.force databases_checked;
+  database_arithmetic kb
+
 let failed what error =
   failwith
     (Printf.sprintf "neo4j: %s: %s" what
        (Neodriver_core.Errors.to_string error))
 
-let connect ~host ~password =
+let connect ~host ~password ~database =
   let user = "neo4j" in
   let uri = Printf.sprintf "bolt://%s:%d" host bolt_port in
   match
@@ -36,7 +59,7 @@ let connect ~host ~password =
       (Eio.Stdenv.mono_clock (Run.env ()))
       (Run.sw ())
   with
-  | Ok driver -> { host; user; password; database = "neo4j"; driver }
+  | Ok driver -> { host; user; password; database; driver }
   | Error error -> failed ("connecting to " ^ uri) error
 
 let close t = Driver.close t.driver

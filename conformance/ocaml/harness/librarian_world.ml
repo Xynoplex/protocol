@@ -551,7 +551,7 @@ let assemble (implementations : Implementations.t) command =
           `String
             (Printf.sprintf "bolt://%s:%d" stores.graph_host Neo4j.bolt_port) );
         ("username", `String "neo4j");
-        ("database", `String "neo4j");
+        ("database", `String (Neo4j.database_of kb.world.kb.did));
         ("passwordEnv", `String graph_password);
       ]
   in
@@ -691,7 +691,8 @@ let assemble (implementations : Implementations.t) command =
       index = Qdrant.index stores.vectors did;
       graph =
         Neo4j.connect ~host:stores.graph_host
-          ~password:stores.graph_password_value;
+          ~password:stores.graph_password_value
+          ~database:(Neo4j.database_of did);
       signals;
       librarian = None;
       weaver_process = None;

@@ -317,7 +317,10 @@ let reads_otlp () =
 
 let graph_of_suite () =
   match (Sys.getenv_opt "NEO4J_HOST", Sys.getenv_opt "NEO4J_PASSWORD") with
-  | Some host, Some password -> Neo4j.connect ~host ~password
+  | Some host, Some password ->
+      Neo4j.connect ~host ~password
+        ~database:
+          (Neo4j.database_of (Protocol.kb_identity Protocol.suite_kb).did)
   | _ ->
       failwith
         "this case reads the librarian suite's neo4j: NEO4J_HOST and \
