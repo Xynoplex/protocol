@@ -6,6 +6,7 @@
 import { randomUUID } from 'node:crypto';
 import { highlight, type Annotation, type BusClient } from '../harness/archivist-world';
 import { eventually } from '../harness/net';
+import { mintedJobId } from '../harness/protocol-core';
 import type { WeaverWorld } from '../harness/weaver-world';
 
 export const TEXT = 'The quick brown fox jumps over the lazy dog.\n';
@@ -57,7 +58,7 @@ export function whole(resourceId: string, exact: string): Annotation {
  * the write; the record says who asked.
  */
 export async function delegated(world: WeaverWorld, requester: BusClient, worker: BusClient, resourceId: string, annotation: Annotation): Promise<void> {
-  const jobId = `job-${randomUUID()}`;
+  const jobId = mintedJobId();
   const dispatcher = await world.kb.sidecar('dispatcher');
   await dispatcher.emit('job:assign', { jobId, jobType: 'mark', resourceId, holder: worker.did, requester: requester.did });
   await eventually('the assignment to be recorded', 10_000, () => world.kb.stored(resourceId).find((event) => event.type === 'job:assigned' && event.payload['jobId'] === jobId));

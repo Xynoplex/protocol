@@ -4,6 +4,7 @@
  * bundled OpenAPI document, the validators compile its schemas, and the
  * bus subject comes from the job-storage specification.
  */
+import { randomUUID } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ErrorObject } from 'ajv';
@@ -26,6 +27,8 @@ export type EventMap = BusPayloads<components['schemas']>;
 export const resourceId = (value: string): ResourceId => value as ResourceId;
 export const annotationId = (value: string): AnnotationId => value as AnnotationId;
 export const kbDid = (domain: string): string => `did:web:${domain}`;
+/** A job's id as the dispatcher mints one at admission (JOBS.md, JobMetadata.json): `job-` and a version 4 UUID as 32 lower-case hex digits. */
+export const mintedJobId = (): string => `job-${randomUUID().replaceAll('-', '')}`;
 
 export const JOBS_STREAM_SUBJECTS = [`${jobsStorage.stream.subjectRoot}.>`] as const;
 

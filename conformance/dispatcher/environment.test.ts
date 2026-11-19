@@ -17,6 +17,7 @@ import { describe, expect, it } from 'vitest';
 import type { DispatcherEnvironment } from '../harness/dispatcher';
 import { DispatcherWorld } from '../harness/dispatcher-world';
 import { eventually } from '../harness/net';
+import { mintedJobId } from '../harness/protocol-core';
 import { startOtlp, type OtlpReceiver, type ReceivedSpan } from '../harness/otlp';
 import { metricName } from '../harness/spec';
 
@@ -43,7 +44,7 @@ async function withDispatcherEnv(
 
 /** Make the dispatcher answer one request. */
 async function ask(world: DispatcherWorld): Promise<void> {
-  const answer = await (await world.person('environment')).status(`job-${randomUUID().replaceAll('-', '')}`);
+  const answer = await (await world.person('environment')).status(mintedJobId());
   expect(answer.channel).toBe(FAILURE);
 }
 
