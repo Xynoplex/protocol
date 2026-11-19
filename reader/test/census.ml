@@ -41,6 +41,39 @@ let members f = function
   | `Assoc members -> `Assoc (f members)
   | _ -> failwith "not an object"
 
+(* Every "$ref" in [json] that names [from] names [onto] instead. *)
+let rec repoint ~from ~onto = function
+  | `Assoc members ->
+      `Assoc
+        (List.map
+           (function
+             | "$ref", `String target when target = from ->
+                 ("$ref", `String onto)
+             | name, value -> (name, repoint ~from ~onto value))
+           members)
+  | `List values -> `List (List.map (repoint ~from ~onto) values)
+  | value -> value
+
+(* The gateway's document's listing, changed. *)
+let gateway_listing copied change =
+  rewrite
+    (Filename.concat copied "openapi.json")
+    (members
+       (List.map (function
+         | "components", components ->
+             ( "components",
+               members
+                 (List.map (function
+                   | "schemas", `Assoc schemas ->
+                       ("schemas", `Assoc (change schemas))
+                   | member -> member))
+                 components )
+         | member -> member)))
+
+let list_in_gateway copied name target =
+  gateway_listing copied (fun schemas ->
+      schemas @ [ (name, `Assoc [ ("$ref", `String target) ]) ])
+
 let () =
   let specs =
     match Sys.argv with
@@ -111,8 +144,60 @@ let () =
                      :: rest) )
              | member -> member))))
     "jobs/retry-cases.json: /cases/0/retryCount: is less than 0";
+  refused specs
+    ~why:"has a component a route uses that the gateway does not list"
+    (fun copied -> gateway_listing copied (List.remove_assoc "HealthResponse"))
+    "components/schemas/HealthResponse.json: /: is a component schema, and the \
+     gateway's document does not list it";
+  refused specs ~why:"has a service's schema listed by the gateway"
+    (fun copied ->
+      list_in_gateway copied "WorkerConfig" "worker/WorkerConfig.json")
+    "openapi.json: /components/schemas/WorkerConfig/$ref: lists \
+     worker/WorkerConfig.json, which is neither a component schema nor \
+     discovery's: the gateway's document lists the public schemas alone";
+  refused specs ~why:"has a gateway route that uses a service's schema"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "paths/api_health.json")
+        (repoint ~from:"../components/schemas/HealthResponse.json"
+           ~onto:"../dispatcher/DispatcherHealth.json"))
+    "paths/api_health.json: \
+     /get/responses/200/content/application~1json/schema/$ref: names \
+     ../dispatcher/DispatcherHealth.json, outside components/schemas: what a \
+     gateway route uses is a component schema";
+  refused specs ~why:"has a component schema that refers into a service's area"
+    (fun copied ->
+      write
+        (Filename.concat copied "components/schemas/Stray.json")
+        {|{"$ref":"../../worker/WorkerConfig.json"}|};
+      list_in_gateway copied "Stray" "components/schemas/Stray.json")
+    "components/schemas/Stray.json: /$ref: names \
+     ../../worker/WorkerConfig.json, outside components/schemas: a component \
+     schema refers to component schemas alone";
+  refused specs ~why:"has Archivist's own schema put back among the components"
+    (fun copied ->
+      let at = Filename.concat copied in
+      Sys.rename
+        (at "archivist/ArchivistHealth.json")
+        (at "components/schemas/ArchivistHealth.json");
+      rewrite
+        (at "archivist/paths/health.json")
+        (repoint ~from:"../ArchivistHealth.json"
+           ~onto:"../../components/schemas/ArchivistHealth.json");
+      rewrite
+        (at "archivist/openapi.json")
+        (repoint ~from:"./ArchivistHealth.json"
+           ~onto:"../components/schemas/ArchivistHealth.json");
+      list_in_gateway copied "ArchivistHealth"
+        "components/schemas/ArchivistHealth.json")
+    "components/schemas/ArchivistHealth.json: /: is reached by Archivist's \
+     document alone, not by a gateway route or the bus: it is Archivist's own, \
+     so its place is archivist/";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
      missing path item, a table without its schema, a schema without its \
-     table, a case table off an area's top, or a value its schema refuses"
+     table, a case table off an area's top, a value its schema refuses, a \
+     component the gateway does not list, a service's schema it lists, a \
+     gateway route or a component that refers into a service's area, or \
+     Archivist's own schema among the components"
