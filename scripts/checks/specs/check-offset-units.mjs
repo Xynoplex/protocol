@@ -18,6 +18,8 @@
 //     schema (one at the top of an area that is no table's) speaks of an
 //     offset, of characters, or of code units, and does not say "code points". A member
 //     added beside the listed ones is held by this, whatever it is called;
+//   - a table's schema, named here as reader/schema/places.ml names it, is not
+//     there: this check's copy of that rule no longer agrees with the reader's;
 //   - a case table listed below, whose cases count offsets or lengths of text,
 //     has no character outside the Basic Multilingual Plane: only such a
 //     character tells a count of code points from one of UTF-16 code units or
@@ -25,7 +27,7 @@
 //
 // It reads the source files, so it cannot pass on a stale bundle.
 
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -71,6 +73,9 @@ const SAYS_THE_UNIT = /code points?/i;
 const SPEAKS_OF_A_COUNT_OF_TEXT = /\boffsets?\b|\bcharacters?\b|\bchars?\b|utf-16|\bcode units?\b/i;
 
 const failures = [];
+for (const schema of tableSchemas) {
+  if (!existsSync(resolve(REPO, schema))) failures.push(`${schema} is not there: this check names a table's schema as reader/schema/places.ml does, and the two no longer agree`);
+}
 /** Every schema by its file, with its name. Two files may share a name (stack/'s and components/' KnowledgeBase). */
 const schemas = new Map(
   DIRECTORIES.flatMap((directory) =>
