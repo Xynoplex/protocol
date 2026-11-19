@@ -31,11 +31,7 @@
         "additionalProperties": false,
         "properties": {
           "scope": {
-            "allOf": [
-              {
-                "$ref": "./ResourceId.json"
-              }
-            ],
+            "$ref": "./ResourceId.json",
             "description": "Resource scope (a resourceId)."
           },
           "channels": {

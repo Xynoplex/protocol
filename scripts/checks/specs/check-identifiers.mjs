@@ -82,16 +82,17 @@ for (const other of others) {
 }
 
 /**
- * The kind a schema refers to: directly, as the items of a list, as the one
- * member of a nullable `allOf`, or as every member of a `oneOf` (one of a
- * kind, or a list of them).
+ * The kind a schema refers to: directly, as the items of a list, or as every
+ * member of a `oneOf` or an `anyOf` but its `{ "type": "null" }` (one of a
+ * kind, or null, or a list of them).
  */
 function referred(schema) {
-  if (Array.isArray(schema?.oneOf) && schema.oneOf.length > 0) {
-    const kinds = new Set(schema.oneOf.map(referred));
+  const union = schema?.oneOf ?? schema?.anyOf;
+  if (Array.isArray(union)) {
+    const kinds = new Set(union.filter((member) => member?.type !== 'null').map(referred));
     return kinds.size === 1 ? [...kinds][0] : undefined;
   }
-  const ref = schema?.$ref ?? schema?.items?.$ref ?? (schema?.allOf?.length === 1 ? schema.allOf[0].$ref : undefined);
+  const ref = schema?.$ref ?? schema?.items?.$ref;
   if (typeof ref !== 'string') return undefined;
   const name = basename(ref, '.json');
   return kindNames.includes(name) ? name : undefined;

@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { Ajv, type ValidateFunction } from 'ajv';
+import { Ajv2020, type ValidateFunction } from 'ajv/dist/2020.js';
 import addFormatsModule from 'ajv-formats';
 import { inject } from 'vitest';
 import { SPEC_SOURCE } from './paths';
@@ -31,26 +31,6 @@ const isObject = (v: unknown): v is JsonObject => typeof v === 'object' && v !==
 
 const SCHEMA_BASE = 'https://spec.local/schemas/';
 
-/** OpenAPI 3.0 `nullable` → draft-07, as the gateway's own validators convert it. */
-function convertNullable(node: Json): void {
-  if (Array.isArray(node)) {
-    node.forEach(convertNullable);
-    return;
-  }
-  if (!isObject(node)) return;
-  if (node['nullable'] === true) {
-    delete node['nullable'];
-    if (typeof node['type'] === 'string') {
-      node['type'] = [node['type'], 'null'];
-    } else {
-      const inner: JsonObject = { ...node };
-      for (const key of Object.keys(node)) delete node[key];
-      node['anyOf'] = [{ type: 'null' }, inner];
-    }
-  }
-  Object.values(node).forEach(convertNullable);
-}
-
 /** `#/components/schemas/X` → an absolute id, so a schema compiles on its own. */
 function absolutize(node: Json): void {
   if (Array.isArray(node)) {
@@ -67,18 +47,17 @@ function absolutize(node: Json): void {
 
 export class Spec {
   readonly doc: JsonObject;
-  private readonly ajv: Ajv;
+  private readonly ajv: Ajv2020;
   private readonly compiled = new Map<string, ValidateFunction>();
 
   constructor(path: string) {
     this.doc = JSON.parse(readFileSync(path, 'utf8')) as JsonObject;
-    this.ajv = new Ajv({ allErrors: true, strict: false });
+    this.ajv = new Ajv2020({ allErrors: true, strict: false });
     addFormats(this.ajv);
     const components = this.doc['components'];
     const schemas = isObject(components) && isObject(components['schemas']) ? components['schemas'] : {};
     for (const [name, schema] of Object.entries(schemas)) {
       const copy = structuredClone(schema);
-      convertNullable(copy);
       absolutize(copy);
       this.ajv.addSchema(copy as object, SCHEMA_BASE + name);
     }
@@ -131,7 +110,6 @@ export class Spec {
     let validate = this.compiled.get(key);
     if (!validate) {
       const copy = structuredClone(schema);
-      convertNullable(copy);
       absolutize(copy);
       validate = this.ajv.compile(copy as object);
       this.compiled.set(key, validate);

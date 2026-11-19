@@ -1,9 +1,9 @@
-(* A JSON Schema as Protocol writes them: OpenAPI 3.0's dialect, and only the
-   keywords, types and formats Protocol uses. A keyword outside that set is
+(* A JSON Schema as Protocol writes them: JSON Schema 2020-12, OpenAPI 3.1's
+   dialect, and only the keywords, types and formats Protocol uses. A keyword outside that set is
    refused, so a spec that starts using one stops the run until the model
    knows it. *)
 
-type type_name = String | Object | Integer | Array | Boolean | Number
+type type_name = String | Object | Integer | Array | Boolean | Number | Null
 type format = Date_time | Uri | Binary
 
 type literal =
@@ -29,8 +29,7 @@ type 'a layer = {
   enum : literal list option;
   const : literal option;
   default : literal option;
-  example : Yojson.Safe.t option;
-  nullable : bool option;
+  examples : Yojson.Safe.t list option;
   properties : (string * 'a) list option;
   required : string list option;
   additional_properties : 'a option;
@@ -68,8 +67,7 @@ let empty : schema =
     enum = None;
     const = None;
     default = None;
-    example = None;
-    nullable = None;
+    examples = None;
     properties = None;
     required = None;
     additional_properties = None;
@@ -107,8 +105,7 @@ let children
       enum = _;
       const = _;
       default = _;
-      example = _;
-      nullable = _;
+      examples = _;
       properties;
       required = _;
       additional_properties;
@@ -251,8 +248,7 @@ let keywords
       enum;
       const;
       default;
-      example;
-      nullable;
+      examples;
       properties;
       required;
       additional_properties;
@@ -286,8 +282,7 @@ let keywords
       is "enum" enum;
       is "const" const;
       is "default" default;
-      is "example" example;
-      is "nullable" nullable;
+      is "examples" examples;
       is "properties" properties;
       is "required" required;
       is "additionalProperties" additional_properties;
@@ -337,6 +332,7 @@ let type_word : type_name -> string = function
   | Array -> "array"
   | Boolean -> "boolean"
   | Number -> "number"
+  | Null -> "null"
 
 let format_word : format -> string = function
   | Date_time -> "date-time"
@@ -363,7 +359,6 @@ let runtime : t -> Yojson.Safe.t =
                s.type_;
              some "format" (fun f -> `String (format_word f)) s.format;
              some "enum" (fun vs -> `List (List.map literal_json vs)) s.enum;
-             some "nullable" (fun b -> `Bool b) s.nullable;
              some "properties" (fun ps -> `Assoc ps) s.properties;
              some "required"
                (fun rs -> `List (List.map (fun r -> `String r) rs))
@@ -393,6 +388,7 @@ let type_name =
       ("array", Array);
       ("boolean", Boolean);
       ("number", Number);
+      ("null", Null);
     ]
 
 let types cursor =
@@ -433,8 +429,9 @@ and schema cursor =
       let enum = Decode.optional o "enum" (Decode.non_empty_list literal) in
       let const = Decode.optional o "const" literal in
       let default = Decode.optional o "default" literal in
-      let example = Decode.optional o "example" Decode.json in
-      let nullable = Decode.optional o "nullable" Decode.bool in
+      let examples =
+        Decode.optional o "examples" (Decode.non_empty_list Decode.json)
+      in
       let properties = Decode.optional o "properties" (Decode.map decode) in
       let required = Decode.optional o "required" (Decode.list Decode.string) in
       let additional_properties =
@@ -467,8 +464,7 @@ and schema cursor =
         enum;
         const;
         default;
-        example;
-        nullable;
+        examples;
         properties;
         required;
         additional_properties;

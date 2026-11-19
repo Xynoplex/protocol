@@ -35,11 +35,9 @@
             "type": "object",
             "properties": {
               "bodySource": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "../components/schemas/ResourceId.json"
-                  }
+                "anyOf": [
+                  { "$ref": "../components/schemas/ResourceId.json" },
+                  { "type": "null" }
                 ]
               },
               "isBodyResolved": {
@@ -49,11 +47,9 @@
                 "$ref": "../components/schemas/ResourceId.json"
               },
               "targetSelector": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "../components/schemas/AnnotationSelector.json"
-                  }
+                "anyOf": [
+                  { "$ref": "../components/schemas/AnnotationSelector.json" },
+                  { "type": "null" }
                 ]
               },
               "isHighlight": {
@@ -72,8 +68,7 @@
                 "type": "boolean"
               },
               "commentText": {
-                "type": "string",
-                "nullable": true
+                "type": ["string", "null"]
               },
               "isStubReference": {
                 "type": "boolean"
@@ -88,11 +83,9 @@
                 "type": "string"
               },
               "textQuoteSelector": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "../components/schemas/TextQuoteSelector.json"
-                  }
+                "anyOf": [
+                  { "$ref": "../components/schemas/TextQuoteSelector.json" },
+                  { "type": "null" }
                 ]
               },
               "entityTypes": {
@@ -102,15 +95,12 @@
                 }
               },
               "tagCategory": {
-                "type": "string",
-                "nullable": true
+                "type": ["string", "null"]
               },
               "tagSchemaId": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "../components/schemas/TaggingJobParams.json#/properties/schemaId"
-                  }
+                "anyOf": [
+                  { "$ref": "../components/schemas/TaggingJobParams.json#/properties/schemaId" },
+                  { "type": "null" }
                 ]
               }
             },

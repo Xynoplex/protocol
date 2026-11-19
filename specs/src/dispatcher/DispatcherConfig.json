@@ -11,11 +11,7 @@
       "description": "The URL the dispatcher reaches the gateway at: its only route to the bus."
     },
     "identity": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ServiceIdentity.json"
-        }
-      ],
+      "$ref": "../components/schemas/ServiceIdentity.json",
       "description": "The issuer the dispatcher's service account signs in at."
     },
     "queue": {

@@ -22,23 +22,19 @@
             "description": "`macos`, `windows`, or any other system."
           },
           "home": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The home directory, or null when it is not set."
           },
           "xdgStateHome": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "XDG_STATE_HOME, or null when it is not set."
           },
           "localAppData": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "LOCALAPPDATA, or null or left out when it is not set."
           },
           "dir": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The state home, or null when there is none."
           }
         },
@@ -84,13 +80,11 @@
             "additionalProperties": false
           },
           "holding": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The access token the renewer holds, or null for none."
           },
           "meanwhile": {
-            "type": "object",
-            "nullable": true,
+            "type": ["object", "null"],
             "description": "What another program does to the stack's sign-in, or null for nothing.",
             "properties": {
               "when": {
@@ -142,22 +136,18 @@
             "additionalProperties": false
           },
           "spends": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The refresh token the renewal's grant presents, or null when it makes no grant."
           },
           "leaves": {
             "description": "What the store then holds for the stack, or null for nothing.",
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/properties/renewals/items/properties/kept"
-              }
+            "anyOf": [
+              { "$ref": "#/properties/renewals/items/properties/kept" },
+              { "type": "null" }
             ]
           },
           "gives": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The access token the renewal gives its holder, or null for none."
           }
         },

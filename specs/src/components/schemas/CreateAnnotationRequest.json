@@ -8,11 +8,7 @@
       "$ref": "./AnnotationTarget.json"
     },
     "body": {
-      "allOf": [
-        {
-          "$ref": "./AnnotationBodies.json"
-        }
-      ],
+      "$ref": "./AnnotationBodies.json",
       "description": "Optional body. Omit for annotations whose motivation alone is meaningful (highlighting) or whose user-supplied content is empty. Shape matches Annotation.body."
     }
   },

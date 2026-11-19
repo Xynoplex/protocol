@@ -198,20 +198,16 @@
             "description": "What the client gives for res-1 after."
           },
           "recorded": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/properties/people/additionalProperties/properties/personKey"
-              }
+            "anyOf": [
+              { "$ref": "#/properties/people/additionalProperties/properties/personKey" },
+              { "type": "null" }
             ],
             "description": "The personKey the stored sign-in holds once the gateway has answered, or null for none."
           },
           "place": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "../components/schemas/PersistedEventId.json"
-              }
+            "anyOf": [
+              { "$ref": "../components/schemas/PersistedEventId.json" },
+              { "type": "null" }
             ],
             "description": "The event id the stream resumes res-1's scope from, or null for none."
           },
@@ -243,16 +239,13 @@
             "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
           },
           "stored": {
-            "nullable": true,
             "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
               "personKey": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/properties/people/additionalProperties/properties/personKey"
-                  }
+                "anyOf": [
+                  { "$ref": "#/properties/people/additionalProperties/properties/personKey" },
+                  { "type": "null" }
                 ],
                 "description": "The personKey the sign-in holds, or null for none."
               }
@@ -286,16 +279,13 @@
             "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
           },
           "stored": {
-            "nullable": true,
             "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
               "personKey": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/properties/people/additionalProperties/properties/personKey"
-                  }
+                "anyOf": [
+                  { "$ref": "#/properties/people/additionalProperties/properties/personKey" },
+                  { "type": "null" }
                 ],
                 "description": "The personKey the sign-in holds, or null for none."
               }
@@ -338,11 +328,9 @@
             }
           },
           "resumes": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "../components/schemas/PersistedEventId.json"
-              }
+            "anyOf": [
+              { "$ref": "../components/schemas/PersistedEventId.json" },
+              { "type": "null" }
             ],
             "description": "The event id the stream resumes res-1's scope from, or null for none."
           }

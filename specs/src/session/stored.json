@@ -104,7 +104,7 @@
         "description": "Where the issuer sends the person back to, named again when the code is exchanged."
       },
       "target": {
-        "allOf": [{ "$ref": "../components/schemas/HttpEndpoint.json" }],
+        "$ref": "../components/schemas/HttpEndpoint.json",
         "description": "Where the person was connecting."
       },
       "issuer": {
@@ -155,7 +155,7 @@
     "description": "A resource open in a knowledge base: which resource, the name it is shown by, when it was opened and its place among the others open there. A registry shows them by their places, and two in one place by when each was opened, first first.",
     "properties": {
       "id": {
-        "allOf": [{ "$ref": "../components/schemas/ResourceId.json" }],
+        "$ref": "../components/schemas/ResourceId.json",
         "description": "The resource."
       },
       "name": {

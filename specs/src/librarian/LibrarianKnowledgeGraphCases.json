@@ -38,11 +38,9 @@
                     "minItems": 1,
                     "description": "What the store answers each time it is asked for the resource, in order: its description, or null where it does not hold it yet.",
                     "items": {
-                      "nullable": true,
-                      "allOf": [
-                        {
-                          "$ref": "../components/schemas/ResourceDescriptor.json"
-                        }
+                      "anyOf": [
+                        { "$ref": "../components/schemas/ResourceDescriptor.json" },
+                        { "type": "null" }
                       ]
                     }
                   },

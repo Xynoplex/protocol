@@ -11,19 +11,11 @@
       "description": "The URL the Librarian reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ServiceIdentity.json"
-        }
-      ],
+      "$ref": "../components/schemas/ServiceIdentity.json",
       "description": "The issuer the Librarian's service account signs in at."
     },
     "archivist": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ServiceAddress.json"
-        }
-      ],
+      "$ref": "../components/schemas/ServiceAddress.json",
       "description": "Where the Archivist listens. The Librarian reads a resource's bytes from it, as its service account."
     },
     "graph": {

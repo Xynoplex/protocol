@@ -25,11 +25,9 @@
             "$ref": "../client/types/QuotedText.json"
           },
           "reconciled": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "../client/types/ReconciledSpan.json"
-              }
+            "anyOf": [
+              { "$ref": "../client/types/ReconciledSpan.json" },
+              { "type": "null" }
             ]
           }
         },

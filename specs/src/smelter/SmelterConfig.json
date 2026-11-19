@@ -11,19 +11,11 @@
       "description": "The URL the Smelter reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ServiceIdentity.json"
-        }
-      ],
+      "$ref": "../components/schemas/ServiceIdentity.json",
       "description": "The issuer the Smelter's service account signs in at."
     },
     "archivist": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ServiceAddress.json"
-        }
-      ],
+      "$ref": "../components/schemas/ServiceAddress.json",
       "description": "Where the Archivist listens. The Smelter reads a resource's bytes from it, and keeps the anchored-text store there, as its service account."
     },
     "embedding": {

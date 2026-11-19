@@ -59,11 +59,9 @@
                 "description": "A component schema, by its name."
               },
               "validate": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/properties/channels/items/oneOf/0/properties/schema"
-                  }
+                "anyOf": [
+                  { "$ref": "#/properties/channels/items/oneOf/0/properties/schema" },
+                  { "type": "null" }
                 ]
               },
               "docs": {
@@ -169,8 +167,7 @@
                 "$ref": "#/properties/channels/items/oneOf/0/properties/schema"
               },
               "validate": {
-                "type": "string",
-                "nullable": true,
+                "type": ["string", "null"],
                 "description": "None: only a channel that carries a schema is validated against one."
               },
               "docs": {
@@ -222,8 +219,7 @@
                 ]
               },
               "validate": {
-                "type": "string",
-                "nullable": true,
+                "type": ["string", "null"],
                 "description": "None: only a channel that carries a schema is validated against one."
               },
               "docs": {
@@ -258,8 +254,7 @@
                 ]
               },
               "validate": {
-                "type": "string",
-                "nullable": true,
+                "type": ["string", "null"],
                 "description": "None: only a channel that carries a schema is validated against one."
               },
               "docs": {
@@ -292,8 +287,7 @@
                 ]
               },
               "validate": {
-                "type": "string",
-                "nullable": true,
+                "type": ["string", "null"],
                 "description": "None: only a channel that carries a schema is validated against one."
               },
               "docs": {

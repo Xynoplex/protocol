@@ -3,11 +3,7 @@
   "description": "Success reply after updating a yielded resource, matched to the originating command by correlationId.",
   "properties": {
     "response": {
-      "allOf": [
-        {
-          "$ref": "./YieldedResource.json"
-        }
-      ],
+      "$ref": "./YieldedResource.json",
       "description": "The updated resource's identity."
     }
   },

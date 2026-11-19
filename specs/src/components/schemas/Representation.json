@@ -13,11 +13,7 @@
     },
     "@type": {
       "description": "Type(s), e.g., schema:MediaObject.",
-      "allOf": [
-        {
-          "$ref": "./OneOrMoreStrings.json"
-        }
-      ]
+      "$ref": "./OneOrMoreStrings.json"
     },
     "mediaType": {
       "type": "string",
@@ -72,11 +68,7 @@
     },
     "conformsTo": {
       "description": "Profile/shape the bytes conform to (e.g., a JSON profile or SVG profile).",
-      "allOf": [
-        {
-          "$ref": "./OneOrMoreUris.json"
-        }
-      ]
+      "$ref": "./OneOrMoreUris.json"
     },
     "tags": {
       "type": "array",

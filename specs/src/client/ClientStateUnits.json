@@ -327,8 +327,7 @@
                       "description": "Which query the case's search was asked is answered, 0 for the first."
                     },
                     "results": {
-                      "type": "array",
-                      "nullable": true,
+                      "type": ["array", "null"],
                       "description": "The answer's results, or null for one still on its way.",
                       "items": {
                         "type": "string"

@@ -233,8 +233,7 @@ let () =
   surface specs ~why:"gives an argument its parameter's schema refuses"
     "namespaces/7/methods/4/cases/0/args/annotationId"
     (fun _ -> `Int 5)
-    "/namespaces/7/methods/4/cases/0/args/annotationId: is 5, which is no \
-     string";
+    "/namespaces/7/methods/4/cases/0/args/annotationId: is none of the anyOf";
   surface specs ~why:"misspells a member of an object argument"
     "namespaces/5/methods/0/cases/1/args/options"
     (members

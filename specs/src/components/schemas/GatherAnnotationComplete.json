@@ -3,19 +3,11 @@
   "description": "Completion payload emitted on the gather:annotation-complete bus channel when annotation context gathering finishes.",
   "properties": {
     "annotationId": {
-      "allOf": [
-        {
-          "$ref": "./AnnotationId.json"
-        }
-      ],
+      "$ref": "./AnnotationId.json",
       "description": "Branded AnnotationId of the annotation whose context was gathered"
     },
     "response": {
-      "allOf": [
-        {
-          "$ref": "./GatheredContext.json"
-        }
-      ],
+      "$ref": "./GatheredContext.json",
       "description": "The gathered annotation context (unified GatheredContext, focus.kind:'annotation')"
     }
   },

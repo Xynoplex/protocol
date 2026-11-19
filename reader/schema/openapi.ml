@@ -1,4 +1,4 @@
-(* OpenAPI 3.0 as Protocol writes it: its two documents, their path items and
+(* OpenAPI 3.1 as Protocol writes it: its two documents, their path items and
    their shared responses, with only the objects and members Protocol uses. *)
 
 (* OpenAPI's Reference Object, in the places one stands for what it names: an
@@ -250,7 +250,7 @@ type document = {
 
 let document =
   Decode.obj (fun o ->
-      Decode.required o "openapi" (Decode.literal "3.0.0");
+      Decode.required o "openapi" (Decode.literal "3.1.1");
       let info = Decode.required o "info" info in
       let servers =
         Decode.required o "servers" (Decode.non_empty_list server)
