@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, inject, it } from 'vitest';
 import { SPEC_SOURCE } from '../harness/paths';
+import { readTable } from '../harness/spec';
 import { eachPlane } from '../harness/world';
 import { cases, runCase, type Case } from './case';
 
@@ -25,10 +26,7 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 // to agree with a client about a stale value.
 describe('the corpus against the tables it restates', () => {
   it('failure-codes answers with every code a failure can carry, and expects of each the client code specs/src/errors/codes.json gives it', () => {
-    const { busRequest, transport } = table<{
-      busRequest: { unrecognizedFailure: string; codes: Array<{ code: string; wire?: string }> };
-      transport: { unclassified: string };
-    }>('errors/codes.json');
+    const { busRequest, transport } = readTable('errors/codes.json', 'ErrorsCodes');
     const wireCodes = table<{ properties: { code: { enum: string[] } } }>('components/schemas/CommandError.json').properties.code.enum;
     // A failure with no words is not its channel's, and is refused as a result with a fault is.
     const expected = (failure: Record<string, unknown>): string =>

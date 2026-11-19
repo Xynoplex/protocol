@@ -233,13 +233,22 @@ export function operationFor(request: string): RegistryOperation {
 /** A Rust service: what the spec's service-environment table covers, and, with the worker, its service-telemetry table. */
 export type Service = 'gateway' | 'dispatcher' | 'archivist';
 
+/**
+ * A table of specs/src at `path`, held to its schema, `schema` as
+ * harness/service-schemas.json names it, and typed by it.
+ */
+export function readTable<Name extends keyof services['schemas']>(path: string, schema: Name): services['schemas'][Name] {
+  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, path), 'utf8'));
+  const validate = servicesSpec().component(schema);
+  if (!validate(table)) throw new Error(`${path} is not what ${schema} states: ${errorsOf(validate)}`);
+  return table as services['schemas'][Name];
+}
+
 /** The names of the environment variables `service` reads (service-environment/variables.json). */
 export function serviceEnvironment(service: Service): string[] {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'service-environment/variables.json'), 'utf8'));
-  const rows = isObject(table) && Array.isArray(table['variables']) ? table['variables'] : [];
-  const names = rows.flatMap((row) =>
-    isObject(row) && typeof row['name'] === 'string' && Array.isArray(row['services']) && row['services'].includes(service) ? [row['name']] : [],
-  );
+  const names = readTable('service-environment/variables.json', 'ServiceEnvironmentVariables')
+    .variables.filter((variable) => variable.services.includes(service))
+    .map((variable) => variable.name);
   if (names.length === 0) throw new Error(`service-environment/variables.json lists no variables for the ${service}`);
   return names;
 }
@@ -272,13 +281,6 @@ type SdkRow = TelemetryRow & Pick<SdkSpan, 'transport'>;
 const SERVICE_TABLE = 'service-telemetry/telemetry.json';
 const SDK_TABLE = 'sdk-telemetry/telemetry.json';
 
-/** A telemetry table, held to its schema. */
-function telemetryTable<Name extends 'ServiceTelemetryTelemetry' | 'SdkTelemetryTelemetry'>(path: string, schema: Name): services['schemas'][Name] {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, path), 'utf8'));
-  const validate = servicesSpec().component(schema);
-  if (!validate(table)) throw new Error(`${path} is not what ${schema} states: ${errorsOf(validate)}`);
-  return table as services['schemas'][Name];
-}
 
 const serviceSpan = ({ name, kind, when, attributes, services }: ServiceSpan): ServiceRow => ({ name, kind, when, attributes, services });
 const serviceMetric = ({ name, instrument, when, attributes, services, planes }: ServiceMetric): ServiceRow => ({ name, kind: instrument, when, attributes, services, ...(planes ? { planes } : {}) });
@@ -310,8 +312,8 @@ let tables: Tables | undefined;
 /** Both telemetry tables: what each service exports, and what an SDK's transports do. */
 function telemetryTables(): Tables {
   if (tables) return tables;
-  const service = telemetryTable(SERVICE_TABLE, 'ServiceTelemetryTelemetry');
-  const sdk = telemetryTable(SDK_TABLE, 'SdkTelemetryTelemetry');
+  const service = readTable(SERVICE_TABLE, 'ServiceTelemetryTelemetry');
+  const sdk = readTable(SDK_TABLE, 'SdkTelemetryTelemetry');
   // The schema states what `sdk` gives a service, and leaves its keys free: each is held to the schema of a service a row names.
   const schema = servicesSpec();
   const serviceSchema = ['properties', 'spans', 'items', 'properties', 'services', 'items'].reduce<Json | undefined>((node, key) => {
@@ -396,25 +398,13 @@ export function metricName(name: string): string {
   return name;
 }
 
-export interface IdCase {
-  id: string;
-  why: string;
-}
+type IdentifierKind = services['schemas']['IdentifiersKinds']['kinds'][number];
 
 /** The strings a kind of id takes and the ones it refuses, each with why (identifiers/kinds.json). */
-export function identifiers(kind: string): { accepts: IdCase[]; refuses: IdCase[] } {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'identifiers/kinds.json'), 'utf8'));
-  const kinds = isObject(table) && Array.isArray(table['kinds']) ? table['kinds'] : [];
-  const found = kinds.find((k) => isObject(k) && k['schema'] === kind);
-  const cases = (list: unknown): IdCase[] => {
-    if (!Array.isArray(list) || list.length === 0) throw new Error(`identifiers/kinds.json: ${kind} has no such cases`);
-    return list.map((c) => {
-      if (!isObject(c) || typeof c['id'] !== 'string' || typeof c['why'] !== 'string') throw new Error(`identifiers/kinds.json: a case of ${kind} is malformed: ${JSON.stringify(c)}`);
-      return { id: c['id'], why: c['why'] };
-    });
-  };
-  if (!isObject(found)) throw new Error(`identifiers/kinds.json names no kind ${kind}`);
-  return { accepts: cases(found['accepts']), refuses: cases(found['refuses']) };
+export function identifiers(kind: string): Pick<IdentifierKind, 'accepts' | 'refuses'> {
+  const found = readTable('identifiers/kinds.json', 'IdentifiersKinds').kinds.find((k) => k.schema === kind);
+  if (!found) throw new Error(`identifiers/kinds.json names no kind ${kind}`);
+  return { accepts: found.accepts, refuses: found.refuses };
 }
 
 export interface PersonCase {
@@ -489,20 +479,15 @@ export function principalCases(domain: string): { people: PersonCase[]; agents: 
 /** The case of kb-identity/cases.json the suite's knowledge base is. */
 export const SUITE_KB = 'the shape xynolog init writes';
 
-export interface KbIdentity {
-  name: string;
-  domain: string;
-  did: string;
-  resource: string;
-}
+type KbIdentityCase = services['schemas']['KbIdentityCases']['cases'][number];
+
+/** The identity a case of kb-identity/cases.json declares. */
+export type KbIdentity = { [Member in 'name' | 'domain' | 'did' | 'resource']: NonNullable<KbIdentityCase[Member]> };
 
 /** A knowledge base's identity, from the shared case table (kb-identity/cases.json): the case `why` names, which must declare one. */
 export function kbIdentity(why: string): KbIdentity {
-  const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'kb-identity/cases.json'), 'utf8')) as {
-    cases: Array<{ why: string; name: string; domain: string | null; did: string | null; resource: string | null }>;
-  };
-  const chosen = table.cases.find((c) => c.why === why);
-  if (!chosen?.domain || !chosen.did || !chosen.resource) throw new Error(`kb-identity/cases.json has no "${why}" case that declares an identity`);
+  const chosen = readTable('kb-identity/cases.json', 'KbIdentityCases').cases.find((c) => c.why === why);
+  if (!chosen?.name || !chosen.domain || !chosen.did || !chosen.resource) throw new Error(`kb-identity/cases.json has no "${why}" case that declares an identity`);
   return { name: chosen.name, domain: chosen.domain, did: chosen.did, resource: chosen.resource };
 }
 

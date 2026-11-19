@@ -28,9 +28,8 @@ import { startClientProxy, type ClientProxy, type ProxiedRequest } from '../harn
 import type { Plane } from '../harness/gateway';
 import { call, nonConformance, type Reply } from '../harness/http';
 import { startOtlp, type OtlpReceiver } from '../harness/otlp';
-import { SPEC_SOURCE } from '../harness/paths';
 import { SERVICE_ROLE, WORKER_ROLE } from '../harness/roles';
-import { errorsOf, registry, spec, type Method } from '../harness/spec';
+import { errorsOf, readTable, registry, spec, type Method } from '../harness/spec';
 import { outsideTheSdkTable } from '../harness/telemetry';
 import type { World } from '../harness/world';
 import { Driver, type DeliveredFrame, type ObservedState, type Outcome, type ReportedFailure } from './driver';
@@ -137,18 +136,10 @@ export function casesIn(dir: string): Case[] {
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-/** The error codes a client may report, from the table every SDK generates its own from. */
+/** The error codes a client may report, from the table every SDK generates its own from: every section's codes. */
 function vocabulary(): Set<string> {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'errors/codes.json'), 'utf8'));
-  const codes = new Set<string>();
-  if (isObject(table)) {
-    for (const section of Object.values(table)) {
-      if (!isObject(section) || !Array.isArray(section['codes'])) continue;
-      for (const entry of section['codes']) if (isObject(entry) && typeof entry['code'] === 'string') codes.add(entry['code']);
-    }
-  }
-  if (codes.size === 0) throw new Error('errors/codes.json lists no codes');
-  return codes;
+  const { $comment, ...sections } = readTable('errors/codes.json', 'ErrorsCodes');
+  return new Set(Object.values(sections).flatMap((section) => section.codes.map((entry) => entry.code)));
 }
 
 /** A request as a case reads it: the operation the spec declares for it, and what it carried. */

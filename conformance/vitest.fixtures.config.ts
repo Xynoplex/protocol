@@ -12,6 +12,7 @@ export default defineConfig({
       'harness/git.test.ts',
       'harness/net.test.ts',
       'harness/otlp.test.ts',
+      'harness/spec.test.ts',
       'harness/telemetry.test.ts',
     ],
   },
