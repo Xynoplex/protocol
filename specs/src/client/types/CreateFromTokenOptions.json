@@ -1,6 +1,7 @@
 {
   "title": "CreateFromTokenOptions",
   "type": "object",
+  "additionalProperties": false,
   "description": "What creating a resource from a clone token is told: the token, the clone's name and text, and whether the source is archived once the clone exists.",
   "properties": {
     "token": {

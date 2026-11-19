@@ -153,6 +153,14 @@ let () =
     (fun _ -> `Int 5)
     "/namespaces/7/methods/4/cases/0/args/annotationId: is 5, which is no \
      string";
+  surface specs ~why:"misspells a member of an object argument"
+    "namespaces/5/methods/0/cases/1/args/options"
+    (members
+       (List.map (function
+         | "limit", value -> ("limmit", value)
+         | member -> member)))
+    "/namespaces/5/methods/0/cases/1/args/options/limmit: is a member the \
+     schema does not state";
   surface specs ~why:"gives an argument below its scalar's minimum"
     "namespaces/6/methods/1/cases/1/args/stallDeadlineMs"
     (fun _ -> `Int (-1))

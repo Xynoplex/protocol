@@ -1,6 +1,7 @@
 {
   "title": "ClaimOptions",
   "type": "object",
+  "additionalProperties": false,
   "description": "What a worker's claiming of jobs is told: the jobs it takes, and how long it waits for what it waits on. A wait left out is client/timing.json's of the same name.",
   "properties": {
     "accepts": {

@@ -1,6 +1,7 @@
 {
   "title": "GatherResourceOptions",
   "type": "object",
+  "additionalProperties": false,
   "description": "What gathering the context of a resource is told beside the resource: GatherResourceRequestOptions, each member of which a caller may leave out. client/surface.json's `gather.resource` cases state what is sent for one left out.",
   "properties": {
     "depth": {

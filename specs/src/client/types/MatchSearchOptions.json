@@ -1,6 +1,7 @@
 {
   "title": "MatchSearchOptions",
   "type": "object",
+  "additionalProperties": false,
   "description": "What a search for what a reference could refer to is told beside the reference and its context: MatchSearchRequest's other members. client/surface.json's `match.search` cases state what is sent for one left out.",
   "properties": {
     "limit": {
