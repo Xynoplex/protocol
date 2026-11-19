@@ -355,7 +355,12 @@ let load root =
               (Validate.errors schema_at schema json ""))
       tables_here
   in
-  let census = census @ stray_case_tables @ orphan_schemas @ validation in
+  let client_surface =
+    Client_surface.refusals ~read_json ~schema_at tables.client_surface
+  in
+  let census =
+    census @ stray_case_tables @ orphan_schemas @ validation @ client_surface
+  in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->
       let table_files =

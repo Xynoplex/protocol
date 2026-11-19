@@ -41,6 +41,34 @@ let members f = function
   | `Assoc members -> `Assoc (f members)
   | _ -> failwith "not an object"
 
+(* [json] with the value at [place], a pointer's tokens, changed. *)
+let rec update place change (json : Yojson.Safe.t) =
+  match (place, json) with
+  | [], value -> change value
+  | token :: rest, `Assoc members ->
+      `Assoc
+        (List.map
+           (fun (key, value) ->
+             if key = token then (key, update rest change value)
+             else (key, value))
+           members)
+  | token :: rest, `List items ->
+      `List
+        (List.mapi
+           (fun index item ->
+             if string_of_int index = token then update rest change item
+             else item)
+           items)
+  | _ -> failwith "no such place"
+
+let surface specs ~why place change expected =
+  refused specs ~why
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "client/surface.json")
+        (update (String.split_on_char '/' place) change))
+    ("client/surface.json: " ^ expected)
+
 let () =
   let specs =
     match Sys.argv with
@@ -111,8 +139,52 @@ let () =
                      :: rest) )
              | member -> member))))
     "jobs/retry-cases.json: /cases/0/retryCount: is less than 0";
+  surface specs ~why:"gives a method an argument it does not take"
+    "namespaces/8/methods/4/cases/0/args"
+    (members (fun args -> args @ [ ("jobID", `String "job-1") ]))
+    "/namespaces/8/methods/4/cases/0/args/jobID: is no parameter of job.status";
+  surface specs ~why:"lacks an argument a method requires"
+    "namespaces/2/methods/1/cases/0/args"
+    (members (List.remove_assoc "annotationId"))
+    "/namespaces/2/methods/1/cases/0/args: lacks annotationId, which \
+     mark.delete requires";
+  surface specs ~why:"gives an argument its parameter's schema refuses"
+    "namespaces/7/methods/4/cases/0/args/annotationId"
+    (fun _ -> `Int 5)
+    "/namespaces/7/methods/4/cases/0/args/annotationId: is 5, which is no \
+     string";
+  surface specs ~why:"misspells a member of an object argument"
+    "namespaces/5/methods/0/cases/1/args/options"
+    (members
+       (List.map (function
+         | "limit", value -> ("limmit", value)
+         | member -> member)))
+    "/namespaces/5/methods/0/cases/1/args/options/limmit: is a member the \
+     schema does not state";
+  surface specs ~why:"gives an argument below its scalar's minimum"
+    "namespaces/6/methods/1/cases/1/args/stallDeadlineMs"
+    (fun _ -> `Int (-1))
+    "/namespaces/6/methods/1/cases/1/args/stallDeadlineMs: is less than 0";
+  surface specs ~why:"names a fixture the table has not"
+    "namespaces/5/methods/0/cases/0/args/context"
+    (fun _ -> `Assoc [ ("$fixture", `String "nowhere") ])
+    "/namespaces/5/methods/0/cases/0/args/context: names the fixture nowhere, \
+     which the table has not";
+  surface specs ~why:"gives a callback as an argument"
+    "namespaces/8/methods/5/cases/0/args"
+    (members (fun args -> args @ [ ("onStatus", `Assoc []) ]))
+    "/namespaces/8/methods/5/cases/0/args/onStatus: is a callback, which a \
+     case cannot give";
+  surface specs ~why:"has a method take a parameter twice"
+    "namespaces/8/methods/4/parameters"
+    (function
+      | `List [ parameter ] -> `List [ parameter; parameter ]
+      | _ -> failwith "job.status takes one parameter")
+    "/namespaces/8/methods/4/parameters/1: names jobId, which job.status takes \
+     already";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
      missing path item, a table without its schema, a schema without its \
-     table, a case table off an area's top, or a value its schema refuses"
+     table, a case table off an area's top, a value its schema refuses, or a \
+     client surface case whose arguments are not its method's parameters"

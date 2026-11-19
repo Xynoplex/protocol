@@ -1,5 +1,5 @@
 {
-  "$comment": "AUTHORITY for the surface of a Xynolog client: every namespace, every method, the shape of what it returns, and what calling it does first. Every SDK is held to this table two ways. Its signatures are read by .github/scripts/checks/check-client-surface.mjs, which fails on a method the table lacks, one an SDK lacks, and one whose return shape is not the row's; each of its sections holds the SDKs it has a reader for. Its behaviour is run: each SDK's surface test calls every method as each of its `cases` states and holds what the call did to the row. A method name is the table's, in camelCase; an SDK spells it by its language's convention (`resourceContent` is `resource_content` in Rust and `ResourceContent` in Go, whose first letter is a capital), and a namespace whose name is a keyword there takes a trailing underscore (`yield_`, `match_`). Swift keeps both names, including its contextual `yield`. Neither is a keyword in Kotlin, which keeps both names; Java reaches them through their getters (`getYield()`), which Java's contextual `yield` does not touch. An `events` row is a property named `<method>$` in TypeScript. The table names no SDK that lacks part of the surface: which SDK lacks a method, a member, a unit, a module or a clock's maker, or is still to have one, and why, is each SDK repository's to record, and the lint excuses an SDK only what that record names. Add a row here before adding a method to any SDK. `worker` is the surface of what a worker is handed: the claims `job.claim` returns, and a job the worker holds. Each lists its members by name, and the same lint holds every SDK to the list both ways: a member the list has and an SDK lacks, and a public member an SDK has and the list lacks. A member is held by its name alone, spelled as its language spells it, and its form is its language's: what a held job states is a property in TypeScript and Python and a method in Rust, and a property that gives a stream of values is named `<member>$` in TypeScript. What a language's own protocols give a type is no member here: how a type is made, Python's names that begin with an underscore, its `__aenter__` and `__anext__` among them, Rust's trait implementations, and what a TypeScript class inherits from a class the SDK does not declare. `named` gives the name an SDK has the member under where its ecosystem has a name of its own for it, and why: the lint then fails if that SDK lacks that name, or has the table's name as well. `takes` marks a member a held job has as its verb's: for each verb, the schema of what the member takes. What a member does is not held here and these rows have no cases: contract/WORKER-CONTRACT.md states it, and the worker conformance suite (conformance/worker) holds each SDK to it. Add a member here before adding it to any SDK. `stateUnits` lists each state unit: what each SDK makes it as (`made`), and its members by name. The same lint holds every SDK to it both ways: a unit an SDK does not declare, or declares as no `StateUnit`; a `StateUnit` an SDK declares among its units that no row makes; a member the list has and an SDK's unit lacks; and a public member an SDK's unit has and the list lacks. A member is held by its name alone, spelled as its language spells it, and its form is its language's, as for `worker`. `dispose` is no member here: every unit has it, being a `StateUnit`. How a unit is made is held apart from its members: every unit can be made from outside its SDK, by the type's own public constructor (Rust's `pub fn new` in the type's own `impl`, Python's class), or by the public function that `madeBy` names for that SDK, spelled as that SDK spells it, where the constructor is not what makes it; Go has no constructors, so every Go unit names one. The same lint fails a unit no public way makes, and a `madeBy` that names a function its SDK lacks, or has but not publicly. Public is reachable from outside the SDK, including what Swift declares `public` or `open`: what TypeScript's entry (sdk/typescript/sdk/src/index.ts) exports, an item a module Rust's crate root reaches declares or re-exports, a name in the `__all__` of a Python module whose path has no private part, what Kotlin declares `public`, and what Go exports from a package that is not internal. What a unit does is not held here: each SDK's tests of its units hold that. Add a unit or a member here before adding it to any SDK. `wire` is the typed bus over a client's transport, which every client hands out as `wire`: what each SDK makes it as (`made`), and its members by name. The same lint holds every SDK to it both ways, as for a state unit: a bus an SDK does not declare, a member the list has and an SDK's bus lacks, and a public member an SDK's bus has and the list lacks. A member is held by its name alone, as for `worker`; how a bus is made is no member. A Go method takes no type parameters, so a member of Go's bus that is generic in its channel is a function of its package that takes the bus (`Emit(ctx, w, bus.MarkSubmit, payload)`). TypeScript's bus is read where @xynolog/core declares it. A transport is no member: a bus hands out none. Add a member here before adding it to any SDK. `storage` is where a client keeps text under a key: the interface an application implements (a trait in Rust, a protocol in Python), what each SDK names it (`made`), and its members by name. The same lint holds every SDK to it both ways, as for `wire`: a storage an SDK does not declare, a member the list has and an SDK's storage lacks, and a public member an SDK's storage has and the list lacks. A member is held by its name alone, as for `worker`. What implements a storage is not read here. Add a member here before adding it to any SDK. `modules` is what each SDK has beside its namespaces: the free functions, types and values of its modules, each module with where each SDK keeps it and its members. A member is named as the table spells it and held by its `kind`: a `function` is spelled by each language's convention, a `reader` as a function but `get` and its name in TypeScript, a `type` as the table spells it, and a `constant` in capitals with underscores but in Go, as a function, and in Swift, as the table spells it. `named` gives an SDK's own name where the rule does not, and is stale, and fails the lint, once it is not so. A module whose `whole` names an SDK is that SDK's files alone, and every public member of them is listed. `clock` is what a caller controls of an SDK's time and chance: the clock every wait keeps, and the random source every jitter draws, one row each. For every SDK a row says either how a caller controls the source from outside the SDK (`outside`), or which public makers take it (`takes`): each maker as its SDK spells it (`Type.member`, or `Type::member` in Rust, for a type's function), with the types it takes the source as. The same lint holds every SDK to it both ways: every public way of making a listed maker takes each of its types, or is handed another maker of the row that takes them already, and keeps that one's; and no parameter or field of an `outside` SDK has a type the row's `typeWords` name. When a wait ends under a moved clock is specs/src/client/clock-cases.json's.",
+  "$comment": "AUTHORITY for the surface of a Xynolog client: every namespace, every method, the shape of what it returns, and what calling it does first. Its behaviour is run: each SDK's surface test calls every method as each of its `cases` states and holds what the call did to the row. Which methods an SDK has is held by its own surface test, where the test keeps a census of them; what each takes and returns is held by no check yet. `parameters` is what a method takes, in order: each parameter by the name its cases' `args` give it, whether a caller must give it, and either its `schema` (a component, a member within one, or a client type of specs/src/client/types, so that every object is named; or a scalar where none states it) or, for a callback, the schema of what each call hands it (`calls`). Protocol's reader holds each case to its method's `parameters` (reader/lib/client_surface.ml): a case gives no argument the method does not take, every one it requires, and each as its parameter's schema says. A null is a value, which a caller gives only where the schema admits it. Every SDK takes each parameter the table states, and none another: an SDK's name for one is the table's, spelled by its language's convention, and how it takes one is its language's (positionally, by keyword, or as a member of a record its writer makes of an object whose members a caller may each leave out), as is the type it holds a count of milliseconds as. A language's own means of cancelling a call (Go's `context.Context`, C#'s `CancellationToken`) is no parameter here. The consumer-owned generator is to write each SDK's namespace types from each method's `parameters` and `shape`. A method name is the table's, in camelCase; an SDK spells it by its language's convention (`resourceContent` is `resource_content` in Rust and `ResourceContent` in Go, whose first letter is a capital), and a namespace whose name is a keyword there takes a trailing underscore (`yield_`, `match_`). Swift keeps both names, including its contextual `yield`. Neither is a keyword in Kotlin, which keeps both names; Java reaches them through their getters (`getYield()`), which Java's contextual `yield` does not touch. An `events` row is a property named `<method>$` in TypeScript. The table names no SDK that lacks part of the surface: which SDK lacks a method, a member, a unit, a module or a clock's maker, or is still to have one, and why, is each SDK repository's to record. Add a row here before adding a method to any SDK. `worker` is the surface of what a worker is handed: the claims `job.claim` returns, and a job the worker holds. Each lists its members by name, and every SDK is to match the list both ways: it lacks no member the list has, and has no public member the list lacks. No check holds an SDK to the list yet. A member is matched by its name alone, spelled as its language spells it, and its form is its language's: what a held job states is a property in TypeScript and Python and a method in Rust, and a property that gives a stream of values is named `<member>$` in TypeScript. What a language's own protocols give a type is no member here: how a type is made, Python's names that begin with an underscore, its `__aenter__` and `__anext__` among them, Rust's trait implementations, and what a TypeScript class inherits from a class the SDK does not declare. `named` gives the name an SDK has the member under where its ecosystem has a name of its own for it, and why: that SDK then has that name, and not the table's as well. `takes` marks a member a held job has as its verb's: for each verb, the schema of what the member takes. What a member does is not held here and these rows have no cases: contract/WORKER-CONTRACT.md states it, and the worker conformance suite (conformance/worker) holds each SDK to it. Add a member here before adding it to any SDK. `stateUnits` lists each state unit: what each SDK makes it as (`made`), and its members by name. Every SDK is to match it both ways, and no check holds one to it yet: it declares every unit, each as a `StateUnit`; every `StateUnit` it declares among its units is one a row makes; and each of its units has every member the list has and no public member the list lacks. A member is matched by its name alone, spelled as its language spells it, and its form is its language's, as for `worker`. `dispose` is no member here: every unit has it, being a `StateUnit`. How a unit is made is stated apart from its members: every unit can be made from outside its SDK, by the type's own public constructor (Rust's `pub fn new` in the type's own `impl`, Python's class), or by the public function that `madeBy` names for that SDK, spelled as that SDK spells it, where the constructor is not what makes it; Go has no constructors, so every Go unit names one. No unit is without a public way to make it, and a `madeBy` names a function its SDK has publicly. Public is reachable from outside the SDK, including what Swift declares `public` or `open`: what TypeScript's entry (sdk/typescript/sdk/src/index.ts) exports, an item a module Rust's crate root reaches declares or re-exports, a name in the `__all__` of a Python module whose path has no private part, what Kotlin declares `public`, and what Go exports from a package that is not internal. What a unit does is not held here: each SDK's tests of its units hold that. Add a unit or a member here before adding it to any SDK. `wire` is the typed bus over a client's transport, which every client hands out as `wire`: what each SDK makes it as (`made`), and its members by name. Every SDK is to match it both ways, as for a state unit, and no check holds one to it yet: it declares a bus, and its bus has every member the list has and no public member the list lacks. A member is matched by its name alone, as for `worker`; how a bus is made is no member. A Go method takes no type parameters, so a member of Go's bus that is generic in its channel is a function of its package that takes the bus (`Emit(ctx, w, bus.MarkSubmit, payload)`). TypeScript's bus is read where @xynolog/core declares it. A transport is no member: a bus hands out none. Add a member here before adding it to any SDK. `storage` is where a client keeps text under a key: the interface an application implements (a trait in Rust, a protocol in Python), what each SDK names it (`made`), and its members by name. Every SDK is to match it both ways, as for `wire`, and no check holds one to it yet: it declares a storage, and its storage has every member the list has and no public member the list lacks. A member is matched by its name alone, as for `worker`. What implements a storage is not read here. Add a member here before adding it to any SDK. `modules` is what each SDK has beside its namespaces: the free functions, types and values of its modules, each module with where each SDK keeps it and its members. A member is named as the table spells it and matched by its `kind`: a `function` is spelled by each language's convention, a `reader` as a function but `get` and its name in TypeScript, a `type` as the table spells it, and a `constant` in capitals with underscores but in Go, as a function, and in Swift, as the table spells it. `named` gives an SDK's own name where the rule does not, and is stale once it is not so. A module whose `whole` names an SDK is that SDK's files alone, and every public member of them is listed. `clock` is what a caller controls of an SDK's time and chance: the clock every wait keeps, and the random source every jitter draws, one row each. For every SDK a row says either how a caller controls the source from outside the SDK (`outside`), or which public makers take it (`takes`): each maker as its SDK spells it (`Type.member`, or `Type::member` in Rust, for a type's function), with the types it takes the source as. Every SDK is to match it both ways, and no check holds one to it yet: every public way of making a listed maker takes each of its types, or is handed another maker of the row that takes them already, and keeps that one's; and no parameter or field of an `outside` SDK has a type the row's `typeWords` name. When a wait ends under a moved clock is specs/src/client/clock-cases.json's.",
   "shapes": {
     "promise": "Asked once, answered once: the value, or a failure with a code.",
     "stream": "A long-running operation: what it reports as it goes, then its final value. Awaited, it gives the final value.",
@@ -44,12 +44,18 @@
           "method": "addEntityType",
           "shape": "promise",
           "via": { "request": "frame:add-entity-type" },
+          "parameters": [
+            { "parameter": "type", "schema": { "$ref": "../components/schemas/FrameAddEntityTypeCommand.json#/properties/tag" }, "required": true }
+          ],
           "cases": [{ "args": { "type": "Person" }, "sends": { "tag": "Person" } }]
         },
         {
           "method": "addEntityTypes",
           "shape": "promise",
           "via": { "request": "frame:add-entity-type" },
+          "parameters": [
+            { "parameter": "types", "schema": { "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes" }, "required": true }
+          ],
           "cases": [
             {
               "why": "one request per type, in order, each awaited",
@@ -64,6 +70,9 @@
           "method": "addTagSchema",
           "shape": "promise",
           "via": { "request": "frame:add-tag-schema" },
+          "parameters": [
+            { "parameter": "schema", "schema": { "$ref": "../components/schemas/TagSchema.json" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "schema": { "id": "s1", "name": "Structure", "description": "Parts of an argument", "domain": "legal", "tags": [] } },
@@ -81,12 +90,18 @@
           "method": "resource",
           "shape": "cache",
           "via": { "request": "browse:resource-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resources",
           "shape": "cache",
           "via": { "request": "browse:resources-requested" },
+          "parameters": [
+            { "parameter": "filters", "schema": { "$ref": "../components/schemas/BrowseResourcesRequest.json" }, "required": false }
+          ],
           "cases": [
             { "why": "no filters: the first hundred", "args": {}, "sends": { "limit": 100, "offset": 0 } },
             {
@@ -104,84 +119,123 @@
           "method": "annotations",
           "shape": "cache",
           "via": { "content": "getAnnotations" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "annotation",
           "shape": "cache",
           "via": { "request": "browse:annotation-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "resourceId": "res-1", "annotationId": "ann-1" } }]
         },
         {
           "method": "entityTypes",
           "shape": "cache",
           "via": { "request": "browse:entity-types-requested" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         },
         {
           "method": "tagSchemas",
           "shape": "cache",
           "via": { "request": "browse:tag-schemas-requested" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         },
         {
           "method": "engines",
           "shape": "cache",
           "via": { "request": "browse:engines-requested" },
+          "parameters": [],
           "cases": [{ "why": "the engines are asked for first; each key holder's limits after it", "args": {}, "sends": {} }]
         },
         {
           "method": "events",
           "shape": "cache",
           "via": { "request": "browse:events-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceContent",
           "shape": "promise",
           "via": { "content": "getBinary" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceGraph",
           "shape": "promise",
           "via": { "content": "getResourceGraph" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceAnchoredText",
           "shape": "promise",
           "via": { "content": "getAnchoredText" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceRepresentation",
           "shape": "promise",
           "via": { "content": "getBinary" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceRepresentationStream",
           "shape": "promise",
           "via": { "content": "getBinaryStream" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceEvents",
           "shape": "promise",
           "via": { "request": "browse:events-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "annotationHistory",
           "shape": "promise",
           "via": { "request": "browse:annotation-history-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "resourceId": "res-1", "annotationId": "ann-1" } }]
         },
         {
           "method": "files",
           "shape": "promise",
           "via": { "request": "browse:directory-requested" },
+          "parameters": [
+            { "parameter": "dirPath", "schema": { "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/path" }, "required": false },
+            { "parameter": "sort", "schema": { "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/sort" }, "required": false }
+          ],
           "cases": [
             { "why": "no arguments: the root, by name", "args": {}, "sends": { "path": ".", "sort": "name" } },
             { "args": { "dirPath": "docs", "sort": "mtime" }, "sends": { "path": "docs", "sort": "mtime" } }
@@ -191,24 +245,34 @@
           "method": "kb",
           "shape": "promise",
           "via": { "request": "browse:kb-requested" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         },
         {
           "method": "click",
           "shape": "signal",
           "via": { "local": "browse:click" },
+          "parameters": [
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
         },
         {
           "method": "openResource",
           "shape": "signal",
           "via": { "local": "browse:resource-open" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "resourceViewed",
           "shape": "signal",
           "via": { "emit": "browse:resource-viewed" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "why": "a report, so it goes over the wire", "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         }
       ]
@@ -221,6 +285,9 @@
           "method": "annotation",
           "shape": "promise",
           "via": { "request": "mark:create-request" },
+          "parameters": [
+            { "parameter": "input", "schema": { "$ref": "../components/schemas/CreateAnnotationRequest.json" }, "required": true }
+          ],
           "cases": [
             {
               "why": "the resource is the annotation's target",
@@ -233,24 +300,39 @@
           "method": "delete",
           "shape": "promise",
           "via": { "request": "mark:delete" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1", "resourceId": "res-1" } }]
         },
         {
           "method": "archive",
           "shape": "promise",
           "via": { "request": "mark:archive" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "unarchive",
           "shape": "promise",
           "via": { "request": "mark:unarchive" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "updateEntityTypes",
           "shape": "promise",
           "via": { "request": "mark:update-entity-types" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "current", "schema": { "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/currentEntityTypes" }, "required": true },
+            { "parameter": "updated", "schema": { "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/updatedEntityTypes" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "resourceId": "res-1", "current": ["Person"], "updated": ["Person", "Place"] },
@@ -262,6 +344,10 @@
           "method": "delegate",
           "shape": "delegation",
           "via": { "request": "job:create" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "params", "schema": { "$ref": "../components/schemas/MarkJobParams.json" }, "required": true }
+          ],
           "cases": [
             {
               "why": "the namespace is the verb, so the job is a mark job; its parameters state its motivation",
@@ -292,6 +378,11 @@
           "method": "request",
           "shape": "signal",
           "via": { "local": "mark:requested" },
+          "parameters": [
+            { "parameter": "source", "schema": { "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/source" }, "required": true },
+            { "parameter": "selector", "schema": { "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/selector" }, "required": true },
+            { "parameter": "motivation", "schema": { "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/motivation" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "source": "res-1", "selector": { "$fixture": "selector" }, "motivation": "highlighting" },
@@ -303,6 +394,9 @@
           "method": "submit",
           "shape": "signal",
           "via": { "local": "mark:submit" },
+          "parameters": [
+            { "parameter": "input", "schema": { "$ref": "../components/schemas/MarkSubmitEvent.json" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "input": { "source": "res-1", "motivation": "highlighting", "selector": { "$fixture": "selector" } } },
@@ -314,6 +408,9 @@
           "method": "reportDeleteError",
           "shape": "signal",
           "via": { "local": "mark:delete-error" },
+          "parameters": [
+            { "parameter": "input", "schema": { "$ref": "../components/schemas/ResourceErrorEvent.json" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "input": { "resourceId": "res-1", "message": "the delete was refused" } },
@@ -331,6 +428,11 @@
           "method": "body",
           "shape": "promise",
           "via": { "request": "bind:update-body" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true },
+            { "parameter": "operations", "schema": { "$ref": "../components/schemas/BindUpdateBodyCommand.json#/properties/operations" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "resourceId": "res-1", "annotationId": "ann-1", "operations": [{ "op": "remove" }] },
@@ -342,6 +444,9 @@
           "method": "initiate",
           "shape": "signal",
           "via": { "local": "bind:initiate" },
+          "parameters": [
+            { "parameter": "input", "schema": { "$ref": "../components/schemas/BindInitiateCommand.json" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "input": { "annotationId": "ann-1", "resourceId": "res-1", "defaultTitle": "A title", "entityTypes": ["Person"] } },
@@ -353,6 +458,9 @@
           "method": "reportBodyError",
           "shape": "signal",
           "via": { "local": "bind:body-error" },
+          "parameters": [
+            { "parameter": "input", "schema": { "$ref": "../components/schemas/ResourceErrorEvent.json" }, "required": true }
+          ],
           "cases": [
             {
               "args": { "input": { "resourceId": "res-1", "message": "the link was refused" } },
@@ -370,6 +478,11 @@
           "method": "annotation",
           "shape": "stream",
           "via": { "request": "gather:requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true },
+            { "parameter": "options", "schema": { "$ref": "../components/schemas/GatherAnnotationOptions.json" }, "required": false }
+          ],
           "cases": [
             {
               "why": "no options: a window of two thousand characters",
@@ -395,6 +508,10 @@
           "method": "resource",
           "shape": "promise",
           "via": { "request": "gather:resource-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "options", "schema": { "$ref": "types/GatherResourceOptions.json" }, "required": false }
+          ],
           "cases": [
             {
               "why": "no options: two hops, ten resources, their content and no summary",
@@ -416,6 +533,9 @@
           "method": "referencedBy",
           "shape": "cache",
           "via": { "request": "gather:referenced-by-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         }
       ]
@@ -428,6 +548,12 @@
           "method": "search",
           "shape": "stream",
           "via": { "request": "match:search-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "referenceId", "schema": { "$ref": "../components/schemas/MatchSearchRequest.json#/properties/referenceId" }, "required": true },
+            { "parameter": "context", "schema": { "$ref": "../components/schemas/MatchSearchRequest.json#/properties/context" }, "required": true },
+            { "parameter": "options", "schema": { "$ref": "types/MatchSearchOptions.json" }, "required": false }
+          ],
           "cases": [
             {
               "why": "no options: ten candidates, scored semantically",
@@ -444,6 +570,10 @@
           "method": "requestSearch",
           "shape": "signal",
           "via": { "local": "match:search-requested" },
+          "parameters": [
+            { "parameter": "input", "schema": { "$ref": "../components/schemas/MatchSearchRequest.json" }, "required": true },
+            { "parameter": "correlationId", "schema": { "$ref": "../components/schemas/BusFrame.json#/properties/correlationId" }, "required": true }
+          ],
           "cases": [
             {
               "why": "the caller's key rides the envelope, never the payload",
@@ -457,6 +587,10 @@
           "method": "resources",
           "shape": "cache",
           "via": { "request": "match:resources-requested" },
+          "parameters": [
+            { "parameter": "search", "schema": { "$ref": "../components/schemas/MatchResourcesRequest.json#/properties/search" }, "required": true },
+            { "parameter": "filters", "schema": { "$ref": "types/ResourceSearchFilters.json" }, "required": false }
+          ],
           "cases": [
             { "why": "no filters: the first hundred", "args": { "search": "cat" }, "sends": { "search": "cat", "limit": 100, "offset": 0 } },
             {
@@ -480,9 +614,12 @@
           "method": "resource",
           "shape": "upload",
           "via": { "content": "putBinary" },
+          "parameters": [
+            { "parameter": "data", "schema": { "$ref": "types/PutBinaryRequest.json" }, "required": true }
+          ],
           "cases": [
             {
-              "args": { "data": { "name": "Notes", "content": "hello", "format": "text/plain", "storageUri": "file://notes.txt" } },
+              "args": { "data": { "name": "Notes", "file": "hello", "format": "text/plain", "storageUri": "file://notes.txt" } },
               "sends": { "name": "Notes", "content": "hello", "format": "text/plain", "storageUri": "file://notes.txt" }
             }
           ]
@@ -491,6 +628,10 @@
           "method": "delegate",
           "shape": "delegation",
           "via": { "request": "job:create" },
+          "parameters": [
+            { "parameter": "params", "schema": { "$ref": "../components/schemas/GenerationJobParams.json" }, "required": true },
+            { "parameter": "stallDeadlineMs", "schema": { "type": "integer", "minimum": 0, "description": "How long the followed generation may say nothing, in milliseconds, before it is given up on. The follower's own, never sent: left out, it grows with the generation's `maxTokens` as client/timing.json's generationStall timings say." }, "required": false }
+          ],
           "cases": [
             {
               "why": "the namespace is the verb, so the job is a yield job; it names no resource: its context's focus does",
@@ -508,18 +649,27 @@
           "method": "cloneToken",
           "shape": "promise",
           "via": { "request": "yield:clone-token-requested" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "fromToken",
           "shape": "promise",
           "via": { "request": "yield:clone-resource-requested" },
+          "parameters": [
+            { "parameter": "token", "schema": { "$ref": "../components/schemas/YieldCloneResourceRequest.json#/properties/token" }, "required": true }
+          ],
           "cases": [{ "args": { "token": "tok-1" }, "sends": { "token": "tok-1" } }]
         },
         {
           "method": "createFromToken",
           "shape": "promise",
           "via": { "request": "yield:clone-resource-requested" },
+          "parameters": [
+            { "parameter": "options", "schema": { "$ref": "types/CreateFromTokenOptions.json" }, "required": true }
+          ],
           "cases": [
             {
               "why": "the source is read first; the clone is uploaded in a format its source's allows, under a name made from its own",
@@ -547,6 +697,7 @@
           "method": "clone",
           "shape": "signal",
           "via": { "local": "yield:clone" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         }
       ]
@@ -559,6 +710,10 @@
           "method": "attention",
           "shape": "count",
           "via": { "emit": "beckon:focus" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true },
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/BeckonFocusEvent.json#/properties/annotationId" }, "required": false }
+          ],
           "cases": [
             { "args": { "resourceId": "res-1", "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1", "resourceId": "res-1" } },
             { "why": "no annotation: the focus is on the resource as a whole, and names none", "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }
@@ -568,24 +723,36 @@
           "method": "click",
           "shape": "count",
           "via": { "emit": "browse:click" },
+          "parameters": [
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
         },
         {
           "method": "openResource",
           "shape": "count",
           "via": { "emit": "browse:resource-open" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "sparkleAll",
           "shape": "count",
           "via": { "emit": "beckon:sparkle" },
+          "parameters": [
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
         },
         {
           "method": "hover",
           "shape": "signal",
           "via": { "local": "beckon:hover" },
+          "parameters": [
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/BeckonHoverEvent.json#/properties/annotationId" }, "required": true }
+          ],
           "cases": [
             { "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } },
             { "why": "nothing is hovered: the field says so", "args": { "annotationId": null }, "sends": { "annotationId": null } }
@@ -595,6 +762,9 @@
           "method": "sparkle",
           "shape": "signal",
           "via": { "local": "beckon:sparkle" },
+          "parameters": [
+            { "parameter": "annotationId", "schema": { "$ref": "../components/schemas/AnnotationId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "annotationId": "ann-1" }, "sends": { "annotationId": "ann-1" } }]
         }
       ]
@@ -607,6 +777,7 @@
           "method": "queued",
           "shape": "events",
           "via": { "observes": "job:queued" },
+          "parameters": [],
           "cases": [
             {
               "why": "a yield job is announced with what it is asked to make, and without its context",
@@ -624,42 +795,59 @@
           "method": "progress",
           "shape": "events",
           "via": { "observes": "job:report-progress" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": { "resourceId": "res-1", "jobId": "job-1", "jobType": "yield", "percentage": 12.5 } }]
         },
         {
           "method": "complete",
           "shape": "events",
           "via": { "observes": "job:complete" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": { "resourceId": "res-1", "jobId": "job-1", "jobType": "yield" } }]
         },
         {
           "method": "fail",
           "shape": "events",
           "via": { "observes": "job:fail" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": { "resourceId": "res-1", "jobId": "job-1", "jobType": "yield", "error": "the model refused" } }]
         },
         {
           "method": "status",
           "shape": "promise",
           "via": { "request": "job:status-requested" },
+          "parameters": [
+            { "parameter": "jobId", "schema": { "$ref": "../components/schemas/JobId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "jobId": "job-1" }, "sends": { "jobId": "job-1" } }]
         },
         {
           "method": "pollUntilComplete",
           "shape": "promise",
           "via": { "request": "job:status-requested" },
+          "parameters": [
+            { "parameter": "jobId", "schema": { "$ref": "../components/schemas/JobId.json" }, "required": true },
+            { "parameter": "options", "schema": { "$ref": "types/JobPollOptions.json" }, "required": false },
+            { "parameter": "onStatus", "calls": { "$ref": "../components/schemas/JobStatusResponse.json" }, "required": false }
+          ],
           "cases": [{ "args": { "jobId": "job-1" }, "sends": { "jobId": "job-1" } }]
         },
         {
           "method": "cancel",
           "shape": "promise",
           "via": { "request": "job:cancel-requested" },
+          "parameters": [
+            { "parameter": "jobId", "schema": { "$ref": "../components/schemas/JobId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "jobId": "job-1" }, "sends": { "jobId": "job-1" } }]
         },
         {
           "method": "claim",
           "shape": "claims",
           "via": { "request": "job:claim" },
+          "parameters": [
+            { "parameter": "options", "schema": { "$ref": "types/ClaimOptions.json" }, "required": true }
+          ],
           "cases": [
             {
               "why": "a claim carries the filters of the jobs the worker takes, as it was given them",
@@ -678,18 +866,23 @@
           "method": "me",
           "shape": "promise",
           "via": { "gateway": "getCurrentUser" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         },
         {
           "method": "mediaToken",
           "shape": "promise",
           "via": { "gateway": "getMediaToken" },
+          "parameters": [
+            { "parameter": "resourceId", "schema": { "$ref": "../components/schemas/ResourceId.json" }, "required": true }
+          ],
           "cases": [{ "args": { "resourceId": "res-1" }, "sends": { "resourceId": "res-1" } }]
         },
         {
           "method": "protectedResourceMetadata",
           "shape": "promise",
           "via": { "gateway": "getProtectedResourceMetadata" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         }
       ]
@@ -702,12 +895,14 @@
           "method": "healthCheck",
           "shape": "promise",
           "via": { "gateway": "healthCheck" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         },
         {
           "method": "status",
           "shape": "promise",
           "via": { "gateway": "getStatus" },
+          "parameters": [],
           "cases": [{ "args": {}, "sends": {} }]
         }
       ]
@@ -1551,10 +1746,7 @@
         },
         {
           "member": "StoredSession",
-          "kind": "type",
-          "named": {
-            "swift": "HeldSignIn"
-          }
+          "kind": "type"
         },
         {
           "member": "knowledgeBasesKey",
