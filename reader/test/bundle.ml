@@ -1,5 +1,5 @@
-(* bundle.exe SPECS: each document of Protocol's specs/src bundles to one that
-   names nothing outside itself; a small specs tree bundles as Redocly
+(* bundle.exe SPECS: Bundle bundles every OpenAPI document of Protocol's
+   specs/src, each to one that names nothing outside itself; a small specs tree bundles as Redocly
    bundles it; and the bundler refuses a tree it would bundle otherwise. *)
 
 let write specs (file, json) =
@@ -245,6 +245,23 @@ let () =
         prerr_endline "usage: bundle.exe SPECS";
         exit 2
   in
+  let rec documents dir =
+    List.concat_map
+      (fun name ->
+        let path = if dir = "" then name else dir ^ "/" ^ name in
+        if Sys.is_directory (Filename.concat specs path) then documents path
+        else if name = "openapi.json" then [ path ]
+        else [])
+      (List.sort compare
+         (Array.to_list (Sys.readdir (Filename.concat specs dir))))
+  in
+  if
+    List.sort compare (documents "")
+    <> List.sort compare (List.map fst Bundle.documents)
+  then
+    fail "specs/src's OpenAPI documents are %s, and Bundle bundles %s"
+      (String.concat ", " (documents ""))
+      (String.concat ", " (List.map fst Bundle.documents));
   List.iter
     (fun (document, _) ->
       match Bundle.document ~specs document with
@@ -361,8 +378,8 @@ let () =
     "names ../responses/Answered.json as a schema, and it is responses/Answered";
   if !failures > 0 then exit 1;
   print_endline
-    "Each document of specs/src bundles to one that names nothing outside \
-     itself, a tree bundles as Redocly bundles it, and the bundler refuses a \
-     reference within a file or into one, a constrained reference, a schema it \
-     cannot name, one name for two files, two names for one, and a schema that \
-     names a response"
+    "Bundle bundles every OpenAPI document of specs/src, each to one that \
+     names nothing outside itself, a tree bundles as Redocly bundles it, and \
+     the bundler refuses a reference within a file or into one, a constrained \
+     reference, a schema it cannot name, one name for two files, two names for \
+     one, and a schema that names a response"

@@ -24,7 +24,7 @@ esac
 # standard output, its progress on standard error, so the bundles are the
 # checkout's user's. "check-and-bundle": both.
 reader() {
-  bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT"
+  bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT" >&2
   "$RUNTIME" run --rm \
     --volume "$ROOT:/source:ro" \
     --workdir /tmp \
@@ -33,8 +33,8 @@ reader() {
       exec 3>&1 1>&2
       mkdir /tmp/protocol
       tar -C /source --exclude=./node_modules --exclude=./conformance/node_modules --exclude=./_build -cf - . | tar -C /tmp/protocol -xf -
-      cd /tmp/protocol
       git config --global --add safe.directory /tmp/protocol
+      cd /tmp/protocol
       printf "==> Building the reader\n"
       dune build @all
       if [[ "$0" != bundle ]]; then
