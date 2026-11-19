@@ -9,32 +9,17 @@
  * A row is held by being here, so a table that grows a trigger this file
  * cannot cause fails the suite rather than going unheld.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { SPEC_SOURCE } from '../harness/paths';
-import { operationFor, registry } from '../harness/spec';
+import { operationFor } from '../harness/spec';
+import { busRegistry, clientRefresh, type ClientRefresh } from '../harness/generated/protocol/protocol';
 import { caseOf, type Case, type Step } from './case';
 
-interface Query {
-  name: string;
-  per?: 'resource' | 'annotation' | 'filters';
-  /** The operation of the registry it asks, or the read of the gateway's API it makes: one of the two. */
-  asks?: string;
-  reads?: string;
-}
+type Query = ClientRefresh.QueriesItem;
 
 /** A row for a channel's events (`on`), or for what befalls the stream itself (`stream`). */
-type Row = ({ on: string; stream?: never } | { stream: 'reopened' | 'unreadable'; on?: never }) & {
-  when?: 'enriched' | 'unenriched';
-  reach?: 'subject' | 'held';
-  refetches?: string[];
-  writes?: string[];
-  removes?: string[];
-  docs: string;
-};
+type Row = ClientRefresh.RefreshItem;
 
 /** What a row is for: its channel, or what befalls the stream. */
-const trigger = (row: Row): string => (row.stream === undefined ? row.on : row.stream);
+const trigger = (row: Row): string => ('stream' in row ? row.stream : row.on);
 
 type FetchStep = Extract<Step, { fetch: string }>;
 
@@ -59,7 +44,7 @@ const LIST = { resources: [], total: 0, offset: 0, limit: 100 };
 const FOUND = { resources: [], total: 0, offset: 0, limit: 100, matchKind: 'semantic' };
 
 /** The operations a refresh of the engines asks beside its own: each key holder's limits. */
-const limitsOperations = (): string[] => registry().operations.map((operation) => operation.request).filter((request) => request.endsWith(':limits-requested'));
+const limitsOperations = (): string[] => busRegistry.operations.map((operation) => operation.request).filter((request) => request.endsWith(':limits-requested'));
 
 /** One request a query makes: on the bus, with the answer the suite gives it; or a read over HTTP, which the stand-in Archivist answers from what `seeded` gave it. */
 type Ask = { operation: string; payload?: unknown; response: unknown } | { read: string; params: unknown };
@@ -153,7 +138,7 @@ function asked(asks: Ask[], tag: string): Step[] {
 const record = (channel: string, extra: Record<string, unknown> = {}): Step => ({
   backend: 'record',
   // On the resource's scope unless the channel is one every client hears.
-  with: { resource: V('r1'), channel, sequence: 1, live: true, ...(registry().audience.scoped.includes(channel) ? {} : { unscoped: true }), ...extra },
+  with: { resource: V('r1'), channel, sequence: 1, live: true, ...(busRegistry.audience.scoped.includes(channel) ? {} : { unscoped: true }), ...extra },
 });
 
 /** The keys of `holding` a row's refetch reaches, as the requests that ask for them again. */
@@ -183,7 +168,7 @@ function cause(row: Row, all: Row[], holding: Held[]): Step[] {
     case 'bus:resume-gap': {
       // A gap with no drop: the scope is let go and taken again, with the
       // watermark an event left it, while the record cannot be read.
-      const added = all.find((other) => other.on === 'mark:added');
+      const added = all.find((other) => 'on' in other && other.on === 'mark:added');
       if (!added) throw new Error('causing bus:resume-gap takes a mark:added, which the table has no row for');
       const ofScope = holding.filter((key) => key.of === 'r1');
       return [
@@ -208,7 +193,7 @@ function cause(row: Row, all: Row[], holding: Held[]): Step[] {
     case 'mark:removed':
       return [record(on, { payload: { annotationId: V('a1') } })];
     case 'mark:body-updated':
-      return [record(on, { payload: { annotationId: V('a1'), operations: [] }, ...(row.when === 'enriched' ? { enriched: { annotation: UPDATED } } : {}) })];
+      return [record(on, { payload: { annotationId: V('a1'), operations: [] }, ...('when' in row && row.when === 'enriched' ? { enriched: { annotation: UPDATED } } : {}) })];
     case 'mark:added':
     case 'mark:entity-tag-added':
     case 'mark:entity-tag-removed':
@@ -227,6 +212,7 @@ function cause(row: Row, all: Row[], holding: Held[]): Step[] {
 }
 
 function built(row: Row, all: Row[], queries: Query[]): Case {
+  const channel = 'on' in row ? row : undefined;
   const holding = held();
   const unheld = queries.filter((query) => !holding.some((key) => key.query === query.name));
   if (unheld.length > 0) throw new Error(`refresh-cases.ts observes no ${unheld.map((query) => query.name).join(', ')}, which specs/src/client/refresh.json names`);
@@ -234,12 +220,12 @@ function built(row: Row, all: Row[], queries: Query[]): Case {
     const query = queries.find((stated) => stated.name === key.query)!;
     const first = key.asks[0]!;
     const asking = 'read' in first ? first.read : first.operation;
-    const stated = query.asks ?? query.reads;
+    const stated = 'asks' in query ? query.asks : query.reads;
     if (asking !== stated) throw new Error(`refresh-cases.ts asks ${asking} for ${key.query}; the table says ${stated}`);
   }
 
   // After a gap the keys of the scope are held by the observers that took it again.
-  const holder = (key: Held): string => (row.on === 'bus:resume-gap' && key.of === 'r1' ? `${key.observer}Again` : key.observer);
+  const holder = (key: Held): string => (channel?.on === 'bus:resume-gap' && key.of === 'r1' ? `${key.observer}Again` : key.observer);
   const acted = (queries: string[] | undefined): Held[] => holding.filter((key) => (queries ?? []).includes(key.query) && key.of !== 'r2');
   const written: Record<string, unknown> = { annotations: [UPDATED], annotation: UPDATED };
 
@@ -257,17 +243,18 @@ function built(row: Row, all: Row[], queries: Query[]): Case {
     { scopes: [V('r1'), V('r2')] },
     ...cause(row, all, holding),
     ...asked(refetched(row, holding), 'again'),
-    ...acted(row.writes).map((key): Step => {
+    ...acted(channel?.writes).map((key): Step => {
       if (!(key.query in written)) throw new Error(`${trigger(row)} writes ${key.query}, which refresh-cases.ts has no written value for`);
       return { reaches: holder(key), state: { status: 'ready', value: written[key.query] } };
     }),
-    ...acted(row.removes).map((key): Step => ({ reaches: holder(key), state: { status: 'failed', error: { code: 'bus.not-found' } } })),
+    ...acted(channel?.removes).map((key): Step => ({ reaches: holder(key), state: { status: 'failed', error: { code: 'bus.not-found' } } })),
     { scopes: [V('r1'), V('r2')] },
     { quiet: 400 },
   ];
 
-  const label = row.when === undefined ? trigger(row) : `${trigger(row)}, ${row.when}`;
-  return caseOf(`refresh-${trigger(row).replaceAll(':', '-')}${row.when === undefined ? '' : `-${row.when}`}`, {
+  const when = channel?.when;
+  const label = when === undefined ? trigger(row) : `${trigger(row)}, ${when}`;
+  return caseOf(`refresh-${trigger(row).replaceAll(':', '-')}${when === undefined ? '' : `-${when}`}`, {
     about: `${label}: ${row.docs.charAt(0).toLowerCase()}${row.docs.slice(1)}`,
     source: 'specs/src/client/refresh.json',
     tier: 'parity',
@@ -277,6 +264,6 @@ function built(row: Row, all: Row[], queries: Query[]): Case {
 
 /** A live case for every row of the refresh table. */
 export function refreshCases(): Case[] {
-  const { queries, refresh } = JSON.parse(readFileSync(join(SPEC_SOURCE, 'client/refresh.json'), 'utf8')) as { queries: Query[]; refresh: Row[] };
+  const { queries, refresh } = clientRefresh;
   return refresh.map((row) => built(row, refresh, queries));
 }

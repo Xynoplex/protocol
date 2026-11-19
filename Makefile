@@ -26,7 +26,7 @@ install:
 conformance-install:
 	bash scripts/make-target.sh conformance-install
 
-## bundle: Bundle specs/src into specs/openapi.json and specs/archivist.openapi.json with the reader
+## bundle: Bundle specs/src into specs/openapi.json, specs/archivist.openapi.json and specs/services.json with the reader, and write the conformance harness's types, tables and validator
 bundle:
 	bash scripts/make-target.sh bundle
 

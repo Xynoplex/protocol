@@ -5,7 +5,8 @@
    every file Git tracks has an owner.
 
    xynolog-protocol bundle ROOT: specs/src read into the model, each OpenAPI
-   document of it bundled into specs/ (Bundle).
+   document of it bundled into specs/, and the services' schemas into
+   specs/services.json (Bundle).
 
    Each refusal is printed, and any fails the run. *)
 
@@ -43,8 +44,8 @@ let () =
       with
       | Ok () ->
           List.iter
-            (fun (_, bundled) -> Printf.printf "Bundled %s\n" bundled)
-            Bundle.documents
+            (fun bundled -> Printf.printf "Bundled %s\n" bundled)
+            (List.map snd Bundle.documents @ [ Bundle.services_bundle ])
       | Error errors -> refused errors)
   | [| _; "check"; root |] -> (
       let outside spec =

@@ -29,7 +29,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import neo4j, { type Driver } from 'neo4j-driver';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import { kbDid, type Annotation, type components, type EventMap, type ResourceDescriptor, type services } from './protocol-core';
+import { kbDid, type Annotation, type components, type EventMap, type ResourceDescriptor, type ServiceSchemas } from './protocol-core';
 import { ArchivistWorld, sha256, unstamped, type BusClient } from './archivist-world';
 import {
   refusedLibrarianBoot,
@@ -45,7 +45,8 @@ import { startOllamaEmbed, type StandInEmbedder } from './ollama-embed';
 import { claimsFor, minted, QDRANT_PORT, VECTORS_TOKEN, vectorIndex, type VectorIndex } from './qdrant';
 import { SERVICE_ROLE } from './roles';
 import { startSmelter, type SmelterLaunch, type SmelterProcess } from './smelter-process';
-import { errorsOf, registry, spec } from './spec';
+import { errorsOf, spec } from './spec';
+import { busRegistry } from './generated/protocol/protocol';
 import type { BusStream } from './stream';
 import { startWeaver, type WeaverLaunch, type WeaverProcess } from './weaver-process';
 import { lastOf } from './weaver-world';
@@ -125,9 +126,9 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
  * its schema under `response`.
  */
 function against(channel: string, payload: unknown): string | undefined {
-  const row = registry().channels.find((c) => c.channel === channel);
+  const row = busRegistry.channels.find((c) => c.channel === channel);
   if (row === undefined) return 'the registry does not declare the channel';
-  if (row.schema === undefined || (row.shape !== 'schema' && row.shape !== 'envelope')) return 'the registry names no schema for the channel';
+  if (row.shape !== 'schema' && row.shape !== 'envelope') return 'the registry names no schema for the channel';
   const carried = row.shape === 'envelope' ? (isObject(payload) ? payload['response'] : undefined) : payload;
   const validate = spec().component(row.schema);
   return validate(carried) ? undefined : `not a ${row.schema}: ${errorsOf(validate)}`;
@@ -140,7 +141,7 @@ function holds<T>(channel: string, payload: unknown): payload is T {
 
 /** Fail unless `OPERATIONS` is the registry's own account of the `match:` and `gather:` operations. */
 function heldToRegistry(): void {
-  const declared = registry().operations.filter((op) => op.request.startsWith('match:') || op.request.startsWith('gather:'));
+  const declared = busRegistry.operations.filter((op) => op.request.startsWith('match:') || op.request.startsWith('gather:'));
   const stated = Object.entries(OPERATIONS).map(([request, [result, failure]]) => `${request} ${result} ${failure}`).sort();
   const registered = declared.map((op) => `${op.request} ${op.result} ${op.failure}`).sort();
   if (stated.join('\n') !== registered.join('\n')) {
@@ -237,13 +238,13 @@ export class LibrarianWorld {
       if (said !== undefined) signals.violations.push(`${frame.channel} carried a payload that is ${said}: ${JSON.stringify(frame.payload).slice(0, 400)}`);
     });
 
-    const graph: services['schemas']['Neo4jGraphConfig'] = { type: 'neo4j', uri: `bolt://${graphDatabase.host}:7687`, username: 'neo4j', database: 'neo4j', passwordEnv: GRAPH_PASSWORD };
+    const graph: ServiceSchemas['Neo4jGraphConfig'] = { type: 'neo4j', uri: `bolt://${graphDatabase.host}:7687`, username: 'neo4j', database: 'neo4j', passwordEnv: GRAPH_PASSWORD };
     const served = kb.world.served;
     const gatewayUrl = kb.world.origin;
     const issuer = kb.world.issuer.origin;
     const archivist = { host: '127.0.0.1', port: kb.settings.port };
     const did = kbDid(served.domain);
-    const vectors: services['schemas']['QdrantVectorsConfig'] = { type: 'qdrant', host: vectorDatabase.host, port: QDRANT_PORT, tokenEnv: VECTORS_TOKEN };
+    const vectors: ServiceSchemas['QdrantVectorsConfig'] = { type: 'qdrant', host: vectorDatabase.host, port: QDRANT_PORT, tokenEnv: VECTORS_TOKEN };
     const claims = claimsFor(did);
     const world = new LibrarianWorld({
       kb,

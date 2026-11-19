@@ -12,9 +12,11 @@ import { storedEvent } from '../harness/archivist';
 import { call } from '../harness/http';
 import { eventually } from '../harness/net';
 import { startOtlp, type OtlpReceiver } from '../harness/otlp';
-import { metricName, operationFor, registry, spanName, spec, telemetry } from '../harness/spec';
+import { metricName, operationFor, spanName, spec, telemetry } from '../harness/spec';
+import { busRegistry } from '../harness/generated/protocol/protocol';
 import { expectedOn, outsideTheTable } from '../harness/telemetry';
-import { eachPlane, PLANES } from '../harness/world';
+import { PLANES } from '../harness/gateway';
+import { eachPlane } from '../harness/world';
 import type { Plane } from '../harness/gateway';
 
 /** OTLP's span kinds. */
@@ -65,7 +67,7 @@ eachPlane(
       expect(span.resource['service.name']).toBe('xynolog-gateway');
 
       const frame = await watcher.frame('beckon:focus', (f) => f.payload['annotationId'] === marker);
-      const carried = (frame.payload[registry().trace.field] as { traceparent?: string } | undefined)?.traceparent ?? '';
+      const carried = (frame.payload[busRegistry.trace.field] as { traceparent?: string } | undefined)?.traceparent ?? '';
       expect(carried.split('-')[1]).toBe(t.traceId);
     });
 
@@ -182,7 +184,7 @@ eachPlane(
       });
       expect([...unauthenticated].sort()).toEqual(['invalid_media_token', 'invalid_token', 'missing_token']);
 
-      for (const row of expectedOn(telemetry('gateway').metrics, plane).filter((r) => r.when === 'traffic')) {
+      for (const row of expectedOn(telemetry('gateway').metrics, plane).filter((r) => !('when' in r) || r.when === 'traffic')) {
         const seen = await eventually(`the ${row.name} metric`, 15_000, () => otlp().metrics.get(metricName(row.name)));
         for (const attribute of row.attributes.filter((a) => !a.only)) {
           await eventually(`${row.name} carrying ${attribute.key}`, 15_000, () => (seen.attributes.has(attribute.key) ? true : undefined));

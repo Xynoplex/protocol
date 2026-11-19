@@ -136,6 +136,7 @@ let int cursor =
 let number cursor =
   match cursor.json with
   | `Int i -> float_of_int i
+  | `Intlit digits -> float_of_string digits
   | `Float f when Float.is_finite f -> f
   | `Float _ -> refuse cursor "expected a finite number"
   | _ -> expected cursor "a number"
@@ -219,6 +220,13 @@ let members_of cursor =
 let map decoder cursor =
   List.map
     (fun (name, json) -> (name, decoder (child cursor name json)))
+    (members_of cursor)
+
+let map_by key value cursor =
+  List.map
+    (fun (name, json) ->
+      let at = child cursor name json in
+      (key { at with json = `String name }, value at))
     (members_of cursor)
 
 let names cases = String.concat ", " (List.map fst cases)

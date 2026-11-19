@@ -10,7 +10,7 @@ import { expect, it } from 'vitest';
 import { refusedDispatcherBoot, startDispatcher, type DispatcherLaunch, type DispatcherSettings } from '../harness/dispatcher';
 import { withDispatcher, type DispatcherWorld } from '../harness/dispatcher-world';
 import { freePort } from '../harness/net';
-import { errorsOf, servicesSpec } from '../harness/spec';
+import { serviceRefusals } from '../harness/services';
 
 /** A launch like the world's, on a port of its own, changed as a case needs. */
 async function launch(world: DispatcherWorld, change: Partial<DispatcherLaunch> = {}): Promise<DispatcherLaunch> {
@@ -26,8 +26,7 @@ withDispatcher('the dispatcher\'s boot', (world) => {
     const health = await world().dispatcher.health();
     expect(health.status).toBe(200);
     expect(health.headers.get('content-type')).toMatch(/^application\/json/);
-    const validate = servicesSpec().component('DispatcherHealth');
-    expect(validate(health.json), errorsOf(validate)).toBe(true);
+    expect(serviceRefusals('DispatcherHealth', health.json)).toEqual([]);
     expect(health.json).toEqual({ status: 'ok', queue: 'jetstream' });
 
     const elsewhere = await world().dispatcher.health('/api/health');

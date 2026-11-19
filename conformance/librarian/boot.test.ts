@@ -6,23 +6,12 @@
  * knowledge base than the one at its gateway, and that it gives up when the
  * gateway does not answer.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { LibrarianSettings } from '../harness/librarian-process';
 import { eachLibrarian } from '../harness/librarian-world';
-import { SPEC_SOURCE } from '../harness/paths';
 import { VECTORS_TOKEN } from '../harness/qdrant';
-import { kbIdentity } from '../harness/spec';
-
-/** How long a held job may show no activity before its holder calls it stalled: the bound a gather's waits must end under. */
-function heldJobStallMs(): number {
-  const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'client/timing.json'), 'utf8')) as { timing: Array<{ name: string; value: number }> };
-  const row = table.timing.find((entry) => entry.name === 'heldJobStallMs');
-  if (row === undefined) throw new Error('specs/src/client/timing.json has no heldJobStallMs');
-  return row.value;
-}
+import { clientTiming, kbIdentity } from '../harness/spec';
 
 /** A knowledge base the gateway does not serve, which a Librarian's settings are made to name. */
 const ELSEWHERE = kbIdentity('a comment is not part of the value');
@@ -50,7 +39,7 @@ const REFUSED: ReadonlyArray<[how: string, changed: (settings: LibrarianSettings
   ["on a graph that lives in one process's memory", (settings) => ({ ...settings, graph: { type: 'memory' } }), /graph\.type is memory/],
   ["on a vector index that lives in one process's memory", (settings) => ({ ...settings, vectors: { type: 'memory' } }), /vectors\.type is memory/],
   // A gather's two waits, for the graph and for the vectors, must both end before a worker that holds a job is called stalled.
-  ['on a settle bound as long as the stall of a held job', (settings) => ({ ...settings, settleTimeoutMs: heldJobStallMs() }), /gather\.settleTimeoutMs must be less than/],
+  ['on a settle bound as long as the stall of a held job', (settings) => ({ ...settings, settleTimeoutMs: clientTiming('heldJobStallMs') }), /gather\.settleTimeoutMs must be less than/],
   ['on a settle bound of no time at all', (settings) => ({ ...settings, settleTimeoutMs: 0 }), /gather\.settleTimeoutMs/],
 ];
 

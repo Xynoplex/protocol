@@ -14,5 +14,6 @@
   (ocaml (= 5.5.2))
   (yojson (>= 3.0.0))
   (re (>= 1.14.0))
+  (js_of_ocaml (>= 6.5.0))
   (alcotest :with-test)
   (ocamlformat (and :with-test (= 0.29.0)))))

@@ -18,7 +18,8 @@ import { QUIET_TIMING, startDispatcher, type DispatcherEnvironment, type Dispatc
 import { startBroker, type Broker, type BrokerOptions } from './nats';
 import { eventually, freePort } from './net';
 import { SERVICE_ROLE, WORKER_ROLE } from './roles';
-import { errorsOf, operationFor, registry, spec } from './spec';
+import { errorsOf, operationFor, spec } from './spec';
+import { busRegistry } from './generated/protocol/protocol';
 import type { BusFrame, BusStream } from './stream';
 import { endCase, World } from './world';
 
@@ -113,7 +114,7 @@ function holdToRegistry(stream: BusStream): void {
   stream.on((message) => {
     const frame = message.frame;
     if (!frame) return;
-    const channel = registry().channels.find((c) => c.channel === frame.channel);
+    const channel = busRegistry.channels.find((c) => c.channel === frame.channel);
     if (!channel) {
       stream.violations.push(`a frame on ${frame.channel}, which the registry does not declare`);
       return;
