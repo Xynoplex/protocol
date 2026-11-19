@@ -302,9 +302,19 @@ let () =
            {|"type":"string","contentEncoding":"base64"|}))
     "components/schemas/Unknown.json: /contentEncoding: an unknown member";
   refused specs ~why:"lacks a path item a document names"
-    (fun copied -> Sys.remove (Filename.concat copied "paths/api_health.json"))
-    "openapi.json: /paths/~1api~1health/$ref: names paths/api_health.json, \
+    (fun copied -> Sys.remove (Filename.concat copied "paths/get-health.json"))
+    "openapi.json: /paths/~1api~1health/$ref: names paths/get-health.json, \
      which Protocol does not have";
+  changed specs ~why:"names a path item by what is not its operationId"
+    "paths/get-status.json" "get/operationId"
+    (fun _ -> `String "getState")
+    "/: is named get-status, and a path item's file is named by its \
+     operationId, get-state";
+  changed specs ~why:"has a path item whose operations share no name"
+    "archivist/paths/resource-anchored-text.json" "put/operationId"
+    (fun _ -> `String "putAnchoredText")
+    "/: holds operations whose operationIds share no name after their verbs, \
+     and a path item's file is named by the name they share";
   refused specs ~why:"lacks a table's schema"
     (fun copied -> Sys.remove (Filename.concat copied "retry/RetryCases.json"))
     "retry/cases.json: /: has no schema, which would be retry/RetryCases.json";
@@ -354,10 +364,10 @@ let () =
   refused specs ~why:"has a gateway route that uses a service's schema"
     (fun copied ->
       rewrite
-        (Filename.concat copied "paths/api_health.json")
+        (Filename.concat copied "paths/get-health.json")
         (repoint ~from:(id "HealthResponse.json")
            ~onto:(id "DispatcherHealth.json")))
-    "paths/api_health.json: \
+    "paths/get-health.json: \
      /get/responses/200/content/application~1json/schema/$ref: names \
      https://xynolog.org/protocol/DispatcherHealth.json, \
      dispatcher/DispatcherHealth.json, outside components/schemas: what a \
@@ -745,7 +755,7 @@ let () =
       | _ -> failwith "not a list")
     "/: names ghostResourceId, which no schema of the spec has";
   changed specs ~why:"has a path parameter refer to no kind"
-    "archivist/paths/events_{resourceId}.json" "get/parameters/0/schema"
+    "archivist/paths/get-resource-events.json" "get/parameters/0/schema"
     (fun _ -> `Assoc [ ("type", `String "string") ])
     "/get/parameters/0: the path parameter {resourceId} must refer to a kind \
      of id";
@@ -854,28 +864,28 @@ let () =
     "/components/securitySchemes/bearerAuth: securitySchemes.bearerAuth: has \
      no description — the claims a credential must carry are protocol";
   changed specs ~why:"names a security scheme nothing defines"
-    "paths/bus_emit.json" "post/security"
+    "paths/emit-on-bus.json" "post/security"
     (fun _ -> `List [ `Assoc [ ("nobody", `List []) ] ])
     "/post/security: POST /bus/emit: names security scheme \"nobody\", which \
      components.securitySchemes does not define";
-  changed specs ~why:"declares no 500" "paths/bus_emit.json" "post/responses"
+  changed specs ~why:"declares no 500" "paths/emit-on-bus.json" "post/responses"
     (members (List.remove_assoc "500"))
     "/post/responses: POST /bus/emit: declares no 500";
-  changed specs ~why:"takes a body and declares no 400" "paths/bus_emit.json"
+  changed specs ~why:"takes a body and declares no 400" "paths/emit-on-bus.json"
     "post/responses"
     (members (List.remove_assoc "400"))
     "/post/responses: POST /bus/emit: takes a request body and declares no 400";
-  changed specs ~why:"leaves a JSON body unbounded" "paths/bus_emit.json"
+  changed specs ~why:"leaves a JSON body unbounded" "paths/emit-on-bus.json"
     "post/x-xynolog-limits"
     (members (List.remove_assoc "maxBodyBytes"))
     "/post: POST /bus/emit: takes a JSON body and states no \
      x-xynolog-limits.maxBodyBytes";
   changed specs ~why:"takes a JSON body and declares no 413"
-    "paths/bus_emit.json" "post/responses"
+    "paths/emit-on-bus.json" "post/responses"
     (members (List.remove_assoc "413"))
     "/post/responses: POST /bus/emit: takes a JSON body and declares no 413";
   changed specs ~why:"protects an operation and declares no 401"
-    "paths/bus_emit.json" "post/responses"
+    "paths/emit-on-bus.json" "post/responses"
     (members (List.remove_assoc "401"))
     "/post/responses: POST /bus/emit: is protected and declares no 401";
   refused specs ~why:"challenges no one"
@@ -883,28 +893,28 @@ let () =
       rewrite
         (Filename.concat copied "components/responses/Unauthorized.json")
         (update [] (members (List.remove_assoc "headers"))))
-    "paths/bus_emit.json: /post/responses/401: POST /bus/emit 401: carries no \
-     WWW-Authenticate header";
+    "paths/emit-on-bus.json: /post/responses/401: POST /bus/emit 401: carries \
+     no WWW-Authenticate header";
   refused specs ~why:"refuses a caller without saying when to come back"
     (fun copied ->
       rewrite
         (Filename.concat copied "components/responses/TooManyRequests.json")
         (update [] (members (List.remove_assoc "headers"))))
-    "paths/bus_emit.json: /post/responses/429: POST /bus/emit 429: carries no \
-     Retry-After header";
-  changed specs ~why:"gives an error no body" "paths/bus_emit.json"
+    "paths/emit-on-bus.json: /post/responses/429: POST /bus/emit 429: carries \
+     no Retry-After header";
+  changed specs ~why:"gives an error no body" "paths/emit-on-bus.json"
     "post/responses/400"
     (members (List.remove_assoc "content"))
     "/post/responses/400: POST /bus/emit 400: declares no body";
   changed specs ~why:"gives an error a body that is not JSON"
-    "paths/bus_emit.json" "post/responses/400/content"
+    "paths/emit-on-bus.json" "post/responses/400/content"
     (members (List.map (fun (_, media) -> ("text/plain", media))))
     "/post/responses/400: POST /bus/emit 400: an error body is text/plain, not \
      application/json";
   refused specs ~why:"gives an error a body that is not ErrorResponse"
     (fun copied ->
       rewrite
-        (Filename.concat copied "paths/bus_emit.json")
+        (Filename.concat copied "paths/emit-on-bus.json")
         (update
            [
              "post";
@@ -915,7 +925,7 @@ let () =
              "schema";
              "$ref";
            ] (fun _ -> `String (id "BusEmitRequest.json"))))
-    "paths/bus_emit.json: /post/responses/400: POST /bus/emit 400: an error \
+    "paths/emit-on-bus.json: /post/responses/400: POST /bus/emit 400: an error \
      body is not ErrorResponse, or a refinement of it";
   refused specs ~why:"writes a stream's event names nowhere"
     (fun copied ->
@@ -925,11 +935,11 @@ let () =
            (members
               (List.map (fun (k, v) ->
                    ((if k = "oneOf" then "anyOf" else k), v))))))
-    "paths/bus_subscribe.json: /post/responses/200: POST /bus/subscribe 200 \
+    "paths/subscribe-to-bus.json: /post/responses/200: POST /bus/subscribe 200 \
      text/event-stream: the stream schema is not a oneOf of its messages, so \
      its event names are written nowhere";
   changed specs ~why:"gives a role a coefficient shaped otherwise"
-    "paths/bus_emit.json"
+    "paths/emit-on-bus.json"
     "post/x-xynolog-limits/emitsPerPrincipal/roles/xynolog-service"
     (fun _ -> `Int 5)
     "/post/x-xynolog-limits/emitsPerPrincipal/roles/xynolog-service: POST \
@@ -944,8 +954,7 @@ let () =
   refused specs ~why:"holds a read longer than its caller waits"
     (fun copied ->
       rewrite
-        (Filename.concat copied
-           "archivist/paths/resources_{id}_anchored-text.json")
+        (Filename.concat copied "archivist/paths/resource-anchored-text.json")
         (update [ "get"; "x-xynolog-limits"; "settleWaitSeconds" ] (fun _ ->
              `Int 1000)))
     "archivist/openapi.json: /: waits that nest: settleWaitSeconds (1000) is \
@@ -961,7 +970,7 @@ let () =
   refused specs ~why:"forgets an emit's key before its attempts end"
     (fun copied ->
       rewrite
-        (Filename.concat copied "paths/bus_emit.json")
+        (Filename.concat copied "paths/emit-on-bus.json")
         (update [ "post"; "x-xynolog-limits"; "idempotencySeconds" ] (fun _ ->
              `Int 1)))
     "openapi.json: /paths/~1bus~1emit: POST /bus/emit: holds a key for 1 s, \

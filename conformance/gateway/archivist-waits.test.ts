@@ -16,7 +16,7 @@
  * side, the longest `connectSeconds` and `readSeconds` together. The fourth is
  * an upload the Archivist recorded and never answered: its resend, under its
  * key, is answered with the resource it made
- * (specs/src/paths/resources.json, A key).
+ * (specs/src/paths/upload-resource.json, A key).
  */
 import { randomUUID } from 'node:crypto';
 import { request } from 'node:http';

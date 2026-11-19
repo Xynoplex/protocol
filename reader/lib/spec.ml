@@ -2,7 +2,8 @@
    JSON file read into the model. A file is one of:
    - the two OpenAPI documents (specs/README.md: "the gateway and Archivist
      OpenAPI documents");
-   - a path item, which a document's "paths" names;
+   - a path item, which a document's "paths" names, its file named by its
+     operationId;
    - a response, which a document's components or an operation names;
    - a table, each of which the model names here and types in Tables;
    - a fixture, which smelter/extraction-cases.json names;
@@ -67,6 +68,36 @@ let rec walk root relative =
 
 let operations (item : Openapi.path_item) =
   List.filter_map Fun.id [ item.get; item.put; item.post ]
+
+let kebab name =
+  let spelled = Buffer.create (String.length name + 8) in
+  String.iteri
+    (fun i c ->
+      if i > 0 && c >= 'A' && c <= 'Z' then Buffer.add_char spelled '-';
+      Buffer.add_char spelled (Char.lowercase_ascii c))
+    name;
+  Buffer.contents spelled
+
+(* D5: a path item's file is named by its operation's operationId, in kebab
+   case; one of several operations by the name their operationIds share after
+   each one's verb, as getResourceAnchoredText and putResourceAnchoredText
+   share resource-anchored-text. *)
+let path_item_name item =
+  let without_verb name =
+    match String.index_opt name '-' with
+    | Some i -> Some (String.sub name (i + 1) (String.length name - i - 1))
+    | None -> None
+  in
+  match
+    List.map
+      (fun (operation : Openapi.operation) -> kebab operation.operation_id)
+      (operations item)
+  with
+  | [ name ] -> Some name
+  | names -> (
+      match List.sort_uniq compare (List.map without_verb names) with
+      | [ Some shared ] -> Some shared
+      | _ -> None)
 
 let operation_responses item =
   List.concat_map
@@ -668,6 +699,27 @@ let load root =
   let client_types_rules = Client_types_rules.refusals ~ids ~files ~read_json in
   let protocol_rules = Protocol_rules.refusals ~ids ~read_json in
   let control_rules = Control_rules.refusals ~ids tables.control_methods in
+  let path_item_names =
+    List.filter_map
+      (fun (file, item) ->
+        let stated = Filename.remove_extension (Filename.basename file) in
+        match path_item_name item with
+        | Some name when name = stated -> None
+        | Some name ->
+            Some
+              (refusal file ""
+                 (Printf.sprintf
+                    "is named %s, and a path item's file is named by its \
+                     operationId, %s"
+                    stated name))
+        | None ->
+            Some
+              (refusal file ""
+                 "holds operations whose operationIds share no name after \
+                  their verbs, and a path item's file is named by the name \
+                  they share"))
+      path_items
+  in
   let services = Places.service_schemas root in
   let empty_services =
     List.filter_map
@@ -685,10 +737,10 @@ let load root =
       Places.services
   in
   let census =
-    census @ stray_case_tables @ orphan_schemas @ empty_services @ validation
-    @ public_api @ client_surface @ reply_bounds @ offset_units @ registry_rules
-    @ jobs_rules @ archivist_rules @ identifiers_rules @ client_types_rules
-    @ protocol_rules @ control_rules
+    census @ stray_case_tables @ orphan_schemas @ path_item_names
+    @ empty_services @ validation @ public_api @ client_surface @ reply_bounds
+    @ offset_units @ registry_rules @ jobs_rules @ archivist_rules
+    @ identifiers_rules @ client_types_rules @ protocol_rules @ control_rules
   in
   match (schemas, census) with
   | Ok schemas, [] ->

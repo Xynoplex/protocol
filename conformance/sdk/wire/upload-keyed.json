@@ -1,6 +1,6 @@
 {
   "about": "every upload carries an Idempotency-Key of its own, never another upload's",
-  "source": "contract/TRANSPORT-CONTRACT.md § Content and the gateway's own operations; specs/src/paths/resources.json",
+  "source": "contract/TRANSPORT-CONTRACT.md § Content and the gateway's own operations; specs/src/paths/upload-resource.json",
   "steps": [
     {"driver": "open", "with": {"channels": ["beckon:focus"], "timing": {"reconnectMs": 50, "lazyRemoveMs": 50}}},
     {"wire": "POST /bus/subscribe", "status": 200, "body": {"clientId": {"$var": "clientId"}, "global": ["beckon:focus"], "scoped": [], "pendingReplies": []}},
