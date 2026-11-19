@@ -1,11 +1,19 @@
-(* xynolog-protocol check SPECS: Protocol's specs/src read into the model, every
-   file accounted for and every table what its schema says. Each refusal is
-   printed, and any fails the run. *)
+(* xynolog-protocol check ROOT: the Protocol checkout at ROOT. Its specs/src is
+   read into the model, every file accounted for and every table what its
+   schema says, and what the checkout states outside specs/src is held to it.
+   Each refusal is printed, and any fails the run. *)
 
 let () =
   match Sys.argv with
-  | [| _; "check"; specs |] -> (
-      match Spec.load specs with
+  | [| _; "check"; root |] -> (
+      match
+        Result.bind
+          (Spec.load (Filename.concat root "specs/src"))
+          (fun spec ->
+            match Archivist_rules.contract ~root spec.tables.bus_registry with
+            | [] -> Ok spec
+            | errors -> Error errors)
+      with
       | Ok spec ->
           Printf.printf
             "Protocol read: 2 OpenAPI documents, %d path items, %d responses, \
@@ -21,5 +29,5 @@ let () =
           Printf.eprintf "%d refusals\n" (List.length errors);
           exit 1)
   | _ ->
-      prerr_endline "usage: xynolog-protocol check SPECS";
+      prerr_endline "usage: xynolog-protocol check ROOT";
       exit 2

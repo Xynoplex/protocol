@@ -1,4 +1,4 @@
-; The reader, its lock, and the specs it reads as data. Nothing else here is
-; dune's.
-(dirs reader specs dune.lock)
-(data_only_dirs specs)
+; The reader, its lock, and the specs and contract it reads as data. Nothing
+; else here is dune's.
+(dirs reader specs contract dune.lock)
+(data_only_dirs specs contract)

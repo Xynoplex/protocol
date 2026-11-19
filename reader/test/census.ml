@@ -101,7 +101,9 @@ let changed specs ~why file place change expected =
     (fun copied ->
       rewrite
         (Filename.concat copied file)
-        (update (String.split_on_char '/' place) change))
+        (update
+           (if place = "" then [] else String.split_on_char '/' place)
+           change))
     (file ^ ": " ^ expected)
 
 let surface specs ~why place change expected =
@@ -389,6 +391,152 @@ let () =
     "text/offset-cases.json: /: counts offsets or lengths of text and has no \
      character outside the Basic Multilingual Plane to tell code points from \
      UTF-16 code units or bytes";
+  changed specs ~why:"lets a cancellation name more than a job"
+    "components/schemas/JobCancelRequest.json" "properties"
+    (members (fun m ->
+         m @ [ ("reason", `Assoc [ ("type", `String "string") ]) ]))
+    "/: is not exactly one required jobId, a JobId: a cancellation names one \
+     job, and selects no other way";
+  changed specs ~why:"tells filters apart by another property"
+    "components/schemas/JobFilter.json" "discriminator/propertyName"
+    (fun _ -> `String "kind")
+    "/discriminator: JobFilter is not told apart by jobType";
+  changed specs ~why:"maps a job description to no yield job"
+    "components/schemas/JobCreateCommand.json" "discriminator/mapping"
+    (members (List.remove_assoc "yield"))
+    "/discriminator/mapping: JobCreateCommand is told apart by [mark], JobType \
+     is [mark,yield]";
+  changed specs ~why:"has a filter select the other job type"
+    "components/schemas/MarkJobFilter.json" "properties/jobType/enum"
+    (fun _ -> `List [ `String "yield" ])
+    "/properties/jobType: JobFilter selects ./MarkJobFilter.json by jobType \
+     mark, whose jobType is [yield]";
+  changed specs ~why:"opens a motivation's parameters"
+    "components/schemas/HighlightingJobParams.json" ""
+    (members (List.remove_assoc "additionalProperties"))
+    "/: a highlighting job's parameters are open: a parameter it does not take \
+     would be accepted";
+  changed specs ~why:"announces a mark job with other parameters"
+    "components/schemas/MarkJobQueuedEvent.json" "properties/params/$ref"
+    (fun _ -> `String "./GenerationJobParams.json")
+    "/properties/params: a mark job is announced with \
+     ./GenerationJobParams.json, and created with ./MarkJobParams.json";
+  changed specs ~why:"states a yield job's parameters in three parts"
+    "components/schemas/GenerationJobParams.json" "allOf"
+    (function
+      | `List parts -> `List (parts @ [ `Assoc [ ("type", `String "object") ] ])
+      | _ -> failwith "no allOf")
+    "/allOf: a yield job's parameters are not stated as what is asked for and \
+     its input";
+  changed specs ~why:"gives a yield job an input beside its context"
+    "components/schemas/GenerationJobParams.json" "allOf/1/properties"
+    (members (fun m -> m @ [ ("more", `Assoc [ ("type", `String "string") ]) ]))
+    "/allOf/1: a yield job's input is [context,more], and an announcement \
+     leaves out exactly its context";
+  changed specs ~why:"opens a filter" "components/schemas/YieldJobFilter.json"
+    ""
+    (members (List.remove_assoc "additionalProperties"))
+    "/: a yield filter is open";
+  changed specs ~why:"has a filter name what a job does not have"
+    "components/schemas/YieldJobFilter.json" "properties"
+    (members (fun m ->
+         m @ [ ("nowhere", `Assoc [ ("type", `String "string") ]) ]))
+    "/properties/nowhere: a yield filter names nowhere, which a yield job \
+     description does not have";
+  changed specs ~why:"lets a mark filter leave out its motivation"
+    "components/schemas/MarkJobFilter.json" "properties/params/required"
+    (fun _ -> `List [])
+    "/properties/params: a mark filter does not always state its motivation";
+  changed specs ~why:"gives JobResult a discriminant"
+    "components/schemas/JobResult.json" ""
+    (members (fun m ->
+         m @ [ ("discriminator", `Assoc [ ("propertyName", `String "kind") ]) ]))
+    "/discriminator: JobResult has a discriminant of its own";
+  changed specs ~why:"opens a result" "components/schemas/JobDeclined.json" ""
+    (members (List.remove_assoc "additionalProperties"))
+    "/: ./JobDeclined.json is open: another result would decode as it";
+  changed specs ~why:"has a result state a kind"
+    "components/schemas/JobDeclined.json" "properties"
+    (members (fun m -> m @ [ ("kind", `Assoc [ ("type", `String "string") ]) ]))
+    "/properties/kind: ./JobDeclined.json states a kind";
+  refused specs ~why:"has two results require one member"
+    (fun copied ->
+      rewrite (Filename.concat copied "components/schemas/JobDeclined.json")
+        (fun json ->
+          json
+          |> update [ "properties" ]
+               (members (fun m ->
+                    m @ [ ("found", `Assoc [ ("type", `String "integer") ]) ]))
+          |> update [ "required" ] (function
+            | `List r -> `List (r @ [ `String "found" ])
+            | _ -> failwith "no required")))
+    "components/schemas/JobDeclined.json: /required: ./JobDeclined.json and \
+     ./MarkJobDone.json both require found";
+  changed specs ~why:"has JobResult hold a result no verb reports"
+    "components/schemas/JobResult.json" "oneOf"
+    (function
+      | `List rs ->
+          `List (rs @ [ `Assoc [ ("$ref", `String "./JobPending.json") ] ])
+      | _ -> failwith "no oneOf")
+    "/oneOf: the verbs report \
+     [./JobDeclined.json,./MarkJobDone.json,./YieldJobDone.json], JobResult is \
+     [./MarkJobDone.json,./YieldJobDone.json,./JobDeclined.json,./JobPending.json]";
+  changed specs ~why:"names a storage record that is no schema"
+    "jobs/storage.json" "bucket/record"
+    (fun _ -> `String "Nowhere")
+    "/bucket/record: the storage layout's record Nowhere is not a schema";
+  changed specs ~why:"selects a job by a status it does not state"
+    "components/schemas/JobPending.json" "properties/status/enum"
+    (fun _ -> `List [ `String "running" ])
+    "/properties/status: Job's discriminator selects ./JobPending.json by \
+     status pending, whose status is [running]";
+  changed specs ~why:"has the dispatcher's document default a field"
+    "dispatcher/DispatcherConfig.json" "properties/port"
+    (members (fun m -> m @ [ ("default", `Int 8080) ]))
+    "/properties/port/default: DispatcherConfig defaults port";
+  changed specs ~why:"has a worker's document leave a field optional"
+    "worker/WorkerConfig.json" "required"
+    (function
+      | `List r -> `List (List.filter (( <> ) (`String "port")) r)
+      | _ -> failwith "no required")
+    "/properties/port: WorkerConfig leaves port optional";
+  refused specs ~why:"lacks a schema of what the Archivist keeps"
+    (fun copied ->
+      Sys.remove
+        (Filename.concat copied "components/schemas/ProfilesProjection.json"))
+    "archivist/ProfilesProjection.json: /: ProfilesProjection has no schema in \
+     specs/src/archivist or specs/src/components/schemas";
+  changed specs ~why:"has ArchivistConfig default a field"
+    "archivist/ArchivistConfig.json" "properties/port"
+    (members (fun m -> m @ [ ("default", `Int 9000) ]))
+    "/properties/port/default: ArchivistConfig defaults port";
+  changed specs ~why:"has ArchivistConfig leave a field optional"
+    "archivist/ArchivistConfig.json" "required"
+    (function
+      | `List r -> `List (List.filter (( <> ) (`String "root")) r)
+      | _ -> failwith "no required")
+    "/properties/root: ArchivistConfig leaves root optional";
+  changed specs ~why:"gives the Archivist no yield engine"
+    "components/schemas/ArchivistEngines.json" "properties/jobs/properties"
+    (members (List.remove_assoc "yield"))
+    "/properties/jobs: the engines' job types are [mark], JobType is \
+     [mark,yield]";
+  changed specs ~why:"gives the Archivist no tagging engine"
+    "components/schemas/ArchivistEngines.json"
+    "properties/jobs/properties/mark/properties"
+    (members (List.remove_assoc "tagging"))
+    "/properties/jobs/properties/mark: the engines' mark motivations are \
+     [highlighting,commenting,assessing,linking], Motivation is \
+     [assessing,commenting,highlighting,linking,tagging]";
+  changed specs ~why:"restates an extraction's method otherwise"
+    "archivist/AnchoredTextExtractedEntry.json" "properties/method"
+    (fun _ -> `Assoc [ ("type", `String "string") ])
+    "/properties/method: AnchoredTextEntry's method is not ExtractedText's";
+  changed specs ~why:"restates the decline classes otherwise"
+    "archivist/AnchoredTextDeclinedEntry.json" "properties/declined"
+    (fun _ -> `Assoc [ ("type", `String "string") ])
+    "/properties/declined: AnchoredTextEntry's declined is not \
+     ExtractionDeclined's";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
@@ -398,5 +546,6 @@ let () =
      gateway route or a component that refers into a service's area, \
      Archivist's own schema among the components, a client surface case whose \
      arguments are not its method's parameters, a reply's list neither bounded \
-     nor named, or an offset whose unit is unsaid; and it reads each value as \
-     the type its schema states"
+     nor named, an offset whose unit is unsaid, a job protocol that disagrees \
+     with itself, or an Archivist stated short; and it reads each value as the \
+     type its schema states"

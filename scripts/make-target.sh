@@ -16,7 +16,8 @@ esac
 
 # The reader, in the OCaml toolchain's image, on a copy of the checkout: it
 # builds, its layout is ocamlformat's, its tests pass, and it reads every file
-# of specs/src, each table what its schema says.
+# of specs/src, each table what its schema says, and the contract documents
+# that name what the specs state.
 reader() {
   bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT"
   "$RUNTIME" run --rm \
@@ -33,7 +34,7 @@ reader() {
       printf "==> Testing the reader\n"
       dune test
       printf "==> Reading the specifications\n"
-      dune exec -- xynolog-protocol check specs/src'
+      dune exec -- xynolog-protocol check .'
 }
 
 if [[ "$TARGET" == reader ]]; then
