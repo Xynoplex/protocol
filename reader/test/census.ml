@@ -94,13 +94,38 @@ let rec update place change (json : Yojson.Safe.t) =
            items)
   | _ -> failwith "no such place"
 
-let surface specs ~why place change expected =
+(* A copy with the value at [place] in [file] changed, refused with
+   [expected] at that file. *)
+let changed specs ~why file place change expected =
   refused specs ~why
     (fun copied ->
       rewrite
-        (Filename.concat copied "client/surface.json")
+        (Filename.concat copied file)
         (update (String.split_on_char '/' place) change))
-    ("client/surface.json: " ^ expected)
+    (file ^ ": " ^ expected)
+
+let surface specs ~why place change expected =
+  changed specs ~why "client/surface.json" place change expected
+
+(* [text] with each character outside the Basic Multilingual Plane written as
+   JSON's escape of its UTF-16 surrogates: the same value, spelled in ASCII. *)
+let escape_astral text =
+  let out = Buffer.create (String.length text) in
+  let rec from i =
+    if i < String.length text then (
+      let decoded = String.get_utf_8_uchar text i in
+      let length = Uchar.utf_decode_length decoded in
+      let code = Uchar.to_int (Uchar.utf_decode_uchar decoded) in
+      if code > 0xFFFF then
+        let v = code - 0x10000 in
+        Printf.bprintf out "\\u%04x\\u%04x"
+          (0xD800 lor (v lsr 10))
+          (0xDC00 lor (v land 0x3FF))
+      else Buffer.add_string out (String.sub text i length);
+      from (i + length))
+  in
+  from 0;
+  Buffer.contents out
 
 let () =
   let specs =
@@ -264,6 +289,80 @@ let () =
       | _ -> failwith "job.status takes one parameter")
     "/namespaces/8/methods/4/parameters/1: names jobId, which job.status takes \
      already";
+  let bounds = "bus/reply-bounds.json" in
+  changed specs ~why:"names a reply of no operation" bounds "replies"
+    (members (fun replies ->
+         replies
+         @ [
+             ( "nowhere:requested",
+               `Assoc [ ("response", `Assoc [ ("grows", `String "always") ]) ]
+             );
+           ]))
+    "/replies/nowhere:requested: names nowhere:requested, which is no \
+     operation of the registry";
+  refused specs ~why:"leaves a reply's unbounded list unnamed"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied bounds)
+        (update [ "replies" ]
+           (members (List.remove_assoc "browse:entity-types-requested"))))
+    "components/schemas/GetEntityTypesResponse.json: /properties/entityTypes: \
+     is response.entityTypes of browse:entity-types-result, a list with no \
+     bound that bus/reply-bounds.json does not name: bound it in its schema, \
+     or say what bounds it";
+  refused specs ~why:"names a list its schema bounds"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "components/schemas/GetEntityTypesResponse.json")
+        (update
+           [ "properties"; "entityTypes" ]
+           (members (fun schema -> schema @ [ ("maxItems", `Int 64) ]))))
+    "bus/reply-bounds.json: \
+     /replies/browse:entity-types-requested/response.entityTypes: names \
+     response.entityTypes of browse:entity-types-result, which its schema \
+     bounds";
+  changed specs ~why:"names a list a reply does not carry" bounds
+    "replies/browse:entity-types-requested"
+    (members (fun entries ->
+         entries
+         @ [ ("response.nothing", `Assoc [ ("grows", `String "always") ]) ]))
+    "/replies/browse:entity-types-requested/response.nothing: names \
+     response.nothing of browse:entity-types-result, which it does not carry";
+  changed specs ~why:"bounds a list by no member of its request" bounds
+    "replies/match:search-requested/response/by"
+    (fun _ -> `String "nowhere")
+    "/replies/match:search-requested/response/by: is nowhere, which is no \
+     member of match:search-requested";
+  changed specs ~why:"bounds a list by a member that bounds nothing" bounds
+    "replies/match:search-requested/response/by"
+    (fun _ -> `String "useSemanticScoring")
+    "/replies/match:search-requested/response/by: is useSemanticScoring of \
+     match:search-requested, which is neither an array nor an integer with a \
+     maximum";
+  changed specs ~why:"has a description of an offset leave its unit out"
+    "components/schemas/TextPositionSelector.json"
+    "properties/start/description"
+    (fun _ -> `String "Where the selection starts.")
+    "/properties/start: carries an offset or a length of text, and its \
+     description does not say that it counts code points";
+  changed specs ~why:"loses a member that carries an offset"
+    "client/types/TextSpan.json" "allOf/0/properties"
+    (members (List.remove_assoc "end"))
+    "/allOf/0/properties/end: is listed as carrying an offset or a length of \
+     text, and is not there";
+  changed specs ~why:"has a new description speak of characters"
+    "components/schemas/UnitCursor.json" "properties/size/description"
+    (fun _ -> `String "How many characters the piece was cut at.")
+    "/properties/size: speaks of an offset or of characters and does not say \
+     \"code points\": \"How many characters the piece was cut at.\"";
+  refused specs ~why:"spells a counting table's astral characters in ASCII"
+    (fun copied ->
+      let path = Filename.concat copied "text/offset-cases.json" in
+      write path
+        (escape_astral (In_channel.with_open_bin path In_channel.input_all)))
+    "text/offset-cases.json: /: counts offsets or lengths of text and has no \
+     character outside the Basic Multilingual Plane to tell code points from \
+     UTF-16 code units or bytes";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
@@ -271,5 +370,6 @@ let () =
      table, a case table off an area's top, a value its schema refuses, a \
      component the gateway does not list, a service's schema it lists, a \
      gateway route or a component that refers into a service's area, \
-     Archivist's own schema among the components, or a client surface case \
-     whose arguments are not its method's parameters"
+     Archivist's own schema among the components, a client surface case whose \
+     arguments are not its method's parameters, a reply's list neither bounded \
+     nor named, or an offset whose unit is unsaid"
