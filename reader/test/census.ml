@@ -41,6 +41,67 @@ let members f = function
   | `Assoc members -> `Assoc (f members)
   | _ -> failwith "not an object"
 
+(* Every "$ref" in [json] that names [from] names [onto] instead. *)
+let rec repoint ~from ~onto = function
+  | `Assoc members ->
+      `Assoc
+        (List.map
+           (function
+             | "$ref", `String target when target = from ->
+                 ("$ref", `String onto)
+             | name, value -> (name, repoint ~from ~onto value))
+           members)
+  | `List values -> `List (List.map (repoint ~from ~onto) values)
+  | value -> value
+
+(* The gateway's document's listing, changed. *)
+let gateway_listing copied change =
+  rewrite
+    (Filename.concat copied "openapi.json")
+    (members
+       (List.map (function
+         | "components", components ->
+             ( "components",
+               members
+                 (List.map (function
+                   | "schemas", `Assoc schemas ->
+                       ("schemas", `Assoc (change schemas))
+                   | member -> member))
+                 components )
+         | member -> member)))
+
+let list_in_gateway copied name target =
+  gateway_listing copied (fun schemas ->
+      schemas @ [ (name, `Assoc [ ("$ref", `String target) ]) ])
+
+(* [json] with the value at [place], a pointer's tokens, changed. *)
+let rec update place change (json : Yojson.Safe.t) =
+  match (place, json) with
+  | [], value -> change value
+  | token :: rest, `Assoc members ->
+      `Assoc
+        (List.map
+           (fun (key, value) ->
+             if key = token then (key, update rest change value)
+             else (key, value))
+           members)
+  | token :: rest, `List items ->
+      `List
+        (List.mapi
+           (fun index item ->
+             if string_of_int index = token then update rest change item
+             else item)
+           items)
+  | _ -> failwith "no such place"
+
+let surface specs ~why place change expected =
+  refused specs ~why
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "client/surface.json")
+        (update (String.split_on_char '/' place) change))
+    ("client/surface.json: " ^ expected)
+
 let () =
   let specs =
     match Sys.argv with
@@ -111,8 +172,103 @@ let () =
                      :: rest) )
              | member -> member))))
     "jobs/retry-cases.json: /cases/0/retryCount: is less than 0";
+  refused specs
+    ~why:"has a component a route uses that the gateway does not list"
+    (fun copied -> gateway_listing copied (List.remove_assoc "HealthResponse"))
+    "components/schemas/HealthResponse.json: /: is a component schema, and the \
+     gateway's document does not list it";
+  refused specs ~why:"has a service's schema listed by the gateway"
+    (fun copied ->
+      list_in_gateway copied "WorkerConfig" "worker/WorkerConfig.json")
+    "openapi.json: /components/schemas/WorkerConfig/$ref: lists \
+     worker/WorkerConfig.json, which is neither a component schema nor \
+     discovery's: the gateway's document lists the public schemas alone";
+  refused specs ~why:"has a gateway route that uses a service's schema"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "paths/api_health.json")
+        (repoint ~from:"../components/schemas/HealthResponse.json"
+           ~onto:"../dispatcher/DispatcherHealth.json"))
+    "paths/api_health.json: \
+     /get/responses/200/content/application~1json/schema/$ref: names \
+     ../dispatcher/DispatcherHealth.json, outside components/schemas: what a \
+     gateway route uses is a component schema";
+  refused specs ~why:"has a component schema that refers into a service's area"
+    (fun copied ->
+      write
+        (Filename.concat copied "components/schemas/Stray.json")
+        {|{"$ref":"../../worker/WorkerConfig.json"}|};
+      list_in_gateway copied "Stray" "components/schemas/Stray.json")
+    "components/schemas/Stray.json: /$ref: names \
+     ../../worker/WorkerConfig.json, outside components/schemas: a component \
+     schema refers to component schemas alone";
+  refused specs ~why:"has Archivist's own schema put back among the components"
+    (fun copied ->
+      let at = Filename.concat copied in
+      Sys.rename
+        (at "archivist/ArchivistHealth.json")
+        (at "components/schemas/ArchivistHealth.json");
+      rewrite
+        (at "archivist/paths/health.json")
+        (repoint ~from:"../ArchivistHealth.json"
+           ~onto:"../../components/schemas/ArchivistHealth.json");
+      rewrite
+        (at "archivist/openapi.json")
+        (repoint ~from:"./ArchivistHealth.json"
+           ~onto:"../components/schemas/ArchivistHealth.json");
+      list_in_gateway copied "ArchivistHealth"
+        "components/schemas/ArchivistHealth.json")
+    "components/schemas/ArchivistHealth.json: /: is reached by Archivist's \
+     document alone, not by a gateway route or the bus: it is Archivist's own, \
+     so its place is archivist/";
+  surface specs ~why:"gives a method an argument it does not take"
+    "namespaces/8/methods/4/cases/0/args"
+    (members (fun args -> args @ [ ("jobID", `String "job-1") ]))
+    "/namespaces/8/methods/4/cases/0/args/jobID: is no parameter of job.status";
+  surface specs ~why:"lacks an argument a method requires"
+    "namespaces/2/methods/1/cases/0/args"
+    (members (List.remove_assoc "annotationId"))
+    "/namespaces/2/methods/1/cases/0/args: lacks annotationId, which \
+     mark.delete requires";
+  surface specs ~why:"gives an argument its parameter's schema refuses"
+    "namespaces/7/methods/4/cases/0/args/annotationId"
+    (fun _ -> `Int 5)
+    "/namespaces/7/methods/4/cases/0/args/annotationId: is none of the anyOf";
+  surface specs ~why:"misspells a member of an object argument"
+    "namespaces/5/methods/0/cases/1/args/options"
+    (members
+       (List.map (function
+         | "limit", value -> ("limmit", value)
+         | member -> member)))
+    "/namespaces/5/methods/0/cases/1/args/options/limmit: is a member the \
+     schema does not state";
+  surface specs ~why:"gives an argument below its scalar's minimum"
+    "namespaces/6/methods/1/cases/1/args/stallDeadlineMs"
+    (fun _ -> `Int (-1))
+    "/namespaces/6/methods/1/cases/1/args/stallDeadlineMs: is less than 0";
+  surface specs ~why:"names a fixture the table has not"
+    "namespaces/5/methods/0/cases/0/args/context"
+    (fun _ -> `Assoc [ ("$fixture", `String "nowhere") ])
+    "/namespaces/5/methods/0/cases/0/args/context: names the fixture nowhere, \
+     which the table has not";
+  surface specs ~why:"gives a callback as an argument"
+    "namespaces/8/methods/5/cases/0/args"
+    (members (fun args -> args @ [ ("onStatus", `Assoc []) ]))
+    "/namespaces/8/methods/5/cases/0/args/onStatus: is a callback, which a \
+     case cannot give";
+  surface specs ~why:"has a method take a parameter twice"
+    "namespaces/8/methods/4/parameters"
+    (function
+      | `List [ parameter ] -> `List [ parameter; parameter ]
+      | _ -> failwith "job.status takes one parameter")
+    "/namespaces/8/methods/4/parameters/1: names jobId, which job.status takes \
+     already";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
      missing path item, a table without its schema, a schema without its \
-     table, a case table off an area's top, or a value its schema refuses"
+     table, a case table off an area's top, a value its schema refuses, a \
+     component the gateway does not list, a service's schema it lists, a \
+     gateway route or a component that refers into a service's area, \
+     Archivist's own schema among the components, or a client surface case \
+     whose arguments are not its method's parameters"

@@ -3,14 +3,14 @@
   "description": "One engine a worker runs: which it is, the jobs the worker claims to do with it, and where its provider is reached.",
   "properties": {
     "engine": {
-      "$ref": "./Engine.json"
+      "$ref": "../components/schemas/Engine.json"
     },
     "jobs": {
       "type": "array",
       "minItems": 1,
       "description": "The jobs the worker claims to do with this engine, as a claim names them (`job:claim`'s `accepts`): it claims with these filters and no other.",
       "items": {
-        "$ref": "./JobFilter.json"
+        "$ref": "../components/schemas/JobFilter.json"
       }
     },
     "baseUrl": {

@@ -3,7 +3,7 @@
   "description": "Everything a Smelter reads at boot: nothing in it is defaulted by the Smelter. Whoever starts a Smelter writes it, from the knowledge base's stack documents, and the Smelter reads it from the path its `--config` flag names. This schema is the contract, and a Smelter needs no launcher. Started without `--config`, or with a path that names no file, the Smelter refuses to start and says which. No secret is a value here: an embedding provider's key is named by the environment variable that holds it, and the Smelter's own service account is `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET` in its environment. A document that does not validate is refused at boot, naming each failing field.",
   "properties": {
     "kb": {
-      "$ref": "./KbIdentity.json"
+      "$ref": "../components/schemas/KbIdentity.json"
     },
     "gatewayUrl": {
       "type": "string",
@@ -11,18 +11,18 @@
       "description": "The URL the Smelter reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "$ref": "./ServiceIdentity.json",
+      "$ref": "../components/schemas/ServiceIdentity.json",
       "description": "The issuer the Smelter's service account signs in at."
     },
     "archivist": {
-      "$ref": "./ServiceAddress.json",
+      "$ref": "../components/schemas/ServiceAddress.json",
       "description": "Where the Archivist listens. The Smelter reads a resource's bytes from it, and keeps the anchored-text store there, as its service account."
     },
     "embedding": {
-      "$ref": "./EmbeddingConfig.json"
+      "$ref": "../embedding/EmbeddingConfig.json"
     },
     "vectors": {
-      "$ref": "./VectorsConfig.json"
+      "$ref": "../vectors/VectorsConfig.json"
     },
     "chunking": {
       "type": "object",
@@ -51,7 +51,7 @@
       "description": "How many PDFs the Smelter works on at once. Each one under way holds its bytes, a page of a scan in pixels beside the OCR process reading it, and its text and vectors, so whoever starts a Smelter sizes this with the memory it gives it. Every other resource is indexed beside them."
     },
     "cursorsPath": {
-      "$ref": "./CursorsPath.json"
+      "$ref": "../components/schemas/CursorsPath.json"
     },
     "port": {
       "type": "integer",
@@ -60,10 +60,10 @@
       "description": "The port the Smelter answers `/health` on."
     },
     "logLevel": {
-      "$ref": "./LogLevel.json"
+      "$ref": "../components/schemas/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "./LogFormat.json"
+      "$ref": "../components/schemas/LogFormat.json"
     }
   },
   "required": [

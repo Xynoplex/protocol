@@ -33,7 +33,7 @@ spec, named where each file is described below.
 ## Configuration
 
 **The Archivist reads one document, named by its `--config` flag,** and defaults nothing. The
-document is an [`ArchivistConfig`](../specs/src/components/schemas/ArchivistConfig.json): the
+document is an [`ArchivistConfig`](../specs/src/archivist/ArchivistConfig.json): the
 gateway's URL, the issuer, the working tree's root, the state volume, the anchored-text store's
 directory, the engine
 for each job and each actor, the port of its HTTP surface, whether to skip the boot rebuild, the staging
@@ -258,7 +258,7 @@ and is the only process that mounts it.
 
 An entry is the file `<ab>/<cd>/<checksum>.json` in the store, keyed by the checksum of the content
 it was extracted from. It is an
-[`AnchoredTextEntry`](../specs/src/components/schemas/AnchoredTextEntry.json), compact JSON with
+[`AnchoredTextEntry`](../specs/src/archivist/AnchoredTextEntry.json), compact JSON with
 `v` and `stamp` first: either the text with its lines and how it was extracted, or a decline naming
 why nothing was extracted. It is written whole, beside its name and moved onto it, and replaces what
 was there.
@@ -502,7 +502,7 @@ token was presented, `Bearer` when none was.
 | `PUT` `/resources/{id}/anchored-text` | Stores an entry for the resource's content; see below. The Smelter's |
 | `GET` `/resources/{id}/anchored-text/stored`, with `?contentChecksum=` | `200` with the entry stored for the resource's content, as stored, under the stamp stated, at once and never waiting for the Smelter. A `contentChecksum` missing or not 64 lowercase hex digits: `400`. No view, or an id that is not one: `404` `{"error":"Resource not found"}`. Content of another checksum, or none: `409`, as for the write. No entry: `404` `{"error":"No entry is stored for this content"}`. The Smelter's |
 | `GET` `/anchored-text/entries` | `200` `{"checksums":[…]}`: the checksum of every entry stored under the stamp stated, in no order. The Smelter's |
-| `PUT` `/anchored-text/stamp` | States the stamp, an [`AnchoredTextStamp`](../specs/src/components/schemas/AnchoredTextStamp.json): `204`. A body that is not one: `400`. The Smelter's |
+| `PUT` `/anchored-text/stamp` | States the stamp, an [`AnchoredTextStamp`](../specs/src/archivist/AnchoredTextStamp.json): `204`. A body that is not one: `400`. The Smelter's |
 | `POST` `/resources` | Stores content and records it; see below |
 
 A body larger than its operation's `x-xynolog-limits.maxBodyBytes` in the
@@ -536,7 +536,7 @@ The answer is decided from the resource's first representation, in this order:
    lost, and the Smelter derives it again when it next starts.
 
 **`PUT /resources/{id}/anchored-text`** takes an
-[`AnchoredTextWrite`](../specs/src/components/schemas/AnchoredTextWrite.json): the checksum of the
+[`AnchoredTextWrite`](../specs/src/archivist/AnchoredTextWrite.json): the checksum of the
 content the entry was derived from, and the entry. The whole body is read before anything is
 answered.
 

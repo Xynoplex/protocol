@@ -8,7 +8,7 @@
       "description": "The URL the Archivist reaches the gateway at: its only route to the bus."
     },
     "identity": {
-      "$ref": "./ServiceIdentity.json",
+      "$ref": "../components/schemas/ServiceIdentity.json",
       "description": "The issuer the Archivist's service account signs in at, and whose tokens it admits callers of its HTTP surface by."
     },
     "root": {
@@ -27,7 +27,7 @@
       "description": "The anchored-text store, which only the Archivist mounts: the Smelter stores each entry in it over HTTP, and the Archivist serves it."
     },
     "engines": {
-      "$ref": "./ArchivistEngines.json"
+      "$ref": "../components/schemas/ArchivistEngines.json"
     },
     "port": {
       "type": "integer",
@@ -61,10 +61,10 @@
       "additionalProperties": false
     },
     "logLevel": {
-      "$ref": "./LogLevel.json"
+      "$ref": "../components/schemas/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "./LogFormat.json"
+      "$ref": "../components/schemas/LogFormat.json"
     }
   },
   "required": [

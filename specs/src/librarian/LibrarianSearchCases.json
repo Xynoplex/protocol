@@ -31,7 +31,7 @@
                         "$ref": "../components/schemas/MatchResourcesRequest.json"
                       },
                       "semanticFloor": {
-                        "$ref": "../components/schemas/LibrarianConfig.json#/properties/search/properties/semanticFloor"
+                        "$ref": "./LibrarianConfig.json#/properties/search/properties/semanticFloor"
                       },
                       "page": {
                         "description": "The answer.",
@@ -421,7 +421,7 @@
                         "$ref": "../components/schemas/MatchResourcesRequest.json"
                       },
                       "semanticFloor": {
-                        "$ref": "../components/schemas/LibrarianConfig.json#/properties/search/properties/semanticFloor"
+                        "$ref": "./LibrarianConfig.json#/properties/search/properties/semanticFloor"
                       },
                       "graph": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/search/oneOf/0/properties/graph"

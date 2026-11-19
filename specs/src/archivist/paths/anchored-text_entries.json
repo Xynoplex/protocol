@@ -14,7 +14,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/AnchoredTextEntries.json"
+              "$ref": "../AnchoredTextEntries.json"
             }
           }
         }

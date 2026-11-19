@@ -3,7 +3,7 @@
   "description": "One stream of the event log, and where it stands: the resource it is of, or `__system__` for the knowledge base's own, and the sequence number of its last event.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "../components/schemas/ResourceId.json"
     },
     "lastSequence": {
       "type": "integer",

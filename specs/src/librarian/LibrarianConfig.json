@@ -3,7 +3,7 @@
   "description": "Everything a Librarian reads at boot: nothing in it is defaulted by the Librarian. Whoever starts a Librarian writes it, from the knowledge base's stack documents, and the Librarian reads it from the path its `--config` flag names. This schema is the contract, and a Librarian needs no launcher. Started without `--config`, or with a path that names no file, the Librarian refuses to start and says which. No secret is a value here: the graph database's password, an embedding provider's key and a model provider's key are each named by the environment variable that holds it, and the Librarian's own service account is `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET` in its environment. A document that does not validate is refused at boot, naming each failing field.",
   "properties": {
     "kb": {
-      "$ref": "./KbIdentity.json"
+      "$ref": "../components/schemas/KbIdentity.json"
     },
     "gatewayUrl": {
       "type": "string",
@@ -11,21 +11,21 @@
       "description": "The URL the Librarian reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "$ref": "./ServiceIdentity.json",
+      "$ref": "../components/schemas/ServiceIdentity.json",
       "description": "The issuer the Librarian's service account signs in at."
     },
     "archivist": {
-      "$ref": "./ServiceAddress.json",
+      "$ref": "../components/schemas/ServiceAddress.json",
       "description": "Where the Archivist listens. The Librarian reads a resource's bytes from it, as its service account."
     },
     "graph": {
-      "$ref": "./GraphConfig.json"
+      "$ref": "../graph/GraphConfig.json"
     },
     "vectors": {
-      "$ref": "./VectorsConfig.json"
+      "$ref": "../vectors/VectorsConfig.json"
     },
     "embedding": {
-      "$ref": "./EmbeddingConfig.json"
+      "$ref": "../embedding/EmbeddingConfig.json"
     },
     "matcher": {
       "$ref": "./LibrarianEngineConfig.json"
@@ -76,10 +76,10 @@
       "description": "The port the Librarian answers `/health` on."
     },
     "logLevel": {
-      "$ref": "./LogLevel.json"
+      "$ref": "../components/schemas/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "./LogFormat.json"
+      "$ref": "../components/schemas/LogFormat.json"
     }
   },
   "required": [

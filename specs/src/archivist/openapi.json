@@ -76,28 +76,28 @@
         "$ref": "../components/schemas/AnchoredTextAnswer.json"
       },
       "AnchoredTextEntries": {
-        "$ref": "../components/schemas/AnchoredTextEntries.json"
+        "$ref": "./AnchoredTextEntries.json"
       },
       "AnchoredTextEntry": {
-        "$ref": "../components/schemas/AnchoredTextEntry.json"
+        "$ref": "./AnchoredTextEntry.json"
       },
       "AnchoredTextStamp": {
-        "$ref": "../components/schemas/AnchoredTextStamp.json"
+        "$ref": "./AnchoredTextStamp.json"
       },
       "AnchoredTextWrite": {
-        "$ref": "../components/schemas/AnchoredTextWrite.json"
+        "$ref": "./AnchoredTextWrite.json"
       },
       "ArchivistEventsResponse": {
-        "$ref": "../components/schemas/ArchivistEventsResponse.json"
+        "$ref": "./ArchivistEventsResponse.json"
       },
       "ArchivistHealth": {
-        "$ref": "../components/schemas/ArchivistHealth.json"
+        "$ref": "./ArchivistHealth.json"
       },
       "ArchivistStream": {
-        "$ref": "../components/schemas/ArchivistStream.json"
+        "$ref": "./ArchivistStream.json"
       },
       "ArchivistStreamsResponse": {
-        "$ref": "../components/schemas/ArchivistStreamsResponse.json"
+        "$ref": "./ArchivistStreamsResponse.json"
       },
       "CreateResourceResponse": {
         "$ref": "../components/schemas/CreateResourceResponse.json"
@@ -112,7 +112,7 @@
         "$ref": "../components/schemas/GetResourceResponse.json"
       },
       "RepresentationNotFound": {
-        "$ref": "../components/schemas/RepresentationNotFound.json"
+        "$ref": "./RepresentationNotFound.json"
       },
       "ResourceId": {
         "$ref": "../components/schemas/ResourceId.json"

@@ -886,29 +886,11 @@
       "ReplyEventId": {
         "$ref": "components/schemas/ReplyEventId.json"
       },
-      "GatewayConfig": {
-        "$ref": "components/schemas/GatewayConfig.json"
-      },
       "KbIdentity": {
         "$ref": "components/schemas/KbIdentity.json"
       },
       "ResourceUpload": {
         "$ref": "components/schemas/ResourceUpload.json"
-      },
-      "ArchivistEventsResponse": {
-        "$ref": "components/schemas/ArchivistEventsResponse.json"
-      },
-      "ArchivistStream": {
-        "$ref": "components/schemas/ArchivistStream.json"
-      },
-      "ArchivistStreamsResponse": {
-        "$ref": "components/schemas/ArchivistStreamsResponse.json"
-      },
-      "ArchivistHealth": {
-        "$ref": "components/schemas/ArchivistHealth.json"
-      },
-      "RepresentationNotFound": {
-        "$ref": "components/schemas/RepresentationNotFound.json"
       },
       "LimitRefusal": {
         "$ref": "components/schemas/LimitRefusal.json"
@@ -1009,80 +991,8 @@
       "LogFormat": {
         "$ref": "components/schemas/LogFormat.json"
       },
-      "DispatcherConfig": {
-        "$ref": "components/schemas/DispatcherConfig.json"
-      },
-      "WorkerConfig": {
-        "$ref": "components/schemas/WorkerConfig.json"
-      },
-      "WorkerEngineConfig": {
-        "$ref": "components/schemas/WorkerEngineConfig.json"
-      },
-      "WorkerKnowledgeBaseConfig": {
-        "$ref": "components/schemas/WorkerKnowledgeBaseConfig.json"
-      },
-      "WorkerHealth": {
-        "$ref": "components/schemas/WorkerHealth.json"
-      },
-      "WorkerKnowledgeBaseHealth": {
-        "$ref": "components/schemas/WorkerKnowledgeBaseHealth.json"
-      },
-      "WorkerEngineHealth": {
-        "$ref": "components/schemas/WorkerEngineHealth.json"
-      },
       "CursorsPath": {
         "$ref": "components/schemas/CursorsPath.json"
-      },
-      "WeaverConfig": {
-        "$ref": "components/schemas/WeaverConfig.json"
-      },
-      "GraphConfig": {
-        "$ref": "components/schemas/GraphConfig.json"
-      },
-      "Neo4jGraphConfig": {
-        "$ref": "components/schemas/Neo4jGraphConfig.json"
-      },
-      "JanusGraphConfig": {
-        "$ref": "components/schemas/JanusGraphConfig.json"
-      },
-      "NeptuneGraphConfig": {
-        "$ref": "components/schemas/NeptuneGraphConfig.json"
-      },
-      "MemoryGraphConfig": {
-        "$ref": "components/schemas/MemoryGraphConfig.json"
-      },
-      "SmelterConfig": {
-        "$ref": "components/schemas/SmelterConfig.json"
-      },
-      "LibrarianConfig": {
-        "$ref": "components/schemas/LibrarianConfig.json"
-      },
-      "LibrarianEngineConfig": {
-        "$ref": "components/schemas/LibrarianEngineConfig.json"
-      },
-      "EmbeddingConfig": {
-        "$ref": "components/schemas/EmbeddingConfig.json"
-      },
-      "OllamaEmbeddingConfig": {
-        "$ref": "components/schemas/OllamaEmbeddingConfig.json"
-      },
-      "VoyageEmbeddingConfig": {
-        "$ref": "components/schemas/VoyageEmbeddingConfig.json"
-      },
-      "VectorsConfig": {
-        "$ref": "components/schemas/VectorsConfig.json"
-      },
-      "QdrantVectorsConfig": {
-        "$ref": "components/schemas/QdrantVectorsConfig.json"
-      },
-      "MemoryVectorsConfig": {
-        "$ref": "components/schemas/MemoryVectorsConfig.json"
-      },
-      "DispatcherHealth": {
-        "$ref": "components/schemas/DispatcherHealth.json"
-      },
-      "ArchivistConfig": {
-        "$ref": "components/schemas/ArchivistConfig.json"
       },
       "ServiceIdentity": {
         "$ref": "components/schemas/ServiceIdentity.json"
@@ -1110,24 +1020,6 @@
       },
       "StorageUriEntry": {
         "$ref": "components/schemas/StorageUriEntry.json"
-      },
-      "AnchoredTextEntry": {
-        "$ref": "components/schemas/AnchoredTextEntry.json"
-      },
-      "AnchoredTextExtractedEntry": {
-        "$ref": "components/schemas/AnchoredTextExtractedEntry.json"
-      },
-      "AnchoredTextDeclinedEntry": {
-        "$ref": "components/schemas/AnchoredTextDeclinedEntry.json"
-      },
-      "AnchoredTextEntries": {
-        "$ref": "components/schemas/AnchoredTextEntries.json"
-      },
-      "AnchoredTextStamp": {
-        "$ref": "components/schemas/AnchoredTextStamp.json"
-      },
-      "AnchoredTextWrite": {
-        "$ref": "components/schemas/AnchoredTextWrite.json"
       },
       "ArchivistEngines": {
         "$ref": "components/schemas/ArchivistEngines.json"

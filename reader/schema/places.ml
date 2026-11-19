@@ -11,6 +11,14 @@
 
 let case_table = "CaseTable.json"
 
+(* The gateway's public schemas (specs/README.md, "Layout"): its document
+   lists every file of components/schemas and the client's discovery
+   document's, which discovery/ holds. A service's own schemas are in its
+   area. *)
+let components = "components/schemas/"
+let discovery = "discovery/"
+let is_component file = String.starts_with ~prefix:components file
+
 (* What a table member that holds a JSON Schema names: such a member is one,
    read as Schema reads any. *)
 let json_schema = "JsonSchema.json"

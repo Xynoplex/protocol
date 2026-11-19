@@ -12,8 +12,9 @@ import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import type { CryptoKey, JWK, JWTPayload } from 'jose';
 import { Spec } from './spec';
 import type { components } from './generated/openapi-types';
+import type { components as services } from './generated/services-types';
 
-export type { components };
+export type { components, services };
 export type Annotation = components['schemas']['Annotation'];
 export type ResourceDescriptor = components['schemas']['ResourceDescriptor'];
 export type ResourceId = string & { readonly __brand: 'ResourceId' };

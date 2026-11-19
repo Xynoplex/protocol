@@ -13,7 +13,7 @@ import { expect, it } from 'vitest';
 import { refusedArchivistBoot, startArchivistProcess, type ArchivistLaunch, type ArchivistSettings } from '../harness/archivist-process';
 import { withArchivist, type ArchivistWorld } from '../harness/archivist-world';
 import { freePort } from '../harness/net';
-import { archivistSpec, errorsOf, kbIdentity, spec } from '../harness/spec';
+import { archivistSpec, errorsOf, kbIdentity, servicesSpec } from '../harness/spec';
 
 /** A launch like the world's, on a port of its own, changed as a case needs. */
 async function launch(world: ArchivistWorld, change: Partial<ArchivistLaunch> = {}): Promise<ArchivistLaunch> {
@@ -55,7 +55,7 @@ withArchivist("the Archivist's boot", (world) => {
   });
 
   it('is configured by a document the spec accepts', () => {
-    const validate = spec().component('ArchivistConfig');
+    const validate = servicesSpec().component('ArchivistConfig');
     expect(validate(world().settings), errorsOf(validate)).toBe(true);
     expect(archivistSpec().operation('get', '/health')).toBeDefined();
   });

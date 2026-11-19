@@ -13,11 +13,14 @@ would have to. So the paths live here, and so does the one piece of protocol
 that differs: the 401 (`responses/Unauthorized.json`), whose challenge names no
 resource metadata, because the Archivist publishes none.
 
-The shapes do not differ, so they are not repeated. Bodies `$ref` the shared
-`../components/schemas/`, where they are also registered in the gateway's
-document so that `@xynolog/core` generates their types and validators. The
-upload body (`ResourceUpload`) is one schema that both documents' `POST
-/resources` name, because the gateway forwards it untouched.
+What is the Archivist's alone is here, beside its document: its health
+answer, its event streams, the anchored-text store's entries, and its
+configuration document (`ArchivistConfig`). Nothing the gateway serves reaches
+them, so the gateway's document does not list them. The shapes the two
+documents share are not repeated: bodies `$ref` the shared
+`../components/schemas/`, which the gateway's document lists. The upload body
+(`ResourceUpload`) is one schema that both documents' `POST /resources` name,
+because the gateway forwards it untouched.
 
 ## What holds each side to it
 
