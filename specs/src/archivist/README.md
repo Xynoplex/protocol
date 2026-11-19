@@ -10,7 +10,7 @@ Its routes are not the gateway's. Were they in `../openapi.json`, every
 consumer of the gateway's API would believe the gateway serves them, and the
 gateway, which refuses to start unless its routes are exactly its document's,
 would have to. So the paths live here, and so does the one piece of protocol
-that differs: the 401 (`responses/Unauthorized.json`), whose challenge names no
+that differs: the 401 (`responses/ArchivistUnauthorized.json`), whose challenge names no
 resource metadata, because the Archivist publishes none.
 
 What is the Archivist's alone is here, beside its document: its health

@@ -4,7 +4,8 @@
      OpenAPI documents");
    - a path item, which a document's "paths" names, its file named by its
      operationId;
-   - a response, which a document's components or an operation names;
+   - a response, which a document's components or an operation names, its
+     file its name in PascalCase, as a schema's is;
    - a table, each of which the model names here and types in Tables;
    - a fixture, which smelter/extraction-cases.json names;
    - a README.md;
@@ -720,6 +721,76 @@ let load root =
                   they share"))
       path_items
   in
+  (* D5: a file that names a component, a schema or a response, is the
+     component's name in PascalCase. A document lists each component by that
+     name, and no two responses share one. *)
+  let stem file = Filename.remove_extension (Filename.basename file) in
+  let pascal name =
+    name <> ""
+    && name.[0] >= 'A'
+    && name.[0] <= 'Z'
+    && String.for_all
+         (fun c ->
+           (c >= 'A' && c <= 'Z')
+           || (c >= 'a' && c <= 'z')
+           || (c >= '0' && c <= '9'))
+         name
+  in
+  let component_files =
+    Hashtbl.fold
+      (fun file (kind, _) found ->
+        match kind with
+        | (Schema_file | Response) when not (pascal (stem file)) ->
+            refusal file ""
+              (Printf.sprintf
+                 "is named %s, and %s's file is its name in PascalCase"
+                 (stem file) (kind_name kind))
+            :: found
+        | _ -> found)
+      decoded []
+    |> List.sort compare
+  in
+  let listed_names =
+    List.concat_map
+      (fun (document : Openapi.document) ->
+        List.filter_map
+          (fun (name, reference) ->
+            let file = target reference in
+            if name = stem file then None
+            else
+              Some
+                (refused_at reference
+                   (Printf.sprintf
+                      "lists %s as %s, and a document lists a component by its \
+                       file's name, %s"
+                      file name (stem file))))
+          (document.components.schemas
+          @
+          match document.components.responses with
+          | Some listed -> listed
+          | None -> []))
+      documents
+  in
+  let shared_responses =
+    let files = List.map fst responses in
+    List.filter_map
+      (fun file ->
+        match
+          List.filter
+            (fun other -> other <> file && stem other = stem file)
+            files
+        with
+        | [] -> None
+        | others ->
+            Some
+              (refusal file ""
+                 (Printf.sprintf
+                    "is the response %s, as %s is: a response is named by its \
+                     file, and no two share a name"
+                    (stem file)
+                    (String.concat ", " others))))
+      files
+  in
   let services = Places.service_schemas root in
   let empty_services =
     List.filter_map
@@ -738,9 +809,10 @@ let load root =
   in
   let census =
     census @ stray_case_tables @ orphan_schemas @ path_item_names
-    @ empty_services @ validation @ public_api @ client_surface @ reply_bounds
-    @ offset_units @ registry_rules @ jobs_rules @ archivist_rules
-    @ identifiers_rules @ client_types_rules @ protocol_rules @ control_rules
+    @ component_files @ listed_names @ shared_responses @ empty_services
+    @ validation @ public_api @ client_surface @ reply_bounds @ offset_units
+    @ registry_rules @ jobs_rules @ archivist_rules @ identifiers_rules
+    @ client_types_rules @ protocol_rules @ control_rules
   in
   match (schemas, census) with
   | Ok schemas, [] ->
