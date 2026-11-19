@@ -6,7 +6,9 @@
    channel's nothing. [S] must name every schema a channel carries, so a
    document that leaves one out is refused where the harness instantiates
    it. A stored event's channel is not here: the registry does not say
-   which component carries a stored event. *)
+   which component carries a stored event. [busOperations] is each
+   operation, by its request's channel: the channels of its result and of
+   its failure. *)
 
 module R = Tables.Bus_registry
 
@@ -60,4 +62,14 @@ let () =
         (fun (channel, carries) ->
           Printf.printf "  %s: %s;\n" (json channel) carries)
         (List.filter_map payload channels);
-      print_string "};\n"
+      print_string "};\n\n";
+      print_string
+        "/** Each operation, by its request's channel: the channels of its \
+         result and of its failure. */\n";
+      print_string "export const busOperations = {\n";
+      List.iter
+        (fun (o : R.operations_item) ->
+          Printf.printf "  %s: { result: %s, failure: %s },\n" (json o.request)
+            (json o.result) (json o.failure))
+        spec.Spec.tables.bus_registry.operations;
+      print_string "} as const;\n"

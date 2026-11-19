@@ -47,6 +47,7 @@ import { SERVICE_ROLE } from './roles';
 import { startSmelter, type SmelterLaunch, type SmelterProcess } from './smelter-process';
 import { errorsOf, spec } from './spec';
 import { busRegistry } from './generated/protocol/protocol';
+import { busOperations } from './generated/protocol/bus';
 import type { BusStream } from './stream';
 import { startWeaver, type WeaverLaunch, type WeaverProcess } from './weaver-process';
 import { lastOf } from './weaver-world';
@@ -74,23 +75,8 @@ const PERSON = 'ada';
 
 // ── The eight operations ───────────────────────────────────────────────────
 
-/**
- * What a Librarian answers: each request channel, with the channel of its
- * result and of its failure. The types of a request and of its replies are
- * read from this table, and `create` holds the table to the bus registry.
- */
-export const OPERATIONS = {
-  'match:search-requested': ['match:search-results', 'match:search-failed'],
-  'match:resources-requested': ['match:resources-result', 'match:resources-failed'],
-  'match:limits-requested': ['match:limits-result', 'match:limits-failed'],
-  'gather:requested': ['gather:complete', 'gather:failed'],
-  'gather:resource-requested': ['gather:resource-complete', 'gather:resource-failed'],
-  'gather:summary-requested': ['gather:summary-result', 'gather:summary-failed'],
-  'gather:referenced-by-requested': ['gather:referenced-by-result', 'gather:referenced-by-failed'],
-  'gather:limits-requested': ['gather:limits-result', 'gather:limits-failed'],
-} as const satisfies Record<string, readonly [keyof EventMap, keyof EventMap]>;
-
-export type Operation = keyof typeof OPERATIONS;
+/** What a Librarian answers: the registry's `match:` and `gather:` operations, by the channel of each request. */
+export type Operation = Extract<keyof typeof busOperations, `match:${string}` | `gather:${string}`>;
 
 /** A payload as a case writes one: an id is the string a case holds, and every other member is as the spec types it. */
 export type Plain<T> = T extends string & { readonly __brand: string }
@@ -104,9 +90,9 @@ export type Plain<T> = T extends string & { readonly __brand: string }
 /** What an operation is asked with. */
 export type Asked<O extends Operation> = Plain<EventMap[O]>;
 /** What an operation's result channel carries. */
-export type Answered<O extends Operation> = EventMap[(typeof OPERATIONS)[O][0]];
+export type Answered<O extends Operation> = EventMap[(typeof busOperations)[O]['result']];
 /** What an operation's failure channel carries. */
-export type Failed<O extends Operation> = EventMap[(typeof OPERATIONS)[O][1]];
+export type Failed<O extends Operation> = EventMap[(typeof busOperations)[O]['failure']];
 /** The one reply to a request: its result, or its failure. */
 export type Reply<O extends Operation> = { ok: true; reply: Answered<O> } | { ok: false; failure: Failed<O> };
 
@@ -137,16 +123,6 @@ function against(channel: string, payload: unknown): string | undefined {
 /** Whether `payload` is what the registry says `channel` carries. */
 function holds<T>(channel: string, payload: unknown): payload is T {
   return against(channel, payload) === undefined;
-}
-
-/** Fail unless `OPERATIONS` is the registry's own account of the `match:` and `gather:` operations. */
-function heldToRegistry(): void {
-  const declared = busRegistry.operations.filter((op) => op.request.startsWith('match:') || op.request.startsWith('gather:'));
-  const stated = Object.entries(OPERATIONS).map(([request, [result, failure]]) => `${request} ${result} ${failure}`).sort();
-  const registered = declared.map((op) => `${op.request} ${op.result} ${op.failure}`).sort();
-  if (stated.join('\n') !== registered.join('\n')) {
-    throw new Error(`the world's table of a Librarian's operations is not the registry's:\nthe world: ${stated.join(', ')}\nthe registry: ${registered.join(', ')}`);
-  }
 }
 
 /** What a case may change of how the world's Librarian is launched. */
@@ -207,7 +183,6 @@ export class LibrarianWorld {
   }
 
   static async create(command: readonly string[]): Promise<LibrarianWorld> {
-    heldToRegistry();
     const graphDatabase = inject('graphDatabase');
     const vectorDatabase = inject('vectorDatabase');
     const weaverService = inject('weaverServices')['python'];
@@ -619,7 +594,7 @@ export class LibrarianWorld {
    * fails the case.
    */
   async ask<O extends Operation>(operation: O, payload: Asked<O>, options: { as?: string; timeoutMs?: number } = {}): Promise<Reply<O>> {
-    const [result, failure] = OPERATIONS[operation];
+    const { result, failure } = busOperations[operation];
     const sent: unknown = payload;
     if (!isObject(sent)) throw new Error(`${operation} is asked with an object`);
     const answer = await (await this.person(options.as ?? PERSON)).request(operation, sent, options.timeoutMs ?? 30_000);
