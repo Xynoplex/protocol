@@ -69,7 +69,7 @@
         {
           "key": "content.stream",
           "values": [
-            "true"
+            true
           ],
           "only": "on a read taken as a stream"
         },
