@@ -8,6 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { expect, it } from 'vitest';
 import { sha256, withArchivist, type Annotation, type ArchivistWorld, type BusClient } from '../harness/archivist-world';
 import { eventually } from '../harness/net';
+import { mintedJobId } from '../harness/protocol-core';
 
 const TEXT = 'A worker reads this and marks it up.\n';
 
@@ -28,7 +29,7 @@ function whole(resourceId: string, exact: string, extra: Record<string, unknown>
 /** A resource, and a job on it assigned to `worker` for `requester`, as the dispatcher records a claim. */
 async function assigned(world: ArchivistWorld, worker: BusClient, requester: BusClient, jobType: 'mark' | 'yield' = 'mark'): Promise<{ id: string; jobId: string }> {
   const id = await world.created(requester.did, { name: 'Worked on', storageUri: `file://jobs/${randomUUID()}.md`, content: TEXT });
-  const jobId = `job-${randomUUID()}`;
+  const jobId = mintedJobId();
   const dispatcher = await world.sidecar('dispatcher');
   await dispatcher.emit('job:assign', { jobId, jobType, resourceId: id, holder: worker.did, requester: requester.did });
   await eventually('the assignment to be recorded', 10_000, () => world.stored(id).find((e) => e.type === 'job:assigned'));
@@ -96,7 +97,7 @@ withArchivist('a job, in the record', (world) => {
     const worker = await world().worker('unassigned');
     const requester = await world().person('requester');
     const id = await world().created(requester.did, { name: 'Worked on', storageUri: `file://jobs/${randomUUID()}.md`, content: TEXT });
-    const jobId = `job-${randomUUID()}`;
+    const jobId = mintedJobId();
     await worker.emit('job:start', { resourceId: id, jobId, jobType: 'mark' });
     await eventually('the start', 10_000, () => world().stored(id).find((e) => e.type === 'job:started'));
 
@@ -111,7 +112,7 @@ withArchivist('a job, in the record', (world) => {
     const requester = await world().person('requester');
     // Another job of the other verb is recorded on the same resource: it says nothing of this one.
     const { id } = await assigned(world(), worker, requester, 'mark');
-    const jobId = `job-${randomUUID()}`;
+    const jobId = mintedJobId();
 
     await worker.emit('job:complete', { resourceId: id, jobId, jobType: 'yield', result: MADE });
     await eventually('the completion', 10_000, () => world().stored(id).find((e) => e.type === 'job:completed'));
@@ -150,7 +151,7 @@ withArchivist('a job, in the record', (world) => {
     expect(await worker.refused('mark:commit', { resourceId: id, annotations: [whole(id, 'worker')] })).toBe(
       'mark:commit refused: a worker-role emitter must cite the job it fulfils in `jobId`',
     );
-    const unassigned = `job-${randomUUID()}`;
+    const unassigned = mintedJobId();
     expect(await worker.refused('mark:commit', { resourceId: id, jobId: unassigned, annotations: [whole(id, 'worker')] })).toBe(
       `refused: cites job ${unassigned}, but the log of ${id} holds no assignment of it, and the job did not make it`,
     );

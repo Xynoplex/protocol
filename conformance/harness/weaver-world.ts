@@ -22,9 +22,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import neo4j, { type Driver } from 'neo4j-driver';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import type { Annotation, ResourceDescriptor } from './protocol-core';
+import { kbDid, type Annotation, type ResourceDescriptor } from './protocol-core';
 import { ArchivistWorld, type Answer, type StoredEvent } from './archivist-world';
 import { isRow, isStrings, readAnnotation, readResource, type Row } from './graph-codec';
+import { graphDatabaseOf } from './graph-database';
 import { eventually } from './net';
 import { SERVICE_ROLE } from './roles';
 import type { BusStream } from './stream';
@@ -175,7 +176,7 @@ export class WeaverWorld {
     const secret = randomBytes(24).toString('hex');
     const kb = await ArchivistWorld.create({ gitSync: false, accounts: { [WEAVER_CLIENT]: { secret, roles: [SERVICE_ROLE] } } });
 
-    const at = { uri: `bolt://${host}:7687`, username: 'neo4j', database: 'neo4j' };
+    const at = { uri: `bolt://${host}:7687`, username: 'neo4j', database: graphDatabaseOf(kbDid(kb.world.served.domain)) };
     const hand = neo4j.driver(at.uri, neo4j.auth.basic(at.username, password));
 
     // A standing stream of what the Weaver says it has applied, open before any Weaver is.

@@ -64,7 +64,29 @@
                 "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "generator": {
-                "$ref": "https://xynolog.org/protocol/Agent.json"
+                "type": "object",
+                "description": "What made the annotation, as a worker states it: AgentSoftware's members, and no `name`, which is the agent's profile (WORKER-SERVICE.md G4).",
+                "properties": {
+                  "@type": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/@type"
+                  },
+                  "@id": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/@id"
+                  },
+                  "provider": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/provider"
+                  },
+                  "model": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/model"
+                  },
+                  "parameters": {
+                    "$ref": "https://xynolog.org/protocol/AgentSoftware.json#/properties/parameters"
+                  }
+                },
+                "required": [
+                  "@type"
+                ],
+                "additionalProperties": false
               },
               "motivation": {
                 "$ref": "https://xynolog.org/protocol/Motivation.json"

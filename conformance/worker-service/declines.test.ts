@@ -57,7 +57,7 @@ eachWorkerService('a job a worker does not do', (world) => {
     const served = await w.start();
     const failure = await settled(served, job, 'job:fail');
 
-    expect(failure).toEqual({ ...identity(job), error: 'Resource not found: res-ws-unknown', willRetry: true });
+    expect(failure).toEqual({ ...identity(job), error: 'Resource not found', willRetry: true });
     expect(served.sequence()).toEqual(['emit job:claim', 'emit job:start', 'emit browse:resource-requested', 'emit job:fail', 'emit job:claim']);
     didNoWork(w, served, job);
   });

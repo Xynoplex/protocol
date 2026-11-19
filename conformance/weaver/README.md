@@ -57,9 +57,16 @@ the owning consumer repository prints the image the launcher starts for an
 operator, which is the one to run:
 
 ```bash
-docker run -d --name weaver-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password "$(consumer-owned source)"
+docker run -d --name weaver-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password -e NEO4J_initial_dbms_default__database="$(suite-database)" "$(consumer-owned source)"
 NEO4J_HOST=localhost NEO4J_PASSWORD=a-password npm run test:weaver
 ```
+
+The graph is in the database
+[`graph/database-cases.json`](../../specs/src/graph/database-cases.json)
+names for the suite's knowledge base (`kb-identity/cases.json`'s case `the
+shape xynolog init writes`), which a Neo4j somebody else runs must already
+hold, so the Neo4j is started with it as its default database, Neo4j's
+`initial.dbms.default_database`.
 
 **One world at a time.** The files share one database, which a rebuild of the
 whole graph clears, so the project runs its files one after another.

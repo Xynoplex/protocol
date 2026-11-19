@@ -86,10 +86,17 @@ the owning consumer repository and the owning consumer repository print the imag
 the launcher starts for an operator, which are the ones to run:
 
 ```bash
-docker run -d --name librarian-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password "$(consumer-owned source)"
+docker run -d --name librarian-suite-neo4j -p 7687:7687 -e NEO4J_AUTH=neo4j/a-password -e NEO4J_initial_dbms_default__database="$(suite-database)" "$(consumer-owned source)"
 docker run -d --name librarian-suite-qdrant -p 6333:6333 -e QDRANT__SERVICE__API_KEY=a-key -e QDRANT__SERVICE__JWT_RBAC=true "$(consumer-owned source)"
 NEO4J_HOST=localhost NEO4J_PASSWORD=a-password QDRANT_HOST=localhost QDRANT_API_KEY=a-key npm run test:librarian
 ```
+
+The graph is in the database
+[`graph/database-cases.json`](../../specs/src/graph/database-cases.json)
+names for the suite's knowledge base (`kb-identity/cases.json`'s case `the
+shape xynolog init writes`), which a Neo4j somebody else runs must already
+hold, so the Neo4j is started with it as its default database, Neo4j's
+`initial.dbms.default_database`.
 
 **One world at a time.** The files share the two databases, and the health
 ports of a Weaver and a Smelter are constants, so the project runs its files

@@ -11,7 +11,10 @@
  * its JWT access control on, as the launcher runs one, and the suite mints
  * the tokens of the services it starts from the key. The suite CLEARS the
  * graph database and the index it is given, so it is given ones of its own
- * (the CLI and images repositories document compatible database images).
+ * (the CLI and images repositories document compatible database images). The
+ * graph is in the database specs/src/graph/database-cases.json names for the
+ * suite's knowledge base, which a Neo4j somebody else runs must already hold:
+ * it is started with that as its default database.
  */
 import type { TestProject } from 'vitest/node';
 import type { Implementations } from './implementations';
@@ -42,7 +45,7 @@ export default async function setup(project: TestProject): Promise<void> {
     ];
     throw new Error(
       `The librarian suite runs against a real neo4j and a real Qdrant, both of which it clears, and ${missing.join(' and ')} ${missing.length > 1 ? 'are' : 'is'} not set. ` +
-        'Start a neo4j for it alone (a compatible Neo4j image with NEO4J_AUTH=neo4j/<password>) and set NEO4J_HOST to its address and NEO4J_PASSWORD to that password. ' +
+        'Start a neo4j for it alone (a compatible Neo4j image with NEO4J_AUTH=neo4j/<password>, and as its default database the one specs/src/graph/database-cases.json names for the suite\'s knowledge base) and set NEO4J_HOST to its address and NEO4J_PASSWORD to that password. ' +
         `Start a Qdrant for it alone (\`cli/internal/launcher/scripts/qdrant-image.sh\` prints the image; its REST port is ${QDRANT_PORT}), ` +
         'with QDRANT__SERVICE__API_KEY=<key> and QDRANT__SERVICE__JWT_RBAC=true, and set QDRANT_HOST to its address and QDRANT_API_KEY to its key.',
     );
