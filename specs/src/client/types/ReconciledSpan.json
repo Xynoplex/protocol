@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ReconciledSpan.json",
   "title": "ReconciledSpan",
   "description": "Where a quoted selection was found in a text, and how it was found, told apart by `anchorMethod`, one of AnchorMethod's words: a fuzzy match also names its search, `matchQuality`, and no other states one.",
   "discriminator": {
@@ -9,7 +11,7 @@
       "description": "The text has the words in exactly one place.",
       "allOf": [
         {
-          "$ref": "./TextSpan.json#/$defs/Members"
+          "$ref": "https://xynolog.org/protocol/TextSpan.json#/$defs/Members"
         },
         {
           "type": "object",
@@ -32,7 +34,7 @@
       "description": "The text has the words in more than one place, and the span is the first that fits every hint the quote gave.",
       "allOf": [
         {
-          "$ref": "./TextSpan.json#/$defs/Members"
+          "$ref": "https://xynolog.org/protocol/TextSpan.json#/$defs/Members"
         },
         {
           "type": "object",
@@ -55,7 +57,7 @@
       "description": "The text has the words in more than one place, and the span is the first, since the quote gave no hint or none fits.",
       "allOf": [
         {
-          "$ref": "./TextSpan.json#/$defs/Members"
+          "$ref": "https://xynolog.org/protocol/TextSpan.json#/$defs/Members"
         },
         {
           "type": "object",
@@ -78,7 +80,7 @@
       "description": "The text has the words nowhere, and a looser search found the span: `matchQuality` names which.",
       "allOf": [
         {
-          "$ref": "./TextSpan.json#/$defs/Members"
+          "$ref": "https://xynolog.org/protocol/TextSpan.json#/$defs/Members"
         },
         {
           "type": "object",
@@ -90,7 +92,7 @@
               ]
             },
             "matchQuality": {
-              "$ref": "./MatchQuality.json"
+              "$ref": "https://xynolog.org/protocol/MatchQuality.json"
             }
           },
           "required": [

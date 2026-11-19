@@ -73,6 +73,14 @@ let output, root =
       prerr_endline "usage: derive.exe [typescript] SPECS";
       exit 2
 
+(* Each schema's [$id], and its file. *)
+let ids =
+  match Places.ids root with
+  | Ok ids -> ids
+  | Error errors ->
+      List.iter (fun e -> prerr_endline (Decode.error_to_string e)) errors;
+      exit 1
+
 (* Every table's schema, from specs/src: each in the table dialect. *)
 let table_schemas = List.map Places.schema_of (Places.tables root)
 let refusals = ref []
@@ -362,7 +370,7 @@ let candidates ~own file pointer =
     (fun kept n -> if List.mem n kept then kept else kept @ [ n ])
     [] names
 
-let annotations = [ "$comment"; "title"; "description" ]
+let annotations = [ "$schema"; "$id"; "$comment"; "title"; "description" ]
 
 (* What may be said beside a node: in the service dialect, its format, its
    examples and its default too, and the [unevaluatedProperties] that closes
@@ -404,7 +412,10 @@ let takes = function
 let type_words = "string, integer, number, boolean, object, array"
 
 (* What a reference names: its file from specs/src, and its place there. *)
-let target (r : Decode.reference) = Decode.resolve r
+let target (r : Decode.reference) =
+  match Decode.names ids r with
+  | Some named -> named
+  | None -> refuse r.file r.pointer (r.target ^ " is an $id no schema states")
 
 (* The object or the other type a node is, following references. *)
 let rec resolved file (s : Schema.t) =
@@ -1007,10 +1018,7 @@ and union ~own ~in_place file pointer members =
    for a case table and CaseTable's [$comment] for any other. *)
 let table_schema table file =
   let s = schema_at file "" in
-  let to_case_table =
-    let depth = List.length (String.split_on_char '/' file) - 1 in
-    String.concat "" (List.init depth (fun _ -> "../")) ^ Places.case_table
-  in
+  let to_case_table = Decode.base ^ Places.case_table in
   match s with
   | Schema ({ type_ = Some [ Object ]; properties = Some properties; _ } as l)
     ->

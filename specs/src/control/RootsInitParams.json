@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RootsInitParams.json",
   "title": "RootsInitParams",
   "type": "object",
   "description": "roots.init's params: the local directory, permanent identity, and optional configuration inputs xynolog init takes.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json"
     },
     "path": {
       "type": "string",

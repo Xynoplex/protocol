@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BeckonHoverEvent.json",
   "type": "object",
   "description": "Emitted when an annotation is hovered over for beckoning",
   "properties": {
     "annotationId": {
       "anyOf": [
         {
-          "$ref": "./AnnotationId.json"
+          "$ref": "https://xynolog.org/protocol/AnnotationId.json"
         },
         {
           "type": "null"

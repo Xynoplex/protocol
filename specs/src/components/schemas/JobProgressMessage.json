@@ -1,50 +1,52 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobProgressMessage.json",
   "description": "What a running job is doing right now, as a code plus typed params — never a prose sentence. The producer reports what happened; each client renders it in the user's language (react-ui from its translations, the Go launcher from its English map). One named schema per code, discriminated on `code`, so generated clients get typed variants and copy-map completeness is statically checkable. The vocabulary is every report Xynolog's worker makes (contract/WORKER-SERVICE.md, D16 to D19 and Y8); extending it means adding a named variant here and copy in every client, gated by the locale-completeness check.",
   "oneOf": [
     {
-      "$ref": "./JobProgressLoading.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressLoading.json"
     },
     {
-      "$ref": "./JobProgressAnalyzing.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressAnalyzing.json"
     },
     {
-      "$ref": "./JobProgressAnalyzingTags.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressAnalyzingTags.json"
     },
     {
-      "$ref": "./JobProgressGeneratingResource.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressGeneratingResource.json"
     },
     {
-      "$ref": "./JobProgressCreatingResource.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressCreatingResource.json"
     },
     {
-      "$ref": "./JobProgressCompleteGenerated.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressCompleteGenerated.json"
     },
     {
-      "$ref": "./JobProgressDetectingEntities.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressDetectingEntities.json"
     },
     {
-      "$ref": "./JobProgressCreatingAnnotations.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressCreatingAnnotations.json"
     },
     {
-      "$ref": "./JobProgressCreatingTagAnnotations.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressCreatingTagAnnotations.json"
     },
     {
-      "$ref": "./JobProgressCompleteCreated.json"
+      "$ref": "https://xynolog.org/protocol/JobProgressCompleteCreated.json"
     }
   ],
   "discriminator": {
     "propertyName": "code",
     "mapping": {
-      "loading": "./JobProgressLoading.json",
-      "analyzing": "./JobProgressAnalyzing.json",
-      "analyzing-tags": "./JobProgressAnalyzingTags.json",
-      "generating-resource": "./JobProgressGeneratingResource.json",
-      "creating-resource": "./JobProgressCreatingResource.json",
-      "complete-generated": "./JobProgressCompleteGenerated.json",
-      "detecting-entities": "./JobProgressDetectingEntities.json",
-      "creating-annotations": "./JobProgressCreatingAnnotations.json",
-      "creating-tag-annotations": "./JobProgressCreatingTagAnnotations.json",
-      "complete-created": "./JobProgressCompleteCreated.json"
+      "loading": "https://xynolog.org/protocol/JobProgressLoading.json",
+      "analyzing": "https://xynolog.org/protocol/JobProgressAnalyzing.json",
+      "analyzing-tags": "https://xynolog.org/protocol/JobProgressAnalyzingTags.json",
+      "generating-resource": "https://xynolog.org/protocol/JobProgressGeneratingResource.json",
+      "creating-resource": "https://xynolog.org/protocol/JobProgressCreatingResource.json",
+      "complete-generated": "https://xynolog.org/protocol/JobProgressCompleteGenerated.json",
+      "detecting-entities": "https://xynolog.org/protocol/JobProgressDetectingEntities.json",
+      "creating-annotations": "https://xynolog.org/protocol/JobProgressCreatingAnnotations.json",
+      "creating-tag-annotations": "https://xynolog.org/protocol/JobProgressCreatingTagAnnotations.json",
+      "complete-created": "https://xynolog.org/protocol/JobProgressCompleteCreated.json"
     }
   }
 }

@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobQueuedEvent.json",
   "description": "A pending job, announced when it is created and again at each tick while it waits. It carries the job description less the job's input, so that a party deciding whether to claim reads here what its claim would be matched against. It is a wake-up and not an offer of this job: a claim is answered with the next pending job it matches.",
   "oneOf": [
     {
-      "$ref": "./MarkJobQueuedEvent.json"
+      "$ref": "https://xynolog.org/protocol/MarkJobQueuedEvent.json"
     },
     {
-      "$ref": "./YieldJobQueuedEvent.json"
+      "$ref": "https://xynolog.org/protocol/YieldJobQueuedEvent.json"
     }
   ],
   "discriminator": {
     "propertyName": "jobType",
     "mapping": {
-      "mark": "./MarkJobQueuedEvent.json",
-      "yield": "./YieldJobQueuedEvent.json"
+      "mark": "https://xynolog.org/protocol/MarkJobQueuedEvent.json",
+      "yield": "https://xynolog.org/protocol/YieldJobQueuedEvent.json"
     }
   }
 }

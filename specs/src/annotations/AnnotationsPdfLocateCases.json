@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationsPdfLocateCases.json",
   "description": "annotations/pdf-locate-cases.json: where a span of a PDF's anchored text is on its pages, where a claim is in a text, and which place a citation lands on.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -15,10 +17,10 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "anchored": {
-            "$ref": "../components/schemas/AnchoredText.json"
+            "$ref": "https://xynolog.org/protocol/AnchoredText.json"
           },
           "span": {
             "description": "A span, by its offsets alone.",
@@ -45,21 +47,21 @@
             "type": "array",
             "description": "The items the span overlaps, in the order the anchored text has them.",
             "items": {
-              "$ref": "../components/schemas/PdfTextItem.json"
+              "$ref": "https://xynolog.org/protocol/PdfTextItem.json"
             }
           },
           "rects": {
             "type": "array",
             "description": "One rectangle for each line of each page the span touches.",
             "items": {
-              "$ref": "../client/types/PdfCoordinate.json"
+              "$ref": "https://xynolog.org/protocol/PdfCoordinate.json"
             }
           },
           "fragments": {
             "type": "array",
             "description": "The fragment of each rectangle, in the same order.",
             "items": {
-              "$ref": "../components/schemas/FragmentSelector.json#/properties/value"
+              "$ref": "https://xynolog.org/protocol/FragmentSelector.json#/properties/value"
             }
           }
         },
@@ -81,7 +83,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "text": {
             "type": "string",
@@ -115,7 +117,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "text": {
             "$ref": "#/properties/claims/items/properties/text"
@@ -124,7 +126,7 @@
             "type": "array",
             "description": "The text's items.",
             "items": {
-              "$ref": "../components/schemas/PdfTextItem.json"
+              "$ref": "https://xynolog.org/protocol/PdfTextItem.json"
             }
           },
           "claim": {
@@ -135,13 +137,13 @@
             "type": "object",
             "properties": {
               "page": {
-                "$ref": "../client/types/PdfCoordinate.json#/properties/page"
+                "$ref": "https://xynolog.org/protocol/PdfCoordinate.json#/properties/page"
               },
               "x": {
-                "$ref": "../client/types/PdfCoordinate.json#/properties/x"
+                "$ref": "https://xynolog.org/protocol/PdfCoordinate.json#/properties/x"
               },
               "y": {
-                "$ref": "../client/types/PdfCoordinate.json#/properties/y"
+                "$ref": "https://xynolog.org/protocol/PdfCoordinate.json#/properties/y"
               }
             },
             "required": [

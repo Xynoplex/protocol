@@ -1,21 +1,23 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkUpdateBodyCommand.json",
   "type": "object",
   "description": "Bus command to update an annotation's body with patch operations.",
   "properties": {
     "_userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "Authenticated user's DID, injected by the /bus/emit gateway. Clients do not set this."
     },
     "annotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "operations": {
       "type": "array",
       "items": {
-        "$ref": "./BodyOperation.json"
+        "$ref": "https://xynolog.org/protocol/BodyOperation.json"
       }
     }
   },

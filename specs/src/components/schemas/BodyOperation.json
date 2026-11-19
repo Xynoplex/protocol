@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BodyOperation.json",
   "oneOf": [
     {
-      "$ref": "./BodyOperationAdd.json"
+      "$ref": "https://xynolog.org/protocol/BodyOperationAdd.json"
     },
     {
-      "$ref": "./BodyOperationRemove.json"
+      "$ref": "https://xynolog.org/protocol/BodyOperationRemove.json"
     },
     {
-      "$ref": "./BodyOperationReplace.json"
+      "$ref": "https://xynolog.org/protocol/BodyOperationReplace.json"
     }
   ],
   "description": "One change to an annotation's bodies: a body added, a body removed, or one body replaced by another."

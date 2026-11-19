@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RuntimeState.json",
   "title": "RuntimeState",
   "type": "object",
   "description": "One container runtime the launcher drives, and whether this machine has it.",
   "properties": {
     "name": {
-      "$ref": "./Runtime.json"
+      "$ref": "https://xynolog.org/protocol/Runtime.json"
     },
     "found": {
       "type": "boolean",

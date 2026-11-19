@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MediaTypesRegistry.json",
   "description": "media-types/registry.json: the media types a knowledge base admits, and what the system can do with each.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "render": {
       "description": "The viewers a reader mounts.",
@@ -50,7 +52,7 @@
         "type": "object",
         "properties": {
           "mediaType": {
-            "$ref": "../components/schemas/SupportedMediaType.json"
+            "$ref": "https://xynolog.org/protocol/SupportedMediaType.json"
           },
           "extension": {
             "type": "string",

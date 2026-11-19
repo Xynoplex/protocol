@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/OneOrMoreAgents.json",
   "oneOf": [
     {
-      "$ref": "./Agent.json"
+      "$ref": "https://xynolog.org/protocol/Agent.json"
     },
     {
       "type": "array",
       "items": {
-        "$ref": "./Agent.json"
+        "$ref": "https://xynolog.org/protocol/Agent.json"
       },
       "minItems": 1
     }

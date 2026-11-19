@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BeckonSparkleEvent.json",
   "type": "object",
   "description": "Emitted when a sparkle effect is triggered on an annotation",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     }
   },
   "required": [

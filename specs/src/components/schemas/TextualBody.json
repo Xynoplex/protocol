@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/TextualBody.json",
   "type": "object",
   "properties": {
     "type": {
@@ -12,7 +14,7 @@
       "description": "The text content (e.g., entity type name)"
     },
     "purpose": {
-      "$ref": "./BodyPurpose.json",
+      "$ref": "https://xynolog.org/protocol/BodyPurpose.json",
       "description": "Why this body is included"
     },
     "format": {

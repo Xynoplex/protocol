@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ResourceAnnotations.json",
   "type": "object",
   "description": "The annotations on one resource, as its materialized view holds them.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "annotations": {
       "type": "array",
       "items": {
-        "$ref": "./Annotation.json"
+        "$ref": "https://xynolog.org/protocol/Annotation.json"
       },
       "description": "Each annotation as the `mark:added` event that recorded it carried it, with the body changes recorded since applied. In the order they were first recorded."
     },

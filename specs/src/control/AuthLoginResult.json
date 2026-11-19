@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AuthLoginResult.json",
   "title": "AuthLoginResult",
   "type": "object",
   "description": "A completed sign-in, kept in the launcher's sign-in store. No token is in it.",

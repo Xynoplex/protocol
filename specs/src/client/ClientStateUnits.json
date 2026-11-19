@@ -1,16 +1,18 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ClientStateUnits.json",
   "description": "client/state-units.json: what a client's state units do, case by case, over a scripted transport; and the notices the session's signals raise.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "notices": {
       "type": "object",
       "minProperties": 1,
       "description": "Each notice, by its name.",
       "additionalProperties": {
-        "$ref": "../JsonSchema.json",
+        "$ref": "https://xynolog.org/protocol/JsonSchema.json",
         "$comment": "The notice's JSON Schema: JSON, as it is given."
       }
     },
@@ -19,7 +21,7 @@
       "type": "object",
       "properties": {
         "context": {
-          "$ref": "../components/schemas/GatheredContext.json"
+          "$ref": "https://xynolog.org/protocol/GatheredContext.json"
         },
         "generation": {
           "$comment": "A generation's parameters. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
@@ -92,7 +94,7 @@
               "type": "object",
               "properties": {
                 "resourceId": {
-                  "$ref": "../components/schemas/ResourceId.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceId.json"
                 },
                 "locale": {
                   "type": "string",
@@ -121,7 +123,7 @@
             "minItems": 1,
             "description": "The channels of the client's bus read from the moment the units are made.",
             "items": {
-              "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+              "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
             }
           },
           "steps": {
@@ -142,7 +144,7 @@
                   "type": "object",
                   "properties": {
                     "say": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "correlationId": {
                       "type": "string",
@@ -165,7 +167,7 @@
                   "type": "object",
                   "properties": {
                     "deliver": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "correlationId": {
                       "type": "string",
@@ -188,7 +190,7 @@
                   "type": "object",
                   "properties": {
                     "answer": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "nth": {
                       "type": "integer",
@@ -196,7 +198,7 @@
                       "description": "Which request sent on `answer` is replied to, 0 for the first."
                     },
                     "reply": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "payload": {
                       "$comment": "The reply's payload. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
@@ -216,7 +218,7 @@
                   "type": "object",
                   "properties": {
                     "queueReply": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "response": {
                       "$comment": "The response. As the wire writes it, with the table's special forms (`{\"$has\": …}`, `{\"code\"}`/`{\"message\"}` and `{\"$fixture\": name}`): JSON, as it is given."
@@ -371,7 +373,7 @@
                   "type": "object",
                   "properties": {
                     "sent": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "payloads": {
                       "type": "array",
@@ -393,7 +395,7 @@
                   "type": "object",
                   "properties": {
                     "sent": {
-                      "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                      "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                     },
                     "count": {
                       "type": "integer",
@@ -436,7 +438,7 @@
                         "type": "object",
                         "properties": {
                           "channel": {
-                            "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                            "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                           },
                           "correlationId": {
                             "description": "The correlation id the frame carries, or the one the `nth` request sent on `sent` carried.",
@@ -449,7 +451,7 @@
                                 "type": "object",
                                 "properties": {
                                   "sent": {
-                                    "$ref": "../components/schemas/BusFrame.json#/properties/channel"
+                                    "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/channel"
                                   },
                                   "nth": {
                                     "type": "integer",

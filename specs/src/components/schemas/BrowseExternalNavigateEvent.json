@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseExternalNavigateEvent.json",
   "type": "object",
   "description": "Emitted when navigation to an external URL is requested",
   "properties": {
@@ -6,7 +8,7 @@
       "type": "string"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     }
   },
   "required": [

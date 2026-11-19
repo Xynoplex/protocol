@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianWindowCases.json",
   "description": "librarian/window-cases.json: a text, what an annotation's target selects of it, a window, and the text before the selection, the selection and the text after it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -17,7 +19,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "around": {
                 "description": "The cut the Librarian makes where it summarizes an annotation.",
@@ -32,7 +34,7 @@
                         "description": "The text."
                       },
                       "selector": {
-                        "$ref": "../components/schemas/AnnotationSelector.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
                       },
                       "window": {
                         "description": "How much text to take on each side, each its own count.",
@@ -97,7 +99,7 @@
                         "description": "The text."
                       },
                       "selector": {
-                        "$ref": "../components/schemas/AnnotationSelector.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
                       },
                       "window": {
                         "$ref": "#/properties/cases/items/oneOf/0/properties/around/oneOf/0/properties/window"
@@ -131,7 +133,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "gathered": {
                 "description": "The cut in a gathered context.",
@@ -146,7 +148,7 @@
                         "description": "The text."
                       },
                       "selector": {
-                        "$ref": "../components/schemas/AnnotationSelector.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
                       },
                       "window": {
                         "type": "integer",
@@ -180,7 +182,7 @@
                         "description": "The text."
                       },
                       "selector": {
-                        "$ref": "../components/schemas/AnnotationSelector.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
                       },
                       "window": {
                         "$ref": "#/properties/cases/items/oneOf/1/properties/gathered/oneOf/0/properties/window"

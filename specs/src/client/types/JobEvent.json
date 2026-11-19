@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobEvent.json",
   "title": "JobEvent",
   "description": "What a delegation reports as its job goes, told apart by `kind`: the queue's naming of the job first, its progress, and last, its failure, a frame refused, or its completion. Each operation that delegates completes with its own verb's completion, a branch of JobCompleteCommand.",
   "oneOf": [
@@ -13,7 +15,7 @@
           ]
         },
         "data": {
-          "$ref": "../../components/schemas/JobCreatedResultResponse.json"
+          "$ref": "https://xynolog.org/protocol/JobCreatedResultResponse.json"
         }
       },
       "required": [
@@ -33,7 +35,7 @@
           ]
         },
         "data": {
-          "$ref": "../../components/schemas/JobProgress.json"
+          "$ref": "https://xynolog.org/protocol/JobProgress.json"
         }
       },
       "required": [
@@ -53,7 +55,7 @@
           ]
         },
         "data": {
-          "$ref": "../../components/schemas/JobFailCommand.json"
+          "$ref": "https://xynolog.org/protocol/JobFailCommand.json"
         }
       },
       "required": [
@@ -84,7 +86,7 @@
               "description": "The member at fault, named by its way from the frame."
             },
             "reason": {
-              "$ref": "./FrameRefusalReason.json"
+              "$ref": "https://xynolog.org/protocol/FrameRefusalReason.json"
             }
           },
           "required": [
@@ -112,7 +114,7 @@
           ]
         },
         "data": {
-          "$ref": "../../components/schemas/JobCompleteCommand.json"
+          "$ref": "https://xynolog.org/protocol/JobCompleteCommand.json"
         }
       },
       "required": [

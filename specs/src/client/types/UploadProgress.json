@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/UploadProgress.json",
   "title": "UploadProgress",
   "description": "What an upload reports as it goes, told apart by `phase`: its size first, then the bytes sent so far, then the resource made.",
   "oneOf": [
@@ -63,7 +65,7 @@
           ]
         },
         "resourceId": {
-          "$ref": "../../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       },
       "required": [

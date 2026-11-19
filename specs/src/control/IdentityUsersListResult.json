@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IdentityUsersListResult.json",
   "title": "IdentityUsersListResult",
   "type": "object",
   "description": "Accounts in the selected knowledge base's launcher-managed identity realm.",
@@ -6,7 +8,7 @@
     "users": {
       "type": "array",
       "items": {
-        "$ref": "./IdentityUser.json"
+        "$ref": "https://xynolog.org/protocol/IdentityUser.json"
       },
       "description": "Accounts, sorted by sign-in name."
     }

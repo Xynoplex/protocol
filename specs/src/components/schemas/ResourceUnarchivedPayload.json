@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ResourceUnarchivedPayload.json",
   "type": "object",
   "description": "Payload for mark:unarchived domain event (empty payload)"
 }

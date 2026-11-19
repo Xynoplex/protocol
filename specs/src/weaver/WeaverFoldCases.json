@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WeaverFoldCases.json",
   "description": "weaver/fold-cases.json: what the Weaver's fold leaves in the graph, from a history of recorded events.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,14 +16,14 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "history": {
             "type": "array",
             "minItems": 1,
             "description": "The events as the Weaver is given them, in the order they are delivered.",
             "items": {
-              "$ref": "../components/schemas/StoredEventResponse.json"
+              "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
             }
           },
           "graph": {
@@ -31,14 +33,14 @@
               "resources": {
                 "type": "array",
                 "items": {
-                  "$ref": "../components/schemas/ResourceDescriptor.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                 }
               },
               "annotations": {
                 "type": "array",
                 "description": "Each as the graph's annotation codec says the graph holds it.",
                 "items": {
-                  "$ref": "../components/schemas/Annotation.json"
+                  "$ref": "https://xynolog.org/protocol/Annotation.json"
                 }
               }
             },

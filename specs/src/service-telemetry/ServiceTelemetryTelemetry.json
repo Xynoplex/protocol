@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json",
   "description": "service-telemetry/telemetry.json: the telemetry each Xynolog service exports over OTLP: its spans and metrics, the services that export each, and the attributes each carries.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "sdk": {
       "type": "object",
@@ -189,7 +191,7 @@
             "uniqueItems": true,
             "description": "The only signal planes a gateway row arrives on.",
             "items": {
-              "$ref": "../gateway/GatewayConfig.json#/properties/signal/properties/type"
+              "$ref": "https://xynolog.org/protocol/GatewayConfig.json#/properties/signal/properties/type"
             }
           },
           "meaning": {

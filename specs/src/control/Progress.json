@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Progress.json",
   "title": "Progress",
   "type": "object",
   "description": "One line of what an operation is doing, as the command line would tell a person, without colour. A secret value the launcher generated or read never appears in one.",
   "properties": {
     "requestId": {
-      "$ref": "./RequestId.json"
+      "$ref": "https://xynolog.org/protocol/RequestId.json"
     },
     "kind": {
       "type": "string",

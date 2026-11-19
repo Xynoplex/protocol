@@ -73,55 +73,55 @@
     },
     "schemas": {
       "AnchoredTextAnswer": {
-        "$ref": "../components/schemas/AnchoredTextAnswer.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextAnswer.json"
       },
       "AnchoredTextEntries": {
-        "$ref": "./AnchoredTextEntries.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextEntries.json"
       },
       "AnchoredTextEntry": {
-        "$ref": "./AnchoredTextEntry.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextEntry.json"
       },
       "AnchoredTextStamp": {
-        "$ref": "./AnchoredTextStamp.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextStamp.json"
       },
       "AnchoredTextWrite": {
-        "$ref": "./AnchoredTextWrite.json"
+        "$ref": "https://xynolog.org/protocol/AnchoredTextWrite.json"
       },
       "ArchivistEventsResponse": {
-        "$ref": "./ArchivistEventsResponse.json"
+        "$ref": "https://xynolog.org/protocol/ArchivistEventsResponse.json"
       },
       "ArchivistHealth": {
-        "$ref": "./ArchivistHealth.json"
+        "$ref": "https://xynolog.org/protocol/ArchivistHealth.json"
       },
       "ArchivistStream": {
-        "$ref": "./ArchivistStream.json"
+        "$ref": "https://xynolog.org/protocol/ArchivistStream.json"
       },
       "ArchivistStreamsResponse": {
-        "$ref": "./ArchivistStreamsResponse.json"
+        "$ref": "https://xynolog.org/protocol/ArchivistStreamsResponse.json"
       },
       "CreateResourceResponse": {
-        "$ref": "../components/schemas/CreateResourceResponse.json"
+        "$ref": "https://xynolog.org/protocol/CreateResourceResponse.json"
       },
       "ErrorResponse": {
-        "$ref": "../components/schemas/ErrorResponse.json"
+        "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
       },
       "GetAnnotationsResponse": {
-        "$ref": "../components/schemas/GetAnnotationsResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
       },
       "GetResourceResponse": {
-        "$ref": "../components/schemas/GetResourceResponse.json"
+        "$ref": "https://xynolog.org/protocol/GetResourceResponse.json"
       },
       "RepresentationNotFound": {
-        "$ref": "./RepresentationNotFound.json"
+        "$ref": "https://xynolog.org/protocol/RepresentationNotFound.json"
       },
       "ResourceId": {
-        "$ref": "../components/schemas/ResourceId.json"
+        "$ref": "https://xynolog.org/protocol/ResourceId.json"
       },
       "ResourceUpload": {
-        "$ref": "../components/schemas/ResourceUpload.json"
+        "$ref": "https://xynolog.org/protocol/ResourceUpload.json"
       },
       "StoredEventResponse": {
-        "$ref": "../components/schemas/StoredEventResponse.json"
+        "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
       }
     }
   }

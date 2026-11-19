@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkCreateRequest.json",
   "type": "object",
   "description": "Raw annotation creation intent — bus handler assembles the W3C annotation",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "request": {
-      "$ref": "CreateAnnotationRequest.json"
+      "$ref": "https://xynolog.org/protocol/CreateAnnotationRequest.json"
     }
   },
   "required": [

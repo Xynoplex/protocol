@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseEventsRequest.json",
   "type": "object",
   "description": "Request to browse events for a resource",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "type": {
       "type": "string"
     },
     "userId": {
-      "$ref": "./UserId.json"
+      "$ref": "https://xynolog.org/protocol/UserId.json"
     },
     "limit": {
       "type": "integer"

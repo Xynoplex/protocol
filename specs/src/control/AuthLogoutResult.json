@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AuthLogoutResult.json",
   "title": "AuthLogoutResult",
   "type": "object",
   "description": "The launcher's session for a stack, ended. Desktop's own session is not touched.",

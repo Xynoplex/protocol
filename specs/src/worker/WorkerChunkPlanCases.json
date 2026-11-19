@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerChunkPlanCases.json",
   "description": "worker/chunk-plan-cases.json: the budget a unit opens with, the step that sizes the next piece, the walk over a text, and the descent into a piece whose reply failed.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -53,17 +55,17 @@
                 ]
               },
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "limits": {
                 "description": "The provider's limits.",
                 "type": "object",
                 "properties": {
                   "contextTokens": {
-                    "$ref": "../components/schemas/InferenceLimits.json#/properties/contextTokens"
+                    "$ref": "https://xynolog.org/protocol/InferenceLimits.json#/properties/contextTokens"
                   },
                   "maxOutputTokens": {
-                    "$ref": "../components/schemas/InferenceLimits.json#/properties/maxOutputTokens"
+                    "$ref": "https://xynolog.org/protocol/InferenceLimits.json#/properties/maxOutputTokens"
                   },
                   "outputTokensPerHour": {
                     "type": "integer",
@@ -148,7 +150,7 @@
                 ]
               },
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "limits": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/limits"
@@ -160,7 +162,7 @@
                 "$ref": "#/properties/cases/items/oneOf/0/properties/typesPerCall"
               },
               "refused": {
-                "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
+                "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
               }
             },
             "required": [
@@ -185,7 +187,7 @@
                 ]
               },
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "size": {
                 "type": "integer",
@@ -271,7 +273,7 @@
                 ]
               },
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "text": {
                 "type": "string",
@@ -345,7 +347,7 @@
                 "description": "Whether the walk reached the end of the text."
               },
               "resume": {
-                "$ref": "../components/schemas/UnitCursor.json"
+                "$ref": "https://xynolog.org/protocol/UnitCursor.json"
               }
             },
             "required": [
@@ -371,7 +373,7 @@
                 ]
               },
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "piece": {
                 "type": "string",
@@ -420,7 +422,7 @@
                     "type": "array",
                     "description": "The verdict of each collapse accepted.",
                     "items": {
-                      "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/verdict"
+                      "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0/properties/verdict"
                     }
                   }
                 },
@@ -455,7 +457,7 @@
                 ]
               },
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "piece": {
                 "$ref": "#/properties/cases/items/oneOf/4/properties/piece"
@@ -503,7 +505,7 @@
                       "type": "object",
                       "properties": {
                         "fails": {
-                          "$ref": "./WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
+                          "$ref": "https://xynolog.org/protocol/WorkerFailureClassCases.json#/properties/cases/items/properties/failure/oneOf/0"
                         }
                       },
                       "required": [

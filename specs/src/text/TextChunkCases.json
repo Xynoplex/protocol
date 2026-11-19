@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/TextChunkCases.json",
   "description": "text/chunk-cases.json: how the worker cuts a text into chunks under a chunking, and the chunkings it refuses.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
   "properties": {
     "$comment": true,
     "defaults": {
-      "$ref": "../smelter/SmelterConfig.json#/properties/chunking"
+      "$ref": "https://xynolog.org/protocol/SmelterConfig.json#/properties/chunking"
     },
     "cases": {
       "type": "array",
@@ -17,7 +19,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "text": {
             "type": "string",
@@ -29,7 +31,7 @@
             "description": "Its length in code points divided by four, rounded up."
           },
           "chunking": {
-            "$ref": "../smelter/SmelterConfig.json#/properties/chunking"
+            "$ref": "https://xynolog.org/protocol/SmelterConfig.json#/properties/chunking"
           },
           "chunks": {
             "type": "array",
@@ -87,7 +89,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "chunking": {
             "description": "A chunking outside SmelterConfig's bounds, which is why it is refused: two numbers of tokens.",

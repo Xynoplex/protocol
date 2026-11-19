@@ -1,26 +1,28 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GraphConfig.json",
   "description": "The graph database a service writes or reads, and what that kind of database needs to be reached: one of the kinds `xynolog-graph` has a store for, told apart by `type`. A secret is never a value here: a database's password is named by the environment variable that holds it.",
   "oneOf": [
     {
-      "$ref": "./Neo4jGraphConfig.json"
+      "$ref": "https://xynolog.org/protocol/Neo4jGraphConfig.json"
     },
     {
-      "$ref": "./JanusGraphConfig.json"
+      "$ref": "https://xynolog.org/protocol/JanusGraphConfig.json"
     },
     {
-      "$ref": "./NeptuneGraphConfig.json"
+      "$ref": "https://xynolog.org/protocol/NeptuneGraphConfig.json"
     },
     {
-      "$ref": "./MemoryGraphConfig.json"
+      "$ref": "https://xynolog.org/protocol/MemoryGraphConfig.json"
     }
   ],
   "discriminator": {
     "propertyName": "type",
     "mapping": {
-      "neo4j": "./Neo4jGraphConfig.json",
-      "janusgraph": "./JanusGraphConfig.json",
-      "neptune": "./NeptuneGraphConfig.json",
-      "memory": "./MemoryGraphConfig.json"
+      "neo4j": "https://xynolog.org/protocol/Neo4jGraphConfig.json",
+      "janusgraph": "https://xynolog.org/protocol/JanusGraphConfig.json",
+      "neptune": "https://xynolog.org/protocol/NeptuneGraphConfig.json",
+      "memory": "https://xynolog.org/protocol/MemoryGraphConfig.json"
     }
   }
 }

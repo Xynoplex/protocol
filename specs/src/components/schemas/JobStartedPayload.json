@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobStartedPayload.json",
   "type": "object",
   "description": "Payload for job:started domain event",
   "properties": {
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     },
     "jobType": {
-      "$ref": "JobType.json"
+      "$ref": "https://xynolog.org/protocol/JobType.json"
     },
     "annotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Annotation this job is attached to, when applicable"
     },
     "totalSteps": {

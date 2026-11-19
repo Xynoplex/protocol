@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionOpenResourceCases.json",
   "description": "session/open-resource-cases.json: which of a knowledge base's open resources a registry asks after, and which stay open.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "kb": {
             "type": "string",
@@ -28,7 +30,7 @@
             "type": "array",
             "description": "The ids of the resources open in it before the session is active.",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           },
           "resources": {
@@ -47,14 +49,14 @@
             "type": "array",
             "description": "The ids of the resources the registry asks for, compared as a set.",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           },
           "stillOpen": {
             "type": "array",
             "description": "The ids of the resources open once the checks are done, compared as a set.",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           }
         },

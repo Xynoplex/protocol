@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseTagSchemasResult.json",
   "type": "object",
   "description": "Result of browsing tag schemas",
   "properties": {
     "response": {
-      "$ref": "./GetTagSchemasResponse.json"
+      "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json"
     }
   },
   "required": [

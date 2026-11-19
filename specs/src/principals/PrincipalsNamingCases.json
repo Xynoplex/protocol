@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/PrincipalsNamingCases.json",
   "description": "principals/naming-cases.json: how the principals a reply mentions are named.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,13 +16,13 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "reply": {
             "$comment": "A reply, which is any JSON."
           },
           "profiles": {
-            "$ref": "../components/schemas/ProfilesProjection.json#/properties/profiles"
+            "$ref": "https://xynolog.org/protocol/ProfilesProjection.json#/properties/profiles"
           },
           "named": {
             "$comment": "The reply with its principals named, which is any JSON."

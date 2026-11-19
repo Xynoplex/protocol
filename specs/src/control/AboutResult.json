@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AboutResult.json",
   "title": "AboutResult",
   "type": "object",
   "description": "What the launcher is. A client asks this first, to learn whether it speaks to the launcher it found.",
@@ -33,7 +35,7 @@
     "runtimes": {
       "type": "array",
       "items": {
-        "$ref": "./RuntimeState.json"
+        "$ref": "https://xynolog.org/protocol/RuntimeState.json"
       },
       "description": "Each container runtime it drives, in the order it prefers them, and whether this machine has it."
     }

@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkCreateOk.json",
   "type": "object",
   "description": "Success reply after creating an annotation, matched to the originating command by correlationId.",
   "properties": {
     "response": {
-      "$ref": "./MarkCreateOkResponse.json"
+      "$ref": "https://xynolog.org/protocol/MarkCreateOkResponse.json"
     }
   },
   "required": [

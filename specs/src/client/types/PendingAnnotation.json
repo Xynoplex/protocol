@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/PendingAnnotation.json",
   "title": "PendingAnnotation",
   "type": "object",
   "description": "The annotation a mark state unit is composing, from the selection a request asked for, until it is submitted or cancelled.",
   "properties": {
     "selector": {
-      "$ref": "../../components/schemas/AnnotationSelector.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
     },
     "motivation": {
-      "$ref": "../../components/schemas/Motivation.json"
+      "$ref": "https://xynolog.org/protocol/Motivation.json"
     }
   },
   "required": [

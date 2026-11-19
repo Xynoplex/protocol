@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RepresentationAddedPayload.json",
   "type": "object",
   "description": "Payload for yield:representation-added domain event",
   "properties": {
     "representation": {
-      "$ref": "Representation.json"
+      "$ref": "https://xynolog.org/protocol/Representation.json"
     }
   },
   "required": [

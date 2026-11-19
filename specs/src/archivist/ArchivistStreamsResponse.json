@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistStreamsResponse.json",
   "type": "object",
   "description": "Every stream of the event log, `__system__` among them, each with the sequence number of its last event, in no order: the Archivist's answer to `GET /events`.",
   "properties": {
     "streams": {
       "type": "array",
       "items": {
-        "$ref": "./ArchivistStream.json"
+        "$ref": "https://xynolog.org/protocol/ArchivistStream.json"
       }
     }
   },

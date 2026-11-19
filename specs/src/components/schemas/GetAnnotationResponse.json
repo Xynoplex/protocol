@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetAnnotationResponse.json",
   "type": "object",
   "properties": {
     "annotation": {
-      "$ref": "./Annotation.json"
+      "$ref": "https://xynolog.org/protocol/Annotation.json"
     },
     "resource": {
       "anyOf": [
         {
-          "$ref": "./ResourceDescriptor.json"
+          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
         },
         {
           "type": "null"
@@ -17,7 +19,7 @@
     "resolvedResource": {
       "anyOf": [
         {
-          "$ref": "./ResourceDescriptor.json"
+          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
         },
         {
           "type": "null"

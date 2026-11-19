@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobFilter.json",
   "description": "Some jobs, named by fields of the job description: a partial description, at the description's own paths. A job matches when every field stated here equals the job's. A `mark` filter always states its motivation.",
   "oneOf": [
     {
-      "$ref": "./MarkJobFilter.json"
+      "$ref": "https://xynolog.org/protocol/MarkJobFilter.json"
     },
     {
-      "$ref": "./YieldJobFilter.json"
+      "$ref": "https://xynolog.org/protocol/YieldJobFilter.json"
     }
   ],
   "discriminator": {
     "propertyName": "jobType",
     "mapping": {
-      "mark": "./MarkJobFilter.json",
-      "yield": "./YieldJobFilter.json"
+      "mark": "https://xynolog.org/protocol/MarkJobFilter.json",
+      "yield": "https://xynolog.org/protocol/YieldJobFilter.json"
     }
   }
 }

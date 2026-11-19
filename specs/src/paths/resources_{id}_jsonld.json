@@ -17,7 +17,7 @@
         "in": "path",
         "required": true,
         "schema": {
-          "$ref": "../components/schemas/ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         }
       }
     ],
@@ -38,7 +38,7 @@
         "content": {
           "application/ld+json": {
             "schema": {
-              "$ref": "../components/schemas/GetResourceResponse.json"
+              "$ref": "https://xynolog.org/protocol/GetResourceResponse.json"
             }
           }
         }
@@ -51,7 +51,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

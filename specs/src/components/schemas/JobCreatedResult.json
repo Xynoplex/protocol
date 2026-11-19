@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobCreatedResult.json",
   "type": "object",
   "description": "Result of a job:create command",
   "properties": {
     "response": {
-      "$ref": "./JobCreatedResultResponse.json"
+      "$ref": "https://xynolog.org/protocol/JobCreatedResultResponse.json"
     }
   },
   "required": [

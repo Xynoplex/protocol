@@ -14,12 +14,16 @@ let rec copy source target =
         Out_channel.output_string out
           (In_channel.with_open_bin source In_channel.input_all))
 
+let id name = Decode.base ^ name
+
 let write path text =
   Out_channel.with_open_bin path (fun out -> Out_channel.output_string out text)
 
 let messages = function
   | Ok _ -> []
   | Error errors -> List.map Decode.error_to_string errors
+
+let failures = ref 0
 
 (* A copy of the specs, changed, must be refused with this refusal among
    those it gives. *)
@@ -32,10 +36,16 @@ let refused specs ~why change expected =
     Printf.eprintf "A copy that %s was not refused with:\n  %s\nbut with:\n" why
       expected;
     List.iter (Printf.eprintf "  %s\n") found;
-    exit 1)
+    incr failures)
 
 let rewrite path change =
   write path (Yojson.Safe.to_string (change (Yojson.Safe.from_file path)))
+
+(* A schema's file named [name]: [members], the inside of a JSON object,
+   after the dialect and the [$id] every schema states. *)
+let identified name members =
+  Printf.sprintf {|{"$schema":"%s","$id":"%s",%s}|} Decode.dialect (id name)
+    members
 
 let members f = function
   | `Assoc members -> `Assoc (f members)
@@ -185,14 +195,86 @@ let () =
     (fun copied ->
       write
         (Filename.concat copied "components/schemas/Dangling.json")
-        {|{"$ref":"Nowhere.json"}|})
-    "components/schemas/Dangling.json: /$ref: names Nowhere.json, which \
-     Protocol does not have";
+        (identified "Dangling.json"
+           {|"$ref":"https://xynolog.org/protocol/Nowhere.json"|}))
+    "components/schemas/Dangling.json: /$ref: names \
+     https://xynolog.org/protocol/Nowhere.json, an $id no JSON Schema states";
+  changed specs ~why:"has a schema state no $id" "components/schemas/JobId.json"
+    ""
+    (members (List.remove_assoc "$id"))
+    "/: states no $id: its $id is https://xynolog.org/protocol/JobId.json";
+  changed specs ~why:"has a schema state an $id not its name"
+    "components/schemas/JobId.json" "$id"
+    (fun _ -> `String (id "TaskId.json"))
+    "/$id: is \"https://xynolog.org/protocol/TaskId.json\", and a JSON \
+     Schema's $id is its name under https://xynolog.org/protocol/: \
+     https://xynolog.org/protocol/JobId.json";
+  changed specs ~why:"has a schema state no dialect"
+    "components/schemas/JobId.json" ""
+    (members (List.remove_assoc "$schema"))
+    "/: states no $schema: a JSON Schema states \
+     https://json-schema.org/draft/2020-12/schema";
+  changed specs ~why:"has a schema of another dialect"
+    "components/schemas/JobId.json" "$schema"
+    (fun _ -> `String "http://json-schema.org/draft-07/schema#")
+    "/$schema: expected \"https://json-schema.org/draft/2020-12/schema\", \
+     found \"http://json-schema.org/draft-07/schema#\"";
+  changed specs ~why:"has an $id within a schema"
+    "components/schemas/JobDeclined.json" "properties/reason"
+    (members (fun m -> ("$id", `String (id "Reason.json")) :: m))
+    "/properties/reason: states $id, which only a JSON Schema's file states, \
+     at its root";
+  changed specs ~why:"has an $id within a table" "client/registry.json"
+    "types/ConnectionIdentity"
+    (members (fun m -> ("$id", `String (id "ConnectionIdentity.json")) :: m))
+    "/types/ConnectionIdentity: states $id, which only a JSON Schema's file \
+     states, at its root";
+  refused specs ~why:"gives two schemas one $id"
+    (fun copied ->
+      copy
+        (Filename.concat copied "components/schemas/JobId.json")
+        (Filename.concat copied "jobs/JobId.json"))
+    "jobs/JobId.json: /$id: states the $id \
+     https://xynolog.org/protocol/JobId.json, which \
+     components/schemas/JobId.json states too";
+  surface specs ~why:"has a parameter name an $id no schema states"
+    "namespaces/0/methods/0/parameters/0/schema/$ref"
+    (fun _ -> `String (id "Nowhere.json"))
+    "/namespaces/0/methods/0/parameters/0/schema/$ref: names \
+     https://xynolog.org/protocol/Nowhere.json, an $id no JSON Schema states";
+  surface specs ~why:"has a parameter name a service's schema"
+    "namespaces/0/methods/0/parameters/0/schema/$ref"
+    (fun _ -> `String (id "WorkerConfig.json"))
+    "/namespaces/0/methods/0/parameters/0/schema/$ref: names \
+     https://xynolog.org/protocol/WorkerConfig.json, worker/WorkerConfig.json, \
+     which is not a component or a client type";
+  changed specs ~why:"has a query's value name an $id no schema states"
+    "client/refresh.json" "queries/0/value/$ref"
+    (fun _ -> `String (id "Nowhere.json"))
+    "/queries/0/value/$ref: names https://xynolog.org/protocol/Nowhere.json, \
+     an $id no JSON Schema states";
+  changed specs ~why:"has a query's value name a client type"
+    "client/refresh.json" "queries/0/value/$ref"
+    (fun _ -> `String (id "DeviceCode.json"))
+    "/queries/0/value/$ref: names \
+     https://xynolog.org/protocol/DeviceCode.json, \
+     client/types/DeviceCode.json, which is not a component";
+  changed specs ~why:"names a schema by its path"
+    "components/schemas/JobCancelRequest.json" "properties/jobId/$ref"
+    (fun _ -> `String "./JobId.json")
+    "/properties/jobId/$ref: names the JSON Schema ./JobId.json by its path: a \
+     JSON Schema is named by its $id, https://xynolog.org/protocol/JobId.json";
+  changed specs ~why:"maps a discriminator's value to a schema's path"
+    "components/schemas/JobCreateCommand.json" "discriminator/mapping/mark"
+    (fun _ -> `String "./MarkJobCreateCommand.json")
+    "/discriminator/mapping/mark: maps mark to \
+     \"./MarkJobCreateCommand.json\", which is no JSON Schema's $id";
   refused specs ~why:"has a schema with a keyword the model does not know"
     (fun copied ->
       write
         (Filename.concat copied "components/schemas/Unknown.json")
-        {|{"type":"string","contentEncoding":"base64"}|})
+        (identified "Unknown.json"
+           {|"type":"string","contentEncoding":"base64"|}))
     "components/schemas/Unknown.json: /contentEncoding: an unknown member";
   refused specs ~why:"lacks a path item a document names"
     (fun copied -> Sys.remove (Filename.concat copied "paths/api_health.json"))
@@ -205,7 +287,8 @@ let () =
     (fun copied ->
       write
         (Filename.concat copied "retry/RetryLost.json")
-        {|{"allOf":[{"$ref":"../CaseTable.json"}]}|})
+        (identified "RetryLost.json"
+           {|"allOf":[{"$ref":"https://xynolog.org/protocol/CaseTable.json"}]|}))
     "retry/RetryLost.json: /: is a table's schema, and no table beside it is \
      named for it";
   refused specs ~why:"has a case table off the top of an area"
@@ -238,45 +321,40 @@ let () =
      gateway's document does not list it";
   refused specs ~why:"has a service's schema listed by the gateway"
     (fun copied ->
-      list_in_gateway copied "WorkerConfig" "worker/WorkerConfig.json")
+      list_in_gateway copied "WorkerConfig" (id "WorkerConfig.json"))
     "openapi.json: /components/schemas/WorkerConfig/$ref: lists \
-     worker/WorkerConfig.json, which is neither a component schema nor \
-     discovery's: the gateway's document lists the public schemas alone";
+     https://xynolog.org/protocol/WorkerConfig.json, worker/WorkerConfig.json, \
+     which is neither a component schema nor discovery's: the gateway's \
+     document lists the public schemas alone";
   refused specs ~why:"has a gateway route that uses a service's schema"
     (fun copied ->
       rewrite
         (Filename.concat copied "paths/api_health.json")
-        (repoint ~from:"../components/schemas/HealthResponse.json"
-           ~onto:"../dispatcher/DispatcherHealth.json"))
+        (repoint ~from:(id "HealthResponse.json")
+           ~onto:(id "DispatcherHealth.json")))
     "paths/api_health.json: \
      /get/responses/200/content/application~1json/schema/$ref: names \
-     ../dispatcher/DispatcherHealth.json, outside components/schemas: what a \
+     https://xynolog.org/protocol/DispatcherHealth.json, \
+     dispatcher/DispatcherHealth.json, outside components/schemas: what a \
      gateway route uses is a component schema";
   refused specs ~why:"has a component schema that refers into a service's area"
     (fun copied ->
       write
         (Filename.concat copied "components/schemas/Stray.json")
-        {|{"$ref":"../../worker/WorkerConfig.json"}|};
-      list_in_gateway copied "Stray" "components/schemas/Stray.json")
+        (identified "Stray.json"
+           {|"$ref":"https://xynolog.org/protocol/WorkerConfig.json"|});
+      list_in_gateway copied "Stray" (id "Stray.json"))
     "components/schemas/Stray.json: /$ref: names \
-     ../../worker/WorkerConfig.json, outside components/schemas: a component \
-     schema refers to component schemas alone";
+     https://xynolog.org/protocol/WorkerConfig.json, worker/WorkerConfig.json, \
+     outside components/schemas: a component schema refers to component \
+     schemas alone";
   refused specs ~why:"has Archivist's own schema put back among the components"
     (fun copied ->
       let at = Filename.concat copied in
       Sys.rename
         (at "archivist/ArchivistHealth.json")
         (at "components/schemas/ArchivistHealth.json");
-      rewrite
-        (at "archivist/paths/health.json")
-        (repoint ~from:"../ArchivistHealth.json"
-           ~onto:"../../components/schemas/ArchivistHealth.json");
-      rewrite
-        (at "archivist/openapi.json")
-        (repoint ~from:"./ArchivistHealth.json"
-           ~onto:"../components/schemas/ArchivistHealth.json");
-      list_in_gateway copied "ArchivistHealth"
-        "components/schemas/ArchivistHealth.json")
+      list_in_gateway copied "ArchivistHealth" (id "ArchivistHealth.json"))
     "components/schemas/ArchivistHealth.json: /: is reached by Archivist's \
      document alone, not by a gateway route or the bus: it is Archivist's own, \
      so its place is archivist/";
@@ -414,8 +492,9 @@ let () =
   changed specs ~why:"has a filter select the other job type"
     "components/schemas/MarkJobFilter.json" "properties/jobType/enum"
     (fun _ -> `List [ `String "yield" ])
-    "/properties/jobType: JobFilter selects ./MarkJobFilter.json by jobType \
-     mark, whose jobType is [yield]";
+    "/properties/jobType: JobFilter selects \
+     https://xynolog.org/protocol/MarkJobFilter.json by jobType mark, whose \
+     jobType is [yield]";
   changed specs ~why:"opens a motivation's parameters"
     "components/schemas/HighlightingJobParams.json" ""
     (members (List.remove_assoc "additionalProperties"))
@@ -423,9 +502,10 @@ let () =
      would be accepted";
   changed specs ~why:"announces a mark job with other parameters"
     "components/schemas/MarkJobQueuedEvent.json" "properties/params/$ref"
-    (fun _ -> `String "./GenerationJobParams.json")
+    (fun _ -> `String (id "GenerationJobParams.json"))
     "/properties/params: a mark job is announced with \
-     ./GenerationJobParams.json, and created with ./MarkJobParams.json";
+     https://xynolog.org/protocol/GenerationJobParams.json, and created with \
+     https://xynolog.org/protocol/MarkJobParams.json";
   changed specs ~why:"states a yield job's parameters in three parts"
     "components/schemas/GenerationJobParams.json" "allOf"
     (function
@@ -459,11 +539,13 @@ let () =
     "/discriminator: JobResult has a discriminant of its own";
   changed specs ~why:"opens a result" "components/schemas/JobDeclined.json" ""
     (members (List.remove_assoc "additionalProperties"))
-    "/: ./JobDeclined.json is open: another result would decode as it";
+    "/: https://xynolog.org/protocol/JobDeclined.json is open: another result \
+     would decode as it";
   changed specs ~why:"has a result state a kind"
     "components/schemas/JobDeclined.json" "properties"
     (members (fun m -> m @ [ ("kind", `Assoc [ ("type", `String "string") ]) ]))
-    "/properties/kind: ./JobDeclined.json states a kind";
+    "/properties/kind: https://xynolog.org/protocol/JobDeclined.json states a \
+     kind";
   refused specs ~why:"has two results require one member"
     (fun copied ->
       rewrite (Filename.concat copied "components/schemas/JobDeclined.json")
@@ -475,17 +557,19 @@ let () =
           |> update [ "required" ] (function
             | `List r -> `List (r @ [ `String "found" ])
             | _ -> failwith "no required")))
-    "components/schemas/JobDeclined.json: /required: ./JobDeclined.json and \
-     ./MarkJobDone.json both require found";
+    "components/schemas/JobDeclined.json: /required: \
+     https://xynolog.org/protocol/JobDeclined.json and \
+     https://xynolog.org/protocol/MarkJobDone.json both require found";
   changed specs ~why:"has JobResult hold a result no verb reports"
     "components/schemas/JobResult.json" "oneOf"
     (function
       | `List rs ->
-          `List (rs @ [ `Assoc [ ("$ref", `String "./JobPending.json") ] ])
+          `List (rs @ [ `Assoc [ ("$ref", `String (id "JobPending.json")) ] ])
       | _ -> failwith "no oneOf")
     "/oneOf: the verbs report \
-     [./JobDeclined.json,./MarkJobDone.json,./YieldJobDone.json], JobResult is \
-     [./MarkJobDone.json,./YieldJobDone.json,./JobDeclined.json,./JobPending.json]";
+     [https://xynolog.org/protocol/JobDeclined.json,https://xynolog.org/protocol/MarkJobDone.json,https://xynolog.org/protocol/YieldJobDone.json], \
+     JobResult is \
+     [https://xynolog.org/protocol/MarkJobDone.json,https://xynolog.org/protocol/YieldJobDone.json,https://xynolog.org/protocol/JobDeclined.json,https://xynolog.org/protocol/JobPending.json]";
   changed specs ~why:"names a storage record that is no schema"
     "jobs/storage.json" "bucket/record"
     (fun _ -> `String "Nowhere")
@@ -493,8 +577,9 @@ let () =
   changed specs ~why:"selects a job by a status it does not state"
     "components/schemas/JobPending.json" "properties/status/enum"
     (fun _ -> `List [ `String "running" ])
-    "/properties/status: Job's discriminator selects ./JobPending.json by \
-     status pending, whose status is [running]";
+    "/properties/status: Job's discriminator selects \
+     https://xynolog.org/protocol/JobPending.json by status pending, whose \
+     status is [running]";
   changed specs ~why:"has the dispatcher's document default a field"
     "dispatcher/DispatcherConfig.json" "properties/port"
     (members (fun m -> m @ [ ("default", `Int 8080) ]))
@@ -505,10 +590,11 @@ let () =
       | `List r -> `List (List.filter (( <> ) (`String "port")) r)
       | _ -> failwith "no required")
     "/properties/port: WorkerConfig leaves port optional";
-  refused specs ~why:"lacks a schema of what the Archivist keeps"
+  refused specs ~why:"keeps a schema of what the Archivist keeps elsewhere"
     (fun copied ->
-      Sys.remove
-        (Filename.concat copied "components/schemas/ProfilesProjection.json"))
+      Sys.rename
+        (Filename.concat copied "components/schemas/ProfilesProjection.json")
+        (Filename.concat copied "principals/ProfilesProjection.json"))
     "archivist/ProfilesProjection.json: /: ProfilesProjection has no schema in \
      specs/src/archivist or specs/src/components/schemas";
   changed specs ~why:"has ArchivistConfig default a field"
@@ -550,7 +636,7 @@ let () =
     "components/schemas/ResourceId.json" ""
     (members (fun m -> m @ [ ("minLength", `Int 1) ]))
     "/: ResourceId must be exactly a string with a pattern and a description; \
-     it has [description,minLength,pattern,type]";
+     it has [$id,$schema,description,minLength,pattern,type]";
   changed specs ~why:"has a kind accept what its pattern does not"
     "identifiers/kinds.json" "kinds/0/accepts"
     (function
@@ -611,7 +697,7 @@ let () =
      ResourceId";
   changed specs ~why:"has a resource's id refer to an annotation's"
     "components/schemas/BeckonFocusEvent.json" "properties/resourceId/$ref"
-    (fun _ -> `String "./AnnotationId.json")
+    (fun _ -> `String (id "AnnotationId.json"))
     "/properties/resourceId: resourceId must refer to ResourceId, and refers \
      to AnnotationId";
   changed specs
@@ -624,7 +710,7 @@ let () =
      specs/src/identifiers/kinds.json";
   changed specs ~why:"has a property among others refer to a kind"
     "components/schemas/SessionJoinedEvent.json" "properties/connectionId"
-    (fun _ -> `Assoc [ ("$ref", `String "./ResourceId.json") ])
+    (fun _ -> `Assoc [ ("$ref", `String (id "ResourceId.json")) ])
     "/properties/connectionId: connectionId is among `others` and refers to \
      ResourceId";
   changed specs ~why:"names a property no schema has" "identifiers/kinds.json"
@@ -674,8 +760,9 @@ let () =
   changed specs ~why:"names open members and leaves them open"
     "client/types/ReconciledSpan.json" "oneOf/0"
     (members (List.remove_assoc "unevaluatedProperties"))
-    "/oneOf/0/allOf/0/$ref: names ./TextSpan.json#/$defs/Members, open \
-     members, and nothing here closes them";
+    "/oneOf/0/allOf/0/$ref: names \
+     https://xynolog.org/protocol/TextSpan.json#/$defs/Members, open members, \
+     and nothing here closes them";
   changed specs ~why:"names a refusal reason no frame is refused for"
     "client/types/FrameRefusalReason.json" "enum"
     (function
@@ -731,11 +818,11 @@ let () =
   changed specs ~why:"keeps another value for a persisted query"
     "session/SessionCacheCases.json"
     "properties/cases/items/oneOf/0/properties/kept/items/properties/value/$ref"
-    (fun _ -> `String "../components/schemas/Annotation.json")
+    (fun _ -> `String (id "Annotation.json"))
     "/properties/cases/items/oneOf/0/properties/kept/items/properties/value: \
-     keeps {\"$ref\":\"../components/schemas/Annotation.json\"} for \
+     keeps {\"$ref\":\"https://xynolog.org/protocol/Annotation.json\"} for \
      \"resource\", and refresh.json's value is \
-     {\"$ref\":\"../components/schemas/ResourceDescriptor.json\"}";
+     {\"$ref\":\"https://xynolog.org/protocol/ResourceDescriptor.json\"}";
   changed specs ~why:"leaves a security scheme undescribed" "openapi.json"
     "components/securitySchemes/bearerAuth/description"
     (fun _ -> `String " ")
@@ -802,7 +889,7 @@ let () =
              "application/json";
              "schema";
              "$ref";
-           ] (fun _ -> `String "../components/schemas/BusEmitRequest.json")))
+           ] (fun _ -> `String (id "BusEmitRequest.json"))))
     "paths/bus_emit.json: /post/responses/400: POST /bus/emit 400: an error \
      body is not ErrorResponse, or a refinement of it";
   refused specs ~why:"writes a stream's event names nowhere"
@@ -855,16 +942,18 @@ let () =
     "openapi.json: /paths/~1bus~1emit: POST /bus/emit: holds a key for 1 s, \
      and a client's attempts at one emit may span 377.5 s (two emitRetry \
      budgets and a refreshRetry, specs/src/client/timing.json)";
+  if !failures > 0 then exit 1;
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
-     file, a missing table, a dangling reference, an unknown keyword, a \
-     missing path item, a table without its schema, a schema without its \
-     table, a case table off an area's top, a value its schema refuses, a \
-     component the gateway does not list, a service's schema it lists, a \
-     gateway route or a component that refers into a service's area, \
-     Archivist's own schema among the components, a client surface case whose \
-     arguments are not its method's parameters, a reply's list neither bounded \
-     nor named, an offset whose unit is unsaid, a job protocol that disagrees \
-     with itself, an Archivist stated short, an id nothing checks, a client \
-     type that disagrees with what restates it, or a protocol fact left to the \
-     code; and it reads each value as the type its schema states"
+     file, a missing table, a dangling reference, a schema without its dialect \
+     or its $id, an $id within a file or twice, a schema named by its path, an \
+     unknown keyword, a missing path item, a table without its schema, a \
+     schema without its table, a case table off an area's top, a value its \
+     schema refuses, a component the gateway does not list, a service's schema \
+     it lists, a gateway route or a component that refers into a service's \
+     area, Archivist's own schema among the components, a client surface case \
+     whose arguments are not its method's parameters, a reply's list neither \
+     bounded nor named, an offset whose unit is unsaid, a job protocol that \
+     disagrees with itself, an Archivist stated short, an id nothing checks, a \
+     client type that disagrees with what restates it, or a protocol fact left \
+     to the code; and it reads each value as the type its schema states"

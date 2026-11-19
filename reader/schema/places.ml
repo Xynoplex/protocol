@@ -111,3 +111,28 @@ let service_schemas root =
 let model_of table =
   let area, stem = area_and_stem table in
   String.map (function '-' -> '_' | c -> c) (area ^ "_" ^ stem)
+
+(* Every JSON file under [root], as a path from it. *)
+let rec json_files root relative =
+  let path = Filename.concat root relative in
+  if Sys.is_directory path then
+    List.concat_map
+      (fun name ->
+        json_files root (if relative = "" then name else relative ^ "/" ^ name))
+      (sorted_entries path)
+  else if Filename.check_suffix relative ".json" then [ relative ]
+  else []
+
+(* Each schema's [$id], as the JSON files under [root] state them at their
+   roots ([Decode.ids]). Which files state one, and what, the reader holds. *)
+let ids root =
+  Decode.ids
+    (List.filter_map
+       (fun file ->
+         match Decode.parse_file ~root file with
+         | Ok (`Assoc members) -> (
+             match List.assoc_opt "$id" members with
+             | Some (`String id) -> Some (id, file)
+             | _ -> None)
+         | _ -> None)
+       (json_files root ""))

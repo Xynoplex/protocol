@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ExtractionDeclined.json",
   "type": "object",
   "description": "A named decline: extraction ran and yielded nothing, by class. A first-class, cacheable outcome — 'we ran and there was nothing' costs a full recognition pass to discover.",
   "properties": {
@@ -10,7 +12,7 @@
       "description": "Discriminant — both ExtractionOutcome members carry `kind`, single-valued: the category here, the detail in `declined`."
     },
     "declined": {
-      "$ref": "./ExtractionDeclinedReason.json",
+      "$ref": "https://xynolog.org/protocol/ExtractionDeclinedReason.json",
       "description": "Why extraction yielded nothing, by class."
     }
   },

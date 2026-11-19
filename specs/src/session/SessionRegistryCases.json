@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionRegistryCases.json",
   "description": "session/registry-cases.json: whether two endpoints are one place, and the order a registry shows a knowledge base's open resources in.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,13 +16,13 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "one": {
-            "$ref": "../components/schemas/KbEndpoint.json"
+            "$ref": "https://xynolog.org/protocol/KbEndpoint.json"
           },
           "other": {
-            "$ref": "../components/schemas/KbEndpoint.json"
+            "$ref": "https://xynolog.org/protocol/KbEndpoint.json"
           },
           "samePlace": {
             "type": "boolean",
@@ -44,20 +46,20 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "open": {
             "type": "array",
             "description": "The resources open in the knowledge base, each as stored.json's `openResource` keeps it.",
             "items": {
-              "$ref": "stored.json#/openResource"
+              "$ref": "https://xynolog.org/protocol/OpenResource.json"
             }
           },
           "shown": {
             "type": "array",
             "description": "The resources' ids, in the order the registry shows them.",
             "items": {
-              "$ref": "../components/schemas/ResourceId.json"
+              "$ref": "https://xynolog.org/protocol/ResourceId.json"
             }
           }
         },

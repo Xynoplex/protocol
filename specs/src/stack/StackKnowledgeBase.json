@@ -1,34 +1,36 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/StackKnowledgeBase.json",
   "title": "StackKnowledgeBase",
   "type": "object",
   "description": "A knowledge base's record and the services that keep it: the Gateway, the Dispatcher, the Archivist, and the broker between them. They live and die with the knowledge base.",
   "properties": {
     "apiVersion": {
-      "$ref": "./StackApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/StackApiVersion.json"
     },
     "kind": {
       "type": "string",
       "const": "KnowledgeBase"
     },
     "metadata": {
-      "$ref": "./Metadata.json"
+      "$ref": "https://xynolog.org/protocol/Metadata.json"
     },
     "spec": {
       "type": "object",
       "description": "The knowledge base's services, and how each runs.",
       "properties": {
         "logLevel": {
-          "$ref": "../components/schemas/LogLevel.json"
+          "$ref": "https://xynolog.org/protocol/LogLevel.json"
         },
         "gateway": {
           "type": "object",
           "description": "The Gateway: where every client and every service reaches the knowledge base.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "port": {
               "type": "integer",
@@ -55,10 +57,10 @@
           "description": "The Dispatcher: it hands queued jobs to workers.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             }
           },
           "required": [
@@ -72,13 +74,13 @@
           "description": "The Archivist: it keeps the knowledge base's record in its working tree.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "address": {
-              "$ref": "./HostPort.json",
+              "$ref": "https://xynolog.org/protocol/HostPort.json",
               "description": "Where the stack's services reach the Archivist, when that is somewhere the launcher cannot see. Absent, they reach it where the launcher places it."
             }
           },
@@ -123,10 +125,10 @@
               "additionalProperties": false
             },
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "external": {
               "type": "object",
@@ -138,10 +140,10 @@
                   "description": "Where it listens: `host:port`."
                 },
                 "user": {
-                  "$ref": "./SecretRef.json"
+                  "$ref": "https://xynolog.org/protocol/SecretRef.json"
                 },
                 "password": {
-                  "$ref": "./SecretRef.json"
+                  "$ref": "https://xynolog.org/protocol/SecretRef.json"
                 }
               },
               "required": [
@@ -158,7 +160,7 @@
           ],
           "allOf": [
             {
-              "$ref": "./Runner.json"
+              "$ref": "https://xynolog.org/protocol/Runner.json"
             }
           ],
           "additionalProperties": false

@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/CreateAnnotationRequest.json",
   "type": "object",
   "properties": {
     "motivation": {
-      "$ref": "./Motivation.json"
+      "$ref": "https://xynolog.org/protocol/Motivation.json"
     },
     "target": {
-      "$ref": "./AnnotationTarget.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationTarget.json"
     },
     "body": {
-      "$ref": "./AnnotationBodies.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationBodies.json",
       "description": "Optional body. Omit for annotations whose motivation alone is meaningful (highlighting) or whose user-supplied content is empty. Shape matches Annotation.body."
     }
   },

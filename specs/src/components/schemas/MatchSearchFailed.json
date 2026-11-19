@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MatchSearchFailed.json",
   "description": "The payload of `match:search-failed`: a CommandError that names the reference whose candidates could not be searched for.",
   "allOf": [
     {
-      "$ref": "./CommandError.json"
+      "$ref": "https://xynolog.org/protocol/CommandError.json"
     },
     {
       "type": "object",
       "properties": {
         "referenceId": {
-          "$ref": "./AnnotationId.json",
+          "$ref": "https://xynolog.org/protocol/AnnotationId.json",
           "description": "The reference the search was asked for."
         }
       },

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/CloneResourceWithTokenResponse.json",
   "type": "object",
   "properties": {
     "token": {
@@ -10,7 +12,7 @@
       "description": "ISO 8601 timestamp when token expires"
     },
     "resource": {
-      "$ref": "./ResourceDescriptor.json"
+      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
     }
   },
   "required": [

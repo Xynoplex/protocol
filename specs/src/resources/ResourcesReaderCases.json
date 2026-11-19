@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ResourcesReaderCases.json",
   "description": "resources/reader-cases.json: what the readers of a resource's description answer of it, or the first fault a resource the schema does not allow is refused for.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -18,19 +20,19 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "resource": {
-                "$ref": "../components/schemas/ResourceDescriptor.json"
+                "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
               },
               "primaryRepresentation": {
-                "$ref": "../components/schemas/Representation.json"
+                "$ref": "https://xynolog.org/protocol/Representation.json"
               },
               "primaryMediaType": {
-                "$ref": "../components/schemas/Representation.json#/properties/mediaType"
+                "$ref": "https://xynolog.org/protocol/Representation.json#/properties/mediaType"
               },
               "entityTypes": {
-                "$ref": "../components/schemas/ResourceDescriptor.json#/properties/entityTypes"
+                "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json#/properties/entityTypes"
               }
             },
             "required": [
@@ -46,7 +48,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "resource": {
                 "$comment": "A resource the ResourceDescriptor schema does not allow: JSON, as it is given."

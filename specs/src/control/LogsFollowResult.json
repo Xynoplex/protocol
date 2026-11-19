@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LogsFollowResult.json",
   "title": "LogsFollowResult",
   "type": "object",
   "description": "A follow whose every source ended on its own. A follow the client cancels is answered with control.cancelled.",

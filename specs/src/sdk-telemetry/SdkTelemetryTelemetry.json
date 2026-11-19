@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SdkTelemetryTelemetry.json",
   "description": "sdk-telemetry/telemetry.json: the telemetry a Xynolog SDK's transports export over OTLP: its spans and metrics, the transport each comes from, and the attributes each carries.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "spans": {
       "type": "array",
@@ -12,7 +14,7 @@
         "type": "object",
         "properties": {
           "name": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/name"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/name"
           },
           "transport": {
             "type": "string",
@@ -23,13 +25,13 @@
             "description": "The transport the row comes from: `bus`, the stream and emits; `content`, uploads and reads."
           },
           "kind": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/kind"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/kind"
           },
           "meaning": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/meaning"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/meaning"
           },
           "attributes": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/attributes"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/attributes"
           }
         },
         "required": [
@@ -49,19 +51,19 @@
         "type": "object",
         "properties": {
           "name": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/name"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/name"
           },
           "transport": {
             "$ref": "#/properties/spans/items/properties/transport"
           },
           "instrument": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/metrics/items/properties/instrument"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/metrics/items/properties/instrument"
           },
           "meaning": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/meaning"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/meaning"
           },
           "attributes": {
-            "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/attributes"
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/attributes"
           }
         },
         "required": [

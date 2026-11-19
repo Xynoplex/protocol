@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SmelterExtractionCases.json",
   "description": "smelter/extraction-cases.json: what deriving a PDF's text comes to, document by document.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -28,7 +30,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "fixture": {
                 "type": "string",
@@ -47,7 +49,7 @@
                 "description": "The class the document is sorted into."
               },
               "method": {
-                "$ref": "../components/schemas/ExtractionMethod.json"
+                "$ref": "https://xynolog.org/protocol/ExtractionMethod.json"
               },
               "pagesWithItems": {
                 "type": "integer",
@@ -113,13 +115,13 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "fixture": {
                 "$ref": "#/properties/cases/items/oneOf/0/properties/fixture"
               },
               "declined": {
-                "$ref": "../components/schemas/ExtractionDeclinedReason.json"
+                "$ref": "https://xynolog.org/protocol/ExtractionDeclinedReason.json"
               }
             },
             "required": [
@@ -135,7 +137,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "bytes": {
                 "oneOf": [
@@ -171,7 +173,7 @@
                 ]
               },
               "declined": {
-                "$ref": "../components/schemas/ExtractionDeclinedReason.json"
+                "$ref": "https://xynolog.org/protocol/ExtractionDeclinedReason.json"
               }
             },
             "required": [

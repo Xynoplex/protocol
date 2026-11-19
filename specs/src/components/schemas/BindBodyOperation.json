@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BindBodyOperation.json",
   "type": "object",
   "description": "One edit to a linking annotation's body list: add or remove a body item, or replace an existing one.",
   "properties": {
@@ -12,15 +14,15 @@
       "description": "The type of body operation"
     },
     "item": {
-      "$ref": "./AnnotationBody.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationBody.json",
       "description": "Body item for add operations"
     },
     "oldItem": {
-      "$ref": "./AnnotationBody.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationBody.json",
       "description": "Previous body item for replace operations"
     },
     "newItem": {
-      "$ref": "./AnnotationBody.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationBody.json",
       "description": "Replacement body item for replace operations"
     }
   },

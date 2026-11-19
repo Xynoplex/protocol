@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetAnnotationsResponse.json",
   "type": "object",
   "properties": {
     "annotations": {
       "type": "array",
       "items": {
-        "$ref": "./Annotation.json"
+        "$ref": "https://xynolog.org/protocol/Annotation.json"
       }
     },
     "total": {
@@ -14,7 +16,7 @@
     "motivation": {
       "anyOf": [
         {
-          "$ref": "./Motivation.json"
+          "$ref": "https://xynolog.org/protocol/Motivation.json"
         },
         {
           "type": "null"

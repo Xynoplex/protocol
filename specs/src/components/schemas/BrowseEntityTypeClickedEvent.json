@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseEntityTypeClickedEvent.json",
   "type": "object",
   "description": "Emitted when an entity type is clicked in the browse panel",
   "properties": {

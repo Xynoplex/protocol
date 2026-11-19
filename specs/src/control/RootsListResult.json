@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RootsListResult.json",
   "title": "RootsListResult",
   "type": "object",
   "description": "Every knowledge base this machine knows, as xynolog roots lists them: the local roots first, then the codespace stacks.",
@@ -6,7 +8,7 @@
     "roots": {
       "type": "array",
       "items": {
-        "$ref": "./Root.json"
+        "$ref": "https://xynolog.org/protocol/Root.json"
       },
       "description": "Each root."
     },

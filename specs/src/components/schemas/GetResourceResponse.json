@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetResourceResponse.json",
   "type": "object",
   "properties": {
     "resource": {
-      "$ref": "./ResourceDescriptor.json"
+      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
     },
     "annotations": {
       "type": "array",
       "items": {
-        "$ref": "./Annotation.json"
+        "$ref": "https://xynolog.org/protocol/Annotation.json"
       },
       "description": "All annotations for the resource (highlights, references, assessments, etc.)"
     }

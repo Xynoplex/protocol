@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianEngineConfig.json",
   "type": "object",
   "description": "The engine a Librarian actor asks: which it is, and where its provider is reached.",
   "properties": {
     "engine": {
-      "$ref": "../components/schemas/Engine.json"
+      "$ref": "https://xynolog.org/protocol/Engine.json"
     },
     "baseUrl": {
       "type": "string",

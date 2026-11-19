@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowsePanelOpenEvent.json",
   "type": "object",
   "description": "Emitted when a browse panel is opened",
   "properties": {
@@ -6,10 +8,10 @@
       "type": "string"
     },
     "scrollToAnnotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     },
     "motivation": {
-      "$ref": "./Motivation.json"
+      "$ref": "https://xynolog.org/protocol/Motivation.json"
     }
   },
   "required": [

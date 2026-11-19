@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SmelterReconcileCases.json",
   "description": "smelter/reconcile-cases.json: the work a Smelter plans when it starts, from what its vector index, the catalog and its anchored-text store hold.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "index": {
             "description": "What the vector index holds.",
@@ -28,7 +30,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "checksum": {
                       "type": "string",
@@ -65,7 +67,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "checksum": {
                       "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/checksum"
@@ -90,7 +92,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "entityTypes": {
                       "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/entityTypes"
@@ -126,7 +128,7 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "$ref": "../components/schemas/ResourceId.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceId.json"
                 },
                 "mediaType": {
                   "$ref": "#/properties/cases/items/properties/index/properties/resources/items/properties/mediaType"
@@ -144,7 +146,7 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "$ref": "../components/schemas/AnnotationId.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                       },
                       "quote": {
                         "type": "string",
@@ -187,7 +189,7 @@
                       ]
                     },
                     "resource": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "required": [
@@ -207,7 +209,7 @@
                       ]
                     },
                     "resource": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "required": [
@@ -227,7 +229,7 @@
                       ]
                     },
                     "resource": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "required": [
@@ -247,7 +249,7 @@
                       ]
                     },
                     "resource": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "required": [
@@ -267,10 +269,10 @@
                       ]
                     },
                     "annotation": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "resource": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "required": [
@@ -291,7 +293,7 @@
                       ]
                     },
                     "annotation": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     }
                   },
                   "required": [
@@ -311,10 +313,10 @@
                       ]
                     },
                     "annotation": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "resource": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "required": [

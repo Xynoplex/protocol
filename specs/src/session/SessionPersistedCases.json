@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionPersistedCases.json",
   "description": "session/persisted-cases.json: what a client keeps of one person in a SessionStorage, and when it is read, written and deleted.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -15,7 +17,7 @@
         "type": "object",
         "properties": {
           "did": {
-            "$ref": "../components/schemas/UserId.json"
+            "$ref": "https://xynolog.org/protocol/UserId.json"
           },
           "personKey": {
             "type": "string",
@@ -38,7 +40,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "kbId": {
             "type": "string",
@@ -46,7 +48,7 @@
             "description": "The knowledge base's id."
           },
           "did": {
-            "$ref": "../components/schemas/UserId.json"
+            "$ref": "https://xynolog.org/protocol/UserId.json"
           },
           "personKey": {
             "$ref": "#/properties/people/additionalProperties/properties/personKey"
@@ -91,7 +93,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "by": {
             "type": "string",
@@ -145,7 +147,7 @@
       }
     },
     "whoAmI": {
-      "$ref": "../components/schemas/UserResponse.json"
+      "$ref": "https://xynolog.org/protocol/UserResponse.json"
     },
     "startupStorage": {
       "description": "What storage holds: each key, and the text kept under it.",
@@ -162,7 +164,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "signedIn": {
             "type": "string",
@@ -211,7 +213,7 @@
           "place": {
             "anyOf": [
               {
-                "$ref": "../components/schemas/PersistedEventId.json"
+                "$ref": "https://xynolog.org/protocol/PersistedEventId.json"
               },
               {
                 "type": "null"
@@ -244,7 +246,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "stored": {
             "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
@@ -291,7 +293,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "stored": {
             "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
@@ -338,7 +340,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "frames": {
             "type": "array",
@@ -352,7 +354,7 @@
           "resumes": {
             "anyOf": [
               {
-                "$ref": "../components/schemas/PersistedEventId.json"
+                "$ref": "https://xynolog.org/protocol/PersistedEventId.json"
               },
               {
                 "type": "null"

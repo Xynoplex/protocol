@@ -22,27 +22,27 @@ let is_record file = List.mem (Filename.basename file) records
 
 (* Every list and map [schema], at [at], carries, by its path from [path],
    following each [$ref] but into a file already walked or a record. *)
-let rec collections ~(schema_at : Validate.schemas) ~seen (at : Validate.place)
-    path (schema : Schema.t) =
+let rec collections ~ids ~(schema_at : Validate.schemas) ~seen
+    (at : Validate.place) path (schema : Schema.t) =
   match schema with
   | Boolean_schema _ -> []
   | Schema s -> (
       match s.ref_ with
       | Some r -> (
-          let file, pointer = Decode.resolve r in
+          let file, pointer = Decode.resolve ids r in
           if List.mem file seen || is_record file then []
           else
             match schema_at { Validate.file; pointer } with
             | Some target ->
-                collections ~schema_at ~seen:(file :: seen) { file; pointer }
-                  path target
+                collections ~ids ~schema_at ~seen:(file :: seen)
+                  { file; pointer } path target
             | None -> [])
       | None ->
           let within key branches =
             List.concat
               (List.mapi
                  (fun index branch ->
-                   collections ~schema_at ~seen
+                   collections ~ids ~schema_at ~seen
                      {
                        at with
                        pointer = at.pointer / key / string_of_int index;
@@ -70,7 +70,7 @@ let rec collections ~(schema_at : Validate.schemas) ~seen (at : Validate.place)
             let members =
               List.concat_map
                 (fun (name, member) ->
-                  collections ~schema_at ~seen
+                  collections ~ids ~schema_at ~seen
                     { at with pointer = at.pointer / "properties" / name }
                     (if path = "" then name else path ^ "." ^ name)
                     member)
@@ -91,7 +91,7 @@ let by_path collections =
     (List.rev paths)
 
 (* The schema of [request]'s member [name], its [$ref] followed. *)
-let member ~(schema_at : Validate.schemas) request name =
+let member ~ids ~(schema_at : Validate.schemas) request name =
   let at : Validate.place =
     { file = Places.components ^ request ^ ".json"; pointer = "" }
   in
@@ -99,7 +99,7 @@ let member ~(schema_at : Validate.schemas) request name =
   | Some (Schema { properties = Some properties; _ }) -> (
       match List.assoc_opt name properties with
       | Some (Schema { ref_ = Some r; _ }) ->
-          let file, pointer = Decode.resolve r in
+          let file, pointer = Decode.resolve ids r in
           schema_at { file; pointer }
       | other -> other)
   | _ -> None
@@ -112,8 +112,8 @@ let bounds (schema : Schema.t) =
       || (List.mem Schema.Integer types && Option.is_some s.maximum)
   | Boolean_schema _ -> false
 
-let refusals ~(schema_at : Validate.schemas) (registry : Tables.Bus_registry.t)
-    (table : Tables.Bus_reply_bounds.t) =
+let refusals ~ids ~(schema_at : Validate.schemas)
+    (registry : Tables.Bus_registry.t) (table : Tables.Bus_reply_bounds.t) =
   let refusal file pointer message = { Decode.file; pointer; message } in
   let channel name =
     List.find_opt
@@ -156,7 +156,8 @@ let refusals ~(schema_at : Validate.schemas) (registry : Tables.Bus_registry.t)
           in
           Option.fold ~none:[]
             ~some:(fun schema ->
-              by_path (collections ~schema_at ~seen:[ at.file ] at "" schema))
+              by_path
+                (collections ~ids ~schema_at ~seen:[ at.file ] at "" schema))
             (schema_at at)
       | _ -> []
     in
@@ -199,7 +200,7 @@ let refusals ~(schema_at : Validate.schemas) (registry : Tables.Bus_registry.t)
             let asked =
               match channel o.request with
               | Some (Schema { schema; _ } | Envelope { schema; _ }) ->
-                  member ~schema_at schema by
+                  member ~ids ~schema_at schema by
               | _ -> None
             in
             match asked with

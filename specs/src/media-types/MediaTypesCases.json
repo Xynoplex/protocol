@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MediaTypesCases.json",
   "description": "media-types/cases.json: the rules every SDK reads from the media-type registry.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -16,7 +18,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "source": {
             "type": [
@@ -26,7 +28,7 @@
             "description": "The source's media type as given, or null for none."
           },
           "format": {
-            "$ref": "../components/schemas/SupportedMediaType.json"
+            "$ref": "https://xynolog.org/protocol/SupportedMediaType.json"
           }
         },
         "required": [
@@ -45,14 +47,14 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "name": {
             "type": "string",
             "description": "The resource's title."
           },
           "format": {
-            "$ref": "../components/schemas/SupportedMediaType.json"
+            "$ref": "https://xynolog.org/protocol/SupportedMediaType.json"
           },
           "fileName": {
             "type": "string",
@@ -77,7 +79,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "format": {
             "type": "string",

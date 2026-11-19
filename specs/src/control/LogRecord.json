@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LogRecord.json",
   "title": "LogRecord",
   "type": "object",
   "description": "One line one of a stack's services wrote. The launcher removes from it each secret value the launcher generated or read; anything else the service wrote is the client's to handle. The launcher keeps no copy.",
   "properties": {
     "requestId": {
-      "$ref": "./RequestId.json"
+      "$ref": "https://xynolog.org/protocol/RequestId.json"
     },
     "service": {
       "type": "string",

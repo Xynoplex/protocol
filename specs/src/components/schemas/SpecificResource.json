@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SpecificResource.json",
   "type": "object",
   "properties": {
     "type": {
@@ -8,11 +10,11 @@
       ]
     },
     "source": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The id of the resource this body leads to"
     },
     "purpose": {
-      "$ref": "./BodyPurpose.json",
+      "$ref": "https://xynolog.org/protocol/BodyPurpose.json",
       "description": "Why this body is included"
     }
   },

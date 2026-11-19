@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IdentityUsersListParams.json",
   "title": "IdentityUsersListParams",
   "type": "object",
   "description": "List accounts in one local knowledge base's launcher-managed Keycloak realm.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json"
     },
     "target": {
-      "$ref": "./IdentityLocalTarget.json"
+      "$ref": "https://xynolog.org/protocol/IdentityLocalTarget.json"
     }
   },
   "required": [

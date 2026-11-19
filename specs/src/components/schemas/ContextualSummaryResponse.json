@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ContextualSummaryResponse.json",
   "type": "object",
   "properties": {
     "summary": {
@@ -9,7 +11,7 @@
       "description": "What the summary is of: the resource the annotation is on, and the annotation's entity types.",
       "properties": {
         "resourceId": {
-          "$ref": "./ResourceId.json"
+          "$ref": "https://xynolog.org/protocol/ResourceId.json"
         },
         "resourceName": {
           "type": "string"

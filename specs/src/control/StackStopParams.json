@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/StackStopParams.json",
   "title": "StackStopParams",
   "type": "object",
   "description": "stack.stop's params: what xynolog stop takes, but its help.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json",
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json",
       "description": "The version of the control API the request is written to."
     },
     "target": {
-      "$ref": "./Target.json",
+      "$ref": "https://xynolog.org/protocol/Target.json",
       "description": "Which knowledge base's stack. Absent: the one the command line chooses, standing where the control server was started."
     },
     "runtime": {
-      "$ref": "./Runtime.json",
+      "$ref": "https://xynolog.org/protocol/Runtime.json",
       "description": "The container runtime to ask, as --runtime names it. Absent: the one the stack's record names, else every installed one."
     },
     "service": {
@@ -21,7 +23,7 @@
       "minLength": 1
     },
     "group": {
-      "$ref": "./ServiceGroup.json",
+      "$ref": "https://xynolog.org/protocol/ServiceGroup.json",
       "description": "Just this one group of services, as --group names it."
     },
     "delete": {

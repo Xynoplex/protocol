@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionCases.json",
   "description": "session/cases.json: how a client holds a session: when it renews its token, what it reads of one, and what it does at its start and when the gateway refuses its token.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
   "properties": {
     "$comment": true,
     "told": {
-      "$ref": "../JsonSchema.json",
+      "$ref": "https://xynolog.org/protocol/JsonSchema.json",
       "$comment": "The reasons a session ends with, each SDK's `SessionEndReason`: a JSON Schema of a string, JSON, as it is given."
     },
     "refreshSchedule": {
@@ -20,7 +22,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "claims": {
             "description": "The token's claims, which a runner puts in any JWT. Absent when the row gives a `token`.",
@@ -74,7 +76,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "token": {
             "type": "string",
@@ -104,7 +106,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "stored": {
             "type": "string",
@@ -163,7 +165,7 @@
           "told": {
             "anyOf": [
               {
-                "$ref": "cases.json#/told"
+                "$ref": "https://xynolog.org/protocol/SessionEndReason.json"
               },
               {
                 "type": "null"
@@ -174,7 +176,7 @@
           "error": {
             "anyOf": [
               {
-                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
               },
               {
                 "type": "null"
@@ -239,7 +241,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "refused": {
             "type": "string",
@@ -301,7 +303,7 @@
           "told": {
             "anyOf": [
               {
-                "$ref": "cases.json#/told"
+                "$ref": "https://xynolog.org/protocol/SessionEndReason.json"
               },
               {
                 "type": "null"
@@ -312,7 +314,7 @@
           "error": {
             "anyOf": [
               {
-                "$ref": "../errors/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
+                "$ref": "https://xynolog.org/protocol/ErrorsCodes.json#/properties/job/properties/codes/items/properties/code"
               },
               {
                 "type": "null"

@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BusStreamMessage.json",
   "description": "Every message the bus stream carries. A client ignores an `event` it does not know; the gateway writes no other.",
   "oneOf": [
     {
-      "$ref": "./BusEventMessage.json"
+      "$ref": "https://xynolog.org/protocol/BusEventMessage.json"
     },
     {
-      "$ref": "./BusPingMessage.json"
+      "$ref": "https://xynolog.org/protocol/BusPingMessage.json"
     }
   ]
 }

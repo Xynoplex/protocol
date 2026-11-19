@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatewayConfig.json",
   "type": "object",
   "description": "Everything the gateway reads at boot: nothing in it is defaulted by the gateway. The launcher writes it for the gateway it starts — from the knowledge base's committed identity and its stack documents — and a gateway started any other way is given the same document at the path its `--config` flag names (the image passes `/etc/xynolog/gateway.json`). Started without `--config`, or with a path that names no file, the gateway refuses to start and says which. Secrets are never values here: a field that needs one names the environment variable holding it. The gateway's other inputs are the environment variables specs/src/service-environment/variables.json lists for it, and the ones this document names. A document that does not validate is refused at boot — the gateway exits without serving — and the refusal names each failing field by its JSON pointer.",
   "properties": {
     "kb": {
-      "$ref": "../components/schemas/KbIdentity.json"
+      "$ref": "https://xynolog.org/protocol/KbIdentity.json"
     },
     "port": {
       "type": "integer",
@@ -38,7 +40,7 @@
       "additionalProperties": false
     },
     "archivist": {
-      "$ref": "../components/schemas/ServiceAddress.json",
+      "$ref": "https://xynolog.org/protocol/ServiceAddress.json",
       "description": "Where the Archivist listens."
     },
     "signal": {
@@ -74,10 +76,10 @@
       "additionalProperties": false
     },
     "logLevel": {
-      "$ref": "../components/schemas/LogLevel.json"
+      "$ref": "https://xynolog.org/protocol/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "../components/schemas/LogFormat.json"
+      "$ref": "https://xynolog.org/protocol/LogFormat.json"
     },
     "capacity": {
       "type": "object",

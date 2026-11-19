@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherAnnotationRequest.json",
   "type": "object",
   "description": "Request payload sent on the gather:requested bus channel to gather context for an annotation.",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Branded AnnotationId of the annotation to gather context for"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Branded ResourceId of the resource the annotation belongs to"
     },
     "options": {
-      "$ref": "./GatherAnnotationOptions.json"
+      "$ref": "https://xynolog.org/protocol/GatherAnnotationOptions.json"
     }
   },
   "required": [

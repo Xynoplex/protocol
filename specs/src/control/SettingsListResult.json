@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SettingsListResult.json",
   "title": "SettingsListResult",
   "type": "object",
   "description": "Every setting the launcher keeps: the machine's, then the knowledge base's.",
@@ -14,7 +16,7 @@
     "settings": {
       "type": "array",
       "items": {
-        "$ref": "./Setting.json"
+        "$ref": "https://xynolog.org/protocol/Setting.json"
       },
       "description": "Each setting."
     }

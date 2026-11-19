@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/VectorsTokenCases.json",
   "description": "vectors/token-cases.json: the claims of the tokens a Qdrant is presented.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,10 +16,10 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "kb": {
-            "$ref": "../KbDid.json"
+            "$ref": "https://xynolog.org/protocol/KbDid.json"
           },
           "claims": {
             "description": "Each service's token's claims, by the service.",

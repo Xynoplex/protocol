@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/InferenceLimitsResult.json",
   "type": "object",
   "description": "The inference limits one service discovered for the engines it holds a client for. An engine whose discovery is currently unavailable is absent.",
   "properties": {
@@ -8,7 +10,7 @@
         "limits": {
           "type": "array",
           "items": {
-            "$ref": "./EngineLimits.json"
+            "$ref": "https://xynolog.org/protocol/EngineLimits.json"
           }
         }
       },

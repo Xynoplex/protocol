@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Setting.json",
   "title": "Setting",
   "type": "object",
   "description": "One setting the launcher keeps, as xynolog settings shows it.",
@@ -22,7 +24,7 @@
     "values": {
       "type": "array",
       "items": {
-        "$ref": "./SettingLine.json"
+        "$ref": "https://xynolog.org/protocol/SettingLine.json"
       },
       "description": "The values in effect, one per line xynolog settings shows."
     },

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GenerationJobRequest.json",
   "type": "object",
   "description": "What a `yield` job is asked to make: every parameter of GenerationJobParams but its `context`, the input the resource is made from. It is what an announcement of the job carries.",
   "properties": {
@@ -40,7 +42,7 @@
       "description": "Output token budget forwarded to the model. Length never determines structure."
     },
     "outputMediaType": {
-      "$ref": "./SupportedMediaType.json",
+      "$ref": "https://xynolog.org/protocol/SupportedMediaType.json",
       "description": "Requested media type of the generated resource's content. Default `text/markdown` at the worker, which validates it against its supported output set and FAILS the job for anything it can't write — not a silent fallback."
     },
     "task": {

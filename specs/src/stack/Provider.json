@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Provider.json",
   "title": "Provider",
   "type": "object",
   "description": "How an inference provider is reached.",
@@ -9,7 +11,7 @@
       "description": "Where the provider's API is reached. Anthropic's own API, and the shared Ollama, are stated by no baseURL."
     },
     "apiKey": {
-      "$ref": "./SecretRef.json"
+      "$ref": "https://xynolog.org/protocol/SecretRef.json"
     }
   },
   "additionalProperties": false

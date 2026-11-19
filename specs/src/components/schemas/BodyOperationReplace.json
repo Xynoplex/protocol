@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BodyOperationReplace.json",
   "type": "object",
   "properties": {
     "op": {
@@ -8,10 +10,10 @@
       ]
     },
     "oldItem": {
-      "$ref": "./AnnotationBody.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationBody.json"
     },
     "newItem": {
-      "$ref": "./AnnotationBody.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationBody.json"
     }
   },
   "required": [

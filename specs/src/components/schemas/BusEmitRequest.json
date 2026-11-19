@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BusEmitRequest.json",
   "type": "object",
   "description": "One event for the bus. `channel` names a channel of the bus registry (specs/src/bus/registry.json) and `payload` must match the schema the registry's `validate` names for it. `scope` publishes a resource-bound broadcast to that resource's subscribers only; everything else is unscoped. `clientId` and `correlationId` are routing facts beside the payload, never inside it.",
   "properties": {
@@ -13,7 +15,7 @@
       "additionalProperties": true
     },
     "scope": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The resource scope of a resource-bound broadcast. Publishers of those broadcasts only; a command or request never carries one."
     },
     "clientId": {

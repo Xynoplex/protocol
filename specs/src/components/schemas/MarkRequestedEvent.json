@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkRequestedEvent.json",
   "type": "object",
   "description": "Emitted when the user requests a new mark (annotation) on a resource",
   "properties": {
     "source": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The '@id' of the resource the mark belongs to (W3C target.source). Routes the event to the right viewer/state unit when a host mounts many viewers on one session."
     },
     "selector": {
-      "$ref": "./AnnotationSelector.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationSelector.json",
       "description": "One or more W3C selectors"
     },
     "motivation": {
-      "$ref": "./Motivation.json"
+      "$ref": "https://xynolog.org/protocol/Motivation.json"
     }
   },
   "required": [

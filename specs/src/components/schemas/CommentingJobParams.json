@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/CommentingJobParams.json",
   "type": "object",
   "description": "What a commenting job takes: passages of the resource are marked, each with a comment the model writes.",
   "properties": {

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/EntityTagChangedPayload.json",
   "type": "object",
   "description": "Payload for mark:entity-tag-added and mark:entity-tag-removed domain events",
   "properties": {

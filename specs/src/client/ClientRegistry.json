@@ -1,16 +1,18 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ClientRegistry.json",
   "description": "client/registry.json: each record a registry of knowledge bases hands its caller, or is handed, as a JSON Schema.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "types": {
       "type": "object",
       "minProperties": 1,
       "description": "Each record, by its type name.",
       "additionalProperties": {
-        "$ref": "../JsonSchema.json",
+        "$ref": "https://xynolog.org/protocol/JsonSchema.json",
         "$comment": "The record's JSON Schema, by the type name surface.json's `registry` module gives it: JSON, as it is given."
       }
     }

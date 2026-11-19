@@ -16,7 +16,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "../components/schemas/BusSubscribeRequest.json"
+            "$ref": "https://xynolog.org/protocol/BusSubscribeRequest.json"
           }
         }
       }
@@ -27,7 +27,7 @@
         "content": {
           "text/event-stream": {
             "schema": {
-              "$ref": "../components/schemas/BusStreamMessage.json"
+              "$ref": "https://xynolog.org/protocol/BusStreamMessage.json"
             }
           }
         }
@@ -37,7 +37,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }
