@@ -520,7 +520,7 @@ specs/src/archivist/paths/list-streams.json,Normative protocol source,xynolog/pr
 specs/src/archivist/paths/put-anchored-text-stamp.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/paths/resource-anchored-text.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/paths/store-resource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/archivist/responses/Unauthorized.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/archivist/responses/ArchivistUnauthorized.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/archivist/shard-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/bus/BusFrameCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/bus/BusLogCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

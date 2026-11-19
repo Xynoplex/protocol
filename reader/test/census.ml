@@ -290,6 +290,48 @@ let () =
     (fun _ -> `String "putAnchoredText")
     "/: holds operations whose operationIds share no name after their verbs, \
      and a path item's file is named by the name they share";
+  refused specs ~why:"lists a component by what is not its file's name"
+    (fun copied ->
+      gateway_listing copied
+        (List.map (function
+          | "HealthResponse", reference -> ("Health", reference)
+          | member -> member)))
+    "openapi.json: /components/schemas/Health/$ref: lists \
+     components/schemas/HealthResponse.json as Health, and a document lists a \
+     component by its file's name, HealthResponse";
+  refused specs ~why:"names a response's file in kebab case"
+    (fun copied ->
+      let from = "components/responses/AtCapacity.json" in
+      let onto = "components/responses/at-capacity.json" in
+      Sys.rename (Filename.concat copied from) (Filename.concat copied onto);
+      rewrite (Filename.concat copied "openapi.json") (repoint ~from ~onto);
+      rewrite
+        (Filename.concat copied "paths/subscribe-to-bus.json")
+        (repoint ~from:("../" ^ from) ~onto:("../" ^ onto)))
+    "components/responses/at-capacity.json: /: is named at-capacity, and a \
+     response's file is its name in PascalCase";
+  refused specs ~why:"names a JSON Schema's file in kebab case"
+    (fun copied ->
+      write
+        (Filename.concat copied "components/schemas/lower-case.json")
+        (identified "lower-case.json" {|"type":"string"|}))
+    "components/schemas/lower-case.json: /: is named lower-case, and a JSON \
+     Schema's file is its name in PascalCase";
+  refused specs ~why:"has two responses of one name"
+    (fun copied ->
+      write
+        (Filename.concat copied "archivist/responses/Unauthorized.json")
+        (In_channel.with_open_bin
+           (Filename.concat copied
+              "archivist/responses/ArchivistUnauthorized.json")
+           In_channel.input_all);
+      rewrite
+        (Filename.concat copied "archivist/paths/list-streams.json")
+        (repoint ~from:"../responses/ArchivistUnauthorized.json"
+           ~onto:"../responses/Unauthorized.json"))
+    "archivist/responses/Unauthorized.json: /: is the response Unauthorized, \
+     as components/responses/Unauthorized.json is: a response is named by its \
+     file, and no two share a name";
   refused specs ~why:"lacks a table's schema"
     (fun copied -> Sys.remove (Filename.concat copied "retry/RetryCases.json"))
     "retry/cases.json: /: has no schema, which would be retry/RetryCases.json";
