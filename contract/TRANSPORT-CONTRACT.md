@@ -317,7 +317,7 @@ So is every line the stream carried that names no reader (§ The transport).
   `requestRetryPauseMs`, with the key it was first sent with: one whose
   connection failed or closed before its answer reached the client, and one
   answered with a status the `transport` rule retries for a keyed request
-  ([`specs/src/retry/cases.json`](../specs/src/retry/cases.json)).
+  ([`specs/src/retry/rules.json`](../specs/src/retry/rules.json)).
   The Archivist answers the repeat with the resource the first made, so the
   upload resolves with that resource's id.
   *Held by `sdk/wire/upload-unanswered`, `sdk/wire/upload-answer-lost`, `specs/src/retry/cases.json`.*

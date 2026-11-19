@@ -445,11 +445,11 @@ own.
   again with a renewed credential too
   ([`specs/src/paths/emit-on-bus.json`](../specs/src/paths/emit-on-bus.json)).
   *Held by `sdk/wire/emit-keyed`, `sdk/wire/emit-credential-renewed`.*
-- Each attempt has a deadline of `emitTimeoutMs`. An attempt refused by a
-  limit (429), by a gateway that says it will recover (503, 504), or
-  unanswered at its deadline is made again inside `emitRetry`, no sooner
-  than a refusal's `Retry-After`; any other refusal is final
-  ([`specs/src/retry/cases.json`](../specs/src/retry/cases.json)).
+- Each attempt has a deadline of `emitTimeoutMs`. An attempt refused with a
+  status the `boot` rule retries
+  ([`specs/src/retry/rules.json`](../specs/src/retry/rules.json)), or
+  unanswered at its deadline, is made again inside `emitRetry`, no sooner
+  than a refusal's `Retry-After`; any other refusal is final.
   *Held by `sdk/wire/emit-rate-limited`, `sdk/wire/emit-budget-spent`, `sdk/wire/emit-refused`, `sdk/wire/unreachable`.*
 - An attempt whose answer was lost, its connection closed before the answer
   reached the client, is made again inside `emitRetry` with the emit's key
