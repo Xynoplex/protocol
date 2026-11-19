@@ -325,11 +325,9 @@
                                   "type": "object",
                                   "properties": {
                                     "answers": {
-                                      "nullable": true,
-                                      "allOf": [
-                                        {
-                                          "$ref": "../components/schemas/ResourceDescriptor.json"
-                                        }
+                                      "anyOf": [
+                                        { "$ref": "../components/schemas/ResourceDescriptor.json" },
+                                        { "type": "null" }
                                       ]
                                     }
                                   },
@@ -367,11 +365,9 @@
                                   "type": "object",
                                   "properties": {
                                     "answers": {
-                                      "nullable": true,
-                                      "allOf": [
-                                        {
-                                          "$ref": "../components/schemas/ResourceView.json"
-                                        }
+                                      "anyOf": [
+                                        { "$ref": "../components/schemas/ResourceView.json" },
+                                        { "type": "null" }
                                       ]
                                     }
                                   },

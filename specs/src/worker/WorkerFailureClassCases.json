@@ -18,7 +18,6 @@
           },
           "failure": {
             "description": "What was thrown, described as data: a failure object, or a string or null, which are no failure object.",
-            "nullable": true,
             "oneOf": [
               {
                 "description": "A failure object: whichever of these it has.",
@@ -93,15 +92,14 @@
               {
                 "type": "string",
                 "description": "Something thrown that is text."
-              }
+              },
+              { "type": "null" }
             ]
           },
           "failureClass": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "../components/schemas/FailureClass.json"
-              }
+            "anyOf": [
+              { "$ref": "../components/schemas/FailureClass.json" },
+              { "type": "null" }
             ]
           }
         },

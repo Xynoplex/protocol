@@ -6,11 +6,7 @@
       "$ref": "./ResourceId.json"
     },
     "motivation": {
-      "allOf": [
-        {
-          "$ref": "./Motivation.json"
-        }
-      ],
+      "$ref": "./Motivation.json",
       "description": "The one motivation the annotations answered have. Every annotation that refers to the resource is answered where none is stated."
     }
   },

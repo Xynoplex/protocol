@@ -141,11 +141,9 @@
             "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
           },
           "context": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "../components/schemas/GatheredContext.json"
-              }
+            "anyOf": [
+              { "$ref": "../components/schemas/GatheredContext.json" },
+              { "type": "null" }
             ]
           },
           "resourceIds": {

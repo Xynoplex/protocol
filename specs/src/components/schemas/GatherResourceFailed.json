@@ -8,11 +8,7 @@
       "type": "object",
       "properties": {
         "resourceId": {
-          "allOf": [
-            {
-              "$ref": "./ResourceId.json"
-            }
-          ],
+          "$ref": "./ResourceId.json",
           "description": "The resource the gather was asked for."
         }
       },

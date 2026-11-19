@@ -8,7 +8,7 @@
       "additionalProperties": false,
       "properties": {
         "reason": {
-          "allOf": [{ "$ref": "../session/cases.json#/told" }],
+          "$ref": "../session/cases.json#/told",
           "description": "Why it ended."
         }
       },
@@ -21,8 +21,7 @@
       "additionalProperties": false,
       "properties": {
         "detail": {
-          "type": "string",
-          "nullable": true,
+          "type": ["string", "null"],
           "description": "The refusal's own message, untranslated; null when it gave none."
         }
       },

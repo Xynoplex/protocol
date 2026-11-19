@@ -38,8 +38,16 @@ let () =
             (refuses schema {|{"type":"string","type":"object"}|}
                "x.json: /type: a duplicate member");
           Alcotest.test_case "a type it does not know" `Quick
-            (refuses schema {|{"type":"null"}|}
-               {|x.json: /type: "null" is none of string, object, integer, array, boolean, number|});
+            (refuses schema {|{"type":"date"}|}
+               {|x.json: /type: "date" is none of string, object, integer, array, boolean, number, null|});
+          Alcotest.test_case "a type that may be null" `Quick
+            (accepts schema {|{"type":["string","null"]}|});
+          Alcotest.test_case "OpenAPI 3.0's nullable" `Quick
+            (refuses schema {|{"type":"string","nullable":true}|}
+               "x.json: /nullable: an unknown member");
+          Alcotest.test_case "OpenAPI 3.0's example" `Quick
+            (refuses schema {|{"type":"string","example":"x"}|}
+               "x.json: /example: an unknown member");
           Alcotest.test_case "a nested place, escaped" `Quick
             (refuses schema {|{"properties":{"a/b~c":{"type":7}}}|}
                "x.json: /properties/a~1b~0c/type: expected a string, found an \

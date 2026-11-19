@@ -94,11 +94,9 @@
               },
               "linksTo": {
                 "description": "The resource the reference edge goes to, or null when there is none.",
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "../components/schemas/ResourceId.json"
-                  }
+                "anyOf": [
+                  { "$ref": "../components/schemas/ResourceId.json" },
+                  { "type": "null" }
                 ]
               },
               "holds": {

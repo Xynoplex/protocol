@@ -3,11 +3,7 @@
   "description": "Create a `mark` job: annotate one resource for one motivation.",
   "properties": {
     "_userId": {
-      "allOf": [
-        {
-          "$ref": "./UserId.json"
-        }
-      ],
+      "$ref": "./UserId.json",
       "description": "The emitter's verified DID, injected by the gateway. Clients do not set this."
     },
     "_roles": {
@@ -24,11 +20,7 @@
       ]
     },
     "resourceId": {
-      "allOf": [
-        {
-          "$ref": "./ResourceId.json"
-        }
-      ],
+      "$ref": "./ResourceId.json",
       "description": "The resource to annotate."
     },
     "params": {

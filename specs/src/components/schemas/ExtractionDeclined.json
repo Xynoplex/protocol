@@ -10,11 +10,7 @@
       "description": "Discriminant — both ExtractionOutcome members carry `kind`, single-valued: the category here, the detail in `declined`."
     },
     "declined": {
-      "allOf": [
-        {
-          "$ref": "./ExtractionDeclinedReason.json"
-        }
-      ],
+      "$ref": "./ExtractionDeclinedReason.json",
       "description": "Why extraction yielded nothing, by class."
     }
   },

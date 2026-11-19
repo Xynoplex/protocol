@@ -5,19 +5,15 @@
       "$ref": "./Annotation.json"
     },
     "resource": {
-      "nullable": true,
-      "allOf": [
-        {
-          "$ref": "./ResourceDescriptor.json"
-        }
+      "anyOf": [
+        { "$ref": "./ResourceDescriptor.json" },
+        { "type": "null" }
       ]
     },
     "resolvedResource": {
-      "nullable": true,
-      "allOf": [
-        {
-          "$ref": "./ResourceDescriptor.json"
-        }
+      "anyOf": [
+        { "$ref": "./ResourceDescriptor.json" },
+        { "type": "null" }
       ]
     }
   },

@@ -19,8 +19,7 @@
             "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
           },
           "source": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The source's media type as given, or null for none."
           },
           "format": {

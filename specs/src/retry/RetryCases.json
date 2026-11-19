@@ -147,14 +147,12 @@
             "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
           },
           "header": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The header's value as received, or null when the response has none."
           },
           "ms": {
-            "type": "integer",
+            "type": ["integer", "null"],
             "minimum": 0,
-            "nullable": true,
             "description": "The wait it states, in milliseconds, or null when it states none."
           }
         },

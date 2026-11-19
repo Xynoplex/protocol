@@ -32,11 +32,7 @@
       "type": "boolean"
     },
     "jobId": {
-      "allOf": [
-        {
-          "$ref": "./JobId.json"
-        }
-      ],
+      "$ref": "./JobId.json",
       "description": "The job this resource was made in fulfilment of, when its create cited one. A write that cites the same job on this resource, by the one who made it, is attributed to that job's requester: the `creator` here."
     },
     "generatedFrom": {
@@ -65,11 +61,7 @@
       "description": "Who requested this resource — derived by the knowledge base at write time, never sent by the emitter. For a resource created in fulfilment of a job, the requester recorded on that job's job:assigned; otherwise the emitter itself. Absent on events written before derivation existed, whose emitter was their only party."
     },
     "wasAttributedTo": {
-      "allOf": [
-        {
-          "$ref": "./OneOrMoreAgents.json"
-        }
-      ],
+      "$ref": "./OneOrMoreAgents.json",
       "description": "PROV-O wasAttributedTo, derived at write time from `creator` and the executor: both parties when they differ, one when they are the same. The value the resource view carries; readers do not re-derive it."
     }
   },

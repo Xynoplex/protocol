@@ -15,27 +15,15 @@
           "description": "Discriminant — both ExtractionOutcome members carry `kind`, single-valued: the category here, the detail in `method`."
         },
         "method": {
-          "allOf": [
-            {
-              "$ref": "./ExtractionMethod.json"
-            }
-          ],
+          "$ref": "./ExtractionMethod.json",
           "description": "How the text was extracted."
         },
         "pdfClass": {
-          "allOf": [
-            {
-              "$ref": "./PdfClass.json"
-            }
-          ],
+          "$ref": "./PdfClass.json",
           "description": "PDF classification, when the source was a PDF."
         },
         "ocrConfidence": {
-          "allOf": [
-            {
-              "$ref": "./OcrConfidence.json"
-            }
-          ],
+          "$ref": "./OcrConfidence.json",
           "description": "How well the engine read the pixels, when any of this text came from OCR."
         },
         "unreadPages": {

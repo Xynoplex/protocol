@@ -25,7 +25,6 @@
           },
           "answer": {
             "description": "The answer: a result, or an error; null for a notification, which is never answered.",
-            "nullable": true,
             "oneOf": [
               {
                 "title": "Result",
@@ -54,11 +53,9 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "nullable": true,
-                    "allOf": [
-                      {
-                        "$ref": "./RequestId.json"
-                      }
+                    "anyOf": [
+                      { "$ref": "./RequestId.json" },
+                      { "type": "null" }
                     ]
                   },
                   "error": {
@@ -108,7 +105,8 @@
                   "error"
                 ],
                 "additionalProperties": false
-              }
+              },
+              { "type": "null" }
             ]
           }
         },

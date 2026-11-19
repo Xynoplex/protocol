@@ -11,19 +11,11 @@
       "description": "The URL the Weaver reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "allOf": [
-        {
-          "$ref": "./ServiceIdentity.json"
-        }
-      ],
+      "$ref": "./ServiceIdentity.json",
       "description": "The issuer the Weaver's service account signs in at."
     },
     "archivist": {
-      "allOf": [
-        {
-          "$ref": "./ServiceAddress.json"
-        }
-      ],
+      "$ref": "./ServiceAddress.json",
       "description": "Where the Archivist listens. The Weaver reads the record by position from it, and a resource's annotations, as its service account."
     },
     "graph": {
