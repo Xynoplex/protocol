@@ -3,14 +3,14 @@
   "cases": [
     {
       "why": "the fixture's KnowledgeBase, as it is",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {},
       "verdict": "accepted"
     },
     {
       "why": "a broker and an issuer somebody else runs",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -43,7 +43,7 @@
     },
     {
       "why": "a misspelled field beside the right one",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -66,7 +66,7 @@
     },
     {
       "why": "a port written as text",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -81,7 +81,7 @@
     },
     {
       "why": "a service with no image: the document names every image it runs",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -134,7 +134,7 @@
     },
     {
       "why": "a document of another kind",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "kind": "KnowledgeIndex"
@@ -153,7 +153,7 @@
     },
     {
       "why": "a broker the launcher runs and somebody else's at once",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -176,7 +176,7 @@
     },
     {
       "why": "somebody else's broker, with an image left behind",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -216,7 +216,7 @@
     },
     {
       "why": "the shared issuer and somebody else's at once",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -234,7 +234,7 @@
     },
     {
       "why": "an issuer named neither shared nor somebody else's",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -249,7 +249,7 @@
     },
     {
       "why": "an Issuer document named from the knowledge base, which the machine's state home now holds",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {
@@ -264,7 +264,7 @@
     },
     {
       "why": "the shared issuer with no lifespan for the knowledge base's realm",
-      "schema": "KnowledgeBase",
+      "schema": "StackKnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
       "patch": {
         "spec": {

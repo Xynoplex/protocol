@@ -1058,13 +1058,11 @@ specs/src/smelter/fixtures/shared-image.pdf,Normative protocol source,xynolog/pr
 specs/src/smelter/fixtures/single-line.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/fixtures/table.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/reconcile-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/stack/ApiVersion.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Browser.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/HostPort.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Image.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Inference.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Issuer.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/stack/KnowledgeBase.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/KnowledgeIndex.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Metadata.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Provider.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1072,7 +1070,9 @@ specs/src/stack/README.md,Normative protocol source,xynolog/protocol,Compatibili
 specs/src/stack/Resources.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Runner.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/SecretRef.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/stack/StackApiVersion.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/StackCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/stack/StackKnowledgeBase.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/VectorStore.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/WorkerPool.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

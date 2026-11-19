@@ -26,9 +26,9 @@
                   "Browser",
                   "Inference",
                   "Issuer",
-                  "KnowledgeBase",
                   "KnowledgeIndex",
                   "ProjectConfig",
+                  "StackKnowledgeBase",
                   "VectorStore",
                   "WorkerPool"
                 ],
