@@ -18,7 +18,8 @@ let refusals document value =
     if file <> "x.json" then None
     else
       Option.bind (Decode.at_pointer pointer json) (fun node ->
-          Result.to_option (Result.map fst (Decode.run ~file node Schema.decode)))
+          Result.to_option
+            (Result.map fst (Decode.run ~file node Schema.decode)))
   in
   match schemas { file = "x.json"; pointer = "" } with
   | None -> Alcotest.fail "x.json is no schema"

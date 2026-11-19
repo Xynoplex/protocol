@@ -37,7 +37,6 @@ let items = function Some (`List items) -> items | _ -> []
 let keys = function Some (`Assoc members) -> List.map fst members | _ -> []
 let shown json = Yojson.Safe.to_string json
 let words list = shown (`List (List.map (fun s -> `String s) list))
-
 let names_defs = Re.compile (Re.str "#/$defs/")
 
 let reads_an_annotation name =
@@ -125,7 +124,8 @@ let refusals ~files ~(read_json : string -> Yojson.Safe.t option) =
           refuse reconciled_span "/oneOf"
             "is told apart by anchorMethod %s, not, one branch each and in \
              order, AnchorMethod's %s"
-            (shown (`List tags)) (shown (`List methods))
+            (shown (`List tags))
+            (shown (`List methods))
     | _ -> ());
   List.iter
     (fun file ->
@@ -138,17 +138,18 @@ let refusals ~files ~(read_json : string -> Yojson.Safe.t option) =
                   List.mem_assoc "additionalProperties" members
                   || List.mem_assoc "unevaluatedProperties" members
                 in
-                let closing = at "/unevaluatedProperties" node = Some (`Bool false) in
+                let closing =
+                  at "/unevaluatedProperties" node = Some (`Bool false)
+                in
                 if List.mem_assoc "properties" members && not (closes || closed)
                 then
                   refuse file pointer
                     "is an open object: a client type is closed, by \
-                     additionalProperties, or by unevaluatedProperties where it \
-                     is composed";
+                     additionalProperties, or by unevaluatedProperties where \
+                     it is composed";
                 (match text (at "/$ref" node) with
                 | Some target
-                  when Re.execp names_defs target
-                       && not (closing || closed) ->
+                  when Re.execp names_defs target && not (closing || closed) ->
                     refuse file (pointer / "$ref")
                       "names %s, open members, and nothing here closes them"
                       target

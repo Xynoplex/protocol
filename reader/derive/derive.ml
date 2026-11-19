@@ -44,7 +44,9 @@
    The TypeScript is of the same types, and of each service's schema
    (Places.service_schemas), read in the service dialect, which a table's
    reference out of the table dialect is read in too: the table dialect
-   with an open object an open record, [allOf] an intersection, any [oneOf]
+   with an open object an open record, but one a node around it closes with
+   [unevaluatedProperties: false] through a [$ref], an [allOf], a [oneOf] or
+   an [anyOf], [allOf] an intersection, any [oneOf]
    or [anyOf] a union, a node of several types a union, [format], [examples]
    and [default] annotations, and an enum's constructors its values. Each
    schema is a namespace named as its file's stem, its root [T]; a string
@@ -363,10 +365,19 @@ let candidates ~own file pointer =
 let annotations = [ "$comment"; "title"; "description" ]
 
 (* What may be said beside a node: in the service dialect, its format, its
-   examples and its default too. *)
+   examples and its default too, and the [unevaluatedProperties] that closes
+   it and the [$defs] it holds. *)
 let said () =
-  if !service then annotations @ [ "format"; "examples"; "default" ]
+  if !service then
+    annotations
+    @ [ "format"; "examples"; "default"; "unevaluatedProperties"; "$defs" ]
   else annotations
+
+(* Whether the node about to be derived is closed by an
+   [unevaluatedProperties] of a node that applies it in place: the [$ref],
+   the [allOf] or the [oneOf] or [anyOf] of a closed node. Each node reads it
+   as it starts, and clears it. *)
+let closing = ref false
 
 (* Whether [s] is [{ "type": "null" }], the alternative of a node that may be
    null. *)
@@ -492,6 +503,23 @@ and node ~strict ~own file pointer s =
          admission of CaseTable's"
   | Schema l -> (
       let present = Schema.keywords l in
+      let closed_here =
+        !closing
+        ||
+        match l.unevaluated_properties with
+        | None -> false
+        | Some (Boolean_schema false) -> true
+        | Some _ ->
+            refuse file
+              (pointer / "unevaluatedProperties")
+              "must be false: it closes what its node applies in place"
+      in
+      closing := false;
+      (* [derive], of a schema this node applies in place. *)
+      let in_place f =
+        closing := closed_here;
+        Fun.protect ~finally:(fun () -> closing := false) f
+      in
       let beside allowed =
         List.iter
           (fun k ->
@@ -525,8 +553,10 @@ and node ~strict ~own file pointer s =
                 (* TypeScript types what a table names outside the table
                    dialect in the service dialect, where OCaml's is JSON. *)
                 service := true;
-                Fun.protect ~finally:(fun () -> service := false) named)
-              else named ())
+                Fun.protect
+                  ~finally:(fun () -> service := false)
+                  (fun () -> in_place named))
+              else in_place named)
       | _ when !service && List.for_all (fun k -> List.mem k (said ())) present
         ->
           Json
@@ -540,16 +570,17 @@ and node ~strict ~own file pointer s =
           All
             (List.mapi
                (fun i m ->
-                 derive ~strict ~own file
-                   (pointer / "allOf" / string_of_int i)
-                   m)
+                 in_place (fun () ->
+                     derive ~strict ~own file
+                       (pointer / "allOf" / string_of_int i)
+                       m))
                members)
       | { any_of = Some members; _ } when !service ->
           beside ("anyOf" :: said ());
-          union ~own file (pointer / "anyOf") members
+          union ~own ~in_place file (pointer / "anyOf") members
       | { one_of = Some members; _ } when !service ->
           beside ("oneOf" :: "discriminator" :: said ());
-          union ~own file (pointer / "oneOf") members
+          union ~own ~in_place file (pointer / "oneOf") members
       | { all_of = Some _; _ } ->
           fail
             "is an allOf, which a table's schema says only where it extends \
@@ -621,8 +652,12 @@ and node ~strict ~own file pointer s =
                     (record ~strict ~own ~open_:false file pointer l properties)
               | Some properties, (None | Some (Boolean_schema true))
                 when !service ->
+                  let open_ =
+                    l.additional_properties = Some (Boolean_schema true)
+                    || not closed_here
+                  in
                   nullable
-                    (record ~strict ~own ~open_:true file pointer l properties)
+                    (record ~strict ~own ~open_ file pointer l properties)
               | Some _, _ ->
                   fail
                     "has properties, and must be closed with \
@@ -951,14 +986,18 @@ and variant ~own file pointer members =
 
 (* The service dialect's [oneOf] or [anyOf]: any one of its members, or null
    when [{ "type": "null" }] is its last. *)
-and union ~own file pointer members =
+and union ~own ~in_place file pointer members =
   let null = List.exists is_null members in
   let types =
     List.concat
       (List.mapi
          (fun i m ->
            if is_null m then []
-           else [ derive ~strict:true ~own file (pointer / string_of_int i) m ])
+           else
+             [
+               in_place (fun () ->
+                   derive ~strict:true ~own file (pointer / string_of_int i) m);
+             ])
          members)
   in
   let union = match types with [ one ] -> one | many -> Union many in

@@ -90,7 +90,9 @@ and evaluate schemas (schema : Schema.t) value path =
         match (s.unevaluated_properties, value) with
         | Some unevaluated, `Assoc members ->
             let left =
-              List.filter (fun (name, _) -> not (List.mem name evaluated)) members
+              List.filter
+                (fun (name, _) -> not (List.mem name evaluated))
+                members
             in
             ( List.concat_map
                 (fun (name, member) ->
