@@ -30,5 +30,6 @@
     "y",
     "width",
     "height"
-  ]
+  ],
+  "additionalProperties": false
 }

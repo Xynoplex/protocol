@@ -33,12 +33,16 @@ let rec draw state depth : Schema.t =
           some (fun () ->
               List.mapi (fun i s -> (Printf.sprintf "p%d" i, s)) (several ()));
         additional_properties = some child;
+        unevaluated_properties = some child;
         property_names = some child;
         items = some child;
         all_of = some several;
         any_of = some several;
         one_of = some several;
         not_ = some child;
+        defs =
+          some (fun () ->
+              List.mapi (fun i s -> (Printf.sprintf "D%d" i, s)) (several ()));
       }
 
 let drawn =
@@ -133,17 +137,19 @@ let () =
                   Schema.empty with
                   properties = Some [ ("a", leaf 0); ("b", leaf 1) ];
                   additional_properties = Some (leaf 2);
-                  property_names = Some (leaf 3);
-                  items = Some (leaf 4);
-                  all_of = Some [ leaf 5 ];
-                  any_of = Some [ leaf 6 ];
-                  one_of = Some [ leaf 7 ];
-                  not_ = Some (leaf 8);
+                  unevaluated_properties = Some (leaf 3);
+                  property_names = Some (leaf 4);
+                  items = Some (leaf 5);
+                  all_of = Some [ leaf 6 ];
+                  any_of = Some [ leaf 7 ];
+                  one_of = Some [ leaf 8 ];
+                  not_ = Some (leaf 9);
+                  defs = Some [ ("A", leaf 10) ];
                 }
               in
               Alcotest.(check bool)
                 "children" true
-                (Schema.children every = List.init 9 leaf));
+                (Schema.children every = List.init 11 leaf));
         ] );
       ( "unread",
         [

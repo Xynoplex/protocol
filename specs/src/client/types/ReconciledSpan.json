@@ -1,23 +1,105 @@
 {
   "title": "ReconciledSpan",
-  "description": "Where a quoted selection was found in a text, and how it was found.",
-  "allOf": [
+  "description": "Where a quoted selection was found in a text, and how it was found, told apart by `anchorMethod`, one of AnchorMethod's words: a fuzzy match also names its search, `matchQuality`, and no other states one.",
+  "discriminator": {
+    "propertyName": "anchorMethod"
+  },
+  "oneOf": [
     {
-      "$ref": "./TextSpan.json"
+      "description": "The text has the words in exactly one place.",
+      "allOf": [
+        {
+          "$ref": "./TextSpan.json#/$defs/Members"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "anchorMethod": {
+              "type": "string",
+              "enum": [
+                "unique-match"
+              ]
+            }
+          },
+          "required": [
+            "anchorMethod"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
     },
     {
-      "type": "object",
-      "properties": {
-        "anchorMethod": {
-          "$ref": "./AnchorMethod.json"
+      "description": "The text has the words in more than one place, and the span is the first that fits every hint the quote gave.",
+      "allOf": [
+        {
+          "$ref": "./TextSpan.json#/$defs/Members"
         },
-        "matchQuality": {
-          "$ref": "./MatchQuality.json"
+        {
+          "type": "object",
+          "properties": {
+            "anchorMethod": {
+              "type": "string",
+              "enum": [
+                "context-recovered"
+              ]
+            }
+          },
+          "required": [
+            "anchorMethod"
+          ]
         }
-      },
-      "required": [
-        "anchorMethod"
-      ]
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "description": "The text has the words in more than one place, and the span is the first, since the quote gave no hint or none fits.",
+      "allOf": [
+        {
+          "$ref": "./TextSpan.json#/$defs/Members"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "anchorMethod": {
+              "type": "string",
+              "enum": [
+                "first-of-many"
+              ]
+            }
+          },
+          "required": [
+            "anchorMethod"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "description": "The text has the words nowhere, and a looser search found the span: `matchQuality` names which.",
+      "allOf": [
+        {
+          "$ref": "./TextSpan.json#/$defs/Members"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "anchorMethod": {
+              "type": "string",
+              "enum": [
+                "fuzzy-match"
+              ]
+            },
+            "matchQuality": {
+              "$ref": "./MatchQuality.json"
+            }
+          },
+          "required": [
+            "anchorMethod",
+            "matchQuality"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
     }
   ]
 }

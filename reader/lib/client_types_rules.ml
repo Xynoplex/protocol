@@ -4,8 +4,11 @@
    elsewhere.
 
    - Telemetry's [anchor.method] values are AnchorMethod's words.
-   - A reconciled span names a search exactly when its method is
-     [fuzzy-match].
+   - ReconciledSpan's branches are told apart by AnchorMethod's words, one
+     each, in order.
+   - Every object of client/types is closed: by [additionalProperties], or,
+     where it is composed, by [unevaluatedProperties] at or around it. A
+     [$defs] entry holds open members, and whatever names one closes it.
    - Some case of bus/frame-cases.json is refused for each reason
      FrameRefusalReason names.
    - annotations/reader-cases.json's [readers] are, in order, what its
@@ -34,26 +37,27 @@ let items = function Some (`List items) -> items | _ -> []
 let keys = function Some (`Assoc members) -> List.map fst members | _ -> []
 let shown json = Yojson.Safe.to_string json
 let words list = shown (`List (List.map (fun s -> `String s) list))
+let names_defs = Re.compile (Re.str "#/$defs/")
 
 let reads_an_annotation name =
   String.length name > 2
   && String.starts_with ~prefix:"is" name
   && match name.[2] with 'A' .. 'Z' -> true | _ -> false
 
-let refusals ~(read_json : string -> Yojson.Safe.t option) =
+let refusals ~files ~(read_json : string -> Yojson.Safe.t option) =
   let found = ref [] in
   let refuse file pointer fmt =
     Printf.ksprintf
       (fun message -> found := { Decode.file; pointer; message } :: !found)
       fmt
   in
-  let files = Hashtbl.create 16 in
+  let missing = Hashtbl.create 16 in
   let read file =
     match read_json file with
     | Some json -> Some json
     | None ->
-        if not (Hashtbl.mem files file) then (
-          Hashtbl.replace files file ();
+        if not (Hashtbl.mem missing file) then (
+          Hashtbl.replace missing file ();
           refuse file "" "is missing: the client types are checked against it");
         None
   in
@@ -101,29 +105,88 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
                 (Option.fold ~none:"none" ~some:shown methods))
           attributes
     | _ -> ());
-  let reconcile = "annotations/reconcile-cases.json" in
-  with_files [ reconcile ] (function
-    | [ table ] ->
-        List.iteri
-          (fun i case ->
-            match at "/reconciled" case with
-            | None | Some `Null -> ()
-            | Some reconciled -> (
-                let pointer = "/cases" / string_of_int i / "reconciled" in
-                let fuzzy =
-                  text (at "/anchorMethod" reconciled) = Some "fuzzy-match"
-                in
-                match at "/matchQuality" reconciled with
-                | None when fuzzy ->
-                    refuse reconcile pointer
-                      "is a fuzzy match, and names no search"
-                | Some quality when not fuzzy ->
-                    refuse reconcile (pointer / "matchQuality")
-                      "names a search, %s, and is not a fuzzy match"
-                      (shown quality)
-                | _ -> ()))
-          (items (at "/cases" table))
+  let reconciled_span = "client/types/ReconciledSpan.json" in
+  with_files [ anchor_method; reconciled_span ] (function
+    | [ anchor; span ] ->
+        let tag branch =
+          List.find_map
+            (fun part -> at "/properties/anchorMethod/enum" part)
+            (items (at "/allOf" branch))
+        in
+        let tags =
+          List.map
+            (fun branch ->
+              match tag branch with Some (`List [ one ]) -> one | _ -> `Null)
+            (items (at "/oneOf" span))
+        in
+        let methods = items (at "/enum" anchor) in
+        if tags <> methods then
+          refuse reconciled_span "/oneOf"
+            "is told apart by anchorMethod %s, not, one branch each and in \
+             order, AnchorMethod's %s"
+            (shown (`List tags))
+            (shown (`List methods))
     | _ -> ());
+  List.iter
+    (fun file ->
+      match read file with
+      | None -> ()
+      | Some json ->
+          let rec walk ~closed pointer = function
+            | `Assoc members as node ->
+                let closes =
+                  List.mem_assoc "additionalProperties" members
+                  || List.mem_assoc "unevaluatedProperties" members
+                in
+                let closing =
+                  at "/unevaluatedProperties" node = Some (`Bool false)
+                in
+                if List.mem_assoc "properties" members && not (closes || closed)
+                then
+                  refuse file pointer
+                    "is an open object: a client type is closed, by \
+                     additionalProperties, or by unevaluatedProperties where \
+                     it is composed";
+                (match text (at "/$ref" node) with
+                | Some target
+                  when Re.execp names_defs target && not (closing || closed) ->
+                    refuse file (pointer / "$ref")
+                      "names %s, open members, and nothing here closes them"
+                      target
+                | _ -> ());
+                List.iter
+                  (fun (key, value) ->
+                    let at_key = pointer / key in
+                    match (key, value) with
+                    | ("allOf" | "anyOf" | "oneOf"), `List parts ->
+                        List.iteri
+                          (fun i part ->
+                            walk ~closed:(closed || closing)
+                              (at_key / string_of_int i)
+                              part)
+                          parts
+                    | "$defs", `Assoc defs ->
+                        List.iter
+                          (fun (name, def) ->
+                            walk ~closed:true (at_key / name) def)
+                          defs
+                    | "properties", `Assoc properties ->
+                        List.iter
+                          (fun (name, property) ->
+                            walk ~closed:false (at_key / name) property)
+                          properties
+                    | ("items" | "additionalProperties" | "not"), schema ->
+                        walk ~closed:false at_key schema
+                    | _ -> ())
+                  members
+            | _ -> ()
+          in
+          walk ~closed:false "" json)
+    (List.filter
+       (fun file ->
+         Filename.dirname file = "client/types"
+         && Filename.check_suffix file ".json")
+       files);
   let reasons = "client/types/FrameRefusalReason.json" in
   with_files [ reasons; "bus/frame-cases.json" ] (function
     | [ reason; frames ] ->

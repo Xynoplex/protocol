@@ -379,10 +379,10 @@ let () =
     "/properties/start: carries an offset or a length of text, and its \
      description does not say that it counts code points";
   changed specs ~why:"loses a member that carries an offset"
-    "client/types/TextSpan.json" "allOf/0/properties"
+    "client/types/TextSpan.json" "$defs/Members/allOf/0/properties"
     (members (List.remove_assoc "end"))
-    "/allOf/0/properties/end: is listed as carrying an offset or a length of \
-     text, and is not there";
+    "/$defs/Members/allOf/0/properties/end: is listed as carrying an offset or \
+     a length of text, and is not there";
   changed specs ~why:"has a new description speak of characters"
     "components/schemas/UnitCursor.json" "properties/size/description"
     (fun _ -> `String "How many characters the piece was cut at.")
@@ -654,7 +654,28 @@ let () =
   changed specs ~why:"has a fuzzy match name no search"
     "annotations/reconcile-cases.json" "cases/22/reconciled"
     (members (List.remove_assoc "matchQuality"))
-    "/cases/22/reconciled: is a fuzzy match, and names no search";
+    "/cases/22/reconciled: is none of the anyOf";
+  changed specs ~why:"gives a quote a member QuotedText does not state"
+    "annotations/reconcile-cases.json" "cases/0/quoted"
+    (members (fun m -> m @ [ ("extra", `String "x") ]))
+    "/cases/0/quoted/extra: is a member the schema does not state";
+  changed specs ~why:"tells a reconciled span apart by a word of its own"
+    "client/types/ReconciledSpan.json"
+    "oneOf/3/allOf/1/properties/anchorMethod/enum"
+    (fun _ -> `List [ `String "fuzzy" ])
+    "/oneOf: is told apart by anchorMethod \
+     [\"unique-match\",\"context-recovered\",\"first-of-many\",\"fuzzy\"], \
+     not, one branch each and in order, AnchorMethod's \
+     [\"unique-match\",\"context-recovered\",\"first-of-many\",\"fuzzy-match\"]";
+  changed specs ~why:"opens a client type" "client/types/SearchState.json" ""
+    (members (List.remove_assoc "additionalProperties"))
+    "/: is an open object: a client type is closed, by additionalProperties, \
+     or by unevaluatedProperties where it is composed";
+  changed specs ~why:"names open members and leaves them open"
+    "client/types/ReconciledSpan.json" "oneOf/0"
+    (members (List.remove_assoc "unevaluatedProperties"))
+    "/oneOf/0/allOf/0/$ref: names ./TextSpan.json#/$defs/Members, open \
+     members, and nothing here closes them";
   changed specs ~why:"names a refusal reason no frame is refused for"
     "client/types/FrameRefusalReason.json" "enum"
     (function
