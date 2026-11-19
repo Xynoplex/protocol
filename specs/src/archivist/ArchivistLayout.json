@@ -120,6 +120,55 @@
         "schema"
       ],
       "additionalProperties": false
+    },
+    "systemProjections": {
+      "type": "object",
+      "description": "The projections of what the `__system__` stream adds up to, in the state directory.",
+      "properties": {
+        "tree": {
+          "type": "string",
+          "enum": [
+            "root",
+            "stateHome"
+          ],
+          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*$",
+          "description": "The directory that holds them, in its tree, `/`-separated."
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Each projection's file.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[^{}/]+\\.json$",
+                "description": "The file's name."
+              },
+              "schema": {
+                "$ref": "https://xynolog.org/protocol/JsonSchema.json",
+                "description": "The schema the projection is."
+              }
+            },
+            "required": [
+              "name",
+              "schema"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "tree",
+        "path",
+        "files"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -128,7 +177,8 @@
     "systemStream",
     "eventFile",
     "storedEvent",
-    "view"
+    "view",
+    "systemProjections"
   ],
   "additionalProperties": false
 }

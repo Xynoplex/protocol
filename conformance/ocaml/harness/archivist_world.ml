@@ -186,6 +186,32 @@ let view t resource_id =
              "%s is not what archivist/layout.json says a view is (%s)" path
              (String.concat "; " refusals))
 
+(* A projection of what the __system__ stream adds up to, by its file's
+   name, held to the schema the layout names: None while it is absent. *)
+let projection t name =
+  let projections = (layout ()).system_projections in
+  let file =
+    match
+      List.find_opt
+        (fun (file : Layout.files_item) -> file.name = name)
+        projections.files
+    with
+    | Some file -> file
+    | None -> failwith ("archivist/layout.json names no projection " ^ name)
+  in
+  let path = placed t projections.tree projections.path "" // name in
+  if not (Sys.file_exists path) then None
+  else
+    let json = Yojson.Safe.from_file path in
+    match Protocol.refusals file.schema json with
+    | [] -> Some json
+    | refusals ->
+        failwith
+          (Printf.sprintf
+             "%s is not what archivist/layout.json says the projection is (%s)"
+             path
+             (String.concat "; " refusals))
+
 (* ── Participants ───────────────────────────────────────────────────── *)
 
 let uniq names =
