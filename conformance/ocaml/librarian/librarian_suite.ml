@@ -562,9 +562,13 @@ end
 (* One world at a time: the files share one graph database and one vector
    database, each cleared when a file's world is made, and the health ports
    of a Weaver and a Smelter are constants. *)
-let () =
-  Suite.main ~project:"xynolog-conformance-librarian" ~workers:1 (fun env ->
-      let implementations = Implementations.read env in
-      Telemetry_file.tests implementations
-      @ Search_file.tests implementations
-      @ Gather_file.tests implementations)
+let suite : Suite.t =
+  {
+    name = "librarian";
+    workers = 1;
+    tests =
+      (fun implementations ->
+        Telemetry_file.tests implementations
+        @ Search_file.tests implementations
+        @ Gather_file.tests implementations);
+  }

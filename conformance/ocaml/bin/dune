@@ -1,0 +1,7 @@
+; The conformance program: xynolog-conformance <suite> --implementations
+; <manifest>, every suite linked in.
+(executable
+ (name main)
+ (package xynolog-conformance)
+ (public_name xynolog-conformance)
+ (libraries xynolog_conformance gateway_suite librarian_suite))

@@ -357,30 +357,40 @@ let reads_neo4j_alike () =
         (Printf.sprintf "%d records, not one of six values"
            (List.length records))
 
-let tests _env =
-  [
-    Testo.create ~category:[ "serve" ]
-      "flushes each event of a stream as it is written" sse_flushes;
-    Testo.create ~category:[ "call" ]
-      "reads a body whole, however large its chunks" reads_large_bodies;
-    Testo.create ~category:[ "serve" ]
-      "ends a dropped request's connection with no byte" dropped_is_empty;
-    Testo.create ~category:[ "serve" ] "sees a held request's client leave"
-      held_is_abandoned;
-    Testo.create ~category:[ "serve" ]
-      "answers a held request when it is released" held_is_answered;
-    Testo.create ~category:[ "serve" ] "writes half a body and then nothing"
-      partly_answered;
-    Testo.create ~category:[ "serve" ]
-      "ends a kept-alive connection when it stops" stop_ends_kept_alive;
-    Testo.create ~category:[ "runner" ] ~max_duration:2.0
-      ~expected_outcome:(Should_fail "it sleeps past its bound")
-      "is stopped when it outlives its bound" outlives_its_bound;
-    Testo.create ~category:[ "otlp" ]
-      "reads an export as protobuf, gzipped or not, and as JSON" reads_otlp;
-    Testo.create ~category:[ "neo4j" ]
-      "reads one graph alike over Bolt and over the Query API (neo4j)"
-      reads_neo4j_alike;
-  ]
+(* A case that reads the stores the librarian suite reads. The run make
+   validate makes leaves it out: [-t "not stores"]. *)
+let stores = Testo.Tag.declare "stores"
 
-let () = Suite.main ~project:"xynolog-conformance-harness" ~workers:4 tests
+let tests _env =
+  List.map
+    (fun (table, gate) ->
+      Testo.create ~category:[ "census" ] ("holds the harness to " ^ table) gate)
+    Census.gates
+  @ [
+      Testo.create ~category:[ "serve" ]
+        "flushes each event of a stream as it is written" sse_flushes;
+      Testo.create ~category:[ "call" ]
+        "reads a body whole, however large its chunks" reads_large_bodies;
+      Testo.create ~category:[ "serve" ]
+        "ends a dropped request's connection with no byte" dropped_is_empty;
+      Testo.create ~category:[ "serve" ] "sees a held request's client leave"
+        held_is_abandoned;
+      Testo.create ~category:[ "serve" ]
+        "answers a held request when it is released" held_is_answered;
+      Testo.create ~category:[ "serve" ] "writes half a body and then nothing"
+        partly_answered;
+      Testo.create ~category:[ "serve" ]
+        "ends a kept-alive connection when it stops" stop_ends_kept_alive;
+      Testo.create ~category:[ "runner" ] ~max_duration:2.0
+        ~expected_outcome:(Should_fail "it sleeps past its bound")
+        "is stopped when it outlives its bound" outlives_its_bound;
+      Testo.create ~category:[ "otlp" ]
+        "reads an export as protobuf, gzipped or not, and as JSON" reads_otlp;
+      Testo.create ~category:[ "neo4j" ] ~tags:[ stores ]
+        "reads one graph alike over Bolt and over the Query API (neo4j)"
+        reads_neo4j_alike;
+    ]
+
+let () =
+  Suite.main ~project:"xynolog-conformance-harness" ~workers:4 ~argv:Sys.argv
+    tests

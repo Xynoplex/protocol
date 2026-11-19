@@ -1,6 +1,6 @@
 (* The implementations a run is held to, read from the JSON file it names:
-   [-e implementations=<file>] on the program's command line. There is no
-   default. The file is the TypeScript harness's, of the shape
+   [--implementations <manifest>] on the program's command line. There is
+   no default. The file is the TypeScript harness's, of the shape
    harness/implementations.ts gives, and is decoded as strictly as the
    reader decodes Protocol: an unknown member, a missing one and a wrong type
    are each refused.
@@ -54,28 +54,22 @@ let decode base =
       in
       { gateway; archivist; weavers; smelters; librarians; model_catalogue })
 
-let read env =
-  match List.assoc_opt "implementations" env with
-  | None ->
-      failwith
-        "Name the implementations to test: -e implementations=<file> (there is \
-         no default implementation file)."
-  | Some file -> (
-      let absolute =
-        if Filename.is_relative file then Filename.concat (Sys.getcwd ()) file
-        else file
-      in
-      match
-        Decode.parse_file
-          ~root:(Filename.dirname absolute)
-          (Filename.basename absolute)
-      with
-      | Error error -> failwith (Decode.error_to_string error)
-      | Ok json -> (
-          match Decode.run ~file json (decode (Filename.dirname absolute)) with
-          | Ok (implementations, _) -> implementations
-          | Error error ->
-              failwith
-                ("The implementations file is not of the shape \
-                  harness/implementations.ts gives: "
-                ^ Decode.error_to_string error)))
+let read file =
+  let absolute =
+    if Filename.is_relative file then Filename.concat (Sys.getcwd ()) file
+    else file
+  in
+  match
+    Decode.parse_file
+      ~root:(Filename.dirname absolute)
+      (Filename.basename absolute)
+  with
+  | Error error -> failwith (Decode.error_to_string error)
+  | Ok json -> (
+      match Decode.run ~file json (decode (Filename.dirname absolute)) with
+      | Ok (implementations, _) -> implementations
+      | Error error ->
+          failwith
+            ("The implementations file is not of the shape \
+              harness/implementations.ts gives: "
+            ^ Decode.error_to_string error))

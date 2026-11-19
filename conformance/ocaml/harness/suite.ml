@@ -39,13 +39,14 @@ let world name ~make ~close =
                 close world );
         world
 
-(* [workers] is how many workers a run starts unless its command line says
-   otherwise. *)
-let main ~project ~workers tests =
+(* testo's command line [argv], run inside [Run.main]. [workers] is how many
+   workers a run starts unless [argv] says otherwise. *)
+let main ~project ~workers ~argv tests =
   let code = ref 0 in
   Run.main (fun () ->
       at_exit close_current;
-      Testo.interpret_argv ~project_name:project ~default_workers:(Some workers)
+      Testo.interpret_argv ~argv ~project_name:project
+        ~default_workers:(Some workers)
         ~handle_subcommand_result:(fun exit_code _ ->
           code := exit_code;
           (* Only the program testo was started as gets here: a worker is
@@ -55,3 +56,59 @@ let main ~project ~workers tests =
         tests;
       close_current ());
   exit !code
+
+(* A suite of the conformance program: its name on the command line, how
+   many workers it runs, and its cases, made for the implementations a run
+   is held to. *)
+type t = {
+  name : string;
+  workers : int;
+  tests : Implementations.t -> Testo.t list;
+}
+
+let project = "xynolog-conformance"
+
+(* xynolog-conformance <suite> --implementations <manifest> [testo's own
+   arguments]. testo starts each worker as the program it was started as,
+   with the arguments it was handed and --worker, so the suite and the
+   manifest are handed to it as its -e options, which reach every worker
+   and the cases. *)
+let run suites =
+  let names = String.concat ", " (List.map (fun suite -> suite.name) suites) in
+  let named name =
+    match List.find_opt (fun suite -> suite.name = name) suites with
+    | Some suite -> suite
+    | None ->
+        prerr_endline
+          (Printf.sprintf "xynolog-conformance has no suite %s: it has %s" name
+             names);
+        exit 2
+  in
+  let argv =
+    match Array.to_list Sys.argv with
+    | program :: name :: "--implementations" :: manifest :: rest
+      when not (List.mem "--worker" rest) ->
+        ignore (named name : t);
+        Array.of_list
+          ((program :: rest)
+          @ [ "-e"; "suite=" ^ name; "-e"; "implementations=" ^ manifest ])
+    | _ :: rest when List.mem "--worker" rest -> Sys.argv
+    | _ ->
+        prerr_endline
+          (Printf.sprintf
+             "usage: xynolog-conformance <suite> --implementations <manifest> \
+              [testo's arguments], the suite one of %s"
+             names);
+        exit 2
+  in
+  let rec handed = function
+    | "-e" :: setting :: _ when String.starts_with ~prefix:"suite=" setting ->
+        String.sub setting 6 (String.length setting - 6)
+    | _ :: rest -> handed rest
+    | [] -> failwith "testo was handed no suite"
+  in
+  let suite = named (handed (Array.to_list argv)) in
+  main ~project ~workers:suite.workers ~argv (fun env ->
+      match List.assoc_opt "implementations" env with
+      | Some manifest -> suite.tests (Implementations.read manifest)
+      | None -> failwith "testo was handed no implementations manifest")

@@ -1,6 +1,5 @@
 ; The gateway suite's cases that are ported to the OCaml harness.
-(executable
- (name main)
+(library
+ (name gateway_suite)
  (package xynolog-conformance)
- (public_name xynolog-conformance-gateway)
  (libraries xynolog_conformance xynolog-protocol yojson testo))
