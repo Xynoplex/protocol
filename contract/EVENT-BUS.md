@@ -315,8 +315,11 @@ The paths are documented end-to-end (with code shapes and call-site examples) in
 `bus-protocol.ts` and `bus-operations.ts` are **generated files** — do not edit
 them. The authority is **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)**:
 every channel, the payload it carries, and the request/reply operation triples.
-sdk's generator reads it, and refuses a registry that breaks the bus's rules
-before it writes any SDK's file:
+This repository's reader, in [`reader/`](../reader), refuses a registry that
+breaks the bus's rules
+([`registry_rules.ml`](../reader/lib/registry_rules.ml)). sdk's generator
+reads the registry through that reader, so it writes no SDK's file from a
+registry the rules refuse:
 
 | Output | Writer |
 |---|---|

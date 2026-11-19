@@ -11,7 +11,7 @@
   "scripts": {
     "specs:bundle": "redocly bundle --config specs/redocly.yaml specs/src/openapi.json -o specs/openapi.json && redocly bundle --config specs/redocly.yaml specs/src/archivist/openapi.json -o specs/archivist.openapi.json",
     "specs:lint": "redocly lint --config specs/redocly.yaml specs/src/openapi.json specs/src/archivist/openapi.json",
-    "specs:check": "node scripts/checks/specs/check-protocol.mjs && node scripts/checks/specs/check-archivist.mjs && node scripts/checks/specs/check-identifiers.mjs && node scripts/checks/specs/check-jobs.mjs && node scripts/checks/specs/check-registry-form.mjs && node scripts/checks/specs/check-registry-prose.mjs && node scripts/checks/specs/check-client-types.mjs && node scripts/checks/specs/check-ownership-inventory.mjs"
+    "specs:check": "node scripts/checks/specs/check-protocol.mjs && node scripts/checks/specs/check-archivist.mjs && node scripts/checks/specs/check-identifiers.mjs && node scripts/checks/specs/check-jobs.mjs && node scripts/checks/specs/check-registry-form.mjs && node scripts/checks/specs/check-client-types.mjs && node scripts/checks/specs/check-ownership-inventory.mjs"
   },
   "devDependencies": {
     "@redocly/cli": "^2.34.0"

@@ -23,3 +23,10 @@
   (source_tree %{project_root}/specs/src))
  (action
   (run %{test} %{project_root}/specs/src)))
+
+(test
+ (name registry_rules)
+ (modules registry_rules)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol yojson alcotest))
