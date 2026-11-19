@@ -123,13 +123,13 @@
                     "description": "Where it is said to end, which need not be a whole number, nor at or after its start."
                   },
                   "exact": {
-                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/properties/exact"
+                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members/properties/exact"
                   },
                   "prefix": {
-                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/properties/prefix"
+                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members/properties/prefix"
                   },
                   "suffix": {
-                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/properties/suffix"
+                    "$ref": "https://xynolog.org/protocol/QuotedText.json#/$defs/Members/properties/suffix"
                   }
                 },
                 "required": [

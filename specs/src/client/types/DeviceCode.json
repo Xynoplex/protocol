@@ -27,5 +27,6 @@
     "userCode",
     "verificationUri",
     "expiresIn"
-  ]
+  ],
+  "additionalProperties": false
 }

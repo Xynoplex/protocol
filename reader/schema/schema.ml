@@ -37,6 +37,7 @@ type 'a layer = {
   properties : (string * 'a) list option;
   required : string list option;
   additional_properties : 'a option;
+  unevaluated_properties : 'a option;
   property_names : 'a option;
   min_properties : int option;
   max_properties : int option;
@@ -54,6 +55,7 @@ type 'a layer = {
   one_of : 'a list option;
   not_ : 'a option;
   discriminator : discriminator option;
+  defs : (string * 'a) list option;
 }
 
 type t = Boolean_schema of bool | Schema of schema
@@ -77,6 +79,7 @@ let empty : schema =
     properties = None;
     required = None;
     additional_properties = None;
+    unevaluated_properties = None;
     property_names = None;
     min_properties = None;
     max_properties = None;
@@ -94,6 +97,7 @@ let empty : schema =
     one_of = None;
     not_ = None;
     discriminator = None;
+    defs = None;
   }
 
 (* The schemas [layer] holds, in the order its keywords are written here. A
@@ -117,6 +121,7 @@ let children
       properties;
       required = _;
       additional_properties;
+      unevaluated_properties;
       property_names;
       min_properties = _;
       max_properties = _;
@@ -134,18 +139,21 @@ let children
       one_of;
       not_;
       discriminator = _;
+      defs;
     } =
   let one = Option.to_list and each = Option.value ~default:[] in
   List.concat
     [
       List.map snd (each properties);
       one additional_properties;
+      one unevaluated_properties;
       one property_names;
       one items;
       each all_of;
       each any_of;
       each one_of;
       one not_;
+      List.map snd (each defs);
     ]
 
 (* [layer] with [f] applied to each schema it holds, in the order [children]
@@ -156,22 +164,26 @@ let map f layer =
     Option.map (List.map (fun (name, s) -> (name, f s))) layer.properties
   in
   let additional_properties = one layer.additional_properties in
+  let unevaluated_properties = one layer.unevaluated_properties in
   let property_names = one layer.property_names in
   let items = one layer.items in
   let all_of = each layer.all_of in
   let any_of = each layer.any_of in
   let one_of = each layer.one_of in
   let not_ = one layer.not_ in
+  let defs = Option.map (List.map (fun (name, s) -> (name, f s))) layer.defs in
   {
     layer with
     properties;
     additional_properties;
+    unevaluated_properties;
     property_names;
     items;
     all_of;
     any_of;
     one_of;
     not_;
+    defs;
   }
 
 (* [map], for an [f] that may refuse: the layer of its results, or its first
@@ -195,8 +207,7 @@ let traverse f layer =
     | None -> Ok None
     | Some xs -> Result.map Option.some (list f xs)
   in
-  let* properties =
-    match layer.properties with
+  let named = function
     | None -> Ok None
     | Some ps ->
         Result.map Option.some
@@ -206,24 +217,29 @@ let traverse f layer =
                Ok (name, s))
              ps)
   in
+  let* properties = named layer.properties in
   let* additional_properties = one layer.additional_properties in
+  let* unevaluated_properties = one layer.unevaluated_properties in
   let* property_names = one layer.property_names in
   let* items = one layer.items in
   let* all_of = each layer.all_of in
   let* any_of = each layer.any_of in
   let* one_of = each layer.one_of in
   let* not_ = one layer.not_ in
+  let* defs = named layer.defs in
   Ok
     {
       layer with
       properties;
       additional_properties;
+      unevaluated_properties;
       property_names;
       items;
       all_of;
       any_of;
       one_of;
       not_;
+      defs;
     }
 
 (* The one recursion over a schema: each schema it holds is folded first, in
@@ -262,6 +278,7 @@ let keywords
       properties;
       required;
       additional_properties;
+      unevaluated_properties;
       property_names;
       min_properties;
       max_properties;
@@ -279,6 +296,7 @@ let keywords
       one_of;
       not_;
       discriminator;
+      defs;
     } =
   let is name value = if Option.is_some value then [ name ] else [] in
   List.concat
@@ -298,6 +316,7 @@ let keywords
       is "properties" properties;
       is "required" required;
       is "additionalProperties" additional_properties;
+      is "unevaluatedProperties" unevaluated_properties;
       is "propertyNames" property_names;
       is "minProperties" min_properties;
       is "maxProperties" max_properties;
@@ -315,6 +334,7 @@ let keywords
       is "oneOf" one_of;
       is "not" not_;
       is "discriminator" discriminator;
+      is "$defs" defs;
     ]
 
 (* The keywords [schema] states that no SDK reads, in the order [keywords]
@@ -376,6 +396,7 @@ let runtime : t -> Yojson.Safe.t =
                (fun rs -> `List (List.map (fun r -> `String r) rs))
                s.required;
              some "additionalProperties" Fun.id s.additional_properties;
+             some "unevaluatedProperties" Fun.id s.unevaluated_properties;
              some "maxProperties" int s.max_properties;
              some "items" Fun.id s.items;
              some "minItems" int s.min_items;
@@ -389,6 +410,7 @@ let runtime : t -> Yojson.Safe.t =
              Option.map (fun v -> ("allOf", v)) (schemas s.all_of);
              Option.map (fun v -> ("anyOf", v)) (schemas s.any_of);
              Option.map (fun v -> ("oneOf", v)) (schemas s.one_of);
+             some "$defs" (fun ds -> `Assoc ds) s.defs;
            ]))
 
 let type_name =
@@ -453,6 +475,9 @@ and schema cursor =
       let additional_properties =
         Decode.optional o "additionalProperties" decode
       in
+      let unevaluated_properties =
+        Decode.optional o "unevaluatedProperties" decode
+      in
       let property_names = Decode.optional o "propertyNames" decode in
       let min_properties = Decode.optional o "minProperties" Decode.int in
       let max_properties = Decode.optional o "maxProperties" Decode.int in
@@ -476,6 +501,7 @@ and schema cursor =
       let one_of = Decode.optional o "oneOf" (Decode.non_empty_list decode) in
       let not_ = Decode.optional o "not" decode in
       let discriminator = Decode.optional o "discriminator" discriminator in
+      let defs = Decode.optional o "$defs" (Decode.map decode) in
       {
         schema;
         id;
@@ -492,6 +518,7 @@ and schema cursor =
         properties;
         required;
         additional_properties;
+        unevaluated_properties;
         property_names;
         min_properties;
         max_properties;
@@ -509,5 +536,6 @@ and schema cursor =
         one_of;
         not_;
         discriminator;
+        defs;
       })
     cursor

@@ -23,7 +23,8 @@
       "required": [
         "phase",
         "totalBytes"
-      ]
+      ],
+      "additionalProperties": false
     },
     {
       "type": "object",
@@ -50,7 +51,8 @@
         "phase",
         "bytesUploaded",
         "totalBytes"
-      ]
+      ],
+      "additionalProperties": false
     },
     {
       "type": "object",
@@ -69,7 +71,8 @@
       "required": [
         "phase",
         "resourceId"
-      ]
+      ],
+      "additionalProperties": false
     }
   ],
   "discriminator": {

@@ -2,7 +2,13 @@
    the keywords Schema knows: a [$ref] holds the value to what it names, and
    to the keywords beside it. [format]
    and [discriminator] are annotations: the type and the [oneOf] decide. A
-   [pattern] is matched as ECMA-262 does it ([Pattern]). *)
+   [pattern] is matched as ECMA-262 does it ([Pattern]).
+
+   [unevaluatedProperties] holds the members no other keyword of its schema
+   evaluated: [properties] and [additionalProperties] beside it, and, through
+   a [$ref], an [allOf], an [anyOf] or a [oneOf], what the schemas they apply
+   in place evaluated. An [anyOf] counts each member the value is, a [oneOf]
+   the one, and a [not] nothing. *)
 
 type place = { file : string; pointer : string }
 
@@ -54,30 +60,59 @@ let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
    each as the pointer into the value and why. A [$ref] is resolved through
    [ids], from the file it is written in, which it carries. *)
 let rec errors ids (schemas : schemas) (schema : Schema.t) value path =
+  fst (evaluate ids schemas schema value path)
+
+(* [errors], and the members of [value], when it is an object, that [schema]
+   evaluated. *)
+and evaluate ids schemas (schema : Schema.t) value path =
   match schema with
-  | Boolean_schema true -> []
-  | Boolean_schema false -> [ (path, "is admitted by no schema") ]
+  | Boolean_schema true -> ([], [])
+  | Boolean_schema false -> ([ (path, "is admitted by no schema") ], [])
   | Schema s ->
-      let named =
+      let named, by_name =
         match s.ref_ with
-        | None -> []
+        | None -> ([], [])
         | Some r -> (
             let file, pointer = Decode.resolve ids r in
             match schemas { file; pointer } with
-            | Some target -> errors ids schemas target value path
+            | Some target -> evaluate ids schemas target value path
             | None ->
-                [
-                  ( path,
-                    Printf.sprintf "is held to %s, which names nothing" r.target
-                  );
-                ])
+                ( [
+                    ( path,
+                      Printf.sprintf "is held to %s, which names nothing"
+                        r.target );
+                  ],
+                  [] ))
       in
-      named @ layer ids schemas s value path
+      let own, by_layer = layer ids schemas s value path in
+      let evaluated = by_name @ by_layer in
+      let rest, by_rest =
+        match (s.unevaluated_properties, value) with
+        | Some unevaluated, `Assoc members ->
+            let left =
+              List.filter
+                (fun (name, _) -> not (List.mem name evaluated))
+                members
+            in
+            ( List.concat_map
+                (fun (name, member) ->
+                  let at = path / name in
+                  match unevaluated with
+                  | Boolean_schema false ->
+                      [ (at, "is a member the schema does not state") ]
+                  | values -> errors ids schemas values member at)
+                left,
+              List.map fst left )
+        | _ -> ([], [])
+      in
+      (named @ own @ rest, evaluated @ by_rest)
 
 and layer ids schemas (s : Schema.schema) value path =
   let found = ref [] in
+  let evaluated = ref [] in
   let say message = found := (path, message) :: !found in
   let add more = found := List.rev_append more !found in
+  let saw names = evaluated := !evaluated @ names in
   let typed =
     match s.type_ with
     | None -> true
@@ -188,36 +223,55 @@ and layer ids schemas (s : Schema.schema) value path =
                      (errors ids schemas names (`String name) at)))
               s.property_names;
             match List.assoc_opt name properties with
-            | Some property -> add (errors ids schemas property member at)
+            | Some property ->
+                saw [ name ];
+                add (errors ids schemas property member at)
             | None -> (
                 match s.additional_properties with
                 | Some (Boolean_schema false) ->
+                    saw [ name ];
                     add [ (at, "is a member the schema does not state") ]
                 | Some (Schema _ as values) ->
+                    saw [ name ];
                     add (errors ids schemas values member at)
-                | Some (Boolean_schema true) | None -> ()))
+                | Some (Boolean_schema true) -> saw [ name ]
+                | None -> ()))
           members
     | _ -> ());
-  let parts key = Option.value ~default:[] key in
-  List.iteri
-    (fun i part -> add (errors ids schemas part value path))
-    (parts s.all_of);
-  let fits member = errors ids schemas member value path = [] in
+  List.iter
+    (fun part ->
+      let wrong, names = evaluate ids schemas part value path in
+      add wrong;
+      saw names)
+    (Option.value ~default:[] s.all_of);
+  (* The members [value] is, each with what it evaluated. *)
+  let fitting members =
+    List.filter_map
+      (fun member ->
+        match evaluate ids schemas member value path with
+        | [], names -> Some names
+        | _ -> None)
+      members
+  in
   Option.iter
     (fun members ->
-      if not (List.exists Fun.id (List.map fits members)) then
-        say "is none of the anyOf")
+      match fitting members with
+      | [] -> say "is none of the anyOf"
+      | fits -> List.iter saw fits)
     s.any_of;
   Option.iter
     (fun members ->
-      match List.length (List.filter Fun.id (List.map fits members)) with
-      | 1 -> ()
-      | 0 -> say "is none of the oneOf"
-      | n -> say (Printf.sprintf "is %d of the oneOf, where it must be one" n))
+      match fitting members with
+      | [ names ] -> saw names
+      | [] -> say "is none of the oneOf"
+      | fits ->
+          say
+            (Printf.sprintf "is %d of the oneOf, where it must be one"
+               (List.length fits)))
     s.one_of;
   Option.iter
     (fun refused ->
       if errors ids schemas refused value path = [] then
         say "is what the not refuses")
     s.not_;
-  List.rev !found
+  (List.rev !found, !evaluated)

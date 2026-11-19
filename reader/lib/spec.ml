@@ -665,7 +665,7 @@ let load root =
   let identifiers_rules =
     Identifiers_rules.refusals ~ids ~read_json files tables.identifiers_kinds
   in
-  let client_types_rules = Client_types_rules.refusals ~ids ~read_json in
+  let client_types_rules = Client_types_rules.refusals ~ids ~files ~read_json in
   let protocol_rules = Protocol_rules.refusals ~ids ~read_json in
   let services = Places.service_schemas root in
   let empty_services =

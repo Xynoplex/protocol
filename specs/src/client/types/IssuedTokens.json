@@ -17,5 +17,6 @@
   "required": [
     "access",
     "refresh"
-  ]
+  ],
+  "additionalProperties": false
 }
