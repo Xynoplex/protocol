@@ -7,7 +7,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { kbDid } from './protocol-core';
 import { eventually } from './net';
 import type { AttributeValue, OtlpReceiver } from './otlp';
-import { resourceKeys, sdkTelemetry, spanPattern, telemetry, type Telemetry, type TelemetryPlane, type TelemetryRow, type TelemetryService } from './spec';
+import { resourceKeys, sdkTelemetry, spanPattern, telemetry, type Telemetry, type TelemetryRow, type TelemetryService } from './spec';
 
 /** OTLP's span kinds, by the names the spec uses. */
 export const SPAN_KIND: Record<string, number> = { internal: 1, server: 2, client: 3, producer: 4, consumer: 5 };
@@ -44,7 +44,7 @@ export function received(otlp: OtlpReceiver): string {
 }
 
 /** The rows a service's cases must make it export: always, or by their traffic, on `plane` where rows name planes. */
-export function expectedOn(rows: TelemetryRow[], plane?: TelemetryPlane): TelemetryRow[] {
+export function expectedOn(rows: TelemetryRow[], plane?: string): TelemetryRow[] {
   return rows.filter((r) => (r.when === 'export' || r.when === 'traffic') && (!r.planes || (plane !== undefined && r.planes.includes(plane))));
 }
 
@@ -63,7 +63,7 @@ const KB = 'xynolog.kb';
  * service. Judged on everything the receiver got, so run it after the cases
  * that make the traffic.
  */
-export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryService, kb: string | null, plane?: TelemetryPlane): Promise<string[]> {
+export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryService, kb: string | null, plane?: string): Promise<string[]> {
   const keys = resourceKeys(service);
   if (keys.includes(KB) && kb === null) throw new Error(`the table says the ${service} names its knowledge base in its resource (${KB}), and the case handed it none`);
   if (!keys.includes(KB) && kb !== null) throw new Error(`the case handed the ${service} the knowledge base ${kb}, and the table says its resource names none`);
@@ -100,7 +100,7 @@ export function outsideTheSdkTable(otlp: OtlpReceiver, transport?: string): Prom
   return heldTo(otlp, sdkTelemetry(transport), 'an SDK', undefined, false);
 }
 
-async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: string, plane: TelemetryPlane | undefined, whole: boolean): Promise<string[]> {
+async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: string, plane: string | undefined, whole: boolean): Promise<string[]> {
   for (const row of expectedOn(spans, plane)) {
     const pattern = spanPattern(row);
     await eventually(`a ${row.name} span`, 15_000, () => otlp.spans.find((s) => pattern.test(s.name)));
