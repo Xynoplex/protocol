@@ -11,5 +11,8 @@
       "description": "Identifies this connection for its lifetime. The matching session:left carries the same value."
     }
   },
-  "required": ["participant", "connectionId"]
+  "required": [
+    "participant",
+    "connectionId"
+  ]
 }

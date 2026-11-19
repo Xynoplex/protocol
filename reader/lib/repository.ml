@@ -1,14 +1,15 @@
-(* What the checkout holds outside the model: how the bus registry is
-   spelled, and that every tracked file has an owner. The repository's check
+(* What the checkout holds outside the model: how each JSON file of
+   specs/src is spelled, and that every tracked file has an owner. The repository's check
    holds these; [Spec.load], which its consumers run on copies, does not. *)
 
-let registry = "specs/src/bus/registry.json"
+let specs = "specs/src"
 let inventory = "OWNERSHIP-INVENTORY.csv"
 
-(* [json] as JavaScript's [JSON.stringify(json, null, 2)] spells it, or why
-   it cannot say: a number beyond what an integer or a plain decimal spells
-   alike in both, a key [JSON.parse] would reorder (one like an array index),
-   and a key written twice. *)
+(* [json] as JavaScript's [JSON.stringify(json, null, 2)] spells what
+   [JSON.parse] read: an object's keys like an array index first, in
+   ascending order, then the others as written. Or why it cannot say: a
+   number beyond what an integer or a plain decimal spells alike in both, and
+   a key written twice. *)
 let canonical (json : Yojson.Safe.t) =
   let out = Buffer.create 65536 in
   let string s =
@@ -29,12 +30,19 @@ let canonical (json : Yojson.Safe.t) =
       s;
     Buffer.add_char out '"'
   in
-  let index_like key =
-    key = "0"
-    || key <> ""
-       && key.[0] >= '1'
-       && key.[0] <= '9'
-       && String.for_all (fun c -> c >= '0' && c <= '9') key
+  (* An array index: a canonical number below 2{^32} - 1. *)
+  let index key =
+    if
+      key = "0"
+      || key <> ""
+         && key.[0] >= '1'
+         && key.[0] <= '9'
+         && String.length key <= 10
+         && String.for_all (fun c -> c >= '0' && c <= '9') key
+    then
+      let n = int_of_string key in
+      if n < 4294967295 then Some n else None
+    else None
   in
   let decimal f =
     let rec shortest p =
@@ -81,16 +89,23 @@ let canonical (json : Yojson.Safe.t) =
     | `Assoc members -> (
         let keys = List.map fst members in
         match
-          ( List.find_opt index_like keys,
-            List.find_opt
-              (fun k -> List.length (List.filter (( = ) k) keys) > 1)
-              keys )
+          List.find_opt
+            (fun k -> List.length (List.filter (( = ) k) keys) > 1)
+            keys
         with
-        | Some key, _ ->
-            Error (Printf.sprintf "the key %S, which JSON.parse reorders" key)
-        | None, Some key ->
-            Error (Printf.sprintf "the key %S, written twice" key)
-        | None, None ->
+        | Some key -> Error (Printf.sprintf "the key %S, written twice" key)
+        | None ->
+            let indexed, named =
+              List.partition
+                (fun (key, _) -> Option.is_some (index key))
+                members
+            in
+            let members =
+              List.sort
+                (fun (a, _) (b, _) -> compare (index a) (index b))
+                indexed
+              @ named
+            in
             Buffer.add_string out "{\n";
             let rec each = function
               | [] -> Ok ()
@@ -113,28 +128,42 @@ let canonical (json : Yojson.Safe.t) =
   in
   Result.map (fun () -> Buffer.contents out ^ "\n") (value 0 json)
 
-(* bus/registry.json, under the repository's [root], is spelled as
+(* The JSON files under [dir], below [root]. *)
+let rec json_files root dir =
+  Sys.readdir (Filename.concat root dir)
+  |> Array.to_list |> List.sort compare
+  |> List.concat_map (fun name ->
+      let path = dir ^ "/" ^ name in
+      if Sys.is_directory (Filename.concat root path) then json_files root path
+      else if Filename.check_suffix name ".json" then [ path ]
+      else [])
+
+(* Each JSON file of specs/src, under the repository's [root], is spelled as
    [JSON.stringify(value, null, 2)] and a newline write it: the tools that
-   edit it spell some characters otherwise, and a one-line change made by
-   the other lands as a whole-file diff. *)
-let registry_form ~root =
-  let refuse message = [ { Decode.file = registry; pointer = ""; message } ] in
-  let raw =
-    In_channel.with_open_bin
-      (Filename.concat root registry)
-      In_channel.input_all
-  in
-  match canonical (Yojson.Safe.from_string raw) with
-  | Error what ->
-      refuse
-        (Printf.sprintf
-           "holds %s, which this check cannot spell as JSON.stringify does" what)
-  | Ok spelled when spelled = raw -> []
-  | Ok _ ->
-      refuse
-        "is not spelled as JSON.stringify(value, null, 2) and a newline write \
-         it: its content may be right, and its bytes (escapes, indentation, \
-         the final newline) are not"
+   edit them spell some characters otherwise, and a one-line change made by
+   another lands as a whole-file diff. *)
+let spelling ~root =
+  List.concat_map
+    (fun file ->
+      let refuse message = [ { Decode.file; pointer = ""; message } ] in
+      let raw =
+        In_channel.with_open_bin
+          (Filename.concat root file)
+          In_channel.input_all
+      in
+      match canonical (Yojson.Safe.from_string raw) with
+      | Error what ->
+          refuse
+            (Printf.sprintf
+               "holds %s, which this check cannot spell as JSON.stringify does"
+               what)
+      | Ok spelled when spelled = raw -> []
+      | Ok _ ->
+          refuse
+            "is not spelled as JSON.stringify(value, null, 2) and a newline \
+             write it: its content may be right, and its bytes (escapes, \
+             indentation, the final newline) are not")
+    (json_files root specs)
 
 (* The rows of a CSV text, RFC 4180's quoting. *)
 let rows text =

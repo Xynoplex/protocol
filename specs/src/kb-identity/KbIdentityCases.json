@@ -22,7 +22,10 @@
             "description": "The knowledge base's directory, whose name stands for a name no file gives."
           },
           "config": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The text of <dir>/.xynolog/config.yaml, or null when there is none."
           },
           "refused": {
@@ -32,26 +35,41 @@
           "name": {
             "description": "The name read, or null when the file is refused.",
             "anyOf": [
-              { "$ref": "./ProjectConfig.json#/properties/project/properties/name" },
-              { "type": "null" }
+              {
+                "$ref": "./ProjectConfig.json#/properties/project/properties/name"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
           "domain": {
             "description": "The domain read, or null when no identity is declared.",
             "anyOf": [
-              { "$ref": "./ProjectConfig.json#/properties/site/properties/domain" },
-              { "type": "null" }
+              {
+                "$ref": "./ProjectConfig.json#/properties/site/properties/domain"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
           "did": {
             "description": "The DID the domain names, or null when no identity is declared.",
             "anyOf": [
-              { "$ref": "../KbDid.json" },
-              { "type": "null" }
+              {
+                "$ref": "../KbDid.json"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
           "resource": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^https://\\S+$",
             "description": "The resource derived from the domain, the audience the gateway's tokens must carry, or null when no identity is declared."
           }

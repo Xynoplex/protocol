@@ -10,5 +10,7 @@
       "description": "The resource this focus applies to, always named. With an annotation it is a guard: a viewer showing a different resource ignores the event. With none it is the resource the focus brings forward."
     }
   },
-  "required": ["resourceId"]
+  "required": [
+    "resourceId"
+  ]
 }

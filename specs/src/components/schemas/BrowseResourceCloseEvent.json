@@ -6,5 +6,7 @@
       "$ref": "./ResourceId.json"
     }
   },
-  "required": ["resourceId"]
+  "required": [
+    "resourceId"
+  ]
 }

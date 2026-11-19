@@ -3,7 +3,9 @@
   "properties": {
     "type": {
       "type": "string",
-      "enum": ["SpecificResource"]
+      "enum": [
+        "SpecificResource"
+      ]
     },
     "source": {
       "$ref": "./ResourceId.json",

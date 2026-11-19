@@ -11,7 +11,7 @@ make install
 make bundle
 ```
 
-`specs/openapi.json` and `specs/archivist.openapi.json` are outputs for type generation and conformance runs. Edit only files under `src/`. `make lint` applies the Redocly rules; `make reader` runs the reader, which holds the protocol's own rules, including each table's schema.
+`specs/openapi.json` and `specs/archivist.openapi.json` are outputs for type generation and conformance runs. Edit only files under `src/`. `make lint` applies the Redocly rules; `make reader` runs the reader, which holds the protocol's own rules, including each table's schema. Every JSON file under `src/` is spelled as `JSON.stringify(value, null, 2)` and a newline write it, so an edit made with any tool changes only what it means to change; `make reader` refuses any other spelling.
 
 ## Layout
 

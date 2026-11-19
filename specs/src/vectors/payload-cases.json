@@ -3,11 +3,16 @@
   "collections": {
     "resources": {
       "distance": "Cosine",
-      "indexes": { "entityTypes": "keyword", "resourceId": "keyword" }
+      "indexes": {
+        "entityTypes": "keyword",
+        "resourceId": "keyword"
+      }
     },
     "annotations": {
       "distance": "Cosine",
-      "indexes": { "resourceId": "keyword" }
+      "indexes": {
+        "resourceId": "keyword"
+      }
     },
     "declined": {
       "distance": "Dot",
@@ -21,12 +26,31 @@
       "resourceStored": {
         "resourceId": "res-1",
         "chunks": [
-          { "index": 0, "text": "Black Hawk led the Sauk.", "embedding": [1, 0, 0] },
-          { "index": 1, "text": "The war ended in 1832.", "embedding": [0, 1, 0] }
+          {
+            "index": 0,
+            "text": "Black Hawk led the Sauk.",
+            "embedding": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "index": 1,
+            "text": "The war ended in 1832.",
+            "embedding": [
+              0,
+              1,
+              0
+            ]
+          }
         ],
         "contentChecksum": "checksum-1",
         "mediaType": "text/markdown; charset=utf-8",
-        "entityTypes": ["Person", "Event"],
+        "entityTypes": [
+          "Person",
+          "Event"
+        ],
         "points": [
           {
             "qdrantId": "8185e123-8a66-b968-fde1-042cd84b07e4",
@@ -36,9 +60,20 @@
               "text": "Black Hawk led the Sauk.",
               "contentChecksum": "checksum-1",
               "mediaType": "text/markdown; charset=utf-8",
-              "entityTypes": ["Person", "Event"]
+              "entityTypes": [
+                "Person",
+                "Event"
+              ]
             },
-            "result": { "score": 1.000000, "resourceId": "res-1", "text": "Black Hawk led the Sauk.", "entityTypes": ["Person", "Event"] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-1",
+              "text": "Black Hawk led the Sauk.",
+              "entityTypes": [
+                "Person",
+                "Event"
+              ]
+            }
           },
           {
             "qdrantId": "e28fd207-aeab-4746-484a-176dcce9fb64",
@@ -48,12 +83,30 @@
               "text": "The war ended in 1832.",
               "contentChecksum": "checksum-1",
               "mediaType": "text/markdown; charset=utf-8",
-              "entityTypes": ["Person", "Event"]
+              "entityTypes": [
+                "Person",
+                "Event"
+              ]
             },
-            "result": { "score": 1.000000, "resourceId": "res-1", "text": "The war ended in 1832.", "entityTypes": ["Person", "Event"] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-1",
+              "text": "The war ended in 1832.",
+              "entityTypes": [
+                "Person",
+                "Event"
+              ]
+            }
           }
         ],
-        "stamp": { "contentChecksum": "checksum-1", "mediaType": "text/markdown; charset=utf-8", "entityTypes": ["Person", "Event"] }
+        "stamp": {
+          "contentChecksum": "checksum-1",
+          "mediaType": "text/markdown; charset=utf-8",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
+        }
       }
     },
     {
@@ -61,12 +114,30 @@
       "resourceStored": {
         "resourceId": "res-2",
         "chunks": [
-          { "index": 0, "text": "Read from the first scanned page.", "embedding": [1, 0, 0] },
-          { "index": 1, "text": "Read from the second scanned page.", "embedding": [0, 1, 0] }
+          {
+            "index": 0,
+            "text": "Read from the first scanned page.",
+            "embedding": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "index": 1,
+            "text": "Read from the second scanned page.",
+            "embedding": [
+              0,
+              1,
+              0
+            ]
+          }
         ],
         "contentChecksum": "checksum-2",
         "mediaType": "application/pdf",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "machineRead": true,
         "points": [
           {
@@ -77,14 +148,18 @@
               "text": "Read from the first scanned page.",
               "contentChecksum": "checksum-2",
               "mediaType": "application/pdf",
-              "entityTypes": ["Place"],
+              "entityTypes": [
+                "Place"
+              ],
               "machineRead": true
             },
             "result": {
-              "score": 1.000000,
+              "score": 1,
               "resourceId": "res-2",
               "text": "Read from the first scanned page.",
-              "entityTypes": ["Place"],
+              "entityTypes": [
+                "Place"
+              ],
               "machineRead": true
             }
           },
@@ -96,19 +171,30 @@
               "text": "Read from the second scanned page.",
               "contentChecksum": "checksum-2",
               "mediaType": "application/pdf",
-              "entityTypes": ["Place"],
+              "entityTypes": [
+                "Place"
+              ],
               "machineRead": true
             },
             "result": {
-              "score": 1.000000,
+              "score": 1,
               "resourceId": "res-2",
               "text": "Read from the second scanned page.",
-              "entityTypes": ["Place"],
+              "entityTypes": [
+                "Place"
+              ],
               "machineRead": true
             }
           }
         ],
-        "stamp": { "contentChecksum": "checksum-2", "mediaType": "application/pdf", "entityTypes": ["Place"], "machineRead": true }
+        "stamp": {
+          "contentChecksum": "checksum-2",
+          "mediaType": "application/pdf",
+          "entityTypes": [
+            "Place"
+          ],
+          "machineRead": true
+        }
       }
     },
     {
@@ -116,11 +202,21 @@
       "resourceStored": {
         "resourceId": "res-3",
         "chunks": [
-          { "index": 0, "text": "Typed by a person.", "embedding": [1, 0, 0] }
+          {
+            "index": 0,
+            "text": "Typed by a person.",
+            "embedding": [
+              1,
+              0,
+              0
+            ]
+          }
         ],
         "contentChecksum": "checksum-3",
         "mediaType": "text/markdown",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "machineRead": false,
         "points": [
           {
@@ -131,12 +227,27 @@
               "text": "Typed by a person.",
               "contentChecksum": "checksum-3",
               "mediaType": "text/markdown",
-              "entityTypes": ["Place"]
+              "entityTypes": [
+                "Place"
+              ]
             },
-            "result": { "score": 1.000000, "resourceId": "res-3", "text": "Typed by a person.", "entityTypes": ["Place"] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-3",
+              "text": "Typed by a person.",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         ],
-        "stamp": { "contentChecksum": "checksum-3", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+        "stamp": {
+          "contentChecksum": "checksum-3",
+          "mediaType": "text/markdown",
+          "entityTypes": [
+            "Place"
+          ]
+        }
       }
     },
     {
@@ -144,12 +255,30 @@
       "resourceStored": {
         "resourceId": "res-4",
         "chunks": [
-          { "index": 0, "text": "A treble clef 𝄞 opens the staff, and a note 🎵 follows it.", "embedding": [1, 0, 0] },
-          { "index": 1, "text": "The staff has five lines.", "embedding": [0, 1, 0] }
+          {
+            "index": 0,
+            "text": "A treble clef 𝄞 opens the staff, and a note 🎵 follows it.",
+            "embedding": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "index": 1,
+            "text": "The staff has five lines.",
+            "embedding": [
+              0,
+              1,
+              0
+            ]
+          }
         ],
         "contentChecksum": "checksum-4",
         "mediaType": "text/markdown",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "points": [
           {
             "qdrantId": "52920173-0190-3262-fa7f-72991b0ac56b",
@@ -159,13 +288,17 @@
               "text": "A treble clef 𝄞 opens the staff, and a note 🎵 follows it.",
               "contentChecksum": "checksum-4",
               "mediaType": "text/markdown",
-              "entityTypes": ["Place"]
+              "entityTypes": [
+                "Place"
+              ]
             },
             "result": {
-              "score": 1.000000,
+              "score": 1,
               "resourceId": "res-4",
               "text": "A treble clef 𝄞 opens the staff, and a note 🎵 follows it.",
-              "entityTypes": ["Place"]
+              "entityTypes": [
+                "Place"
+              ]
             }
           },
           {
@@ -176,12 +309,27 @@
               "text": "The staff has five lines.",
               "contentChecksum": "checksum-4",
               "mediaType": "text/markdown",
-              "entityTypes": ["Place"]
+              "entityTypes": [
+                "Place"
+              ]
             },
-            "result": { "score": 1.000000, "resourceId": "res-4", "text": "The staff has five lines.", "entityTypes": ["Place"] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-4",
+              "text": "The staff has five lines.",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         ],
-        "stamp": { "contentChecksum": "checksum-4", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+        "stamp": {
+          "contentChecksum": "checksum-4",
+          "mediaType": "text/markdown",
+          "entityTypes": [
+            "Place"
+          ]
+        }
       }
     },
     {
@@ -189,7 +337,15 @@
       "resourceStored": {
         "resourceId": "res-5",
         "chunks": [
-          { "index": 0, "text": "Tagged with nothing.", "embedding": [1, 0, 0] }
+          {
+            "index": 0,
+            "text": "Tagged with nothing.",
+            "embedding": [
+              1,
+              0,
+              0
+            ]
+          }
         ],
         "contentChecksum": "checksum-5",
         "mediaType": "text/markdown",
@@ -205,10 +361,19 @@
               "mediaType": "text/markdown",
               "entityTypes": []
             },
-            "result": { "score": 1.000000, "resourceId": "res-5", "text": "Tagged with nothing.", "entityTypes": [] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-5",
+              "text": "Tagged with nothing.",
+              "entityTypes": []
+            }
           }
         ],
-        "stamp": { "contentChecksum": "checksum-5", "mediaType": "text/markdown", "entityTypes": [] }
+        "stamp": {
+          "contentChecksum": "checksum-5",
+          "mediaType": "text/markdown",
+          "entityTypes": []
+        }
       }
     },
     {
@@ -216,12 +381,30 @@
       "resourceStored": {
         "resourceId": "res-6",
         "chunks": [
-          { "index": 9, "text": "The tenth chunk.", "embedding": [1, 0, 0] },
-          { "index": 10, "text": "The eleventh chunk.", "embedding": [0, 1, 0] }
+          {
+            "index": 9,
+            "text": "The tenth chunk.",
+            "embedding": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "index": 10,
+            "text": "The eleventh chunk.",
+            "embedding": [
+              0,
+              1,
+              0
+            ]
+          }
         ],
         "contentChecksum": "checksum-6",
         "mediaType": "text/markdown",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "points": [
           {
             "qdrantId": "05a00f1a-de73-5e47-a199-3185927eea81",
@@ -231,9 +414,18 @@
               "text": "The tenth chunk.",
               "contentChecksum": "checksum-6",
               "mediaType": "text/markdown",
-              "entityTypes": ["Place"]
+              "entityTypes": [
+                "Place"
+              ]
             },
-            "result": { "score": 1.000000, "resourceId": "res-6", "text": "The tenth chunk.", "entityTypes": ["Place"] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-6",
+              "text": "The tenth chunk.",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           },
           {
             "qdrantId": "0c5ea2c7-18fb-4a75-02c3-1438928e7bc8",
@@ -243,12 +435,27 @@
               "text": "The eleventh chunk.",
               "contentChecksum": "checksum-6",
               "mediaType": "text/markdown",
-              "entityTypes": ["Place"]
+              "entityTypes": [
+                "Place"
+              ]
             },
-            "result": { "score": 1.000000, "resourceId": "res-6", "text": "The eleventh chunk.", "entityTypes": ["Place"] }
+            "result": {
+              "score": 1,
+              "resourceId": "res-6",
+              "text": "The eleventh chunk.",
+              "entityTypes": [
+                "Place"
+              ]
+            }
           }
         ],
-        "stamp": { "contentChecksum": "checksum-6", "mediaType": "text/markdown", "entityTypes": ["Place"] }
+        "stamp": {
+          "contentChecksum": "checksum-6",
+          "mediaType": "text/markdown",
+          "entityTypes": [
+            "Place"
+          ]
+        }
       }
     },
     {
@@ -257,24 +464,37 @@
         "annotationId": "ann-1",
         "resourceId": "res-1",
         "motivation": "highlighting",
-        "entityTypes": ["Person", "Event"],
+        "entityTypes": [
+          "Person",
+          "Event"
+        ],
         "text": "Black Hawk",
-        "embedding": [0, 0, 1],
+        "embedding": [
+          0,
+          0,
+          1
+        ],
         "point": {
           "qdrantId": "276980e7-d994-3369-a771-b8789be80f59",
           "payload": {
             "annotationId": "ann-1",
             "resourceId": "res-1",
             "motivation": "highlighting",
-            "entityTypes": ["Person", "Event"],
+            "entityTypes": [
+              "Person",
+              "Event"
+            ],
             "text": "Black Hawk"
           },
           "result": {
-            "score": 1.000000,
+            "score": 1,
             "resourceId": "res-1",
             "annotationId": "ann-1",
             "text": "Black Hawk",
-            "entityTypes": ["Person", "Event"]
+            "entityTypes": [
+              "Person",
+              "Event"
+            ]
           }
         }
       }
@@ -285,9 +505,15 @@
         "annotationId": "ann-2",
         "resourceId": "res-2",
         "motivation": "linking",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "text": "the first scanned page",
-        "embedding": [0, 0, 1],
+        "embedding": [
+          0,
+          0,
+          1
+        ],
         "machineRead": true,
         "point": {
           "qdrantId": "93a09a89-004f-5a12-80d4-6873366e0d66",
@@ -295,16 +521,20 @@
             "annotationId": "ann-2",
             "resourceId": "res-2",
             "motivation": "linking",
-            "entityTypes": ["Place"],
+            "entityTypes": [
+              "Place"
+            ],
             "text": "the first scanned page",
             "machineRead": true
           },
           "result": {
-            "score": 1.000000,
+            "score": 1,
             "resourceId": "res-2",
             "annotationId": "ann-2",
             "text": "the first scanned page",
-            "entityTypes": ["Place"],
+            "entityTypes": [
+              "Place"
+            ],
             "machineRead": true
           }
         }
@@ -316,9 +546,15 @@
         "annotationId": "ann-3",
         "resourceId": "res-3",
         "motivation": "commenting",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "text": "a person",
-        "embedding": [0, 0, 1],
+        "embedding": [
+          0,
+          0,
+          1
+        ],
         "machineRead": false,
         "point": {
           "qdrantId": "4aac22ff-686d-377f-ab9c-54dd3e5c71d0",
@@ -326,10 +562,20 @@
             "annotationId": "ann-3",
             "resourceId": "res-3",
             "motivation": "commenting",
-            "entityTypes": ["Place"],
+            "entityTypes": [
+              "Place"
+            ],
             "text": "a person"
           },
-          "result": { "score": 1.000000, "resourceId": "res-3", "annotationId": "ann-3", "text": "a person", "entityTypes": ["Place"] }
+          "result": {
+            "score": 1,
+            "resourceId": "res-3",
+            "annotationId": "ann-3",
+            "text": "a person",
+            "entityTypes": [
+              "Place"
+            ]
+          }
         }
       }
     },
@@ -339,19 +585,35 @@
         "annotationId": "ann-4",
         "resourceId": "res-4",
         "motivation": "tagging",
-        "entityTypes": ["Place"],
+        "entityTypes": [
+          "Place"
+        ],
         "text": "clef 𝄞 opens",
-        "embedding": [0, 0, 1],
+        "embedding": [
+          0,
+          0,
+          1
+        ],
         "point": {
           "qdrantId": "df6c9910-3e53-859f-5a4a-32c2b5b02fae",
           "payload": {
             "annotationId": "ann-4",
             "resourceId": "res-4",
             "motivation": "tagging",
-            "entityTypes": ["Place"],
+            "entityTypes": [
+              "Place"
+            ],
             "text": "clef 𝄞 opens"
           },
-          "result": { "score": 1.000000, "resourceId": "res-4", "annotationId": "ann-4", "text": "clef 𝄞 opens", "entityTypes": ["Place"] }
+          "result": {
+            "score": 1,
+            "resourceId": "res-4",
+            "annotationId": "ann-4",
+            "text": "clef 𝄞 opens",
+            "entityTypes": [
+              "Place"
+            ]
+          }
         }
       }
     },
@@ -363,11 +625,27 @@
         "motivation": "assessing",
         "entityTypes": [],
         "text": "nothing",
-        "embedding": [0, 0, 1],
+        "embedding": [
+          0,
+          0,
+          1
+        ],
         "point": {
           "qdrantId": "93a9c1ba-b42e-1bee-34ba-806224a0035f",
-          "payload": { "annotationId": "ann-5", "resourceId": "res-5", "motivation": "assessing", "entityTypes": [], "text": "nothing" },
-          "result": { "score": 1.000000, "resourceId": "res-5", "annotationId": "ann-5", "text": "nothing", "entityTypes": [] }
+          "payload": {
+            "annotationId": "ann-5",
+            "resourceId": "res-5",
+            "motivation": "assessing",
+            "entityTypes": [],
+            "text": "nothing"
+          },
+          "result": {
+            "score": 1,
+            "resourceId": "res-5",
+            "annotationId": "ann-5",
+            "text": "nothing",
+            "entityTypes": []
+          }
         }
       }
     },
@@ -398,10 +676,21 @@
           "text": "Read from a scan.",
           "contentChecksum": "checksum-1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person", "Event"],
+          "entityTypes": [
+            "Person",
+            "Event"
+          ],
           "machineRead": true
         },
-        "stamp": { "contentChecksum": "checksum-1", "mediaType": "text/markdown", "entityTypes": ["Person", "Event"], "machineRead": true }
+        "stamp": {
+          "contentChecksum": "checksum-1",
+          "mediaType": "text/markdown",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ],
+          "machineRead": true
+        }
       }
     },
     {
@@ -413,9 +702,19 @@
           "text": "Typed by a person.",
           "contentChecksum": "checksum-1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person", "Event"]
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
         },
-        "stamp": { "contentChecksum": "checksum-1", "mediaType": "text/markdown", "entityTypes": ["Person", "Event"] }
+        "stamp": {
+          "contentChecksum": "checksum-1",
+          "mediaType": "text/markdown",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
+        }
       }
     },
     {
@@ -426,9 +725,18 @@
           "chunkIndex": 0,
           "text": "Typed by a person.",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person", "Event"]
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
         },
-        "stamp": { "mediaType": "text/markdown", "entityTypes": ["Person", "Event"] }
+        "stamp": {
+          "mediaType": "text/markdown",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
+        }
       }
     },
     {
@@ -439,9 +747,18 @@
           "chunkIndex": 0,
           "text": "Typed by a person.",
           "contentChecksum": "checksum-1",
-          "entityTypes": ["Person", "Event"]
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
         },
-        "stamp": { "contentChecksum": "checksum-1", "entityTypes": ["Person", "Event"] }
+        "stamp": {
+          "contentChecksum": "checksum-1",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
+        }
       }
     },
     {
@@ -454,7 +771,11 @@
           "contentChecksum": "checksum-1",
           "mediaType": "text/markdown"
         },
-        "stamp": { "contentChecksum": "checksum-1", "mediaType": "text/markdown", "entityTypes": [] }
+        "stamp": {
+          "contentChecksum": "checksum-1",
+          "mediaType": "text/markdown",
+          "entityTypes": []
+        }
       }
     },
     {
@@ -465,7 +786,10 @@
           "text": "Typed by a person.",
           "contentChecksum": "checksum-1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person", "Event"]
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
         }
       }
     },
@@ -476,31 +800,66 @@
           "annotationId": "ann-1",
           "resourceId": "res-1",
           "motivation": "highlighting",
-          "entityTypes": ["Person", "Event"],
+          "entityTypes": [
+            "Person",
+            "Event"
+          ],
           "text": "Black Hawk",
           "machineRead": true
         },
-        "stamp": { "resourceId": "res-1", "entityTypes": ["Person", "Event"] }
+        "stamp": {
+          "resourceId": "res-1",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
+        }
       }
     },
     {
       "why": "an annotation's point with no entity types has a stamp with an empty list of them",
       "annotationStampRead": {
-        "payload": { "annotationId": "ann-1", "resourceId": "res-1", "motivation": "highlighting", "text": "Black Hawk" },
-        "stamp": { "resourceId": "res-1", "entityTypes": [] }
+        "payload": {
+          "annotationId": "ann-1",
+          "resourceId": "res-1",
+          "motivation": "highlighting",
+          "text": "Black Hawk"
+        },
+        "stamp": {
+          "resourceId": "res-1",
+          "entityTypes": []
+        }
       }
     },
     {
       "why": "a point that names an annotation and no resource has a stamp with no resource: a listing of annotations' stamps answers it, so that whoever lists can take it out",
       "annotationStampRead": {
-        "payload": { "annotationId": "ann-1", "motivation": "highlighting", "entityTypes": ["Person"], "text": "Black Hawk" },
-        "stamp": { "entityTypes": ["Person"] }
+        "payload": {
+          "annotationId": "ann-1",
+          "motivation": "highlighting",
+          "entityTypes": [
+            "Person"
+          ],
+          "text": "Black Hawk"
+        },
+        "stamp": {
+          "entityTypes": [
+            "Person"
+          ]
+        }
       }
     },
     {
       "why": "a point that names no annotation is no annotation's: no stamp of one is read from it, and a listing of annotations' stamps leaves it out",
       "annotationStampRead": {
-        "payload": { "resourceId": "res-1", "motivation": "highlighting", "entityTypes": ["Person"], "text": "Black Hawk" }
+        "payload": {
+          "resourceId": "res-1",
+          "motivation": "highlighting",
+          "entityTypes": [
+            "Person"
+          ],
+          "text": "Black Hawk"
+        }
       }
     },
     {
@@ -513,10 +872,21 @@
           "text": "The war ended in 1832.",
           "contentChecksum": "checksum-1",
           "mediaType": "text/markdown",
-          "entityTypes": ["Person", "Event"]
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
         },
-        "score": 0.750000,
-        "result": { "score": 0.750000, "resourceId": "res-1", "text": "The war ended in 1832.", "entityTypes": ["Person", "Event"] }
+        "score": 0.75,
+        "result": {
+          "score": 0.75,
+          "resourceId": "res-1",
+          "text": "The war ended in 1832.",
+          "entityTypes": [
+            "Person",
+            "Event"
+          ]
+        }
       }
     },
     {
@@ -527,11 +897,21 @@
           "annotationId": "ann-1",
           "resourceId": "res-1",
           "motivation": "highlighting",
-          "entityTypes": ["Person"],
+          "entityTypes": [
+            "Person"
+          ],
           "text": "Black Hawk"
         },
-        "score": 0.500000,
-        "result": { "score": 0.500000, "resourceId": "res-1", "annotationId": "ann-1", "text": "Black Hawk", "entityTypes": ["Person"] }
+        "score": 0.5,
+        "result": {
+          "score": 0.5,
+          "resourceId": "res-1",
+          "annotationId": "ann-1",
+          "text": "Black Hawk",
+          "entityTypes": [
+            "Person"
+          ]
+        }
       }
     },
     {
@@ -544,15 +924,19 @@
           "text": "Read from the first scanned page.",
           "contentChecksum": "checksum-2",
           "mediaType": "application/pdf",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "machineRead": true
         },
-        "score": 0.250000,
+        "score": 0.25,
         "result": {
-          "score": 0.250000,
+          "score": 0.25,
           "resourceId": "res-2",
           "text": "Read from the first scanned page.",
-          "entityTypes": ["Place"],
+          "entityTypes": [
+            "Place"
+          ],
           "machineRead": true
         }
       }

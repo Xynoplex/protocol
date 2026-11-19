@@ -199,15 +199,23 @@
           },
           "recorded": {
             "anyOf": [
-              { "$ref": "#/properties/people/additionalProperties/properties/personKey" },
-              { "type": "null" }
+              {
+                "$ref": "#/properties/people/additionalProperties/properties/personKey"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The personKey the stored sign-in holds once the gateway has answered, or null for none."
           },
           "place": {
             "anyOf": [
-              { "$ref": "../components/schemas/PersistedEventId.json" },
-              { "type": "null" }
+              {
+                "$ref": "../components/schemas/PersistedEventId.json"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The event id the stream resumes res-1's scope from, or null for none."
           },
@@ -240,12 +248,19 @@
           },
           "stored": {
             "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "personKey": {
                 "anyOf": [
-                  { "$ref": "#/properties/people/additionalProperties/properties/personKey" },
-                  { "type": "null" }
+                  {
+                    "$ref": "#/properties/people/additionalProperties/properties/personKey"
+                  },
+                  {
+                    "type": "null"
+                  }
                 ],
                 "description": "The personKey the sign-in holds, or null for none."
               }
@@ -280,12 +295,19 @@
           },
           "stored": {
             "description": "The sign-in kept in the stored one's place, by the personKey it holds; null when it is forgotten.",
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "personKey": {
                 "anyOf": [
-                  { "$ref": "#/properties/people/additionalProperties/properties/personKey" },
-                  { "type": "null" }
+                  {
+                    "$ref": "#/properties/people/additionalProperties/properties/personKey"
+                  },
+                  {
+                    "type": "null"
+                  }
                 ],
                 "description": "The personKey the sign-in holds, or null for none."
               }
@@ -329,8 +351,12 @@
           },
           "resumes": {
             "anyOf": [
-              { "$ref": "../components/schemas/PersistedEventId.json" },
-              { "type": "null" }
+              {
+                "$ref": "../components/schemas/PersistedEventId.json"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The event id the stream resumes res-1's scope from, or null for none."
           }

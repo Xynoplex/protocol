@@ -8,7 +8,9 @@
       "minLength": 1,
       "description": "Where the provider's API is reached. Anthropic's own API, and the shared Ollama, are stated by no baseURL."
     },
-    "apiKey": { "$ref": "./SecretRef.json" }
+    "apiKey": {
+      "$ref": "./SecretRef.json"
+    }
   },
   "additionalProperties": false
 }

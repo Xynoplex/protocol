@@ -141,60 +141,177 @@
   "signIn": {
     "docs": "Why a person could not be signed in at the issuer a knowledge base trusts, or a session could not be renewed there. Over the authorization-code grant, the device grant, the refresh grant and revocation alike.",
     "codes": [
-      { "code": "no-issuer", "docs": "The knowledge base trusts no external issuer: there is nowhere to sign in." },
-      { "code": "discovery", "docs": "The knowledge base did not say which issuer it trusts, or the issuer did not describe itself, or described another issuer, or offers no endpoint the grant needs." },
-      { "code": "no-pending", "docs": "A sign-in response arrived and no sign-in is pending here: it was completed already, or begun somewhere else." },
-      { "code": "state", "docs": "The sign-in response does not belong to the pending sign-in." },
-      { "code": "denied", "docs": "The person, or the issuer, refused the sign-in." },
-      { "code": "expired", "docs": "The device code ran out before it was approved." },
-      { "code": "aborted", "docs": "The sign-in was abandoned by whoever began it." },
-      { "code": "exchange", "docs": "The issuer refused a token request, a device authorization or a revocation, or answered without what was asked for." }
+      {
+        "code": "no-issuer",
+        "docs": "The knowledge base trusts no external issuer: there is nowhere to sign in."
+      },
+      {
+        "code": "discovery",
+        "docs": "The knowledge base did not say which issuer it trusts, or the issuer did not describe itself, or described another issuer, or offers no endpoint the grant needs."
+      },
+      {
+        "code": "no-pending",
+        "docs": "A sign-in response arrived and no sign-in is pending here: it was completed already, or begun somewhere else."
+      },
+      {
+        "code": "state",
+        "docs": "The sign-in response does not belong to the pending sign-in."
+      },
+      {
+        "code": "denied",
+        "docs": "The person, or the issuer, refused the sign-in."
+      },
+      {
+        "code": "expired",
+        "docs": "The device code ran out before it was approved."
+      },
+      {
+        "code": "aborted",
+        "docs": "The sign-in was abandoned by whoever began it."
+      },
+      {
+        "code": "exchange",
+        "docs": "The issuer refused a token request, a device authorization or a revocation, or answered without what was asked for."
+      }
     ]
   },
   "kbIdentity": {
     "docs": "Why a knowledge base that was reached with a fresh sign-in could not be registered: it has to say who it is, and nothing stands in for its answer.",
     "codes": [
-      { "code": "unreachable", "docs": "The knowledge base was not reached, so it said nothing." },
-      { "code": "not-reported", "docs": "The knowledge base answered that it cannot say what it is." }
+      {
+        "code": "unreachable",
+        "docs": "The knowledge base was not reached, so it said nothing."
+      },
+      {
+        "code": "not-reported",
+        "docs": "The knowledge base answered that it cannot say what it is."
+      }
     ]
   },
   "spanRefusal": {
     "docs": "Why no annotation was built of a span: the span is not the text's, or, for a PDF, is nowhere on its pages, or the PDF's anchored text does not hold together. specs/src/annotations/builder-cases.json holds when each is given.",
     "codes": [
-      { "code": "span-out-of-range", "docs": "The span's offsets are not two whole numbers from 0, the second no less than the first, within the text." },
-      { "code": "exact-mismatch", "docs": "The words the span states are not the text between its offsets." },
-      { "code": "prefix-mismatch", "docs": "The prefix the span states is not the text just before it." },
-      { "code": "suffix-mismatch", "docs": "The suffix the span states is not the text just after it." },
-      { "code": "nothing-located", "docs": "No item of the PDF's anchored text holds any of the span, so it is nowhere on a page." },
-      { "code": "exact-not-covered", "docs": "The items of the PDF's anchored text that hold the span do not have its words." },
-      { "code": "item-out-of-range", "docs": "An item of the PDF's anchored text is no stretch of that text: its offsets are not two whole numbers from 0, the second no less than the first, within the text. This one is said of the anchored text and not of the span: the items are what say where the text is on a page, and no span is built on an anchored text one of whose items cannot be." }
+      {
+        "code": "span-out-of-range",
+        "docs": "The span's offsets are not two whole numbers from 0, the second no less than the first, within the text."
+      },
+      {
+        "code": "exact-mismatch",
+        "docs": "The words the span states are not the text between its offsets."
+      },
+      {
+        "code": "prefix-mismatch",
+        "docs": "The prefix the span states is not the text just before it."
+      },
+      {
+        "code": "suffix-mismatch",
+        "docs": "The suffix the span states is not the text just after it."
+      },
+      {
+        "code": "nothing-located",
+        "docs": "No item of the PDF's anchored text holds any of the span, so it is nowhere on a page."
+      },
+      {
+        "code": "exact-not-covered",
+        "docs": "The items of the PDF's anchored text that hold the span do not have its words."
+      },
+      {
+        "code": "item-out-of-range",
+        "docs": "An item of the PDF's anchored text is no stretch of that text: its offsets are not two whole numbers from 0, the second no less than the first, within the text. This one is said of the anchored text and not of the span: the items are what say where the text is on a page, and no span is built on an anchored text one of whose items cannot be."
+      }
     ]
   },
   "control": {
     "docs": "Why a request of the launcher's control API (`xynolog control`, contract/LAUNCHER-CONTROL.md) failed. The launcher sends one in each error's data, and Desktop reads it. A knowledge base never sends one.",
     "codes": [
-      { "code": "control.invalid-params", "docs": "The request's params are not what its method's schema admits. The error's fields name each fault; JSON-RPC's own invalid-params code (-32602) carries it." },
-      { "code": "control.unsupported-api-version", "docs": "The request is written to a version of the control API this launcher does not speak. The error's supported field names the ones it does." },
-      { "code": "control.invalid-request", "docs": "The launcher refuses the request as the command line refuses the same options: they contradict each other, or do not apply to what they name." },
-      { "code": "control.invalid-service", "docs": "The request names a service or a group the launcher has none of." },
-      { "code": "control.invalid-value", "docs": "The launcher refuses a setting's value, as a start would refuse it. The previous value is kept." },
-      { "code": "control.unknown-setting", "docs": "The request names a setting the launcher does not keep." },
-      { "code": "control.target-required", "docs": "Several stacks could be meant and the request names none of them. The error's choices name each; nothing was done." },
-      { "code": "control.target-ambiguous", "docs": "The root the request names is the basename of several registered roots. The error's choices name each by its path; nothing was done." },
-      { "code": "control.root-not-found", "docs": "The root the request names is not a knowledge base's clone: no such directory, no .xynolog/ in it, or a project file the launcher refuses." },
-      { "code": "control.root-not-registered", "docs": "The root the request names is not in the registry." },
-      { "code": "control.stack-not-running", "docs": "The request needs a stack of its target recorded on this machine, and none is." },
-      { "code": "control.stack-running", "docs": "The request would change what a recorded stack depends on: stop the stack first." },
-      { "code": "control.start-in-progress", "docs": "Another xynolog start of the same knowledge base holds its start lock." },
-      { "code": "control.runtime-unavailable", "docs": "No container runtime the request can use is on the launcher's PATH." },
-      { "code": "control.dependency-unavailable", "docs": "A program the request needs besides a container runtime (gh, for a codespace) is not on the launcher's PATH." },
-      { "code": "control.unreachable", "docs": "What the request needs to reach did not answer: the knowledge base, its issuer, or a codespace's forward." },
-      { "code": "control.confirmation-required", "docs": "The request would destroy something, and does not state that a person confirmed it." },
-      { "code": "control.unreadable-state", "docs": "The launcher's own record of this machine (the stack record, the registry, the sign-in store) cannot be read. Nothing was assumed in its place." },
-      { "code": "control.already-signed-in", "docs": "The launcher's stored session for the target is valid: there is nothing to sign in to." },
-      { "code": "control.sign-in-failed", "docs": "The person was not signed in: the issuer refused or the code expired, the gateway refused the token, or the session could not be kept. Nothing was stored." },
-      { "code": "control.cancelled", "docs": "The client cancelled the request before it ended." },
-      { "code": "control.failed", "docs": "The request failed for a reason no other code names. Its message says why, as the command line would." }
+      {
+        "code": "control.invalid-params",
+        "docs": "The request's params are not what its method's schema admits. The error's fields name each fault; JSON-RPC's own invalid-params code (-32602) carries it."
+      },
+      {
+        "code": "control.unsupported-api-version",
+        "docs": "The request is written to a version of the control API this launcher does not speak. The error's supported field names the ones it does."
+      },
+      {
+        "code": "control.invalid-request",
+        "docs": "The launcher refuses the request as the command line refuses the same options: they contradict each other, or do not apply to what they name."
+      },
+      {
+        "code": "control.invalid-service",
+        "docs": "The request names a service or a group the launcher has none of."
+      },
+      {
+        "code": "control.invalid-value",
+        "docs": "The launcher refuses a setting's value, as a start would refuse it. The previous value is kept."
+      },
+      {
+        "code": "control.unknown-setting",
+        "docs": "The request names a setting the launcher does not keep."
+      },
+      {
+        "code": "control.target-required",
+        "docs": "Several stacks could be meant and the request names none of them. The error's choices name each; nothing was done."
+      },
+      {
+        "code": "control.target-ambiguous",
+        "docs": "The root the request names is the basename of several registered roots. The error's choices name each by its path; nothing was done."
+      },
+      {
+        "code": "control.root-not-found",
+        "docs": "The root the request names is not a knowledge base's clone: no such directory, no .xynolog/ in it, or a project file the launcher refuses."
+      },
+      {
+        "code": "control.root-not-registered",
+        "docs": "The root the request names is not in the registry."
+      },
+      {
+        "code": "control.stack-not-running",
+        "docs": "The request needs a stack of its target recorded on this machine, and none is."
+      },
+      {
+        "code": "control.stack-running",
+        "docs": "The request would change what a recorded stack depends on: stop the stack first."
+      },
+      {
+        "code": "control.start-in-progress",
+        "docs": "Another xynolog start of the same knowledge base holds its start lock."
+      },
+      {
+        "code": "control.runtime-unavailable",
+        "docs": "No container runtime the request can use is on the launcher's PATH."
+      },
+      {
+        "code": "control.dependency-unavailable",
+        "docs": "A program the request needs besides a container runtime (gh, for a codespace) is not on the launcher's PATH."
+      },
+      {
+        "code": "control.unreachable",
+        "docs": "What the request needs to reach did not answer: the knowledge base, its issuer, or a codespace's forward."
+      },
+      {
+        "code": "control.confirmation-required",
+        "docs": "The request would destroy something, and does not state that a person confirmed it."
+      },
+      {
+        "code": "control.unreadable-state",
+        "docs": "The launcher's own record of this machine (the stack record, the registry, the sign-in store) cannot be read. Nothing was assumed in its place."
+      },
+      {
+        "code": "control.already-signed-in",
+        "docs": "The launcher's stored session for the target is valid: there is nothing to sign in to."
+      },
+      {
+        "code": "control.sign-in-failed",
+        "docs": "The person was not signed in: the issuer refused or the code expired, the gateway refused the token, or the session could not be kept. Nothing was stored."
+      },
+      {
+        "code": "control.cancelled",
+        "docs": "The client cancelled the request before it ended."
+      },
+      {
+        "code": "control.failed",
+        "docs": "The request failed for a reason no other code names. Its message says why, as the command line would."
+      }
     ]
   }
 }

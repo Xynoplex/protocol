@@ -3,8 +3,12 @@
   "properties": {
     "tagSchemas": {
       "type": "array",
-      "items": { "$ref": "./TagSchema.json" }
+      "items": {
+        "$ref": "./TagSchema.json"
+      }
     }
   },
-  "required": ["tagSchemas"]
+  "required": [
+    "tagSchemas"
+  ]
 }

@@ -5,13 +5,24 @@
       "why": "a bare token is replaced by its source's name where it stood, the space before it kept, and its citation is exactly that name: nothing is guessed",
       "text": "Paris is the capital of France, as [[ctx-9]] says.",
       "format": "text/markdown",
-      "contextResourceIds": ["src-1", "ctx-9"],
+      "contextResourceIds": [
+        "src-1",
+        "ctx-9"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "src-1": "Source Doc", "ctx-9": "Context Doc" },
+      "contextNames": {
+        "src-1": "Source Doc",
+        "ctx-9": "Context Doc"
+      },
       "resolved": {
         "text": "Paris is the capital of France, as Context Doc says.",
         "citations": [
-          { "resourceId": "ctx-9", "start": 35, "end": 46, "exact": "Context Doc" }
+          {
+            "resourceId": "ctx-9",
+            "start": 35,
+            "end": 46,
+            "exact": "Context Doc"
+          }
         ]
       },
       "dropped": []
@@ -20,13 +31,24 @@
       "why": "a bare token after a finished sentence is replaced all the same: the text reads as a fragment, and the link is on the name",
       "text": "Paris is the capital of France. [[ctx-9]] It is large.",
       "format": "text/markdown",
-      "contextResourceIds": ["src-1", "ctx-9"],
+      "contextResourceIds": [
+        "src-1",
+        "ctx-9"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "src-1": "Source Doc", "ctx-9": "Context Doc" },
+      "contextNames": {
+        "src-1": "Source Doc",
+        "ctx-9": "Context Doc"
+      },
       "resolved": {
         "text": "Paris is the capital of France. Context Doc It is large.",
         "citations": [
-          { "resourceId": "ctx-9", "start": 32, "end": 43, "exact": "Context Doc" }
+          {
+            "resourceId": "ctx-9",
+            "start": 32,
+            "end": 43,
+            "exact": "Context Doc"
+          }
         ]
       },
       "dropped": []
@@ -35,27 +57,49 @@
       "why": "the name is the context's, never the model's: a name written in a token is no id the context showed, and the token is taken out and cites nothing",
       "text": "Built in [[Rome]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Built in.",
         "citations": []
       },
-      "dropped": ["Rome"]
+      "dropped": [
+        "Rome"
+      ]
     },
     {
       "why": "two bare tokens are two names, each cited where it was put",
       "text": "Compare [[r1]] with [[r2]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "Rome",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "Compare Rome with Tea Notes.",
         "citations": [
-          { "resourceId": "r1", "start": 8, "end": 12, "exact": "Rome" },
-          { "resourceId": "r2", "start": 18, "end": 27, "exact": "Tea Notes" }
+          {
+            "resourceId": "r1",
+            "start": 8,
+            "end": 12,
+            "exact": "Rome"
+          },
+          {
+            "resourceId": "r2",
+            "start": 18,
+            "end": 27,
+            "exact": "Tea Notes"
+          }
         ]
       },
       "dropped": []
@@ -64,13 +108,25 @@
       "why": "a bare token that names an annotation the context showed carries that annotation's id, and is replaced by its resource's name",
       "text": "Ice melts, says [[r1/ann-7]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
-      "contextAnnotationIds": ["ann-7"],
-      "contextNames": { "r1": "Rome" },
+      "contextResourceIds": [
+        "r1"
+      ],
+      "contextAnnotationIds": [
+        "ann-7"
+      ],
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Ice melts, says Rome.",
         "citations": [
-          { "resourceId": "r1", "annotationId": "ann-7", "start": 16, "end": 20, "exact": "Rome" }
+          {
+            "resourceId": "r1",
+            "annotationId": "ann-7",
+            "start": 16,
+            "end": 20,
+            "exact": "Rome"
+          }
         ]
       },
       "dropped": []
@@ -79,54 +135,86 @@
       "why": "an id the context did not hold is a model's invention: the token is taken out with the space before it, puts nothing in its place, and cites nothing",
       "text": "A bold claim [[not-in-context]].",
       "format": "text/markdown",
-      "contextResourceIds": ["src-1", "ctx-9"],
+      "contextResourceIds": [
+        "src-1",
+        "ctx-9"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "src-1": "Source Doc", "ctx-9": "Context Doc" },
+      "contextNames": {
+        "src-1": "Source Doc",
+        "ctx-9": "Context Doc"
+      },
       "resolved": {
         "text": "A bold claim.",
         "citations": []
       },
-      "dropped": ["not-in-context"]
+      "dropped": [
+        "not-in-context"
+      ]
     },
     {
       "why": "a dropped token is taken out like any other, and a later name's positions are in the text without it",
       "text": "One [[zzz]] and [[r1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "One and Rome.",
         "citations": [
-          { "resourceId": "r1", "start": 8, "end": 12, "exact": "Rome" }
+          {
+            "resourceId": "r1",
+            "start": 8,
+            "end": 12,
+            "exact": "Rome"
+          }
         ]
       },
-      "dropped": ["zzz"]
+      "dropped": [
+        "zzz"
+      ]
     },
     {
       "why": "what is not a resource id is never cited, even where the context's related content is keyed by it",
       "text": "It rains [[doc.1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["doc.1"],
+      "contextResourceIds": [
+        "doc.1"
+      ],
       "contextAnnotationIds": [],
       "contextNames": {},
       "resolved": {
         "text": "It rains.",
         "citations": []
       },
-      "dropped": ["doc.1"]
+      "dropped": [
+        "doc.1"
+      ]
     },
     {
       "why": "a bare token needs no text before it: it is its source's name wherever it stands",
       "text": "[[r1]] was founded on seven hills.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Rome was founded on seven hills.",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 4, "exact": "Rome" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 4,
+            "exact": "Rome"
+          }
         ]
       },
       "dropped": []
@@ -135,7 +223,9 @@
       "why": "double brackets around white space, around more than two ids, or around nothing are no token, and stay in the text",
       "text": "See [[a b]], [[a/b/c]], [[]] and [a].",
       "format": "text/markdown",
-      "contextResourceIds": ["a"],
+      "contextResourceIds": [
+        "a"
+      ],
       "contextAnnotationIds": [],
       "contextNames": {},
       "resolved": {
@@ -148,26 +238,41 @@
       "why": "tabs before a token that puts nothing in its place are taken out with the spaces",
       "text": "Salt dissolves\t  [[zzz]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Salt dissolves.",
         "citations": []
       },
-      "dropped": ["zzz"]
+      "dropped": [
+        "zzz"
+      ]
     },
     {
       "why": "spaces and tabs before a token that is replaced by a name stay: the name takes the token's place",
       "text": "Built by\t[[r1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Built by\tRome.",
         "citations": [
-          { "resourceId": "r1", "start": 9, "end": 13, "exact": "Rome" }
+          {
+            "resourceId": "r1",
+            "start": 9,
+            "end": 13,
+            "exact": "Rome"
+          }
         ]
       },
       "dropped": []
@@ -183,45 +288,64 @@
         "text": "Heading\n\nBody.",
         "citations": []
       },
-      "dropped": ["zzz"]
+      "dropped": [
+        "zzz"
+      ]
     },
     {
       "why": "spaces that stand before a line feed are not at the end of the text before a token that puts nothing in its place: they stay in the text with the line feed",
       "text": "Tea is hot. \n[[zzz]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Tea is hot. \n",
         "citations": []
       },
-      "dropped": ["zzz"]
+      "dropped": [
+        "zzz"
+      ]
     },
     {
       "why": "a source the context gave no name, as it gives none to a resource it names only by its id, has none to put in a bare token's place: the token is taken out with the space before it, and cites nothing",
       "text": "It is cited by [[res-4]].",
       "format": "text/markdown",
-      "contextResourceIds": ["res-4"],
+      "contextResourceIds": [
+        "res-4"
+      ],
       "contextAnnotationIds": [],
       "contextNames": {},
       "resolved": {
         "text": "It is cited by.",
         "citations": []
       },
-      "dropped": ["res-4"]
+      "dropped": [
+        "res-4"
+      ]
     },
     {
       "why": "a marked token cites a source the context gave no name as it cites any other: a marked claim needs no name",
       "text": "[[res-4: It cites the focus]].",
       "format": "text/markdown",
-      "contextResourceIds": ["res-4"],
+      "contextResourceIds": [
+        "res-4"
+      ],
       "contextAnnotationIds": [],
       "contextNames": {},
       "resolved": {
         "text": "It cites the focus.",
         "citations": [
-          { "resourceId": "res-4", "start": 0, "end": 18, "exact": "It cites the focus" }
+          {
+            "resourceId": "res-4",
+            "start": 0,
+            "end": 18,
+            "exact": "It cites the focus"
+          }
         ]
       },
       "dropped": []
@@ -230,9 +354,13 @@
       "why": "a text with no token is left as it is",
       "text": "Nothing is cited here.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Nothing is cited here.",
         "citations": []
@@ -243,13 +371,22 @@
       "why": "positions count the text's characters, not its bytes",
       "text": "Café ouvert, dit [[r1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Thé servi" },
+      "contextNames": {
+        "r1": "Thé servi"
+      },
       "resolved": {
         "text": "Café ouvert, dit Thé servi.",
         "citations": [
-          { "resourceId": "r1", "start": 17, "end": 26, "exact": "Thé servi" }
+          {
+            "resourceId": "r1",
+            "start": 17,
+            "end": 26,
+            "exact": "Thé servi"
+          }
         ]
       },
       "dropped": []
@@ -258,13 +395,22 @@
       "why": "positions count the text's code points, not its UTF-16 code units: after an emoji, a name with an emoji in it starts at 10 and ends at 21, where a count of code units would say 11 and 23",
       "text": "🎉 Opened: [[r1]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Thé 😀 servi" },
+      "contextNames": {
+        "r1": "Thé 😀 servi"
+      },
       "resolved": {
         "text": "🎉 Opened: Thé 😀 servi",
         "citations": [
-          { "resourceId": "r1", "start": 10, "end": 21, "exact": "Thé 😀 servi" }
+          {
+            "resourceId": "r1",
+            "start": 10,
+            "end": 21,
+            "exact": "Thé 😀 servi"
+          }
         ]
       },
       "dropped": []
@@ -273,41 +419,71 @@
       "why": "a token that names an annotation the context did not show makes no citation, though its resource is one the context showed; a later token for the resource alone is its name",
       "text": "Ice melts [[r1/ann-8]]. Salt dissolves in [[r1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
-      "contextAnnotationIds": ["ann-7"],
-      "contextNames": { "r1": "Rome" },
+      "contextResourceIds": [
+        "r1"
+      ],
+      "contextAnnotationIds": [
+        "ann-7"
+      ],
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Ice melts. Salt dissolves in Rome.",
         "citations": [
-          { "resourceId": "r1", "start": 29, "end": 33, "exact": "Rome" }
+          {
+            "resourceId": "r1",
+            "start": 29,
+            "end": 33,
+            "exact": "Rome"
+          }
         ]
       },
-      "dropped": ["r1"]
+      "dropped": [
+        "r1"
+      ]
     },
     {
       "why": "what is not an annotation id is never cited, even where the context names it",
       "text": "It rains [[r1/ann.7]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
-      "contextAnnotationIds": ["ann.7"],
-      "contextNames": { "r1": "Rome" },
+      "contextResourceIds": [
+        "r1"
+      ],
+      "contextAnnotationIds": [
+        "ann.7"
+      ],
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "It rains.",
         "citations": []
       },
-      "dropped": ["r1"]
+      "dropped": [
+        "r1"
+      ]
     },
     {
       "why": "in Markdown a name's ASCII punctuation is written after a backslash, so that none of it is read as markup; the citation is of the name as written, backslashes and all",
       "text": "First described in [[r1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "On *Radiant* Matter (1879)" },
+      "contextNames": {
+        "r1": "On *Radiant* Matter (1879)"
+      },
       "resolved": {
         "text": "First described in On \\*Radiant\\* Matter \\(1879\\).",
         "citations": [
-          { "resourceId": "r1", "start": 19, "end": 49, "exact": "On \\*Radiant\\* Matter \\(1879\\)" }
+          {
+            "resourceId": "r1",
+            "start": 19,
+            "end": 49,
+            "exact": "On \\*Radiant\\* Matter \\(1879\\)"
+          }
         ]
       },
       "dropped": []
@@ -316,13 +492,22 @@
       "why": "in Markdown every one of the 32 ASCII punctuation characters is written after a backslash",
       "text": "[[r1]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" },
+      "contextNames": {
+        "r1": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      },
       "resolved": {
         "text": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 64, "exact": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 64,
+            "exact": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~"
+          }
         ]
       },
       "dropped": []
@@ -331,13 +516,22 @@
       "why": "in a PDF's source, which is Typst, every one of the 32 ASCII punctuation characters is written after a backslash, as in Markdown",
       "text": "[[r1]]",
       "format": "application/pdf",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" },
+      "contextNames": {
+        "r1": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      },
       "resolved": {
         "text": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 64, "exact": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 64,
+            "exact": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~"
+          }
         ]
       },
       "dropped": []
@@ -346,13 +540,22 @@
       "why": "in plain text a name is written as it is",
       "text": "[[r1]]",
       "format": "text/plain",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" },
+      "contextNames": {
+        "r1": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      },
       "resolved": {
         "text": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 32, "exact": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 32,
+            "exact": "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+          }
         ]
       },
       "dropped": []
@@ -361,13 +564,22 @@
       "why": "only ASCII punctuation is written after a backslash: a curly quotation mark or a dash outside ASCII is written as it is",
       "text": "See [[r1]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "“Rome” – Notes" },
+      "contextNames": {
+        "r1": "“Rome” – Notes"
+      },
       "resolved": {
         "text": "See “Rome” – Notes.",
         "citations": [
-          { "resourceId": "r1", "start": 4, "end": 18, "exact": "“Rome” – Notes" }
+          {
+            "resourceId": "r1",
+            "start": 4,
+            "end": 18,
+            "exact": "“Rome” – Notes"
+          }
         ]
       },
       "dropped": []
@@ -376,13 +588,24 @@
       "why": "a name is put in the text and never read for tokens: a name that holds double brackets is no token",
       "text": "See [[r1]].",
       "format": "text/plain",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "[[r2]]", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "[[r2]]",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "See [[r2]].",
         "citations": [
-          { "resourceId": "r1", "start": 4, "end": 10, "exact": "[[r2]]" }
+          {
+            "resourceId": "r1",
+            "start": 4,
+            "end": 10,
+            "exact": "[[r2]]"
+          }
         ]
       },
       "dropped": []
@@ -391,13 +614,22 @@
       "why": "a marked token's claim stays in the text where the token was, with the space before it, and its citation is exactly the claim: nothing is guessed",
       "text": "The theory was [[r1: proposed by Smith]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "The theory was proposed by Smith.",
         "citations": [
-          { "resourceId": "r1", "start": 15, "end": 32, "exact": "proposed by Smith" }
+          {
+            "resourceId": "r1",
+            "start": 15,
+            "end": 32,
+            "exact": "proposed by Smith"
+          }
         ]
       },
       "dropped": []
@@ -406,13 +638,22 @@
       "why": "a mark inside a sentence cites what it wraps and nothing more",
       "text": "Tea is [[r1: hot]], they said.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Tea is hot, they said.",
         "citations": [
-          { "resourceId": "r1", "start": 7, "end": 10, "exact": "hot" }
+          {
+            "resourceId": "r1",
+            "start": 7,
+            "end": 10,
+            "exact": "hot"
+          }
         ]
       },
       "dropped": []
@@ -421,13 +662,22 @@
       "why": "a marked claim with an abbreviation, a file name, a decimal and a full stop of its own is cited whole: no sentence is read in it",
       "text": "[[r1: Dr. Lovelace edited config.json at 3.14 a.m.]] Then she left.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Dr. Lovelace edited config.json at 3.14 a.m. Then she left.",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 44, "exact": "Dr. Lovelace edited config.json at 3.14 a.m." }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 44,
+            "exact": "Dr. Lovelace edited config.json at 3.14 a.m."
+          }
         ]
       },
       "dropped": []
@@ -436,13 +686,22 @@
       "why": "a marked claim of two sentences is cited whole",
       "text": "[[r1: It rained. The river rose.]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "It rained. The river rose.",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 26, "exact": "It rained. The river rose." }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 26,
+            "exact": "It rained. The river rose."
+          }
         ]
       },
       "dropped": []
@@ -451,14 +710,30 @@
       "why": "a token that lists several ids cites its claim once for each, over the one span, in the order it lists them",
       "text": "Both [[r1,r2: agree on it]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "Rome",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "Both agree on it.",
         "citations": [
-          { "resourceId": "r1", "start": 5, "end": 16, "exact": "agree on it" },
-          { "resourceId": "r2", "start": 5, "end": 16, "exact": "agree on it" }
+          {
+            "resourceId": "r1",
+            "start": 5,
+            "end": 16,
+            "exact": "agree on it"
+          },
+          {
+            "resourceId": "r2",
+            "start": 5,
+            "end": 16,
+            "exact": "agree on it"
+          }
         ]
       },
       "dropped": []
@@ -467,14 +742,30 @@
       "why": "white space may stand on either side of the comma between two ids",
       "text": "Both [[r1 , r2: agree]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "Rome",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "Both agree.",
         "citations": [
-          { "resourceId": "r1", "start": 5, "end": 10, "exact": "agree" },
-          { "resourceId": "r2", "start": 5, "end": 10, "exact": "agree" }
+          {
+            "resourceId": "r1",
+            "start": 5,
+            "end": 10,
+            "exact": "agree"
+          },
+          {
+            "resourceId": "r2",
+            "start": 5,
+            "end": 10,
+            "exact": "agree"
+          }
         ]
       },
       "dropped": []
@@ -483,54 +774,89 @@
       "why": "an id of a marked token that the context did not show cites nothing: the claim stays, and the token's other ids cite it",
       "text": "Seen [[zzz,r1: twice]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Seen twice.",
         "citations": [
-          { "resourceId": "r1", "start": 5, "end": 10, "exact": "twice" }
+          {
+            "resourceId": "r1",
+            "start": 5,
+            "end": 10,
+            "exact": "twice"
+          }
         ]
       },
-      "dropped": ["zzz"]
+      "dropped": [
+        "zzz"
+      ]
     },
     {
       "why": "a marked token none of whose ids the context showed leaves its claim in the text, and cites nothing",
       "text": "Seen [[zzz: once]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Seen once.",
         "citations": []
       },
-      "dropped": ["zzz"]
+      "dropped": [
+        "zzz"
+      ]
     },
     {
       "why": "what is not a resource id is never cited from a marked token either, and its claim stays",
       "text": "[[doc.1: x]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "x",
         "citations": []
       },
-      "dropped": ["doc.1"]
+      "dropped": [
+        "doc.1"
+      ]
     },
     {
       "why": "a marked token names the annotation a passage came from as a bare one does",
       "text": "Ice [[r1/ann-7: melts]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
-      "contextAnnotationIds": ["ann-7"],
-      "contextNames": { "r1": "Rome" },
+      "contextResourceIds": [
+        "r1"
+      ],
+      "contextAnnotationIds": [
+        "ann-7"
+      ],
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Ice melts.",
         "citations": [
-          { "resourceId": "r1", "annotationId": "ann-7", "start": 4, "end": 9, "exact": "melts" }
+          {
+            "resourceId": "r1",
+            "annotationId": "ann-7",
+            "start": 4,
+            "end": 9,
+            "exact": "melts"
+          }
         ]
       },
       "dropped": []
@@ -539,13 +865,22 @@
       "why": "a marked token whose claim is empty is taken as a bare token: it is its source's name",
       "text": "Named [[r1: ]] here.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Named Rome here.",
         "citations": [
-          { "resourceId": "r1", "start": 6, "end": 10, "exact": "Rome" }
+          {
+            "resourceId": "r1",
+            "start": 6,
+            "end": 10,
+            "exact": "Rome"
+          }
         ]
       },
       "dropped": []
@@ -554,14 +889,30 @@
       "why": "a marked token whose claim is empty and that lists several ids is taken as as many bare tokens, each put where the one before it ended: their names stand together",
       "text": "By [[r1,r2: ]].",
       "format": "text/markdown",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "Rome",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "By RomeTea Notes.",
         "citations": [
-          { "resourceId": "r1", "start": 3, "end": 7, "exact": "Rome" },
-          { "resourceId": "r2", "start": 7, "end": 16, "exact": "Tea Notes" }
+          {
+            "resourceId": "r1",
+            "start": 3,
+            "end": 7,
+            "exact": "Rome"
+          },
+          {
+            "resourceId": "r2",
+            "start": 7,
+            "end": 16,
+            "exact": "Tea Notes"
+          }
         ]
       },
       "dropped": []
@@ -570,13 +921,22 @@
       "why": "a claim ends at the first ]] after its colon: what follows stays in the text",
       "text": "[[r1: one]] two]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "one two]]",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 3, "exact": "one" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 3,
+            "exact": "one"
+          }
         ]
       },
       "dropped": []
@@ -585,13 +945,22 @@
       "why": "the white space at the ends of a claim is the token's, and leaves the text with it: the claim is its words",
       "text": "A [[r1:   spaced claim  ]] end.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "A spaced claim end.",
         "citations": [
-          { "resourceId": "r1", "start": 2, "end": 14, "exact": "spaced claim" }
+          {
+            "resourceId": "r1",
+            "start": 2,
+            "end": 14,
+            "exact": "spaced claim"
+          }
         ]
       },
       "dropped": []
@@ -600,13 +969,22 @@
       "why": "a marked claim may run over a line end",
       "text": "[[r1: line one\nline two]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "line one\nline two",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 17, "exact": "line one\nline two" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 17,
+            "exact": "line one\nline two"
+          }
         ]
       },
       "dropped": []
@@ -615,13 +993,22 @@
       "why": "a marked claim's offsets count code points: after an emoji it starts at 2, where a count of UTF-16 code units says 3",
       "text": "😀 [[r1: ok]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "😀 ok",
         "citations": [
-          { "resourceId": "r1", "start": 2, "end": 4, "exact": "ok" }
+          {
+            "resourceId": "r1",
+            "start": 2,
+            "end": 4,
+            "exact": "ok"
+          }
         ]
       },
       "dropped": []
@@ -630,14 +1017,30 @@
       "why": "a bare token after a marked one is its source's name, as a bare token always is",
       "text": "[[r1: Alpha holds]], as [[r2]] says.",
       "format": "text/markdown",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "Rome",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "Alpha holds, as Tea Notes says.",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 11, "exact": "Alpha holds" },
-          { "resourceId": "r2", "start": 16, "end": 25, "exact": "Tea Notes" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 11,
+            "exact": "Alpha holds"
+          },
+          {
+            "resourceId": "r2",
+            "start": 16,
+            "end": 25,
+            "exact": "Tea Notes"
+          }
         ]
       },
       "dropped": []
@@ -646,9 +1049,13 @@
       "why": "a marked token with no closing ]] is no token, and stays in the text as it is",
       "text": "Seen [[r1: no end",
       "format": "text/markdown",
-      "contextResourceIds": ["r1"],
+      "contextResourceIds": [
+        "r1"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome" },
+      "contextNames": {
+        "r1": "Rome"
+      },
       "resolved": {
         "text": "Seen [[r1: no end",
         "citations": []
@@ -659,13 +1066,24 @@
       "why": "a token inside a claim is no token of its own: the claim ends at the first ]], what was inside it is the claim's, and what follows stays in the text",
       "text": "[[r1: see [[r2]] here]]",
       "format": "text/markdown",
-      "contextResourceIds": ["r1", "r2"],
+      "contextResourceIds": [
+        "r1",
+        "r2"
+      ],
       "contextAnnotationIds": [],
-      "contextNames": { "r1": "Rome", "r2": "Tea Notes" },
+      "contextNames": {
+        "r1": "Rome",
+        "r2": "Tea Notes"
+      },
       "resolved": {
         "text": "see [[r2 here]]",
         "citations": [
-          { "resourceId": "r1", "start": 0, "end": 8, "exact": "see [[r2" }
+          {
+            "resourceId": "r1",
+            "start": 0,
+            "end": 8,
+            "exact": "see [[r2"
+          }
         ]
       },
       "dropped": []
@@ -692,7 +1110,11 @@
         },
         "graph": {
           "nodes": [
-            { "id": "res-2", "type": "resource", "label": "A neighbour" },
+            {
+              "id": "res-2",
+              "type": "resource",
+              "label": "A neighbour"
+            },
             {
               "id": "ann-5",
               "type": "annotation",
@@ -703,7 +1125,9 @@
                 "id": "ann-5",
                 "motivation": "linking",
                 "created": "2026-01-01T00:00:00.000Z",
-                "target": { "source": "res-1" }
+                "target": {
+                  "source": "res-1"
+                }
               }
             }
           ],
@@ -711,15 +1135,37 @@
         },
         "semanticContext": {
           "similar": [
-            { "text": "A similar passage.", "resourceId": "res-3", "resourceName": "Elsewhere", "score": 0.9 },
-            { "text": "A passage an annotation marked.", "resourceId": "res-3", "resourceName": "Elsewhere", "score": 0.8, "annotationId": "ann-9" }
+            {
+              "text": "A similar passage.",
+              "resourceId": "res-3",
+              "resourceName": "Elsewhere",
+              "score": 0.9
+            },
+            {
+              "text": "A passage an annotation marked.",
+              "resourceId": "res-3",
+              "resourceName": "Elsewhere",
+              "score": 0.8,
+              "annotationId": "ann-9"
+            }
           ]
         },
         "metadata": {}
       },
-      "resourceIds": ["res-1", "res-2", "res-3", "res-4"],
-      "annotationIds": ["ann-9"],
-      "names": { "res-1": "Focus", "res-2": "A neighbour", "res-3": "Elsewhere" }
+      "resourceIds": [
+        "res-1",
+        "res-2",
+        "res-3",
+        "res-4"
+      ],
+      "annotationIds": [
+        "ann-9"
+      ],
+      "names": {
+        "res-1": "Focus",
+        "res-2": "A neighbour",
+        "res-3": "Elsewhere"
+      }
     },
     {
       "why": "an annotation focus: the resource the annotation is in, with its name, and no annotation: the focus is not one the model was shown an id for",
@@ -732,7 +1178,9 @@
             "id": "ann-1",
             "motivation": "linking",
             "created": "2026-01-01T00:00:00.000Z",
-            "target": { "source": "res-1" }
+            "target": {
+              "source": "res-1"
+            }
           },
           "sourceResource": {
             "@context": "https://xynolog.dev/context/v1",
@@ -747,9 +1195,13 @@
         },
         "metadata": {}
       },
-      "resourceIds": ["res-1"],
+      "resourceIds": [
+        "res-1"
+      ],
       "annotationIds": [],
-      "names": { "res-1": "Source" }
+      "names": {
+        "res-1": "Source"
+      }
     },
     {
       "why": "no context at all: nothing can be cited, and nothing is named",
@@ -772,24 +1224,59 @@
         },
         "graph": {
           "nodes": [
-            { "id": "res-1", "type": "resource", "label": "The graph's" },
-            { "id": "res-2", "type": "resource", "label": "The graph's" },
-            { "id": "res-3", "type": "resource", "label": "res-3" }
+            {
+              "id": "res-1",
+              "type": "resource",
+              "label": "The graph's"
+            },
+            {
+              "id": "res-2",
+              "type": "resource",
+              "label": "The graph's"
+            },
+            {
+              "id": "res-3",
+              "type": "resource",
+              "label": "res-3"
+            }
           ],
           "edges": []
         },
         "semanticContext": {
           "similar": [
-            { "text": "A passage.", "resourceId": "res-1", "resourceName": "A passage's", "score": 0.9 },
-            { "text": "A passage.", "resourceId": "res-2", "resourceName": "A passage's", "score": 0.9 },
-            { "text": "A passage.", "resourceId": "res-3", "resourceName": "A passage's", "score": 0.9 }
+            {
+              "text": "A passage.",
+              "resourceId": "res-1",
+              "resourceName": "A passage's",
+              "score": 0.9
+            },
+            {
+              "text": "A passage.",
+              "resourceId": "res-2",
+              "resourceName": "A passage's",
+              "score": 0.9
+            },
+            {
+              "text": "A passage.",
+              "resourceId": "res-3",
+              "resourceName": "A passage's",
+              "score": 0.9
+            }
           ]
         },
         "metadata": {}
       },
-      "resourceIds": ["res-1", "res-2", "res-3"],
+      "resourceIds": [
+        "res-1",
+        "res-2",
+        "res-3"
+      ],
       "annotationIds": [],
-      "names": { "res-1": "The focus's own", "res-2": "The graph's", "res-3": "A passage's" }
+      "names": {
+        "res-1": "The focus's own",
+        "res-2": "The graph's",
+        "res-3": "A passage's"
+      }
     },
     {
       "why": "a resource the context names only by its id has no name, as the Librarian labels a citer whose view it could not read; nor has one named by white space alone; and the white space at a name's ends is no part of it, nor of what is held to the id",
@@ -805,17 +1292,36 @@
         },
         "graph": {
           "nodes": [
-            { "id": "res-2", "type": "resource", "label": "res-2" },
-            { "id": "res-3", "type": "resource", "label": " \t " },
-            { "id": "res-4", "type": "resource", "label": " res-4 " }
+            {
+              "id": "res-2",
+              "type": "resource",
+              "label": "res-2"
+            },
+            {
+              "id": "res-3",
+              "type": "resource",
+              "label": " \t "
+            },
+            {
+              "id": "res-4",
+              "type": "resource",
+              "label": " res-4 "
+            }
           ],
           "edges": []
         },
         "metadata": {}
       },
-      "resourceIds": ["res-1", "res-2", "res-3", "res-4"],
+      "resourceIds": [
+        "res-1",
+        "res-2",
+        "res-3",
+        "res-4"
+      ],
       "annotationIds": [],
-      "names": { "res-1": "Padded" }
+      "names": {
+        "res-1": "Padded"
+      }
     }
   ]
 }

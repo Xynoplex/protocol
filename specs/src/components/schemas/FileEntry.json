@@ -1,10 +1,19 @@
 {
   "type": "object",
-  "required": ["type", "name", "path", "size", "mtime", "tracked"],
+  "required": [
+    "type",
+    "name",
+    "path",
+    "size",
+    "mtime",
+    "tracked"
+  ],
   "properties": {
     "type": {
       "type": "string",
-      "enum": ["file"]
+      "enum": [
+        "file"
+      ]
     },
     "name": {
       "type": "string",
@@ -33,7 +42,9 @@
     },
     "entityTypes": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Entity types assigned to this resource (only when tracked is true)"
     },
     "annotationCount": {

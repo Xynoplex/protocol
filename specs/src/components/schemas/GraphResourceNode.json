@@ -14,7 +14,7 @@
     },
     "label": {
       "type": "string",
-      "description": "The resource's display name \u2014 its raw id when the resource's view was missing at build time"
+      "description": "The resource's display name — its raw id when the resource's view was missing at build time"
     },
     "entityTypes": {
       "type": "array",

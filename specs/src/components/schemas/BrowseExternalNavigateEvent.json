@@ -9,5 +9,7 @@
       "$ref": "./ResourceId.json"
     }
   },
-  "required": ["url"]
+  "required": [
+    "url"
+  ]
 }

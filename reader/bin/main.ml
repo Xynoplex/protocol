@@ -1,8 +1,8 @@
 (* xynolog-protocol check ROOT: the Protocol checkout at ROOT. Its specs/src is
    read into the model, every file accounted for and every table what its
-   schema says; what the checkout states outside specs/src is held to it; the
-   bus registry is spelled as JSON.stringify spells it; and every file Git
-   tracks has an owner. Each refusal is printed, and any fails the run. *)
+   schema says; what the checkout states outside specs/src is held to it;
+   each JSON file of specs/src is spelled as JSON.stringify spells it; and
+   every file Git tracks has an owner. Each refusal is printed, and any fails the run. *)
 
 (* The files Git tracks under [root]. *)
 let tracked root =
@@ -28,7 +28,7 @@ let () =
   | [| _; "check"; root |] -> (
       let outside spec =
         Archivist_rules.contract ~root spec.Spec.tables.bus_registry
-        @ Repository.registry_form ~root
+        @ Repository.spelling ~root
         @
         match tracked root with
         | Ok files -> Repository.ownership ~root files
@@ -43,9 +43,9 @@ let () =
       | Ok spec ->
           Printf.printf
             "Protocol read: 2 OpenAPI documents, %d path items, %d responses, \
-             %d JSON Schemas, and %d tables, each what its schema says; the \
-             bus registry spelled as JSON.stringify spells it, and every \
-             tracked file owned\n"
+             %d JSON Schemas, and %d tables, each what its schema says; each \
+             JSON file spelled as JSON.stringify spells it, and every tracked \
+             file owned\n"
             (List.length spec.path_items)
             (List.length spec.responses)
             (List.length spec.schemas)

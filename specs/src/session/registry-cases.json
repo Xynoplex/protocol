@@ -3,50 +3,120 @@
   "cases": [
     {
       "why": "the same protocol, host and port is one place",
-      "one": { "kind": "http", "host": "kb.example.org", "port": 443, "protocol": "https" },
-      "other": { "kind": "http", "host": "kb.example.org", "port": 443, "protocol": "https" },
+      "one": {
+        "kind": "http",
+        "host": "kb.example.org",
+        "port": 443,
+        "protocol": "https"
+      },
+      "other": {
+        "kind": "http",
+        "host": "kb.example.org",
+        "port": 443,
+        "protocol": "https"
+      },
       "samePlace": true
     },
     {
       "why": "another protocol is another place, though the host and the port are the same",
-      "one": { "kind": "http", "host": "kb.example.org", "port": 4000, "protocol": "http" },
-      "other": { "kind": "http", "host": "kb.example.org", "port": 4000, "protocol": "https" },
+      "one": {
+        "kind": "http",
+        "host": "kb.example.org",
+        "port": 4000,
+        "protocol": "http"
+      },
+      "other": {
+        "kind": "http",
+        "host": "kb.example.org",
+        "port": 4000,
+        "protocol": "https"
+      },
       "samePlace": false
     },
     {
       "why": "another host is another place",
-      "one": { "kind": "http", "host": "kb.example.org", "port": 443, "protocol": "https" },
-      "other": { "kind": "http", "host": "kb.example.net", "port": 443, "protocol": "https" },
+      "one": {
+        "kind": "http",
+        "host": "kb.example.org",
+        "port": 443,
+        "protocol": "https"
+      },
+      "other": {
+        "kind": "http",
+        "host": "kb.example.net",
+        "port": 443,
+        "protocol": "https"
+      },
       "samePlace": false
     },
     {
       "why": "another port is another place",
-      "one": { "kind": "http", "host": "localhost", "port": 4000, "protocol": "http" },
-      "other": { "kind": "http", "host": "localhost", "port": 4001, "protocol": "http" },
+      "one": {
+        "kind": "http",
+        "host": "localhost",
+        "port": 4000,
+        "protocol": "http"
+      },
+      "other": {
+        "kind": "http",
+        "host": "localhost",
+        "port": 4001,
+        "protocol": "http"
+      },
       "samePlace": false
     },
     {
       "why": "a host written in other letter case is the same host: the origin puts it in lowercase",
-      "one": { "kind": "http", "host": "KB.Example.org", "port": 443, "protocol": "https" },
-      "other": { "kind": "http", "host": "kb.example.org", "port": 443, "protocol": "https" },
+      "one": {
+        "kind": "http",
+        "host": "KB.Example.org",
+        "port": 443,
+        "protocol": "https"
+      },
+      "other": {
+        "kind": "http",
+        "host": "kb.example.org",
+        "port": 443,
+        "protocol": "https"
+      },
       "samePlace": true
     },
     {
       "why": "a loaded knowledge base is the place its id names",
-      "one": { "kind": "local", "kbId": "kb-a" },
-      "other": { "kind": "local", "kbId": "kb-a" },
+      "one": {
+        "kind": "local",
+        "kbId": "kb-a"
+      },
+      "other": {
+        "kind": "local",
+        "kbId": "kb-a"
+      },
       "samePlace": true
     },
     {
       "why": "another loaded knowledge base is another place",
-      "one": { "kind": "local", "kbId": "kb-a" },
-      "other": { "kind": "local", "kbId": "kb-b" },
+      "one": {
+        "kind": "local",
+        "kbId": "kb-a"
+      },
+      "other": {
+        "kind": "local",
+        "kbId": "kb-b"
+      },
       "samePlace": false
     },
     {
       "why": "a gateway and a loaded knowledge base are never one place",
-      "one": { "kind": "http", "host": "localhost", "port": 4000, "protocol": "http" },
-      "other": { "kind": "local", "kbId": "localhost" },
+      "one": {
+        "kind": "http",
+        "host": "localhost",
+        "port": 4000,
+        "protocol": "http"
+      },
+      "other": {
+        "kind": "local",
+        "kbId": "localhost"
+      },
       "samePlace": false
     }
   ],
@@ -54,28 +124,81 @@
     {
       "why": "the place each has decides, though they were opened the other way round",
       "open": [
-        { "id": "opened-first", "name": "Opened first", "openedAt": 1000, "order": 1 },
-        { "id": "opened-second", "name": "Opened second", "openedAt": 2000, "order": 0 }
+        {
+          "id": "opened-first",
+          "name": "Opened first",
+          "openedAt": 1000,
+          "order": 1
+        },
+        {
+          "id": "opened-second",
+          "name": "Opened second",
+          "openedAt": 2000,
+          "order": 0
+        }
       ],
-      "shown": ["opened-second", "opened-first"]
+      "shown": [
+        "opened-second",
+        "opened-first"
+      ]
     },
     {
       "why": "two in one place are shown by when each was opened, first first",
       "open": [
-        { "id": "opened-second", "name": "Opened second", "openedAt": 2000, "order": 0 },
-        { "id": "opened-first", "name": "Opened first", "openedAt": 1000, "order": 0 }
+        {
+          "id": "opened-second",
+          "name": "Opened second",
+          "openedAt": 2000,
+          "order": 0
+        },
+        {
+          "id": "opened-first",
+          "name": "Opened first",
+          "openedAt": 1000,
+          "order": 0
+        }
       ],
-      "shown": ["opened-first", "opened-second"]
+      "shown": [
+        "opened-first",
+        "opened-second"
+      ]
     },
     {
       "why": "places decide first and open times only within a place, whatever the order kept",
       "open": [
-        { "id": "c", "name": "C", "openedAt": 3000, "order": 2, "mediaType": "text/plain" },
-        { "id": "b", "name": "B", "openedAt": 5000, "order": 0, "storageUri": "file://docs/b.md" },
-        { "id": "a", "name": "A", "openedAt": 4000, "order": 0 },
-        { "id": "d", "name": "D", "openedAt": 1000, "order": 2 }
+        {
+          "id": "c",
+          "name": "C",
+          "openedAt": 3000,
+          "order": 2,
+          "mediaType": "text/plain"
+        },
+        {
+          "id": "b",
+          "name": "B",
+          "openedAt": 5000,
+          "order": 0,
+          "storageUri": "file://docs/b.md"
+        },
+        {
+          "id": "a",
+          "name": "A",
+          "openedAt": 4000,
+          "order": 0
+        },
+        {
+          "id": "d",
+          "name": "D",
+          "openedAt": 1000,
+          "order": 2
+        }
       ],
-      "shown": ["a", "b", "d", "c"]
+      "shown": [
+        "a",
+        "b",
+        "d",
+        "c"
+      ]
     }
   ]
 }

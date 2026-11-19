@@ -4,10 +4,16 @@
   "properties": {
     "annotationId": {
       "anyOf": [
-        { "$ref": "./AnnotationId.json" },
-        { "type": "null" }
+        {
+          "$ref": "./AnnotationId.json"
+        },
+        {
+          "type": "null"
+        }
       ]
     }
   },
-  "required": ["annotationId"]
+  "required": [
+    "annotationId"
+  ]
 }

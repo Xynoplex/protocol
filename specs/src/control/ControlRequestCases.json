@@ -54,8 +54,12 @@
                 "properties": {
                   "id": {
                     "anyOf": [
-                      { "$ref": "./RequestId.json" },
-                      { "type": "null" }
+                      {
+                        "$ref": "./RequestId.json"
+                      },
+                      {
+                        "type": "null"
+                      }
                     ]
                   },
                   "error": {
@@ -106,7 +110,9 @@
                 ],
                 "additionalProperties": false
               },
-              { "type": "null" }
+              {
+                "type": "null"
+              }
             ]
           }
         },

@@ -49,8 +49,20 @@ let () =
             (spelled
                (`List [ `Float 0.5; `Float 1.0; `Float 0.1 ])
                "[\n  0.5,\n  1,\n  0.1\n]\n");
-          case "a key like an index"
-            (unspelled (`Assoc [ ("b", `Null); ("1", `Null) ]));
+          case "keys like an index first, ascending"
+            (spelled
+               (`Assoc
+                  [ ("b", `Null); ("401", `Null); ("a", `Null); ("200", `Null) ])
+               "{\n\
+               \  \"200\": null,\n\
+               \  \"401\": null,\n\
+               \  \"b\": null,\n\
+               \  \"a\": null\n\
+                }\n");
+          case "a key past the last index, as written"
+            (spelled
+               (`Assoc [ ("b", `Null); ("4294967295", `Null); ("01", `Null) ])
+               "{\n  \"b\": null,\n  \"4294967295\": null,\n  \"01\": null\n}\n");
           case "a key written twice"
             (unspelled (`Assoc [ ("a", `Null); ("a", `Null) ]));
           case "a number in an exponent" (unspelled (`Float 1e21));

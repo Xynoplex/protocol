@@ -153,8 +153,12 @@
           },
           "span": {
             "anyOf": [
-              { "$ref": "#/properties/cases/items/properties/span" },
-              { "type": "null" }
+              {
+                "$ref": "#/properties/cases/items/properties/span"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         },

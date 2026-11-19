@@ -15,12 +15,28 @@
       "patch": {
         "spec": {
           "messaging": {
-            "signal": { "type": "nats" },
+            "signal": {
+              "type": "nats"
+            },
             "image": null,
             "resources": null,
-            "external": { "servers": "broker.example.com:4222", "user": { "fromEnv": "NATS_USER" }, "password": { "fromEnv": "NATS_PASSWORD" } }
+            "external": {
+              "servers": "broker.example.com:4222",
+              "user": {
+                "fromEnv": "NATS_USER"
+              },
+              "password": {
+                "fromEnv": "NATS_PASSWORD"
+              }
+            }
           },
-          "issuer": { "shared": null, "external": { "type": "oidc", "url": "https://login.example.com" } }
+          "issuer": {
+            "shared": null,
+            "external": {
+              "type": "oidc",
+              "url": "https://login.example.com"
+            }
+          }
         }
       },
       "verdict": "accepted"
@@ -29,7 +45,13 @@
       "why": "a misspelled field beside the right one",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "gateway": { "imgae": "ghcr.io/xynolog/xynolog-gateway:latest" } } },
+      "patch": {
+        "spec": {
+          "gateway": {
+            "imgae": "ghcr.io/xynolog/xynolog-gateway:latest"
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/gateway/imgae",
       "reason": "unknown-field"
@@ -46,7 +68,13 @@
       "why": "a port written as text",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "gateway": { "port": "4000" } } },
+      "patch": {
+        "spec": {
+          "gateway": {
+            "port": "4000"
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/gateway/port",
       "reason": "wrong-type"
@@ -55,7 +83,13 @@
       "why": "a service with no image: the document names every image it runs",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "dispatcher": { "image": null } } },
+      "patch": {
+        "spec": {
+          "dispatcher": {
+            "image": null
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/dispatcher/image",
       "reason": "missing-required"
@@ -72,7 +106,17 @@
       "why": "a memory ceiling in another unit",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "smelter": { "resources": { "limits": { "memory": "8GB" } } } } },
+      "patch": {
+        "spec": {
+          "smelter": {
+            "resources": {
+              "limits": {
+                "memory": "8GB"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/smelter/resources/limits/memory",
       "reason": "not-allowed"
@@ -81,7 +125,9 @@
       "why": "another version of the kinds",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "apiVersion": "xynolog.org/v1beta1" },
+      "patch": {
+        "apiVersion": "xynolog.org/v1beta1"
+      },
       "verdict": "refused",
       "at": "/apiVersion",
       "reason": "not-allowed"
@@ -90,7 +136,9 @@
       "why": "a document of another kind",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "kind": "KnowledgeIndex" },
+      "patch": {
+        "kind": "KnowledgeIndex"
+      },
       "verdict": "refused",
       "at": "/kind",
       "reason": "not-allowed"
@@ -107,7 +155,21 @@
       "why": "a broker the launcher runs and somebody else's at once",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "messaging": { "external": { "servers": "broker.example.com:4222", "user": { "fromEnv": "NATS_USER" }, "password": { "fromEnv": "NATS_PASSWORD" } } } } },
+      "patch": {
+        "spec": {
+          "messaging": {
+            "external": {
+              "servers": "broker.example.com:4222",
+              "user": {
+                "fromEnv": "NATS_USER"
+              },
+              "password": {
+                "fromEnv": "NATS_PASSWORD"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/messaging",
       "reason": "exactly-one"
@@ -116,7 +178,22 @@
       "why": "somebody else's broker, with an image left behind",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "messaging": { "resources": null, "external": { "servers": "broker.example.com:4222", "user": { "fromEnv": "NATS_USER" }, "password": { "fromEnv": "NATS_PASSWORD" } } } } },
+      "patch": {
+        "spec": {
+          "messaging": {
+            "resources": null,
+            "external": {
+              "servers": "broker.example.com:4222",
+              "user": {
+                "fromEnv": "NATS_USER"
+              },
+              "password": {
+                "fromEnv": "NATS_PASSWORD"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/messaging",
       "reason": "exactly-one"
@@ -125,7 +202,14 @@
       "why": "a graph store nobody runs",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "graph": { "image": null, "resources": null } } },
+      "patch": {
+        "spec": {
+          "graph": {
+            "image": null,
+            "resources": null
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/graph",
       "reason": "exactly-one"
@@ -134,7 +218,16 @@
       "why": "the shared issuer and somebody else's at once",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "issuer": { "external": { "type": "oidc", "url": "https://login.example.com" } } } },
+      "patch": {
+        "spec": {
+          "issuer": {
+            "external": {
+              "type": "oidc",
+              "url": "https://login.example.com"
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/issuer",
       "reason": "exactly-one"
@@ -143,7 +236,13 @@
       "why": "an issuer named neither shared nor somebody else's",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "issuer": { "shared": null } } },
+      "patch": {
+        "spec": {
+          "issuer": {
+            "shared": null
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/issuer",
       "reason": "exactly-one"
@@ -152,7 +251,13 @@
       "why": "an Issuer document named from the knowledge base, which the machine's state home now holds",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "issuer": { "ref": "issuer" } } },
+      "patch": {
+        "spec": {
+          "issuer": {
+            "ref": "issuer"
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/issuer/ref",
       "reason": "unknown-field"
@@ -161,7 +266,15 @@
       "why": "the shared issuer with no lifespan for the knowledge base's realm",
       "schema": "KnowledgeBase",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/knowledge-base.yaml",
-      "patch": { "spec": { "issuer": { "shared": { "accessTokenLifespan": null } } } },
+      "patch": {
+        "spec": {
+          "issuer": {
+            "shared": {
+              "accessTokenLifespan": null
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/issuer/shared/accessTokenLifespan",
       "reason": "missing-required"
@@ -172,8 +285,29 @@
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
       "patch": {
         "spec": {
-          "graph": { "image": null, "resources": null, "external": { "uri": "bolt://graph.example.com:7687", "password": { "fromEnv": "NEO4J_PASSWORD" } } },
-          "vectors": { "shared": null, "external": { "host": "vectors.example.com", "port": 6333, "smelterToken": { "fromEnv": "VECTORS_SMELTER_TOKEN" }, "librarianToken": { "fromEnv": "VECTORS_LIBRARIAN_TOKEN" } } }
+          "graph": {
+            "image": null,
+            "resources": null,
+            "external": {
+              "uri": "bolt://graph.example.com:7687",
+              "password": {
+                "fromEnv": "NEO4J_PASSWORD"
+              }
+            }
+          },
+          "vectors": {
+            "shared": null,
+            "external": {
+              "host": "vectors.example.com",
+              "port": 6333,
+              "smelterToken": {
+                "fromEnv": "VECTORS_SMELTER_TOKEN"
+              },
+              "librarianToken": {
+                "fromEnv": "VECTORS_LIBRARIAN_TOKEN"
+              }
+            }
+          }
         }
       },
       "verdict": "accepted"
@@ -182,7 +316,20 @@
       "why": "a vector store somebody else runs, with no token for the Librarian",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "shared": null, "external": { "host": "vectors.example.com", "port": 6333, "smelterToken": { "fromEnv": "VECTORS_SMELTER_TOKEN" } } } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "shared": null,
+            "external": {
+              "host": "vectors.example.com",
+              "port": 6333,
+              "smelterToken": {
+                "fromEnv": "VECTORS_SMELTER_TOKEN"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/vectors/external/librarianToken",
       "reason": "missing-required"
@@ -191,14 +338,37 @@
       "why": "a vector store of the knowledge base's own, which the launcher runs",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "shared": null, "image": "qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10", "resources": { "limits": { "memory": "1G" } } } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "shared": null,
+            "image": "qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10",
+            "resources": {
+              "limits": {
+                "memory": "1G"
+              }
+            }
+          }
+        }
+      },
       "verdict": "accepted"
     },
     {
       "why": "the shared vector store and one of the knowledge base's own at once",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "image": "qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10", "resources": { "limits": { "memory": "1G" } } } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "image": "qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10",
+            "resources": {
+              "limits": {
+                "memory": "1G"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/vectors",
       "reason": "exactly-one"
@@ -207,7 +377,22 @@
       "why": "the shared vector store and somebody else's at once",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "external": { "host": "vectors.example.com", "port": 6333, "smelterToken": { "fromEnv": "VECTORS_SMELTER_TOKEN" }, "librarianToken": { "fromEnv": "VECTORS_LIBRARIAN_TOKEN" } } } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "external": {
+              "host": "vectors.example.com",
+              "port": 6333,
+              "smelterToken": {
+                "fromEnv": "VECTORS_SMELTER_TOKEN"
+              },
+              "librarianToken": {
+                "fromEnv": "VECTORS_LIBRARIAN_TOKEN"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/vectors",
       "reason": "exactly-one"
@@ -216,7 +401,13 @@
       "why": "a vector store named neither shared, nor the knowledge base's own, nor somebody else's",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "shared": null } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "shared": null
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/vectors",
       "reason": "exactly-one"
@@ -225,7 +416,14 @@
       "why": "a vector store of the knowledge base's own with no memory ceiling",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "shared": null, "image": "qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10" } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "shared": null,
+            "image": "qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10"
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/vectors",
       "reason": "exactly-one"
@@ -234,7 +432,15 @@
       "why": "the shared vector store with a port, which is the machine's VectorStore document's to say",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "vectors": { "shared": { "port": 6330 } } } },
+      "patch": {
+        "spec": {
+          "vectors": {
+            "shared": {
+              "port": 6330
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/vectors/shared/port",
       "reason": "unknown-field"
@@ -250,7 +456,9 @@
       "why": "another version of the kinds",
       "schema": "VectorStore",
       "base": "cli/internal/launcher/testdata/vectors.yaml",
-      "patch": { "apiVersion": "xynolog.org/v1beta1" },
+      "patch": {
+        "apiVersion": "xynolog.org/v1beta1"
+      },
       "verdict": "refused",
       "at": "/apiVersion",
       "reason": "not-allowed"
@@ -259,7 +467,11 @@
       "why": "a VectorStore with no type",
       "schema": "VectorStore",
       "base": "cli/internal/launcher/testdata/vectors.yaml",
-      "patch": { "spec": { "type": null } },
+      "patch": {
+        "spec": {
+          "type": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/type",
       "reason": "missing-required"
@@ -268,7 +480,11 @@
       "why": "a VectorStore with no image",
       "schema": "VectorStore",
       "base": "cli/internal/launcher/testdata/vectors.yaml",
-      "patch": { "spec": { "image": null } },
+      "patch": {
+        "spec": {
+          "image": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/image",
       "reason": "missing-required"
@@ -277,7 +493,11 @@
       "why": "a VectorStore with no resources",
       "schema": "VectorStore",
       "base": "cli/internal/launcher/testdata/vectors.yaml",
-      "patch": { "spec": { "resources": null } },
+      "patch": {
+        "spec": {
+          "resources": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/resources",
       "reason": "missing-required"
@@ -286,7 +506,11 @@
       "why": "a VectorStore published on no port",
       "schema": "VectorStore",
       "base": "cli/internal/launcher/testdata/vectors.yaml",
-      "patch": { "spec": { "port": null } },
+      "patch": {
+        "spec": {
+          "port": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/port",
       "reason": "missing-required"
@@ -295,7 +519,14 @@
       "why": "a VectorStore somebody else runs, which a knowledge base names at its own `external`",
       "schema": "VectorStore",
       "base": "cli/internal/launcher/testdata/vectors.yaml",
-      "patch": { "spec": { "external": { "host": "vectors.example.com", "port": 6333 } } },
+      "patch": {
+        "spec": {
+          "external": {
+            "host": "vectors.example.com",
+            "port": 6333
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/external",
       "reason": "unknown-field"
@@ -304,7 +535,15 @@
       "why": "a similarity above one",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "librarian": { "search": { "semanticFloor": 1.5 } } } },
+      "patch": {
+        "spec": {
+          "librarian": {
+            "search": {
+              "semanticFloor": 1.5
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/librarian/search/semanticFloor",
       "reason": "not-allowed"
@@ -313,7 +552,13 @@
       "why": "a Smelter that works on no PDF at once",
       "schema": "KnowledgeIndex",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/index.yaml",
-      "patch": { "spec": { "smelter": { "pdfsAtOnce": 0 } } },
+      "patch": {
+        "spec": {
+          "smelter": {
+            "pdfsAtOnce": 0
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/smelter/pdfsAtOnce",
       "reason": "not-allowed"
@@ -322,7 +567,13 @@
       "why": "a database name that is no lowercase identifier: PostgreSQL would fold it, and the issuer would ask for another",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "database": { "name": "Keycloak" } } },
+      "patch": {
+        "spec": {
+          "database": {
+            "name": "Keycloak"
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/database/name",
       "reason": "not-allowed"
@@ -331,7 +582,19 @@
       "why": "a database the launcher runs and somebody else's at once",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "database": { "external": { "host": "db.example.com", "port": 5432, "password": { "fromEnv": "POSTGRES_PASSWORD" } } } } },
+      "patch": {
+        "spec": {
+          "database": {
+            "external": {
+              "host": "db.example.com",
+              "port": 5432,
+              "password": {
+                "fromEnv": "POSTGRES_PASSWORD"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/database",
       "reason": "exactly-one"
@@ -347,14 +610,33 @@
       "why": "an Issuer whose database somebody else runs",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "database": { "image": null, "resources": null, "port": null, "external": { "host": "db.example.com", "port": 5432, "password": { "fromEnv": "POSTGRES_PASSWORD" } } } } },
+      "patch": {
+        "spec": {
+          "database": {
+            "image": null,
+            "resources": null,
+            "port": null,
+            "external": {
+              "host": "db.example.com",
+              "port": 5432,
+              "password": {
+                "fromEnv": "POSTGRES_PASSWORD"
+              }
+            }
+          }
+        }
+      },
       "verdict": "accepted"
     },
     {
       "why": "an Issuer with no type",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "type": null } },
+      "patch": {
+        "spec": {
+          "type": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/type",
       "reason": "missing-required"
@@ -363,7 +645,11 @@
       "why": "an Issuer with no image",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "image": null } },
+      "patch": {
+        "spec": {
+          "image": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/image",
       "reason": "missing-required"
@@ -372,7 +658,11 @@
       "why": "an Issuer with no resources",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "resources": null } },
+      "patch": {
+        "spec": {
+          "resources": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/resources",
       "reason": "missing-required"
@@ -381,7 +671,11 @@
       "why": "an Issuer published on no port",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "port": null } },
+      "patch": {
+        "spec": {
+          "port": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/port",
       "reason": "missing-required"
@@ -390,7 +684,11 @@
       "why": "an Issuer with no database",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "database": null } },
+      "patch": {
+        "spec": {
+          "database": null
+        }
+      },
       "verdict": "refused",
       "at": "/spec/database",
       "reason": "missing-required"
@@ -399,7 +697,11 @@
       "why": "an Issuer naming a realm's lifespan, which is each knowledge base's to name",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "accessTokenLifespan": 300 } },
+      "patch": {
+        "spec": {
+          "accessTokenLifespan": 300
+        }
+      },
       "verdict": "refused",
       "at": "/spec/accessTokenLifespan",
       "reason": "unknown-field"
@@ -408,7 +710,13 @@
       "why": "a database the launcher runs, published on no port the issuer could reach",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "database": { "port": null } } },
+      "patch": {
+        "spec": {
+          "database": {
+            "port": null
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/database",
       "reason": "exactly-one"
@@ -417,7 +725,21 @@
       "why": "somebody else's database with a port of the launcher's left behind",
       "schema": "Issuer",
       "base": "cli/internal/launcher/testdata/issuer.yaml",
-      "patch": { "spec": { "database": { "image": null, "resources": null, "external": { "host": "db.example.com", "port": 5432, "password": { "fromEnv": "POSTGRES_PASSWORD" } } } } },
+      "patch": {
+        "spec": {
+          "database": {
+            "image": null,
+            "resources": null,
+            "external": {
+              "host": "db.example.com",
+              "port": 5432,
+              "password": {
+                "fromEnv": "POSTGRES_PASSWORD"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/database",
       "reason": "exactly-one"
@@ -433,7 +755,13 @@
       "why": "a provider no engine can name",
       "schema": "Inference",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/inference/anthropic.yaml",
-      "patch": { "spec": { "providers": { "mistral": {} } } },
+      "patch": {
+        "spec": {
+          "providers": {
+            "mistral": {}
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/providers/mistral",
       "reason": "not-allowed"
@@ -442,7 +770,13 @@
       "why": "engines with none for the actors",
       "schema": "Inference",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/inference/anthropic.yaml",
-      "patch": { "spec": { "engines": { "actors": null } } },
+      "patch": {
+        "spec": {
+          "engines": {
+            "actors": null
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/engines/actors",
       "reason": "missing-required"
@@ -451,7 +785,17 @@
       "why": "a job's engine of a provider no engine can name",
       "schema": "Inference",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/inference/anthropic.yaml",
-      "patch": { "spec": { "engines": { "jobs": { "yield": { "provider": "mistral" } } } } },
+      "patch": {
+        "spec": {
+          "engines": {
+            "jobs": {
+              "yield": {
+                "provider": "mistral"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/engines/jobs/yield/provider",
       "reason": "not-allowed"
@@ -460,7 +804,15 @@
       "why": "a key written into the document instead of named",
       "schema": "Inference",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/inference/anthropic.yaml",
-      "patch": { "spec": { "providers": { "anthropic": { "apiKey": "the-key-itself-pasted-in" } } } },
+      "patch": {
+        "spec": {
+          "providers": {
+            "anthropic": {
+              "apiKey": "the-key-itself-pasted-in"
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/providers/anthropic/apiKey",
       "reason": "wrong-type"
@@ -469,7 +821,17 @@
       "why": "a secret named by a variable name no shell has",
       "schema": "Inference",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/stack/inference/anthropic.yaml",
-      "patch": { "spec": { "providers": { "anthropic": { "apiKey": { "fromEnv": "1KEY" } } } } },
+      "patch": {
+        "spec": {
+          "providers": {
+            "anthropic": {
+              "apiKey": {
+                "fromEnv": "1KEY"
+              }
+            }
+          }
+        }
+      },
       "verdict": "refused",
       "at": "/spec/providers/anthropic/apiKey/fromEnv",
       "reason": "not-allowed"
@@ -493,14 +855,22 @@
       "why": "a project file with no version, which nothing changes",
       "schema": "ProjectConfig",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/config.yaml",
-      "patch": { "project": { "version": null } },
+      "patch": {
+        "project": {
+          "version": null
+        }
+      },
       "verdict": "accepted"
     },
     {
       "why": "a project file with a key nothing reads",
       "schema": "ProjectConfig",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/config.yaml",
-      "patch": { "site": { "adminEmail": "admin@example.com" } },
+      "patch": {
+        "site": {
+          "adminEmail": "admin@example.com"
+        }
+      },
       "verdict": "refused",
       "at": "/site/adminEmail",
       "reason": "unknown-field"
@@ -509,7 +879,11 @@
       "why": "a project file with no identity",
       "schema": "ProjectConfig",
       "base": "cli/internal/launcher/testdata/kb/.xynolog/config.yaml",
-      "patch": { "site": { "domain": null } },
+      "patch": {
+        "site": {
+          "domain": null
+        }
+      },
       "verdict": "refused",
       "at": "/site/domain",
       "reason": "missing-required"

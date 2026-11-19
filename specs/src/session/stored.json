@@ -84,7 +84,12 @@
         "description": "Who the gateway said the sign-in's person is, as the key their caches and stream position are kept under (`lastEventIdKeyPrefix`), never the did itself. Written once the gateway names the person, on the sign-in whose token it was asked about; a renewal keeps it, a new sign-in starts without it, and forgetting the sign-in, however it is forgotten, reads it first to delete what is kept under it. Absent for a sign-in whose gateway has not yet named its person."
       }
     },
-    "required": ["access", "refresh", "clientId", "tokenEndpoint"]
+    "required": [
+      "access",
+      "refresh",
+      "clientId",
+      "tokenEndpoint"
+    ]
   },
   "pendingAuthorization": {
     "title": "PendingAuthorization",
@@ -132,7 +137,11 @@
             "description": "The issuer's revocation endpoint (RFC 7009). Absent when the issuer has none."
           }
         },
-        "required": ["issuer", "authorization", "token"]
+        "required": [
+          "issuer",
+          "authorization",
+          "token"
+        ]
       },
       "kbId": {
         "type": "string",
@@ -147,7 +156,13 @@
         "description": "The name of what the person believed they clicked. Absent when they named nothing."
       }
     },
-    "required": ["state", "verifier", "redirectUri", "target", "issuer"]
+    "required": [
+      "state",
+      "verifier",
+      "redirectUri",
+      "target",
+      "issuer"
+    ]
   },
   "openResource": {
     "title": "OpenResource",
@@ -181,7 +196,12 @@
         "description": "Where the resource is in the knowledge base's working tree, as a URI (file://docs/overview.md). Absent when it is not known."
       }
     },
-    "required": ["id", "name", "openedAt", "order"]
+    "required": [
+      "id",
+      "name",
+      "openedAt",
+      "order"
+    ]
   },
   "cacheDocument": {
     "title": "CacheDocument",
@@ -198,8 +218,12 @@
         "items": {
           "type": "array",
           "prefixItems": [
-            { "description": "The key: a resource's id for a query per resource, an annotation's id for one per annotation, `wholeKey` for one per nothing." },
-            { "description": "The value: what the query's `value` in specs/src/client/refresh.json says its cache holds." },
+            {
+              "description": "The key: a resource's id for a query per resource, an annotation's id for one per annotation, `wholeKey` for one per nothing."
+            },
+            {
+              "description": "The value: what the query's `value` in specs/src/client/refresh.json says its cache holds."
+            },
             {
               "type": "integer",
               "minimum": 0,
@@ -211,13 +235,20 @@
         }
       }
     },
-    "required": ["version", "entries"]
+    "required": [
+      "version",
+      "entries"
+    ]
   },
   "lastEventIds": {
     "title": "LastEventIds",
     "type": "object",
     "description": "Where a knowledge base's stream was: for each scope, a resource's id, the id of the last recorded event delivered on it.",
-    "propertyNames": { "$ref": "../components/schemas/ResourceId.json" },
-    "additionalProperties": { "$ref": "../components/schemas/PersistedEventId.json" }
+    "propertyNames": {
+      "$ref": "../components/schemas/ResourceId.json"
+    },
+    "additionalProperties": {
+      "$ref": "../components/schemas/PersistedEventId.json"
+    }
   }
 }

@@ -4,25 +4,64 @@
     {
       "why": "a knowledge base that does not answer gives no verdict, and every open resource is checked all the same: the gone one closes, and the others stay",
       "kb": "unanswered",
-      "open": ["res-described", "res-gone", "res-unanswered"],
-      "resources": { "res-described": "ready", "res-gone": "gone", "res-unanswered": "unanswered" },
-      "asked": ["res-described", "res-gone", "res-unanswered"],
-      "stillOpen": ["res-described", "res-unanswered"]
+      "open": [
+        "res-described",
+        "res-gone",
+        "res-unanswered"
+      ],
+      "resources": {
+        "res-described": "ready",
+        "res-gone": "gone",
+        "res-unanswered": "unanswered"
+      },
+      "asked": [
+        "res-described",
+        "res-gone",
+        "res-unanswered"
+      ],
+      "stillOpen": [
+        "res-described",
+        "res-unanswered"
+      ]
     },
     {
       "why": "a knowledge base that answers as its entry has every open resource checked: the gone one closes, and the others stay",
       "kb": "itself",
-      "open": ["res-described", "res-gone", "res-unanswered"],
-      "resources": { "res-described": "ready", "res-gone": "gone", "res-unanswered": "unanswered" },
-      "asked": ["res-described", "res-gone", "res-unanswered"],
-      "stillOpen": ["res-described", "res-unanswered"]
+      "open": [
+        "res-described",
+        "res-gone",
+        "res-unanswered"
+      ],
+      "resources": {
+        "res-described": "ready",
+        "res-gone": "gone",
+        "res-unanswered": "unanswered"
+      },
+      "asked": [
+        "res-described",
+        "res-gone",
+        "res-unanswered"
+      ],
+      "stillOpen": [
+        "res-described",
+        "res-unanswered"
+      ]
     },
     {
       "why": "no verdict keeps nothing the knowledge base says is gone: each gone resource closes",
       "kb": "unanswered",
-      "open": ["res-gone", "res-also-gone"],
-      "resources": { "res-gone": "gone", "res-also-gone": "gone" },
-      "asked": ["res-gone", "res-also-gone"],
+      "open": [
+        "res-gone",
+        "res-also-gone"
+      ],
+      "resources": {
+        "res-gone": "gone",
+        "res-also-gone": "gone"
+      },
+      "asked": [
+        "res-gone",
+        "res-also-gone"
+      ],
       "stillOpen": []
     }
   ]

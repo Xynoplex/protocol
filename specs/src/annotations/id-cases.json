@@ -14,7 +14,12 @@
       "motivation": "commenting",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "type": "TextualBody", "value": "an author", "purpose": "commenting", "format": "text/plain" }
+        {
+          "type": "TextualBody",
+          "value": "an author",
+          "purpose": "commenting",
+          "format": "text/plain"
+        }
       ],
       "id": "oQDVZSYutxZJn11upX1Bi"
     },
@@ -24,7 +29,12 @@
       "motivation": "commenting",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "format": "text/plain", "value": "an author", "type": "TextualBody", "purpose": "commenting" }
+        {
+          "format": "text/plain",
+          "value": "an author",
+          "type": "TextualBody",
+          "purpose": "commenting"
+        }
       ],
       "id": "oQDVZSYutxZJn11upX1Bi"
     },
@@ -34,7 +44,12 @@
       "motivation": "commenting",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "type": "TextualBody", "value": "a mathematician", "purpose": "commenting", "format": "text/plain" }
+        {
+          "type": "TextualBody",
+          "value": "a mathematician",
+          "purpose": "commenting",
+          "format": "text/plain"
+        }
       ],
       "id": "UJ1Yz_vXoqeLLcMgNezg2"
     },
@@ -44,7 +59,12 @@
       "motivation": "assessing",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "type": "TextualBody", "value": "an author", "purpose": "commenting", "format": "text/plain" }
+        {
+          "type": "TextualBody",
+          "value": "an author",
+          "purpose": "commenting",
+          "format": "text/plain"
+        }
       ],
       "id": "uOJciMhD-aOC3rbDvwF1y"
     },
@@ -74,7 +94,11 @@
       "resourceId": "res-1",
       "motivation": "linking",
       "anchor": "0:12:Ada Lovelace",
-      "body": { "type": "SpecificResource", "source": "res-2", "purpose": "linking" },
+      "body": {
+        "type": "SpecificResource",
+        "source": "res-2",
+        "purpose": "linking"
+      },
       "id": "UT5aqFrOu4jBoarVpgXH_"
     },
     {
@@ -83,7 +107,11 @@
       "motivation": "linking",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "type": "SpecificResource", "source": "res-2", "purpose": "linking" }
+        {
+          "type": "SpecificResource",
+          "source": "res-2",
+          "purpose": "linking"
+        }
       ],
       "id": "sVEMYHBABNhlSkCzr2RAi"
     },
@@ -93,8 +121,16 @@
       "motivation": "tagging",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "type": "TextualBody", "value": "Person", "purpose": "tagging" },
-        { "type": "TextualBody", "value": "people-v1", "purpose": "classifying" }
+        {
+          "type": "TextualBody",
+          "value": "Person",
+          "purpose": "tagging"
+        },
+        {
+          "type": "TextualBody",
+          "value": "people-v1",
+          "purpose": "classifying"
+        }
       ],
       "id": "UbT9OcbClBRLtrEK6ToM-"
     },
@@ -104,8 +140,16 @@
       "motivation": "tagging",
       "anchor": "0:12:Ada Lovelace",
       "body": [
-        { "type": "TextualBody", "value": "people-v1", "purpose": "classifying" },
-        { "type": "TextualBody", "value": "Person", "purpose": "tagging" }
+        {
+          "type": "TextualBody",
+          "value": "people-v1",
+          "purpose": "classifying"
+        },
+        {
+          "type": "TextualBody",
+          "value": "Person",
+          "purpose": "tagging"
+        }
       ],
       "id": "wcLvHzEjwN5OI5PRriWGe"
     },
@@ -113,7 +157,7 @@
       "why": "what is escaped in a string and what is not: the double quotes, the backslash, the line break and the tab are; U+0001 and U+001F are, as \\u0001 and \\u001f; the slash and U+007F are written as themselves",
       "resourceId": "res-1",
       "motivation": "highlighting",
-      "anchor": "4:24:say \"a\\b\"\n\tor/not\u0001\u001f\u007f",
+      "anchor": "4:24:say \"a\\b\"\n\tor/not\u0001\u001f",
       "id": "QQ0pHyP1zF61DaG1WgyWj"
     },
     {
@@ -129,7 +173,10 @@
       "motivation": "commenting",
       "anchor": "0:4:café",
       "body": [
-        { "type": "TextualBody", "value": "世界 — “monde”" }
+        {
+          "type": "TextualBody",
+          "value": "世界 — “monde”"
+        }
       ],
       "id": "x34YfjqVWVhx71aGiu9te"
     },
@@ -141,7 +188,14 @@
       "body": {
         "type": "TextualBody",
         "value": "seven",
-        "detail": { "b": -1, "a": [true, null, false] },
+        "detail": {
+          "b": -1,
+          "a": [
+            true,
+            null,
+            false
+          ]
+        },
         "Value": 7,
         "@language": "en"
       },
@@ -160,7 +214,12 @@
       "motivation": "commenting",
       "anchor": "7:9:𝑥𝑦",
       "body": [
-        { "type": "TextualBody", "value": "a product 🎉", "purpose": "commenting", "format": "text/plain" }
+        {
+          "type": "TextualBody",
+          "value": "a product 🎉",
+          "purpose": "commenting",
+          "format": "text/plain"
+        }
       ],
       "id": "EC6ecBvKDj4WZEcB_2k2z"
     },
@@ -169,7 +228,11 @@
       "resourceId": "res-1",
       "motivation": "linking",
       "anchor": "",
-      "body": { "type": "SpecificResource", "source": "res-2", "purpose": "linking" },
+      "body": {
+        "type": "SpecificResource",
+        "source": "res-2",
+        "purpose": "linking"
+      },
       "id": "xdaSX40cMJa46S2JHwFtC"
     },
     {
@@ -177,7 +240,12 @@
       "resourceId": "res-1",
       "motivation": "commenting",
       "anchor": "0:12:Ada Lovelace",
-      "body": { "type": "TextualBody", "value": "an author", "😀": 1, "ｚ": 2 },
+      "body": {
+        "type": "TextualBody",
+        "value": "an author",
+        "😀": 1,
+        "ｚ": 2
+      },
       "id": "ezkXvdosD9657eaaCQKLh"
     }
   ]

@@ -6,5 +6,7 @@
       "$ref": "./AnnotationId.json"
     }
   },
-  "required": ["annotationId"]
+  "required": [
+    "annotationId"
+  ]
 }

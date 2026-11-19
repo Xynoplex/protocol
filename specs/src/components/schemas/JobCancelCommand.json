@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "A worker's settling of a running job it holds whose work it has stopped for a cancellation \u2014 the queue moves the job to cancelled/. Distinct from JobCancelRequest (the client\u2192worker REQUEST to stop): this is the worker announcing it did, so the running job is never yanked to cancelled/ out from under a live worker (the roach-motel race).",
+  "description": "A worker's settling of a running job it holds whose work it has stopped for a cancellation — the queue moves the job to cancelled/. Distinct from JobCancelRequest (the client→worker REQUEST to stop): this is the worker announcing it did, so the running job is never yanked to cancelled/ out from under a live worker (the roach-motel race).",
   "properties": {
     "_userId": {
       "$ref": "./UserId.json",
@@ -31,7 +31,7 @@
       "additionalProperties": {
         "$ref": "./UnitCursor.json"
       },
-      "description": "The furthest each unit begun got, keyed by unit, with what it had counted there \u2014 the grain `completedUnits` cannot express. A unit named in `completedUnits` is stated here too, by the cursor it ended at: a later attempt skips it whole and counts it by that cursor. A cursor never says a unit is finished; only `completedUnits` does. Merged monotonically per unit, finished or not: a stale snapshot must never move a cursor backward."
+      "description": "The furthest each unit begun got, keyed by unit, with what it had counted there — the grain `completedUnits` cannot express. A unit named in `completedUnits` is stated here too, by the cursor it ended at: a later attempt skips it whole and counts it by that cursor. A cursor never says a unit is finished; only `completedUnits` does. Merged monotonically per unit, finished or not: a stale snapshot must never move a cursor backward."
     }
   },
   "required": [

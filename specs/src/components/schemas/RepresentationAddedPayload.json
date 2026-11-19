@@ -2,7 +2,11 @@
   "type": "object",
   "description": "Payload for yield:representation-added domain event",
   "properties": {
-    "representation": { "$ref": "Representation.json" }
+    "representation": {
+      "$ref": "Representation.json"
+    }
   },
-  "required": ["representation"]
+  "required": [
+    "representation"
+  ]
 }
