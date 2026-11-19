@@ -537,6 +537,179 @@ let () =
     (fun _ -> `Assoc [ ("type", `String "string") ])
     "/properties/declined: AnchoredTextEntry's declined is not \
      ExtractionDeclined's";
+  changed specs ~why:"names a kind with no schema" "identifiers/kinds.json"
+    "kinds/2/schema"
+    (fun _ -> `String "TaskId")
+    "/kinds/2/schema: TaskId has no schema: components/schemas/TaskId.json";
+  changed specs ~why:"gives a kind's schema more than its rule"
+    "components/schemas/ResourceId.json" ""
+    (members (fun m -> m @ [ ("minLength", `Int 1) ]))
+    "/: ResourceId must be exactly a string with a pattern and a description; \
+     it has [description,minLength,pattern,type]";
+  changed specs ~why:"has a kind accept what its pattern does not"
+    "identifiers/kinds.json" "kinds/0/accepts"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [ `Assoc [ ("id", `String "a b"); ("why", `String "a break") ] ])
+      | _ -> failwith "not a list")
+    "/kinds/0/accepts/4/id: ResourceId accepts \"a b\" (a break), and its \
+     pattern ^[A-Za-z0-9_-]{1,128}$ does not";
+  changed specs ~why:"has a kind refuse what its pattern accepts"
+    "identifiers/kinds.json" "kinds/0/refuses"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [ `Assoc [ ("id", `String "abc"); ("why", `String "a break") ] ])
+      | _ -> failwith "not a list")
+    "/kinds/0/refuses/14/id: ResourceId refuses \"abc\" (a break), and its \
+     pattern ^[A-Za-z0-9_-]{1,128}$ accepts it";
+  changed specs ~why:"has a kind accept a DID with a no-break space"
+    "identifiers/kinds.json" "kinds/3/accepts"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [
+                `Assoc
+                  [
+                    ("id", `String "did:web:x:a b"); ("why", `String "a break");
+                  ];
+              ])
+      | _ -> failwith "not a list")
+    "/kinds/3/accepts/4/id: UserId accepts \"did:web:x:a b\" (a break), and \
+     its pattern ^did:\\S+$ does not";
+  changed specs ~why:"names a property for two kinds" "identifiers/kinds.json"
+    "kinds/2/properties"
+    (function
+      | `List l -> `List (l @ [ `String "resourceId" ])
+      | _ -> failwith "not a list")
+    "/kinds/2/properties/1: resourceId is named for two kinds: ResourceId and \
+     JobId";
+  changed specs ~why:"has a property among others that is named for a kind"
+    "identifiers/kinds.json" "others"
+    (function
+      | `List l ->
+          `List
+            (l
+            @ [
+                `Assoc
+                  [
+                    ("property", `String "resourceId");
+                    ("docs", `String "a break");
+                  ];
+              ])
+      | _ -> failwith "not a list")
+    "/others/14/property: resourceId is among `others` and is named for \
+     ResourceId";
+  changed specs ~why:"has a resource's id refer to an annotation's"
+    "components/schemas/BeckonFocusEvent.json" "properties/resourceId/$ref"
+    (fun _ -> `String "./AnnotationId.json")
+    "/properties/resourceId: resourceId must refer to ResourceId, and refers \
+     to AnnotationId";
+  changed specs
+    ~why:"has a property named like an id that is classified nowhere"
+    "components/schemas/BeckonFocusEvent.json" "properties"
+    (members (fun m ->
+         m @ [ ("widgetId", `Assoc [ ("type", `String "string") ]) ]))
+    "/properties/widgetId: widgetId is named like an id and is classified \
+     nowhere: name it for a kind, or among `others`, in \
+     specs/src/identifiers/kinds.json";
+  changed specs ~why:"has a property among others refer to a kind"
+    "components/schemas/SessionJoinedEvent.json" "properties/connectionId"
+    (fun _ -> `Assoc [ ("$ref", `String "./ResourceId.json") ])
+    "/properties/connectionId: connectionId is among `others` and refers to \
+     ResourceId";
+  changed specs ~why:"names a property no schema has" "identifiers/kinds.json"
+    "kinds/0/properties"
+    (function
+      | `List l -> `List (l @ [ `String "ghostResourceId" ])
+      | _ -> failwith "not a list")
+    "/: names ghostResourceId, which no schema of the spec has";
+  changed specs ~why:"has a path parameter refer to no kind"
+    "archivist/paths/events_{resourceId}.json" "get/parameters/0/schema"
+    (fun _ -> `Assoc [ ("type", `String "string") ])
+    "/get/parameters/0: the path parameter {resourceId} must refer to a kind \
+     of id";
+  changed specs ~why:"has a pattern ECMA-262 and ocaml-re read apart"
+    "components/schemas/ResourceId.json" "pattern"
+    (fun _ -> `String "^\\p{L}+$")
+    "/pattern: the pattern escapes p, which ECMA-262 and ocaml-re read apart";
+  changed specs ~why:"lists anchor methods that are not AnchorMethod's"
+    "service-telemetry/telemetry.json" "metrics/27/attributes/1/values"
+    (function
+      | `List l -> `List (List.filteri (fun i _ -> i < List.length l - 1) l)
+      | _ -> failwith "not a list")
+    "/metrics/27/attributes/1/values: lists anchor.method values \
+     [\"unique-match\",\"context-recovered\",\"first-of-many\"], not \
+     AnchorMethod's \
+     [\"unique-match\",\"context-recovered\",\"first-of-many\",\"fuzzy-match\"]";
+  changed specs ~why:"has a fuzzy match name no search"
+    "annotations/reconcile-cases.json" "cases/22/reconciled"
+    (members (List.remove_assoc "matchQuality"))
+    "/cases/22/reconciled: is a fuzzy match, and names no search";
+  changed specs ~why:"names a refusal reason no frame is refused for"
+    "client/types/FrameRefusalReason.json" "enum"
+    (function
+      | `List l -> `List (l @ [ `String "stale" ]) | _ -> failwith "not a list")
+    "/enum/2: FrameRefusalReason names \"stale\", and no case of \
+     frame-cases.json is refused for it";
+  refused specs ~why:"has the surface lose a reader the cases read"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "client/surface.json")
+        (update [ "modules"; "0"; "members"; "3"; "member" ] (fun _ ->
+             `String "commentBody")))
+    "annotations/reader-cases.json: /readers/9: names the reader \
+     \"commentText\", which client/surface.json's annotations module does not \
+     have";
+  changed specs ~why:"lists the builders out of order"
+    "annotations/builder-cases.json" "builders"
+    (function `List l -> `List (List.rev l) | _ -> failwith "not a list")
+    "/builders: builders \
+     [\"annotationOfResource\",\"annotationOfSpan\",\"reconcile\"] are not \
+     client/surface.json's other annotations functions \
+     [\"reconcile\",\"annotationOfSpan\",\"annotationOfResource\"]";
+  changed specs ~why:"gives DeviceCode a member UserAction does not carry"
+    "client/types/DeviceCode.json" "properties"
+    (members (fun m ->
+         m @ [ ("interval", `Assoc [ ("type", `String "integer") ]) ]))
+    "/properties: DeviceCode's members \
+     [\"userCode\",\"verificationUri\",\"verificationUriComplete\",\"expiresIn\",\"interval\"] \
+     are not UserAction's less requestId \
+     [\"verificationUri\",\"verificationUriComplete\",\"userCode\",\"expiresIn\"]";
+  changed specs ~why:"types a DeviceCode member otherwise"
+    "client/types/DeviceCode.json" "properties/userCode/type"
+    (fun _ -> `String "integer")
+    "/properties/userCode: DeviceCode's userCode is \"integer\", and \
+     UserAction's userCode is \"string\"";
+  changed specs ~why:"has DeviceCode require less than UserAction"
+    "client/types/DeviceCode.json" "required"
+    (function
+      | `List l -> `List (List.filter (( <> ) (`String "expiresIn")) l)
+      | _ -> failwith "not a list")
+    "/required: DeviceCode requires [\"userCode\",\"verificationUri\"], and \
+     UserAction, less requestId, requires \
+     [\"expiresIn\",\"userCode\",\"verificationUri\"]";
+  changed specs ~why:"lists the method shapes out of order"
+    "client/ClientSurface.json"
+    "properties/namespaces/items/properties/methods/items/properties/shape/enum"
+    (function `List l -> `List (List.rev l) | _ -> failwith "not a list")
+    "/properties/namespaces/items/properties/methods/items/properties/shape/enum: \
+     the method shapes \
+     [\"claims\",\"events\",\"count\",\"signal\",\"cache\",\"upload\",\"delegation\",\"stream\",\"promise\"] \
+     are not, in order, the shapes it states \
+     [\"promise\",\"stream\",\"delegation\",\"upload\",\"cache\",\"signal\",\"count\",\"events\",\"claims\"]";
+  changed specs ~why:"keeps another value for a persisted query"
+    "session/SessionCacheCases.json"
+    "properties/cases/items/oneOf/0/properties/kept/items/properties/value/$ref"
+    (fun _ -> `String "../components/schemas/Annotation.json")
+    "/properties/cases/items/oneOf/0/properties/kept/items/properties/value: \
+     keeps {\"$ref\":\"../components/schemas/Annotation.json\"} for \
+     \"resource\", and refresh.json's value is \
+     {\"$ref\":\"../components/schemas/ResourceDescriptor.json\"}";
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
      file, a missing table, a dangling reference, an unknown keyword, a \
@@ -547,5 +720,6 @@ let () =
      Archivist's own schema among the components, a client surface case whose \
      arguments are not its method's parameters, a reply's list neither bounded \
      nor named, an offset whose unit is unsaid, a job protocol that disagrees \
-     with itself, or an Archivist stated short; and it reads each value as the \
+     with itself, an Archivist stated short, an id nothing checks, or a client \
+     type that disagrees with what restates it; and it reads each value as the \
      type its schema states"
