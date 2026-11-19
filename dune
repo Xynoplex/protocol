@@ -1,4 +1,4 @@
-; The reader, its lock, and the specs and contract it reads as data. Nothing
-; else here is dune's.
-(dirs reader specs contract dune.lock)
+; The reader, its lock, the specs and contract it reads as data, and the
+; OCaml conformance harness built on it. Nothing else here is dune's.
+(dirs reader specs contract dune.lock conformance)
 (data_only_dirs specs contract)

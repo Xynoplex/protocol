@@ -1,0 +1,6 @@
+; The harness's own cases.
+(executable
+ (name main)
+ (package xynolog-conformance)
+ (public_name xynolog-conformance-harness-test)
+ (libraries xynolog_conformance eio eio_main cohttp http uri testo opentelemetry.proto pbrt decompress.de decompress.gz ohex))

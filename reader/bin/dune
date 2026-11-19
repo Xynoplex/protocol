@@ -1,5 +1,6 @@
 (executable
  (name main)
  (public_name xynolog-protocol)
+ (package xynolog-protocol)
  (flags (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
  (libraries xynolog_protocol unix))

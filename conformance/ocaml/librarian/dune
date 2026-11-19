@@ -1,0 +1,6 @@
+; The librarian suite's cases that are ported to the OCaml harness.
+(executable
+ (name main)
+ (package xynolog-conformance)
+ (public_name xynolog-conformance-librarian)
+ (libraries xynolog_conformance xynolog-protocol yojson testo))

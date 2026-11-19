@@ -1,0 +1,19 @@
+(version 0.0.10)
+
+(build
+ (all_platforms
+  ((action
+    (progn
+     (when %{pkg-self:dev} (run dune subst))
+     (run dune build -p %{pkg-self:name} -j %{jobs} @install))))))
+
+(depends
+ (all_platforms
+  (ocaml dune yojson)))
+
+(source
+ (fetch
+  (url
+   https://github.com/hebilicious/nats-ml/releases/download/v0.0.10/nats-client-0.0.10.tbz)
+  (checksum
+   sha512=4f6e6dfa0aa3029c178fbb1b266a3ea604f2c51579267d1e7ab2e7382a70335f6c05a463a851b860accdeee6eb78eca735ec887a1d4c944716d514aa63fefdfd)))
