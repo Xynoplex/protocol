@@ -884,8 +884,8 @@
         {
           "key": "detection.reroll",
           "values": [
-            "true",
-            "false"
+            true,
+            false
           ]
         },
         {
@@ -928,8 +928,8 @@
         {
           "key": "detection.reroll",
           "values": [
-            "true",
-            "false"
+            true,
+            false
           ]
         },
         {
@@ -972,8 +972,8 @@
         {
           "key": "detection.reroll",
           "values": [
-            "true",
-            "false"
+            true,
+            false
           ]
         },
         {
@@ -1016,8 +1016,8 @@
         {
           "key": "detection.reroll",
           "values": [
-            "true",
-            "false"
+            true,
+            false
           ]
         },
         {

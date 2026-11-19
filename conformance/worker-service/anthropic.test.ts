@@ -12,7 +12,7 @@ import { afterAll, beforeAll, expect, it } from 'vitest';
 import type { ScriptedMessage } from '../harness/anthropic';
 import { everyJob } from '../harness/dispatcher-world';
 import { eventually } from '../harness/net';
-import { startOtlp, type OtlpReceiver } from '../harness/otlp';
+import { startOtlp, type OtlpReceiver, type ReceivedMetric } from '../harness/otlp';
 import { errorsOf, metricName, spanName, spec } from '../harness/spec';
 import { ANTHROPIC_MODEL, eachWorkerService, type Engine, type RunningJob, type Served, type WorkerServiceWorld } from '../harness/worker-service-world';
 import {
@@ -567,7 +567,7 @@ eachWorkerService('a worker on Anthropic', (world) => {
     // What learned the model's limits is no generation: of the three requests, the two askings of the one generation are counted, as one.
     expect(w.anthropic.requests.map((r) => `${r.method} ${r.path}`)).toEqual([`GET /v1/models/${engine.model}`, 'POST /v1/messages', 'POST /v1/messages']);
     const ended = { 'inference.provider': ['anthropic'], 'inference.model': [engine.model], 'inference.outcome': ['success'] };
-    const carried = (metric: { attributes: Map<string, Set<string>> }) => Object.fromEntries([...metric.attributes].map(([key, values]) => [key, [...values]]));
+    const carried = (metric: ReceivedMetric) => Object.fromEntries([...metric.attributes].map(([key, values]) => [key, [...values]]));
     const calls = await eventually('the count of generations', 15_000, () => otlp().metrics.get(metricName('xynolog.inference.calls')));
     expect(carried(calls)).toEqual(ended);
     expect([...new Set(calls.values)]).toEqual([1]);
