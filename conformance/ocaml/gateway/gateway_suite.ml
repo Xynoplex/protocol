@@ -145,6 +145,4 @@ module Broker = struct
     ]
 end
 
-let () =
-  Suite.main ~project:"xynolog-conformance-gateway" ~workers:4 (fun env ->
-      Broker.tests (Implementations.read env))
+let suite : Suite.t = { name = "gateway"; workers = 4; tests = Broker.tests }

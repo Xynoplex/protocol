@@ -4,3 +4,14 @@
  (package xynolog-conformance)
  (public_name xynolog-conformance-harness-test)
  (libraries xynolog_conformance eio eio_main cohttp http uri testo opentelemetry.proto pbrt decompress.de decompress.gz ohex))
+
+; make validate's run: every case that needs no store and no manifest, from
+; the root of the workspace, where specs/src is.
+(rule
+ (alias runtest)
+ (deps
+  (source_tree ../../../specs/src))
+ (action
+  (chdir
+   %{workspace_root}
+   (run %{exe:main.exe} -t "not stores"))))
