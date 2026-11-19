@@ -35,6 +35,9 @@ type t = {
   path_items : (string * Openapi.path_item) list;
   responses : (string * Openapi.response) list;
   schemas : (string * Schema.t) list;
+  services : string list;
+      (** The services' schemas ([Places.service_schemas]), as paths from
+          specs/src. *)
   tables : Tables.t;
   table_files : string list;
 }
@@ -512,10 +515,26 @@ let load root =
   let registry_rules = Registry_rules.refusals ~read_json tables.bus_registry in
   let jobs_rules = Jobs_rules.refusals ~read_json in
   let archivist_rules = Archivist_rules.refusals ~read_json in
+  let services = Places.service_schemas root in
+  let empty_services =
+    List.filter_map
+      (fun area ->
+        if
+          List.exists
+            (fun file -> String.starts_with ~prefix:(area ^ "/") file)
+            services
+        then None
+        else
+          Some
+            (refusal area ""
+               "is a service's area (Places.services) and holds no schema of \
+                the service's"))
+      Places.services
+  in
   let census =
-    census @ stray_case_tables @ orphan_schemas @ validation @ public_api
-    @ client_surface @ reply_bounds @ offset_units @ registry_rules @ jobs_rules
-    @ archivist_rules
+    census @ stray_case_tables @ orphan_schemas @ empty_services @ validation
+    @ public_api @ client_surface @ reply_bounds @ offset_units @ registry_rules
+    @ jobs_rules @ archivist_rules
   in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->
@@ -533,6 +552,7 @@ let load root =
           path_items;
           responses;
           schemas;
+          services;
           tables;
           table_files;
         }
