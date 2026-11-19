@@ -4,7 +4,7 @@
   "description": "The vector store the launcher runs for the knowledge bases on a machine, each knowledge base's index in collections of its own. It belongs to no knowledge base, so its document is kept in the launcher's state home, in `stack/vectors.yaml`, not in a knowledge base's repository. A knowledge base keeps its index in it by naming `shared` at `spec.vectors`.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "./StackApiVersion.json"
     },
     "kind": {
       "type": "string",
