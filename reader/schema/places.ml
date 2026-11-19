@@ -71,6 +71,41 @@ let schema_of table =
   let area, stem = area_and_stem table in
   area ^ "/" ^ pascal area ^ pascal stem ^ ".json"
 
+(* The areas whose schemas are a service's own, such as its configuration
+   document and its health answer (specs/README.md, "Layout"): each
+   service's, and the stores' and the embedding model's. *)
+let services =
+  [
+    "archivist";
+    "dispatcher";
+    "embedding";
+    "gateway";
+    "graph";
+    "librarian";
+    "smelter";
+    "vectors";
+    "weaver";
+    "worker";
+  ]
+
+(* The services' schemas at [root], as paths from it, in order: each a JSON
+   file at the top of a service's area, named in PascalCase, that is no
+   table's schema. A service's area that is no directory holds none. *)
+let service_schemas root =
+  let tables_schemas = List.map schema_of (tables root) in
+  List.concat_map
+    (fun area ->
+      let directory = Filename.concat root area in
+      if not (Sys.file_exists directory && Sys.is_directory directory) then []
+      else
+        sorted_entries directory
+        |> List.filter (fun name ->
+            Filename.check_suffix name ".json"
+            && match name.[0] with 'A' .. 'Z' -> true | _ -> false)
+        |> List.map (fun name -> area ^ "/" ^ name)
+        |> List.filter (fun file -> not (List.mem file tables_schemas)))
+    services
+
 (* The name of [table]'s model, as a value: jobs_retry_cases. Its module is
    that name capitalized. *)
 let model_of table =
