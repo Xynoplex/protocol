@@ -57,3 +57,16 @@
  (flags
   (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
  (libraries xynolog_protocol alcotest))
+
+; Each document of specs/src bundles to one that names nothing outside
+; itself, and the bundler refuses what it cannot bundle as Redocly does.
+(test
+ (name bundle)
+ (modules bundle)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol yojson)
+ (deps
+  (source_tree %{project_root}/specs/src))
+ (action
+  (run %{test} %{project_root}/specs/src)))

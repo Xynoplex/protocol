@@ -3,7 +3,8 @@
 .PHONY: help install conformance-install bundle lint conformance-typecheck conformance-fixtures reader validate
 
 # `make help` prints the `##` lines below, in order (build-tools/make-help.awk).
-# Every target runs its npm task in a Node container (scripts/make-target.sh).
+# Every target runs in a container (scripts/make-target.sh): the reader in the
+# OCaml toolchain's, the npm tasks in a Node one.
 ##@ Xynolog Protocol: make [target] [VARIABLE=value ...]
 ##@ Variables
 ## CONTAINER_RUNTIME=name: container|docker|podman; else the first to respond
@@ -12,7 +13,7 @@ help:
 	@awk -f build-tools/make-help.awk Makefile Makefile
 
 ##@ Validate
-## validate: Read the specifications with the reader, then install, bundle, lint, type-check the conformance harness and run its fixtures
+## validate: Read and bundle the specifications with the reader, then install, lint, type-check the conformance harness and run its fixtures
 validate:
 	bash scripts/make-target.sh validate
 
@@ -25,7 +26,7 @@ install:
 conformance-install:
 	bash scripts/make-target.sh conformance-install
 
-## bundle: Bundle specs/src into specs/openapi.json and specs/archivist.openapi.json
+## bundle: Bundle specs/src into specs/openapi.json and specs/archivist.openapi.json with the reader
 bundle:
 	bash scripts/make-target.sh bundle
 
@@ -33,11 +34,11 @@ bundle:
 lint:
 	bash scripts/make-target.sh lint
 
-## conformance-typecheck: Bundle, then type-check the conformance harness
+## conformance-typecheck: Bundle with the reader, then type-check the conformance harness
 conformance-typecheck:
 	bash scripts/make-target.sh conformance-typecheck
 
-## conformance-fixtures: Bundle, then run the conformance fixtures
+## conformance-fixtures: Bundle with the reader, then run the conformance fixtures
 conformance-fixtures:
 	bash scripts/make-target.sh conformance-fixtures
 

@@ -1,16 +1,14 @@
 /**
- * Once per run: bundle the specs the suite checks against — the gateway's API,
- * the Archivist's HTTP surface its stand-in Archivist is held to, and the
- * services' own schemas the suites read (services-document.ts) — and
- * refuse to start when the required NATS broker is missing. Consumer commands
- * and implementations are supplied by the manifest.
- *
- * The bundles are made here, from `specs/src`, rather than read from the
- * gitignored bundles in `specs/`: a stale bundle would let the suite pass
- * against a spec that is not the source.
+ * Once per run: name the specs the suite checks against — the gateway's API
+ * and the Archivist's HTTP surface its stand-in Archivist is held to, as the
+ * reader bundles them into `specs/` (`make bundle`, which the conformance
+ * targets run first), and the services' own schemas the suites read
+ * (services-document.ts), bundled here — and refuse to start when a bundle or
+ * the required NATS broker is missing. Consumer commands and implementations
+ * are supplied by the manifest.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { TestProject } from 'vitest/node';
@@ -42,8 +40,13 @@ export default function setup(project: TestProject): () => void {
     execFileSync(join(REPO_ROOT, 'node_modules/.bin/redocly'), ['bundle', source, '-o', out], { cwd: REPO_ROOT, stdio: 'ignore' });
     return out;
   };
-  project.provide('specPath', bundle('specs/src/openapi.json', 'openapi.json'));
-  project.provide('archivistSpecPath', bundle('specs/src/archivist/openapi.json', 'archivist.openapi.json'));
+  const bundled = (name: string) => {
+    const path = join(REPO_ROOT, 'specs', name);
+    if (!existsSync(path)) throw new Error(`specs/${name} is missing. The reader writes it: make bundle.`);
+    return path;
+  };
+  project.provide('specPath', bundled('openapi.json'));
+  project.provide('archivistSpecPath', bundled('archivist.openapi.json'));
   project.provide('servicesSpecPath', bundle(writeServicesDocument(), 'services.openapi.json'));
   return () => rmSync(dir, { recursive: true, force: true });
 }

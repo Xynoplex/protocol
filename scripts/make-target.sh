@@ -14,52 +14,68 @@ case "$TARGET" in
     ;;
 esac
 
-# The reader, in the OCaml toolchain's image, on a copy of the checkout: it
-# builds, its layout is ocamlformat's, its tests pass, and it reads every file
-# of specs/src, each table what its schema says, the contract documents that
-# name what the specs state, the bus registry's spelling, and the ownership
-# inventory against what Git tracks, so the copy carries .git.
+# The reader, in the OCaml toolchain's image, on a copy of the checkout.
+# "check": it builds, its layout is ocamlformat's, its tests pass, and it
+# reads every file of specs/src, each table what its schema says, the
+# contract documents that name what the specs state, the bus registry's
+# spelling, and the ownership inventory against what Git tracks, so the copy
+# carries .git. "bundle": it builds, and bundles each OpenAPI document of
+# specs/src into specs/, which it hands the checkout as a tar stream on
+# standard output, its progress on standard error, so the bundles are the
+# checkout's user's. "check-and-bundle": both.
 reader() {
-  bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT"
+  bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT" >&2
   "$RUNTIME" run --rm \
     --volume "$ROOT:/source:ro" \
     --workdir /tmp \
     --memory 4g \
     xynolog-ocaml-toolchain bash -euc '
+      exec 3>&1 1>&2
       mkdir /tmp/protocol
       tar -C /source --exclude=./node_modules --exclude=./conformance/node_modules --exclude=./_build -cf - . | tar -C /tmp/protocol -xf -
-      cd /tmp/protocol
       git config --global --add safe.directory /tmp/protocol
+      cd /tmp/protocol
       printf "==> Building the reader\n"
       dune build @all
-      dune build @fmt
-      printf "==> Testing the reader\n"
-      dune test
-      printf "==> Reading the specifications\n"
-      dune exec -- xynolog-protocol check .'
+      if [[ "$0" != bundle ]]; then
+        dune build @fmt
+        printf "==> Testing the reader\n"
+        dune test
+        printf "==> Reading the specifications\n"
+        dune exec -- xynolog-protocol check .
+      fi
+      if [[ "$0" != check ]]; then
+        printf "==> Bundling the specifications\n"
+        dune exec -- xynolog-protocol bundle .
+        tar -C specs -cf - openapi.json archivist.openapi.json >&3
+      fi' "$1"
 }
 
-if [[ "$TARGET" == reader ]]; then
-  reader
-  exit
-fi
-if [[ "$TARGET" == validate ]]; then
-  reader
-fi
+case "$TARGET" in
+  reader)
+    reader check
+    exit
+    ;;
+  bundle)
+    reader bundle | tar -C "$ROOT/specs" -xf -
+    exit
+    ;;
+  validate) reader check-and-bundle | tar -C "$ROOT/specs" -xf - ;;
+  conformance-typecheck|conformance-fixtures) reader bundle | tar -C "$ROOT/specs" -xf - ;;
+esac
 
 case "$TARGET" in
   install) COMMAND='npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null' ;;
   conformance-install) COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null' ;;
-  bundle) COMMAND='npm run --silent specs:bundle' ;;
   lint) COMMAND='npm run --silent specs:lint' ;;
   conformance-typecheck)
-    COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null && npm run --silent specs:bundle && npm run --silent typecheck --prefix conformance'
+    COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null && npm run --silent typecheck --prefix conformance'
     ;;
   conformance-fixtures)
-    COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null && npm run --silent specs:bundle && npm run --silent test:fixtures --prefix conformance'
+    COMMAND='npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null && npm run --silent test:fixtures --prefix conformance'
     ;;
   validate)
-    COMMAND='printf "==> Installing protocol dependencies\n"; npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Installing conformance dependencies\n"; npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Bundling specifications\n"; npm run --silent specs:bundle; printf "==> Linting specifications\n"; npm run --silent specs:lint; printf "==> Type-checking conformance harness\n"; npm run --silent typecheck --prefix conformance; printf "==> Running conformance fixtures\n"; npm run --silent test:fixtures --prefix conformance'
+    COMMAND='printf "==> Installing protocol dependencies\n"; npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Installing conformance dependencies\n"; npm ci --prefix conformance --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Linting specifications\n"; npm run --silent specs:lint; printf "==> Type-checking conformance harness\n"; npm run --silent typecheck --prefix conformance; printf "==> Running conformance fixtures\n"; npm run --silent test:fixtures --prefix conformance'
     ;;
 esac
 
