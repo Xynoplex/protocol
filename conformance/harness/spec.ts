@@ -261,8 +261,8 @@ export function serviceEnvironment(service: Service): string[] {
 
 export interface TelemetryAttribute {
   key: string;
-  /** The only values it may carry, where the spec lists them. */
-  values?: string[];
+  /** The only values it may carry, where the spec lists them, each of the type it is carried as. */
+  values?: (string | boolean)[];
   /** Why it may be absent: it is carried only under this condition. */
   only?: string;
 }
@@ -303,8 +303,14 @@ function row(table: string, r: unknown, kindKey: 'kind' | 'instrument'): { field
   const name = r['name'];
   const attributes = r['attributes'].map((a): TelemetryAttribute => {
     if (!isObject(a) || typeof a['key'] !== 'string') throw new Error(`${table}: ${name} has a malformed attribute`);
-    const values = Array.isArray(a['values']) ? a['values'].map(String) : undefined;
-    return { key: a['key'], ...(values ? { values } : {}), ...(typeof a['only'] === 'string' ? { only: a['only'] } : {}) };
+    const key = a['key'];
+    const values = Array.isArray(a['values'])
+      ? a['values'].map((v): string | boolean => {
+          if (typeof v === 'string' || typeof v === 'boolean') return v;
+          throw new Error(`${table}: ${name}'s ${key} lists ${JSON.stringify(v)}, which is no string or boolean`);
+        })
+      : undefined;
+    return { key, ...(values ? { values } : {}), ...(typeof a['only'] === 'string' ? { only: a['only'] } : {}) };
   });
   return { fields: r, name, kind: String(r[kindKey]), attributes };
 }

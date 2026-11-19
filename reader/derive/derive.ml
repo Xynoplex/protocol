@@ -29,11 +29,14 @@
    states the values of another in the table's module is that one's type. A
    member named [$ref] is a reference, which the reader resolves.
 
-   What a [$ref] names outside the schema's own file (a component, or
-   CaseTable's) is derived where it can be, by the same rules with its
-   annotations and formats read as such; where it cannot (an open object, an
-   [allOf], a [oneOf] the components state) it is [Yojson.Safe.t], which the
-   table's validation against its schema holds to what it names.
+   What a [$ref] names in another table's schema is a node of that schema,
+   in the table dialect as its own table's model reads it, and is derived
+   by these rules, named for that schema's file. What it names elsewhere
+   outside the schema's own file (a component, or CaseTable's) is derived
+   where it can be, by the same rules with its annotations and formats read
+   as such; where it cannot (an open object, an [allOf], a [oneOf] the
+   components state) it is [Yojson.Safe.t], which the table's validation
+   against its schema holds to what it names.
 
    A case table's schema extends CaseTable.json: its [allOf] is that alone,
    and it admits each of CaseTable's properties with [true] but [cases],
@@ -51,6 +54,8 @@ let root =
       prerr_endline "usage: derive.exe SPECS";
       exit 2
 
+(* Every table's schema, from specs/src: each in the table dialect. *)
+let table_schemas = List.map Places.schema_of (Places.tables root)
 let refusals = ref []
 
 exception Stop
@@ -476,7 +481,8 @@ and node ~strict ~own file pointer s =
           | tfile, "" when tfile = Places.json_schema -> Json_schema
           | tfile, tpointer ->
               derive
-                ~strict:(strict && tfile = file)
+                ~strict:
+                  (strict && (tfile = file || List.mem tfile table_schemas))
                 ~own:(own && tfile = file)
                 tfile tpointer (schema_at tfile tpointer))
       | _ when present = [ "$comment" ] ->

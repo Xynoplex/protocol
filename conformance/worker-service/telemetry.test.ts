@@ -12,7 +12,7 @@ import { afterAll, beforeAll, expect, it } from 'vitest';
 import { marks } from '../harness/dispatcher-world';
 import { eventually } from '../harness/net';
 import { startOtlp, type OtlpReceiver } from '../harness/otlp';
-import { metricName, spanName, spec, telemetry, type TelemetryRow } from '../harness/spec';
+import { metricName, spanName, spec, telemetry, type TelemetryAttribute, type TelemetryRow } from '../harness/spec';
 import { outsideTheTable, received, SPAN_KIND } from '../harness/telemetry';
 import { eachWorkerService, type RunningJob, type Served, type WorkerServiceWorld } from '../harness/worker-service-world';
 import { counting, markJob, settled, TEXT } from './support';
@@ -132,7 +132,7 @@ async function traffic(w: WorkerServiceWorld): Promise<{ served: Served; jobs: R
   return { served, jobs };
 }
 
-const valuesOf = (row: TelemetryRow | undefined, key: string): string[] | undefined => row?.attributes.find((a) => a.key === key)?.values;
+const valuesOf = (row: TelemetryRow | undefined, key: string): TelemetryAttribute['values'] => row?.attributes.find((a) => a.key === key)?.values;
 
 eachWorkerService('what a worker exports', (world) => {
   it("names jobs and providers in its rows as the spec names them", () => {

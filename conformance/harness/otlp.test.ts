@@ -96,3 +96,28 @@ it('reports each span and metric with the attributes of the resource it was expo
     }
   }
 });
+
+it('keeps each attribute value of the type it was carried as, so a boolean is not its string', async () => {
+  const collector = new Collector();
+  const meter = new MeterProvider({ resource: resourceFromAttributes(SERVICE), readers: [collector] }).getMeter('receiver');
+  const counter = meter.createCounter('xynolog.detection.calls');
+  counter.add(1, { 'detection.reroll': true });
+  counter.add(1, { 'detection.reroll': 'true' });
+  const { resourceMetrics } = await collector.collect();
+  const finished = new InMemorySpanExporter();
+  new TracerProvider({ spanProcessors: [new SimpleSpanProcessor({ exporter: finished })] }).getTracer('receiver').startSpan('content.get', { kind: SpanKind.CLIENT, attributes: { 'content.stream': true } }).end();
+  for (const [type, traces, metrics] of [
+    ['application/json', JsonTraceSerializer, JsonMetricsSerializer],
+    ['application/x-protobuf', ProtobufTraceSerializer, ProtobufMetricsSerializer],
+  ] as const) {
+    const receiver = await startOtlp();
+    try {
+      await send(receiver, '/v1/traces', type, traces.serializeRequest(finished.getFinishedSpans()));
+      await send(receiver, '/v1/metrics', type, metrics.serializeRequest(resourceMetrics));
+      expect(receiver.spans[0]?.attributes['content.stream'], type).toBe(true);
+      expect(receiver.metrics.get('xynolog.detection.calls')?.attributes.get('detection.reroll'), type).toEqual(new Set([true, 'true']));
+    } finally {
+      await receiver.close();
+    }
+  }
+});

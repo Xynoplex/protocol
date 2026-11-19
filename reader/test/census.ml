@@ -77,11 +77,38 @@ let () =
         prerr_endline "usage: census.exe SPECS";
         exit 2
   in
-  (match Spec.load specs with
-  | Ok _ -> ()
-  | Error errors ->
-      List.iter (fun e -> prerr_endline (Decode.error_to_string e)) errors;
-      Printf.eprintf "Protocol has %d refusals\n" (List.length errors);
+  let spec =
+    match Spec.load specs with
+    | Ok spec -> spec
+    | Error errors ->
+        List.iter (fun e -> prerr_endline (Decode.error_to_string e)) errors;
+        Printf.eprintf "Protocol has %d refusals\n" (List.length errors);
+        exit 1
+  in
+  (* A table's value is of the type its schema states, through a reference
+     into another table's schema too: content.get's content.stream, which
+     sdk-telemetry states through service-telemetry's attribute, is the
+     boolean true. *)
+  let content_get =
+    List.find
+      (fun (span : Tables.Sdk_telemetry_telemetry.spans_item) ->
+        span.name = "content.get")
+      spec.tables.sdk_telemetry_telemetry.spans
+  in
+  (match
+     List.find_map
+       (fun (attribute :
+              Tables.Sdk_telemetry_telemetry
+              .service_telemetry_telemetry_attributes_item) ->
+         if attribute.key = "content.stream" then Some attribute.values
+         else None)
+       content_get.attributes
+   with
+  | Some (Some [ Boolean true ]) -> ()
+  | _ ->
+      prerr_endline
+        "sdk-telemetry/telemetry.json: content.get's content.stream is not the \
+         boolean true";
       exit 1);
   refused specs ~why:"has a file the model does not know"
     (fun copied -> write (Filename.concat copied "retry/notes.txt") "")
@@ -187,4 +214,5 @@ let () =
      file, a missing table, a dangling reference, an unknown keyword, a \
      missing path item, a table without its schema, a schema without its \
      table, a case table off an area's top, a value its schema refuses, or a \
-     client surface case whose arguments are not its method's parameters"
+     client surface case whose arguments are not its method's parameters; and \
+     it reads each value as the type its schema states"
