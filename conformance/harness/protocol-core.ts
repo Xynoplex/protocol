@@ -11,6 +11,7 @@ import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import type { CryptoKey, JWK, JWTPayload } from 'jose';
 import { Spec } from './spec';
 import type { components } from './generated/openapi-types';
+import type { BusPayloads } from './generated/protocol/bus';
 import { jobsStorage, type ServiceSchemas } from './generated/protocol/protocol';
 
 export type { components, ServiceSchemas };
@@ -19,33 +20,8 @@ export type ResourceDescriptor = components['schemas']['ResourceDescriptor'];
 export type ResourceId = string & { readonly __brand: 'ResourceId' };
 export type AnnotationId = string & { readonly __brand: 'AnnotationId' };
 
-/** The channels used by the Librarian conformance suite, typed from the same schemas as the wire contract. */
-export type EventMap = {
-  'match:search-requested': components['schemas']['MatchSearchRequest'];
-  'match:search-results': components['schemas']['MatchSearchResult'];
-  'match:search-failed': components['schemas']['MatchSearchFailed'];
-  'match:resources-requested': components['schemas']['MatchResourcesRequest'];
-  'match:resources-result': components['schemas']['MatchResourcesResult'];
-  'match:resources-failed': components['schemas']['CommandError'];
-  'match:limits-requested': components['schemas']['InferenceLimitsRequest'];
-  'match:limits-result': components['schemas']['InferenceLimitsResult'];
-  'match:limits-failed': components['schemas']['CommandError'];
-  'gather:requested': components['schemas']['GatherAnnotationRequest'];
-  'gather:complete': components['schemas']['GatherAnnotationComplete'];
-  'gather:failed': components['schemas']['GatherFailed'];
-  'gather:resource-requested': components['schemas']['GatherResourceRequest'];
-  'gather:resource-complete': components['schemas']['GatherResourceComplete'];
-  'gather:resource-failed': components['schemas']['GatherResourceFailed'];
-  'gather:summary-requested': components['schemas']['GatherSummaryRequest'];
-  'gather:summary-result': components['schemas']['ContextualSummaryResponse'];
-  'gather:summary-failed': components['schemas']['CommandError'];
-  'gather:referenced-by-requested': components['schemas']['GatherReferencedByRequest'];
-  'gather:referenced-by-result': components['schemas']['GatherReferencedByResult'];
-  'gather:referenced-by-failed': components['schemas']['CommandError'];
-  'gather:limits-requested': components['schemas']['InferenceLimitsRequest'];
-  'gather:limits-result': components['schemas']['InferenceLimitsResult'];
-  'gather:limits-failed': components['schemas']['CommandError'];
-};
+/** What each channel carries, as the reader writes it from the bus registry, over the gateway's component schemas. */
+export type EventMap = BusPayloads<components['schemas']>;
 
 export const resourceId = (value: string): ResourceId => value as ResourceId;
 export const annotationId = (value: string): AnnotationId => value as AnnotationId;
