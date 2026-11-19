@@ -55,7 +55,7 @@ const SCHEMA = {
     weaverServices: { values: { properties: { command: COMMAND, healthPort: { type: 'uint16' } } } },
     /** How each Smelter is started: run with `--config <document>` (smelter/README.md). */
     smelterServices: { values: COMMAND },
-    /** How each Librarian is started: run with `--config <document>` (librarian/README.md). */
+    /** How each Librarian is started: run with `--config <document>` (ocaml/librarian/README.md). */
     librarianServices: { values: COMMAND },
   },
   optionalProperties: {

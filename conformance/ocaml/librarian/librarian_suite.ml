@@ -1,6 +1,5 @@
-(* The librarian suite: each TypeScript file of conformance/librarian, case
-   for case, as a file here. Each file is a world of its own, as each
-   TypeScript file is. *)
+(* The librarian suite: boot, barriers, search, gather and telemetry. Each
+   file is a world of its own. *)
 
 (* One world at a time: the files share one graph database and one vector
    database, each cleared when a file's world is made, and the health ports

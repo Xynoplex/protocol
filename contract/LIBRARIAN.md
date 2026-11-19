@@ -17,9 +17,9 @@ deviates from it, the code is wrong, or this document is wrong and is
 corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
-when a Librarian breaks it. `librarian/<case>` is the file `<case>.test.ts` of
+when a Librarian breaks it. `librarian/<case>` is the file `<case>.ml` of
 the librarian conformance suite
-([`conformance/librarian`](../conformance/librarian/README.md)),
+([`conformance/ocaml/librarian`](../conformance/ocaml/librarian/README.md)),
 which starts a Librarian as a process behind a real gateway and a real
 Archivist, beside a Weaver and a Smelter that write the graph and the index it
 reads, and plays its models and its embedding provider: the same cases judge

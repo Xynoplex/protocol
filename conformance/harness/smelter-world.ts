@@ -43,7 +43,7 @@ import type { BusStream } from './stream';
 import { endCase } from './world';
 
 /** The Smelter's service account at the issuer. */
-export const SMELTER_CLIENT = 'xynolog-smelter';
+const SMELTER_CLIENT = 'xynolog-smelter';
 
 /** The model the world's Smelter is told to embed with. The stand-in answers for any. */
 export const EMBEDDING_MODEL = 'conformance-embedder';
@@ -52,7 +52,7 @@ export const EMBEDDING_MODEL = 'conformance-embedder';
 const PERSON = 'ada';
 
 /** A decision a Smelter signals on `smelt:settled`. */
-export type Settled = components['schemas']['SmeltSettled'];
+type Settled = components['schemas']['SmeltSettled'];
 
 /** One entry of the anchored-text store. */
 export type AnchoredTextEntry = ServiceSchemas['AnchoredTextEntry'];

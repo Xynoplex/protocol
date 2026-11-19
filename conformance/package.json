@@ -9,8 +9,7 @@
     "typecheck": "npm run generate:types && tsc --noEmit",
     "test:fixtures": "vitest run --config vitest.fixtures.config.ts",
     "typecheck:smelter": "tsc --noEmit -p tsconfig.smelter.json",
-    "typecheck:librarian": "tsc --noEmit -p tsconfig.librarian.json",
-    "pretest": "npm run typecheck && npm run typecheck:smelter && npm run typecheck:librarian",
+    "pretest": "npm run typecheck && npm run typecheck:smelter",
     "test": "vitest run",
     "test:gateway": "npm run typecheck && vitest run --project gateway",
     "test:dispatcher": "npm run typecheck && vitest run --project dispatcher",
@@ -19,8 +18,7 @@
     "test:worker": "npm run typecheck && vitest run --project worker",
     "test:worker-service": "npm run typecheck && vitest run --project worker-service",
     "test:weaver": "npm run typecheck && vitest run --project weaver",
-    "test:smelter": "npm run typecheck:smelter && vitest run --project smelter",
-    "test:librarian": "npm run typecheck:librarian && vitest run --project librarian"
+    "test:smelter": "npm run typecheck:smelter && vitest run --project smelter"
   },
   "devDependencies": {
     "@nats-io/jetstream": "^3.4.0",
