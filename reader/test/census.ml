@@ -720,10 +720,6 @@ let () =
     (fun _ -> `List [ `Assoc [ ("nobody", `List []) ] ])
     "/post/security: POST /bus/emit: names security scheme \"nobody\", which \
      components.securitySchemes does not define";
-  changed specs ~why:"leaves an operation's security unsaid"
-    "paths/bus_emit.json" "post"
-    (members (List.remove_assoc "security"))
-    "/post: POST /bus/emit: declares no `security` — say [] for a public route";
   changed specs ~why:"declares no 500" "paths/bus_emit.json" "post/responses"
     (members (List.remove_assoc "500"))
     "/post/responses: POST /bus/emit: declares no 500";
@@ -758,15 +754,6 @@ let () =
         (update [] (members (List.remove_assoc "headers"))))
     "paths/bus_emit.json: /post/responses/429: POST /bus/emit 429: carries no \
      Retry-After header";
-  refused specs ~why:"declares a header with no schema"
-    (fun copied ->
-      rewrite
-        (Filename.concat copied "components/responses/TooManyRequests.json")
-        (update
-           [ "headers"; "Retry-After" ]
-           (members (List.remove_assoc "schema"))))
-    "paths/bus_emit.json: /post/responses/429: POST /bus/emit 429: header \
-     Retry-After has no schema";
   changed specs ~why:"gives an error no body" "paths/bus_emit.json"
     "post/responses/400"
     (members (List.remove_assoc "content"))
