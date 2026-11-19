@@ -276,7 +276,7 @@ an older stamp stay until the store is cleared.
 The Archivist records what it is told on these channels. Every command carries `_userId`, the DID of
 its sender, which the gateway sets. A reply carries the command's correlation id. A reply whose JSON
 is larger than a bus message may be, `POST /bus/emit`'s `x-xynolog-limits.maxBodyBytes` in the
-gateway's [API](../specs/src/paths/bus_emit.json), is not sent: the operation's failure channel
+gateway's [API](../specs/src/paths/emit-on-bus.json), is not sent: the operation's failure channel
 is answered at once, with `{message}`, `The answer could not be sent: it is <n> bytes, and a bus
 message may be <maxBodyBytes>`. Any other reply that cannot be sent, as one within that size whose
 frame is not, is answered there once the transport gives up, with `The answer could not be sent: `

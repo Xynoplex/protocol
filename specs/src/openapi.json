@@ -29,49 +29,49 @@
   },
   "paths": {
     "/api/health": {
-      "$ref": "paths/api_health.json"
+      "$ref": "paths/get-health.json"
     },
     "/": {
-      "$ref": "paths/root.json"
+      "$ref": "paths/get-health-at-root.json"
     },
     "/api/openapi.json": {
-      "$ref": "paths/api_openapi.json"
+      "$ref": "paths/get-open-api-document.json"
     },
     "/.well-known/oauth-protected-resource": {
-      "$ref": "paths/well-known_oauth-protected-resource.json"
+      "$ref": "paths/get-protected-resource-metadata.json"
     },
     "/api/tokens/media": {
-      "$ref": "paths/api_tokens_media.json"
+      "$ref": "paths/create-media-token.json"
     },
     "/api/users/me": {
-      "$ref": "paths/api_users_me.json"
+      "$ref": "paths/get-current-user.json"
     },
     "/api/status": {
-      "$ref": "paths/api_status.json"
+      "$ref": "paths/get-status.json"
     },
     "/bus/subscribe": {
-      "$ref": "paths/bus_subscribe.json"
+      "$ref": "paths/subscribe-to-bus.json"
     },
     "/bus/emit": {
-      "$ref": "paths/bus_emit.json"
+      "$ref": "paths/emit-on-bus.json"
     },
     "/resources": {
-      "$ref": "paths/resources.json"
+      "$ref": "paths/upload-resource.json"
     },
     "/resources/{id}": {
-      "$ref": "paths/resources_{id}.json"
+      "$ref": "paths/get-resource-representation.json"
     },
     "/resources/{id}/jsonld": {
-      "$ref": "paths/resources_{id}_jsonld.json"
+      "$ref": "paths/get-resource-json-ld.json"
     },
     "/resources/{id}/annotations": {
-      "$ref": "paths/resources_{id}_annotations.json"
+      "$ref": "paths/get-resource-annotations.json"
     },
     "/resources/{id}/anchored-text": {
-      "$ref": "paths/resources_{id}_anchored-text.json"
+      "$ref": "paths/get-resource-anchored-text.json"
     },
     "/api/resources/{id}": {
-      "$ref": "paths/api_resources_{id}.json"
+      "$ref": "paths/get-resource-representation-with-media-token.json"
     }
   },
   "components": {
