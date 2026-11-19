@@ -4,7 +4,7 @@
   "description": "The engines a machine uses for a knowledge base: the providers it reaches, and the provider and model each job and each Librarian actor is done with. A knowledge base's repository may carry several, one for each provider, and a machine chooses one.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "./StackApiVersion.json"
     },
     "kind": {
       "type": "string",

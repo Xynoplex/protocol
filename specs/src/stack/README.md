@@ -11,11 +11,11 @@ deployment elsewhere edits its own copy.
 
 | Kind | Schema | Holds |
 |---|---|---|
-| `KnowledgeBase` | [`KnowledgeBase.json`](KnowledgeBase.json) | the Gateway, the Dispatcher, the Archivist, the broker between them, and the issuer the knowledge base trusts: the machine's (`shared`, with the lifespan of the knowledge base's realm), or somebody else's (`external`) |
+| `KnowledgeBase` | [`StackKnowledgeBase.json`](StackKnowledgeBase.json) | the Gateway, the Dispatcher, the Archivist, the broker between them, and the issuer the knowledge base trusts: the machine's (`shared`, with the lifespan of the knowledge base's realm), or somebody else's (`external`) |
 | `KnowledgeIndex` | [`KnowledgeIndex.json`](KnowledgeIndex.json) | the graph store, the vector store, the embedding model, and the Librarian, the Smelter and the Weaver |
 | `Inference` | [`Inference.json`](Inference.json) | the providers a machine reaches, and the engine for each job and each Librarian actor ([`ArchivistEngines`](../components/schemas/ArchivistEngines.json)) |
 
-Every kind's `apiVersion` is [`ApiVersion.json`](ApiVersion.json)'s:
+Every kind's `apiVersion` is [`StackApiVersion.json`](StackApiVersion.json)'s:
 `xynolog.org/v1alpha1`. The objects the kinds share are
 [`Metadata.json`](Metadata.json), [`Image.json`](Image.json),
 [`Resources.json`](Resources.json), [`SecretRef.json`](SecretRef.json),

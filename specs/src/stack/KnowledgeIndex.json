@@ -4,7 +4,7 @@
   "description": "What a knowledge base's record is indexed into, and the services that keep and read the indexes: the Weaver's graph, the Smelter's vectors and anchored text, and the Librarian that answers from them. Each can be rebuilt from the record.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "./StackApiVersion.json"
     },
     "kind": {
       "type": "string",

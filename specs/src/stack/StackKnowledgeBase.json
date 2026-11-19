@@ -1,10 +1,10 @@
 {
-  "title": "KnowledgeBase",
+  "title": "StackKnowledgeBase",
   "type": "object",
   "description": "A knowledge base's record and the services that keep it: the Gateway, the Dispatcher, the Archivist, and the broker between them. They live and die with the knowledge base.",
   "properties": {
     "apiVersion": {
-      "$ref": "./ApiVersion.json"
+      "$ref": "./StackApiVersion.json"
     },
     "kind": {
       "type": "string",
