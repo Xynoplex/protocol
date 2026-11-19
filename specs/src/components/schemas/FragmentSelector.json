@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/FragmentSelector.json",
   "type": "object",
   "description": "W3C Web Annotation FragmentSelector for media fragment identifiers (RFC 3778 for PDFs)",
   "properties": {

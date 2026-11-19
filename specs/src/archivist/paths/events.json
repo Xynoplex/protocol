@@ -14,7 +14,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../ArchivistStreamsResponse.json"
+              "$ref": "https://xynolog.org/protocol/ArchivistStreamsResponse.json"
             }
           }
         }
@@ -27,7 +27,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

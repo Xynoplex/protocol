@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnchoredText.json",
   "type": "object",
   "description": "Text paired with the geometry that indexes it — the minimum needed to turn a range of the text, two offsets counted in Unicode code points, into a selection, or a rectangle into a quote. Whole-resource: a producer iterates page by page, but every consumer wants one map.",
   "properties": {
@@ -10,7 +12,7 @@
       "type": "array",
       "description": "Positioned runs indexing `text`, roughly one per word.",
       "items": {
-        "$ref": "./PdfTextItem.json"
+        "$ref": "https://xynolog.org/protocol/PdfTextItem.json"
       }
     }
   },

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatheredContext.json",
   "type": "object",
   "description": "Context gathered for a gather.* call — consumed by yield.* (generation) and the matcher. A shared base (graph, semanticContext, metadata, inferredRelationshipSummary) plus a discriminated `focus` that names the anchor: an annotation or a whole resource.",
   "properties": {
@@ -16,11 +18,11 @@
               ]
             },
             "annotation": {
-              "$ref": "./Annotation.json",
+              "$ref": "https://xynolog.org/protocol/Annotation.json",
               "description": "The annotation this context was gathered for"
             },
             "sourceResource": {
-              "$ref": "./ResourceDescriptor.json",
+              "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json",
               "description": "The resource containing the annotation"
             },
             "selected": {
@@ -49,7 +51,7 @@
               "description": "User-provided hint to supplement or replace the selected text for search and generation"
             },
             "targetResource": {
-              "$ref": "./ResourceDescriptor.json",
+              "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json",
               "description": "The resource the annotation links to, if it is a resolved reference. Dormant capability — produced/exposed but not yet consumed."
             },
             "targetContext": {
@@ -85,7 +87,7 @@
               ]
             },
             "resource": {
-              "$ref": "./ResourceDescriptor.json",
+              "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json",
               "description": "The resource this context was gathered for"
             },
             "summary": {
@@ -123,7 +125,7 @@
       ]
     },
     "graph": {
-      "$ref": "./KnowledgeGraph.json",
+      "$ref": "https://xynolog.org/protocol/KnowledgeGraph.json",
       "description": "Knowledge graph backbone — resources AND annotations as typed nodes. The flattened views (connections, citedBy, siblings) are derived from this."
     },
     "semanticContext": {
@@ -133,7 +135,7 @@
         "similar": {
           "type": "array",
           "items": {
-            "$ref": "./SemanticMatch.json"
+            "$ref": "https://xynolog.org/protocol/SemanticMatch.json"
           },
           "description": "Passages ranked by cosine similarity to the focal text"
         },

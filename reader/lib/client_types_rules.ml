@@ -19,7 +19,11 @@
      shapes it states.
    - session/SessionCacheCases.json's loads are, in order, of
      client/refresh.json's persisted queries, each keeping its query's
-     value. *)
+     value.
+   - A parameter of client/surface.json names, by its [$id], a component or
+     a client type of client/types, and a query's value in
+     client/refresh.json a component: an [$id] does not say where its
+     schema is. *)
 
 let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
 let at = Decode.at_pointer
@@ -40,7 +44,7 @@ let reads_an_annotation name =
   && String.starts_with ~prefix:"is" name
   && match name.[2] with 'A' .. 'Z' -> true | _ -> false
 
-let refusals ~(read_json : string -> Yojson.Safe.t option) =
+let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
   let found = ref [] in
   let refuse file pointer fmt =
     Printf.ksprintf
@@ -313,5 +317,48 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
                   (Option.fold ~none:"nothing" ~some:shown (at "/value" query))
             | _ -> ())
           persisted
+    | _ -> ());
+  let names_one_of file pointer target ~places ~what =
+    let named, _ = Decode.resolve ids { target; file; pointer } in
+    if
+      not
+        (List.exists
+           (fun place -> String.starts_with ~prefix:place named)
+           places)
+    then refuse file pointer "names %s, %s, which is not %s" target named what
+  in
+  with_files [ "client/surface.json" ] (function
+    | [ surface ] ->
+        List.iteri
+          (fun n namespace ->
+            List.iteri
+              (fun m method_ ->
+                List.iteri
+                  (fun k parameter ->
+                    match at "/schema/$ref" parameter with
+                    | Some (`String target) ->
+                        names_one_of "client/surface.json"
+                          ("/namespaces" / string_of_int n / "methods"
+                         / string_of_int m / "parameters" / string_of_int k
+                         / "schema" / "$ref")
+                          target
+                          ~places:[ Places.components; "client/types/" ]
+                          ~what:"a component or a client type"
+                    | _ -> ())
+                  (items (at "/parameters" method_)))
+              (items (at "/methods" namespace)))
+          (items (at "/namespaces" surface))
+    | _ -> ());
+  with_files [ "client/refresh.json" ] (function
+    | [ refresh ] ->
+        List.iteri
+          (fun i query ->
+            match at "/value/$ref" query with
+            | Some (`String target) ->
+                names_one_of "client/refresh.json"
+                  ("/queries" / string_of_int i / "value" / "$ref")
+                  target ~places:[ Places.components ] ~what:"a component"
+            | _ -> ())
+          (items (at "/queries" refresh))
     | _ -> ());
   List.rev !found

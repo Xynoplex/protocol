@@ -14,7 +14,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../AnchoredTextEntries.json"
+              "$ref": "https://xynolog.org/protocol/AnchoredTextEntries.json"
             }
           }
         }

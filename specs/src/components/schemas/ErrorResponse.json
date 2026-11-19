@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ErrorResponse.json",
   "type": "object",
   "description": "The body of every error the gateway answers, whatever the status and whatever the route — including a path it does not serve.",
   "properties": {

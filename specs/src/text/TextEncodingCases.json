@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/TextEncodingCases.json",
   "description": "text/encoding-cases.json: every label of the Encoding Standard, the encoding it names, and what a reader does with bytes said to be in it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -58,7 +60,7 @@
                 "$ref": "#/properties/cases/items/oneOf/0/properties/labels"
               },
               "bytes": {
-                "$ref": "./TextDecodeCases.json#/properties/cases/items/oneOf/0/properties/bytes"
+                "$ref": "https://xynolog.org/protocol/TextDecodeCases.json#/properties/cases/items/oneOf/0/properties/bytes"
               },
               "text": {
                 "type": "string",

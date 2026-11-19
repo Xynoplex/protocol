@@ -16,7 +16,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "../AnchoredTextStamp.json"
+            "$ref": "https://xynolog.org/protocol/AnchoredTextStamp.json"
           }
         }
       }
@@ -30,7 +30,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ErrorResponse.json"
+              "$ref": "https://xynolog.org/protocol/ErrorResponse.json"
             }
           }
         }

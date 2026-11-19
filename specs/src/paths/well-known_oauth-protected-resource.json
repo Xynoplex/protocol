@@ -13,7 +13,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/ProtectedResourceMetadata.json"
+              "$ref": "https://xynolog.org/protocol/ProtectedResourceMetadata.json"
             }
           }
         }

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/CaseTable.json",
   "description": "What every case table carries beside its cases (specs/README.md, \"Case tables\"): the rule it states. A case table's schema extends this one through `allOf` and admits each of its properties.",
   "type": "object",
   "properties": {

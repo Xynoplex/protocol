@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BindInitiateCommand.json",
   "type": "object",
   "description": "Command payload sent on the bind:initiate bus channel to start a bind flow.",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Branded AnnotationId of the annotation being bound"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Branded ResourceId of the resource being bound to"
     },
     "defaultTitle": {

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionCacheCases.json",
   "description": "session/cache-cases.json: what a client keeps of its queries and of its stream in a SessionStorage, and what it keeps of what another client wrote there.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -41,10 +43,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                     }
                   },
                   "required": [
@@ -91,10 +93,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                      "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
                     }
                   },
                   "required": [
@@ -141,10 +143,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/Annotation.json"
+                      "$ref": "https://xynolog.org/protocol/Annotation.json"
                     }
                   },
                   "required": [
@@ -196,7 +198,7 @@
                       "description": "stored.json's `wholeKey`."
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                      "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
                     }
                   },
                   "required": [
@@ -248,7 +250,7 @@
                       "description": "stored.json's `wholeKey`."
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                      "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json#/properties/tagSchemas"
                     }
                   },
                   "required": [
@@ -297,10 +299,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                     }
                   },
                   "required": [
@@ -325,10 +327,10 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         },
                         "value": {
-                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                         }
                       },
                       "required": [
@@ -376,10 +378,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                      "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
                     }
                   },
                   "required": [
@@ -404,10 +406,10 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         },
                         "value": {
-                          "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                          "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
                         }
                       },
                       "required": [
@@ -455,10 +457,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/Annotation.json"
+                      "$ref": "https://xynolog.org/protocol/Annotation.json"
                     }
                   },
                   "required": [
@@ -483,10 +485,10 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "$ref": "../components/schemas/AnnotationId.json"
+                          "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                         },
                         "value": {
-                          "$ref": "../components/schemas/Annotation.json"
+                          "$ref": "https://xynolog.org/protocol/Annotation.json"
                         }
                       },
                       "required": [
@@ -539,7 +541,7 @@
                       "description": "stored.json's `wholeKey`."
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                      "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
                     }
                   },
                   "required": [
@@ -569,7 +571,7 @@
                           "description": "stored.json's `wholeKey`."
                         },
                         "value": {
-                          "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                          "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
                         }
                       },
                       "required": [
@@ -622,7 +624,7 @@
                       "description": "stored.json's `wholeKey`."
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                      "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json#/properties/tagSchemas"
                     }
                   },
                   "required": [
@@ -652,7 +654,7 @@
                           "description": "stored.json's `wholeKey`."
                         },
                         "value": {
-                          "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                          "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json#/properties/tagSchemas"
                         }
                       },
                       "required": [
@@ -709,10 +711,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/ResourceDescriptor.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                     }
                   },
                   "required": [
@@ -737,10 +739,10 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         },
                         "value": {
-                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                         }
                       },
                       "required": [
@@ -788,10 +790,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                      "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
                     }
                   },
                   "required": [
@@ -816,10 +818,10 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         },
                         "value": {
-                          "$ref": "../components/schemas/GetAnnotationsResponse.json"
+                          "$ref": "https://xynolog.org/protocol/GetAnnotationsResponse.json"
                         }
                       },
                       "required": [
@@ -867,10 +869,10 @@
                   "type": "object",
                   "properties": {
                     "key": {
-                      "$ref": "../components/schemas/AnnotationId.json"
+                      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                     },
                     "value": {
-                      "$ref": "../components/schemas/Annotation.json"
+                      "$ref": "https://xynolog.org/protocol/Annotation.json"
                     }
                   },
                   "required": [
@@ -895,10 +897,10 @@
                       "type": "object",
                       "properties": {
                         "key": {
-                          "$ref": "../components/schemas/AnnotationId.json"
+                          "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                         },
                         "value": {
-                          "$ref": "../components/schemas/Annotation.json"
+                          "$ref": "https://xynolog.org/protocol/Annotation.json"
                         }
                       },
                       "required": [
@@ -951,7 +953,7 @@
                       "description": "stored.json's `wholeKey`."
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                      "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
                     }
                   },
                   "required": [
@@ -981,7 +983,7 @@
                           "description": "stored.json's `wholeKey`."
                         },
                         "value": {
-                          "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                          "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
                         }
                       },
                       "required": [
@@ -1034,7 +1036,7 @@
                       "description": "stored.json's `wholeKey`."
                     },
                     "value": {
-                      "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                      "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json#/properties/tagSchemas"
                     }
                   },
                   "required": [
@@ -1064,7 +1066,7 @@
                           "description": "stored.json's `wholeKey`."
                         },
                         "value": {
-                          "$ref": "../components/schemas/GetTagSchemasResponse.json#/properties/tagSchemas"
+                          "$ref": "https://xynolog.org/protocol/GetTagSchemasResponse.json#/properties/tagSchemas"
                         }
                       },
                       "required": [
@@ -1116,7 +1118,7 @@
             "description": "The places the load keeps: each scope's id, and its place.",
             "type": "object",
             "additionalProperties": {
-              "$ref": "../components/schemas/PersistedEventId.json"
+              "$ref": "https://xynolog.org/protocol/PersistedEventId.json"
             }
           }
         },

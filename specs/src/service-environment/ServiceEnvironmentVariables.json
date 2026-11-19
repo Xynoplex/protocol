@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceEnvironmentVariables.json",
   "description": "service-environment/variables.json: every environment variable a Xynolog service written in Rust reads, beside its configuration document.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "variables": {
       "type": "array",
@@ -22,7 +24,7 @@
             "uniqueItems": true,
             "description": "The services that read it.",
             "items": {
-              "$ref": "../service-telemetry/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/services/items"
+              "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/services/items"
             }
           },
           "readBy": {

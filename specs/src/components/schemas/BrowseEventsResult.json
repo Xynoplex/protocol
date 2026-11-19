@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseEventsResult.json",
   "type": "object",
   "description": "Result of browsing events for a resource",
   "properties": {
     "response": {
-      "$ref": "./GetEventsResponse.json"
+      "$ref": "https://xynolog.org/protocol/GetEventsResponse.json"
     }
   },
   "required": [

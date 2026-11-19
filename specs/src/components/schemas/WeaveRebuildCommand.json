@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WeaveRebuildCommand.json",
   "type": "object",
   "description": "Bus command to rebuild the graph projection from the event log — the whole graph when resourceId is absent, one resource when present. Served by the Weaver; replaces direct rebuild access, which does not survive the Weaver's container split.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "When present, rebuild only this resource; otherwise clear and rebuild the entire graph."
     },
     "_userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "Authenticated user's DID, injected by the /bus/emit gateway. Clients do not set this."
     }
   }

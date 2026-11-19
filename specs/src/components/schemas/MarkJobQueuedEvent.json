@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkJobQueuedEvent.json",
   "type": "object",
   "description": "A pending `mark` job, announced with its parameters as it was created.",
   "properties": {
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     },
     "jobType": {
       "type": "string",
@@ -12,15 +14,15 @@
       ]
     },
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The resource the job is about."
     },
     "userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "The DID of the principal whose `job:create` created the job."
     },
     "params": {
-      "$ref": "./MarkJobParams.json"
+      "$ref": "https://xynolog.org/protocol/MarkJobParams.json"
     }
   },
   "required": [

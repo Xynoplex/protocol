@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WeaverConfig.json",
   "type": "object",
   "description": "Everything a Weaver reads at boot: nothing in it is defaulted by the Weaver. The launcher writes it for the Weaver it starts, from the knowledge base's stack documents, and the Weaver reads it from the path its `--config` flag names (its image passes `/etc/xynolog/weaver.json`). Whoever starts a Weaver another way writes the same document: this schema is the contract, and a Weaver needs no launcher. Started without `--config`, or with a path that names no file, the Weaver refuses to start and says which. No secret is a value here: the graph database's password is named by the environment variable that holds it, and the Weaver's own service account is `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET` in its environment. A document that does not validate is refused at boot, naming each failing field.",
   "properties": {
     "kb": {
-      "$ref": "../components/schemas/KbIdentity.json"
+      "$ref": "https://xynolog.org/protocol/KbIdentity.json"
     },
     "gatewayUrl": {
       "type": "string",
@@ -11,18 +13,18 @@
       "description": "The URL the Weaver reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "$ref": "../components/schemas/ServiceIdentity.json",
+      "$ref": "https://xynolog.org/protocol/ServiceIdentity.json",
       "description": "The issuer the Weaver's service account signs in at."
     },
     "archivist": {
-      "$ref": "../components/schemas/ServiceAddress.json",
+      "$ref": "https://xynolog.org/protocol/ServiceAddress.json",
       "description": "Where the Archivist listens. The Weaver reads the record by position from it, and a resource's annotations, as its service account."
     },
     "graph": {
-      "$ref": "../graph/GraphConfig.json"
+      "$ref": "https://xynolog.org/protocol/GraphConfig.json"
     },
     "cursorsPath": {
-      "$ref": "../components/schemas/CursorsPath.json"
+      "$ref": "https://xynolog.org/protocol/CursorsPath.json"
     },
     "port": {
       "type": "integer",
@@ -31,10 +33,10 @@
       "description": "The port the Weaver answers `/health` on."
     },
     "logLevel": {
-      "$ref": "../components/schemas/LogLevel.json"
+      "$ref": "https://xynolog.org/protocol/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "../components/schemas/LogFormat.json"
+      "$ref": "https://xynolog.org/protocol/LogFormat.json"
     }
   },
   "required": [

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseRouterPushEvent.json",
   "type": "object",
   "description": "Emitted when the browse panel requests a router navigation",
   "properties": {

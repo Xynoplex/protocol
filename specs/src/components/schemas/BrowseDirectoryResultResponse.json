@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseDirectoryResultResponse.json",
   "type": "object",
   "properties": {
     "path": {
@@ -7,7 +9,7 @@
     "entries": {
       "type": "array",
       "items": {
-        "$ref": "./DirectoryEntry.json"
+        "$ref": "https://xynolog.org/protocol/DirectoryEntry.json"
       }
     }
   },

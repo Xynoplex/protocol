@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationsReconcileCases.json",
   "description": "annotations/reconcile-cases.json: where a quoted span is in a text, reconciled, or null where it is refused.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -15,19 +17,19 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "text": {
             "type": "string",
             "description": "The real text."
           },
           "quoted": {
-            "$ref": "../client/types/QuotedText.json"
+            "$ref": "https://xynolog.org/protocol/QuotedText.json"
           },
           "reconciled": {
             "anyOf": [
               {
-                "$ref": "../client/types/ReconciledSpan.json"
+                "$ref": "https://xynolog.org/protocol/ReconciledSpan.json"
               },
               {
                 "type": "null"

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobsFilterCases.json",
   "description": "jobs/filter-cases.json: whether a job matches a filter.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,23 +16,23 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "filter": {
-            "$ref": "../components/schemas/JobFilter.json"
+            "$ref": "https://xynolog.org/protocol/JobFilter.json"
           },
           "job": {
             "type": "object",
             "description": "The job description as it is announced or held. It may be partial, as a description a filter is compared with can be, so it requires nothing of its parameters.",
             "properties": {
               "jobType": {
-                "$ref": "../components/schemas/JobType.json"
+                "$ref": "https://xynolog.org/protocol/JobType.json"
               },
               "params": {
                 "type": "object",
                 "properties": {
                   "motivation": {
-                    "$ref": "../components/schemas/Motivation.json"
+                    "$ref": "https://xynolog.org/protocol/Motivation.json"
                   },
                   "schemaId": {
                     "type": "string"
@@ -48,7 +50,7 @@
                     "type": "string"
                   },
                   "outputMediaType": {
-                    "$ref": "../components/schemas/SupportedMediaType.json"
+                    "$ref": "https://xynolog.org/protocol/SupportedMediaType.json"
                   },
                   "tone": {
                     "type": "string"
@@ -63,7 +65,7 @@
                     }
                   },
                   "resourceId": {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   }
                 },
                 "additionalProperties": false

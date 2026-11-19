@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianPromptCases.json",
   "description": "librarian/prompt-cases.json: the five prompts the Librarian sends a model: what each is made from, its text, and what it is sent with.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -13,11 +15,11 @@
       "type": "object",
       "properties": {
         "score": {
-          "$ref": "../JsonSchema.json",
+          "$ref": "https://xynolog.org/protocol/JsonSchema.json",
           "$comment": "The JSON Schema a provider holds each element of the reply to a score prompt to."
         },
         "reference-suggestions": {
-          "$ref": "../JsonSchema.json",
+          "$ref": "https://xynolog.org/protocol/JsonSchema.json",
           "$comment": "The JSON Schema a provider holds each element of the reply to a reference-suggestions prompt to."
         }
       },
@@ -35,7 +37,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "prompt": {
                 "type": "string",
@@ -56,7 +58,7 @@
                     "description": "What the annotation's author typed to say what is meant."
                   },
                   "motivation": {
-                    "$ref": "../components/schemas/Motivation.json"
+                    "$ref": "https://xynolog.org/protocol/Motivation.json"
                   },
                   "source": {
                     "type": "string",
@@ -91,7 +93,7 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         },
                         "name": {
                           "type": "string",
@@ -191,7 +193,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "prompt": {
                 "type": "string",
@@ -269,7 +271,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "prompt": {
                 "type": "string",
@@ -327,7 +329,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "prompt": {
                 "type": "string",
@@ -380,7 +382,7 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "prompt": {
                 "type": "string",

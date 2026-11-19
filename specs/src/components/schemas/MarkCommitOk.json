@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkCommitOk.json",
   "type": "object",
   "description": "Durability acknowledgement for a mark:commit batch: every annotation named by the command is in the event log at the moment this is emitted.",
   "properties": {
@@ -14,7 +16,7 @@
           "type": "array",
           "description": "Ids the batch covers, whether appended now or already present.",
           "items": {
-            "$ref": "./AnnotationId.json"
+            "$ref": "https://xynolog.org/protocol/AnnotationId.json"
           }
         }
       },

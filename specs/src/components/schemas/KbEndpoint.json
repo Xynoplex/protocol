@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/KbEndpoint.json",
   "description": "How a knowledge base is reached: a gateway over HTTP, or a knowledge base the host process has loaded. Told apart by `kind`. Only what builds a transport, or signs in at an issuer, reads it.",
   "oneOf": [
     {
-      "$ref": "./HttpEndpoint.json"
+      "$ref": "https://xynolog.org/protocol/HttpEndpoint.json"
     },
     {
-      "$ref": "./LocalEndpoint.json"
+      "$ref": "https://xynolog.org/protocol/LocalEndpoint.json"
     }
   ],
   "discriminator": {
     "propertyName": "kind",
     "mapping": {
-      "http": "./HttpEndpoint.json",
-      "local": "./LocalEndpoint.json"
+      "http": "https://xynolog.org/protocol/HttpEndpoint.json",
+      "local": "https://xynolog.org/protocol/LocalEndpoint.json"
     }
   }
 }

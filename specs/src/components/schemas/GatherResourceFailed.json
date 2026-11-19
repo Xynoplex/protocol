@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherResourceFailed.json",
   "description": "The payload of `gather:resource-failed`: a CommandError that names the resource whose context could not be gathered.",
   "allOf": [
     {
-      "$ref": "./CommandError.json"
+      "$ref": "https://xynolog.org/protocol/CommandError.json"
     },
     {
       "type": "object",
       "properties": {
         "resourceId": {
-          "$ref": "./ResourceId.json",
+          "$ref": "https://xynolog.org/protocol/ResourceId.json",
           "description": "The resource the gather was asked for."
         }
       },

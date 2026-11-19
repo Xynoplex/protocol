@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationRemovedPayload.json",
   "type": "object",
   "description": "Payload for mark:removed domain event",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     }
   },
   "required": [

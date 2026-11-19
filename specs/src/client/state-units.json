@@ -8,7 +8,7 @@
       "additionalProperties": false,
       "properties": {
         "reason": {
-          "$ref": "../session/cases.json#/told",
+          "$ref": "https://xynolog.org/protocol/SessionEndReason.json",
           "description": "Why it ended."
         }
       },

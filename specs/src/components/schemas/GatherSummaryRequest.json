@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherSummaryRequest.json",
   "type": "object",
   "description": "Request to generate an AI summary of an annotation",
   "properties": {
     "annotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     }
   },
   "required": [

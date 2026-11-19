@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkJobCreateCommand.json",
   "type": "object",
   "description": "Create a `mark` job: annotate one resource for one motivation.",
   "properties": {
     "_userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "The emitter's verified DID, injected by the gateway. Clients do not set this."
     },
     "_roles": {
@@ -20,11 +22,11 @@
       ]
     },
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The resource to annotate."
     },
     "params": {
-      "$ref": "./MarkJobParams.json"
+      "$ref": "https://xynolog.org/protocol/MarkJobParams.json"
     }
   },
   "required": [

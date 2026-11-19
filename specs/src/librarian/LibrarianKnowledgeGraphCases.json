@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianKnowledgeGraphCases.json",
   "description": "librarian/knowledge-graph-cases.json: what the graph store and the views answer, and the knowledge graph a Librarian builds for one resource, or the failure.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -18,10 +20,10 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "resource": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "depth": {
                 "type": "integer",
@@ -40,7 +42,7 @@
                     "items": {
                       "anyOf": [
                         {
-                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                         },
                         {
                           "type": "null"
@@ -55,7 +57,7 @@
                       "type": "object",
                       "properties": {
                         "resource": {
-                          "$ref": "../components/schemas/ResourceDescriptor.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                         },
                         "bidirectional": {
                           "type": "boolean",
@@ -73,14 +75,14 @@
                     "type": "array",
                     "description": "The annotations that refer to the resource, in the order the store gives them.",
                     "items": {
-                      "$ref": "../components/schemas/Annotation.json"
+                      "$ref": "https://xynolog.org/protocol/Annotation.json"
                     }
                   },
                   "annotations": {
                     "type": "array",
                     "description": "The annotations on the resource, in the order the store gives them.",
                     "items": {
-                      "$ref": "../components/schemas/Annotation.json"
+                      "$ref": "https://xynolog.org/protocol/Annotation.json"
                     }
                   },
                   "further": {
@@ -116,7 +118,7 @@
                 "type": "object",
                 "description": "The resource views that exist, by resource id.",
                 "additionalProperties": {
-                  "$ref": "../components/schemas/ResourceView.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceView.json"
                 }
               },
               "applied": {
@@ -129,7 +131,7 @@
                 "description": "How many milliseconds passed in waiting before the answer."
               },
               "knowledgeGraph": {
-                "$ref": "../components/schemas/KnowledgeGraph.json"
+                "$ref": "https://xynolog.org/protocol/KnowledgeGraph.json"
               }
             },
             "required": [
@@ -149,10 +151,10 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "resource": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "depth": {
                 "type": "integer",
@@ -167,7 +169,7 @@
                 "type": "object",
                 "description": "The resource views that exist, by resource id.",
                 "additionalProperties": {
-                  "$ref": "../components/schemas/ResourceView.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceView.json"
                 }
               },
               "applied": {

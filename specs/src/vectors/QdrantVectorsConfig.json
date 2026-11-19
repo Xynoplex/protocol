@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/QdrantVectorsConfig.json",
   "type": "object",
   "description": "A vector index kept in a Qdrant server, asked over its REST API with a token.",
   "properties": {

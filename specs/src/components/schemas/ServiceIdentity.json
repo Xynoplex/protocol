@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceIdentity.json",
   "type": "object",
   "description": "The identity provider a service's account signs in at, by its issuer.",
   "properties": {

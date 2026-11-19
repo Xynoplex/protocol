@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseAnnotationResult.json",
   "type": "object",
   "description": "Result of browsing a single annotation",
   "properties": {
     "response": {
-      "$ref": "./GetAnnotationResponse.json"
+      "$ref": "https://xynolog.org/protocol/GetAnnotationResponse.json"
     }
   },
   "required": [

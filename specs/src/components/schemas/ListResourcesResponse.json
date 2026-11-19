@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ListResourcesResponse.json",
   "type": "object",
   "properties": {
     "resources": {
       "type": "array",
       "items": {
-        "$ref": "./ResourceDescriptor.json"
+        "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
       }
     },
     "total": {

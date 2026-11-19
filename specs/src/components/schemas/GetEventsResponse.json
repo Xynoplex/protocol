@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetEventsResponse.json",
   "type": "object",
   "properties": {
     "events": {
       "type": "array",
       "items": {
-        "$ref": "AttributedEvent.json"
+        "$ref": "https://xynolog.org/protocol/AttributedEvent.json"
       }
     },
     "total": {
       "type": "number"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     }
   },
   "required": [

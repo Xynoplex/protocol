@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GraphCodecCases.json",
   "description": "graph/codec-cases.json: what the graph holds of an annotation and of a resource, as its two codecs say it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -17,43 +19,43 @@
         "maxProperties": 2,
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "annotationStored": {
             "description": "An annotation as the record gives it, its row, and what reading the row back answers.",
             "type": "object",
             "properties": {
               "annotation": {
-                "$ref": "../components/schemas/Annotation.json"
+                "$ref": "https://xynolog.org/protocol/Annotation.json"
               },
               "properties": {
                 "description": "The properties of the annotation's row that are plain strings.",
                 "type": "object",
                 "properties": {
                   "id": {
-                    "$ref": "../components/schemas/AnnotationId.json"
+                    "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                   },
                   "resourceId": {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   },
                   "type": {
                     "type": "string",
                     "description": "The row's type."
                   },
                   "motivation": {
-                    "$ref": "../components/schemas/Motivation.json"
+                    "$ref": "https://xynolog.org/protocol/Motivation.json"
                   },
                   "created": {
-                    "$ref": "../components/schemas/Annotation.json#/properties/created"
+                    "$ref": "https://xynolog.org/protocol/Annotation.json#/properties/created"
                   },
                   "modified": {
-                    "$ref": "../components/schemas/Annotation.json#/properties/modified"
+                    "$ref": "https://xynolog.org/protocol/Annotation.json#/properties/modified"
                   },
                   "exact": {
-                    "$ref": "../components/schemas/TextQuoteSelector.json#/properties/exact"
+                    "$ref": "https://xynolog.org/protocol/TextQuoteSelector.json#/properties/exact"
                   },
                   "source": {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   }
                 },
                 "required": [
@@ -70,13 +72,13 @@
                 "type": "object",
                 "properties": {
                   "creator": {
-                    "$ref": "../components/schemas/Agent.json"
+                    "$ref": "https://xynolog.org/protocol/Agent.json"
                   },
                   "selector": {
-                    "$ref": "../components/schemas/AnnotationSelector.json"
+                    "$ref": "https://xynolog.org/protocol/AnnotationSelector.json"
                   },
                   "generator": {
-                    "$ref": "../components/schemas/OneOrMoreAgents.json"
+                    "$ref": "https://xynolog.org/protocol/OneOrMoreAgents.json"
                   }
                 },
                 "required": [
@@ -96,7 +98,7 @@
                 "description": "The resource the reference edge goes to, or null when there is none.",
                 "anyOf": [
                   {
-                    "$ref": "../components/schemas/ResourceId.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceId.json"
                   },
                   {
                     "type": "null"
@@ -104,7 +106,7 @@
                 ]
               },
               "holds": {
-                "$ref": "../components/schemas/Annotation.json"
+                "$ref": "https://xynolog.org/protocol/Annotation.json"
               }
             },
             "required": [
@@ -132,7 +134,7 @@
                         "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/id"
                       },
                       "resourceId": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "type": {
                         "$ref": "#/properties/cases/items/properties/annotationStored/properties/properties/properties/type"
@@ -171,7 +173,7 @@
                     }
                   },
                   "annotation": {
-                    "$ref": "../components/schemas/Annotation.json"
+                    "$ref": "https://xynolog.org/protocol/Annotation.json"
                   }
                 },
                 "required": [
@@ -214,7 +216,7 @@
                 "type": "object",
                 "properties": {
                   "current": {
-                    "$ref": "../components/schemas/Annotation.json"
+                    "$ref": "https://xynolog.org/protocol/Annotation.json"
                   },
                   "updates": {
                     "description": "What the update states.",
@@ -224,24 +226,24 @@
                         "type": "array",
                         "description": "The bodies the annotation then has; an empty list leaves it none.",
                         "items": {
-                          "$ref": "../components/schemas/AnnotationBody.json"
+                          "$ref": "https://xynolog.org/protocol/AnnotationBody.json"
                         }
                       },
                       "modified": {
-                        "$ref": "../components/schemas/Annotation.json#/properties/modified"
+                        "$ref": "https://xynolog.org/protocol/Annotation.json#/properties/modified"
                       },
                       "target": {
-                        "$ref": "../components/schemas/Annotation.json#/properties/target"
+                        "$ref": "https://xynolog.org/protocol/Annotation.json#/properties/target"
                       },
                       "id": {
-                        "$ref": "../components/schemas/AnnotationId.json"
+                        "$ref": "https://xynolog.org/protocol/AnnotationId.json"
                       }
                     },
                     "required": [],
                     "additionalProperties": false
                   },
                   "annotation": {
-                    "$ref": "../components/schemas/Annotation.json"
+                    "$ref": "https://xynolog.org/protocol/Annotation.json"
                   }
                 },
                 "required": [
@@ -256,7 +258,7 @@
                 "type": "object",
                 "properties": {
                   "current": {
-                    "$ref": "../components/schemas/Annotation.json"
+                    "$ref": "https://xynolog.org/protocol/Annotation.json"
                   },
                   "updates": {
                     "$ref": "#/properties/cases/items/properties/annotationUpdated/oneOf/0/properties/updates"
@@ -279,13 +281,13 @@
             "type": "object",
             "properties": {
               "current": {
-                "$ref": "../components/schemas/Annotation.json"
+                "$ref": "https://xynolog.org/protocol/Annotation.json"
               },
               "source": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "body": {
-                "$ref": "../components/schemas/AnnotationBodies.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationBodies.json"
               }
             },
             "required": [
@@ -303,17 +305,17 @@
                 "type": "object",
                 "properties": {
                   "resource": {
-                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                   },
                   "properties": {
                     "description": "The properties of the resource's row that are not JSON.",
                     "type": "object",
                     "properties": {
                       "id": {
-                        "$ref": "../components/schemas/ResourceId.json"
+                        "$ref": "https://xynolog.org/protocol/ResourceId.json"
                       },
                       "name": {
-                        "$ref": "../components/schemas/ResourceDescriptor.json#/properties/name"
+                        "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json#/properties/name"
                       },
                       "entityTypes": {
                         "type": "array",
@@ -322,13 +324,13 @@
                         }
                       },
                       "format": {
-                        "$ref": "../components/schemas/SupportedMediaType.json"
+                        "$ref": "https://xynolog.org/protocol/SupportedMediaType.json"
                       },
                       "archived": {
                         "type": "boolean"
                       },
                       "created": {
-                        "$ref": "../components/schemas/ResourceDescriptor.json#/properties/dateCreated"
+                        "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json#/properties/dateCreated"
                       },
                       "contentChecksum": {
                         "type": "string",
@@ -355,7 +357,7 @@
                     "type": "object",
                     "properties": {
                       "creator": {
-                        "$ref": "../components/schemas/OneOrMoreAgents.json"
+                        "$ref": "https://xynolog.org/protocol/OneOrMoreAgents.json"
                       }
                     },
                     "required": [
@@ -364,7 +366,7 @@
                     "additionalProperties": false
                   },
                   "holds": {
-                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                   }
                 },
                 "required": [
@@ -380,7 +382,7 @@
                 "type": "object",
                 "properties": {
                   "resource": {
-                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                   },
                   "refused": {
                     "$ref": "#/properties/cases/items/properties/annotationRead/oneOf/1/properties/refused"
@@ -440,7 +442,7 @@
                     "additionalProperties": false
                   },
                   "resource": {
-                    "$ref": "../components/schemas/ResourceDescriptor.json"
+                    "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                   }
                 },
                 "required": [

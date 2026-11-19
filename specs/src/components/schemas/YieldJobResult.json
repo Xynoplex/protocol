@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/YieldJobResult.json",
   "description": "What a `yield` job reports when it concludes without failing: the resource it made, or a decline. Neither names its kind: a decline is the one with `declined`.",
   "oneOf": [
     {
-      "$ref": "./YieldJobDone.json"
+      "$ref": "https://xynolog.org/protocol/YieldJobDone.json"
     },
     {
-      "$ref": "./JobDeclined.json"
+      "$ref": "https://xynolog.org/protocol/JobDeclined.json"
     }
   ]
 }

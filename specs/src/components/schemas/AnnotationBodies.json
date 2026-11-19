@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationBodies.json",
   "oneOf": [
     {
-      "$ref": "./AnnotationBody.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationBody.json"
     },
     {
       "type": "array",
       "items": {
-        "$ref": "./AnnotationBody.json"
+        "$ref": "https://xynolog.org/protocol/AnnotationBody.json"
       },
       "minItems": 1,
       "description": "Non-empty array of mixed TextualBody (tagging) and SpecificResource (linking) bodies"

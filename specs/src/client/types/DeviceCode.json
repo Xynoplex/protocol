@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/DeviceCode.json",
   "title": "DeviceCode",
   "type": "object",
   "description": "What a device-authorization grant (RFC 8628) shows the person signing in: the code they enter, and where.",

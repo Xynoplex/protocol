@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/HighlightingJobParams.json",
   "type": "object",
   "description": "What a highlighting job takes: passages of the resource worth a reader's attention are marked, with no text of the job's own.",
   "properties": {

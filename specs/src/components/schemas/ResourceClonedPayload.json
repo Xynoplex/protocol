@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ResourceClonedPayload.json",
   "type": "object",
   "description": "Payload for yield:cloned domain event",
   "properties": {
@@ -6,7 +8,7 @@
       "type": "string"
     },
     "format": {
-      "$ref": "ContentFormat.json"
+      "$ref": "https://xynolog.org/protocol/ContentFormat.json"
     },
     "contentChecksum": {
       "type": "string"
@@ -19,7 +21,7 @@
       "description": "Where the clone's bytes are, on the resource's primary Representation — the same single home `yield:created` writes to."
     },
     "parentResourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "entityTypes": {
       "type": "array",
@@ -31,11 +33,11 @@
       "type": "string"
     },
     "creator": {
-      "$ref": "Agent.json",
+      "$ref": "https://xynolog.org/protocol/Agent.json",
       "description": "Who made the clone — the emitter, derived at write time. A clone is never job-fulfilling. Absent on events written before derivation existed, whose emitter was their only party."
     },
     "wasAttributedTo": {
-      "$ref": "./OneOrMoreAgents.json",
+      "$ref": "https://xynolog.org/protocol/OneOrMoreAgents.json",
       "description": "PROV-O wasAttributedTo, derived at write time: the cloner alone. The value the resource view carries."
     }
   },

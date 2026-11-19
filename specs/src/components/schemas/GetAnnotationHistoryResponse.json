@@ -1,20 +1,22 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetAnnotationHistoryResponse.json",
   "type": "object",
   "properties": {
     "events": {
       "type": "array",
       "items": {
-        "$ref": "AttributedEvent.json"
+        "$ref": "https://xynolog.org/protocol/AttributedEvent.json"
       }
     },
     "total": {
       "type": "number"
     },
     "annotationId": {
-      "$ref": "./AnnotationId.json"
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     }
   },
   "required": [

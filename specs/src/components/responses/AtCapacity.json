@@ -12,7 +12,7 @@
   "content": {
     "application/json": {
       "schema": {
-        "$ref": "../schemas/LimitRefusal.json"
+        "$ref": "https://xynolog.org/protocol/LimitRefusal.json"
       }
     }
   }

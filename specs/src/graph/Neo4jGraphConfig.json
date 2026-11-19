@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Neo4jGraphConfig.json",
   "type": "object",
   "description": "A graph kept in a Neo4j database.",
   "properties": {

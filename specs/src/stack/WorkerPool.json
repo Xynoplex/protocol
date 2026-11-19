@@ -1,34 +1,36 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerPool.json",
   "title": "WorkerPool",
   "type": "object",
   "description": "The shared worker that does knowledge bases' jobs: its image, its memory and its log level. They are shared, not any knowledge base's, so its document is kept in the launcher's state home, in `stack/workers.yaml`, not in a knowledge base's repository. A knowledge base's jobs are done when its Inference document gives a job an engine. A worker needs only the Gateway, and an issuer's token with the worker's role.",
   "properties": {
     "apiVersion": {
-      "$ref": "./StackApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/StackApiVersion.json"
     },
     "kind": {
       "type": "string",
       "const": "WorkerPool"
     },
     "metadata": {
-      "$ref": "./Metadata.json"
+      "$ref": "https://xynolog.org/protocol/Metadata.json"
     },
     "spec": {
       "type": "object",
       "description": "How the worker runs.",
       "properties": {
         "logLevel": {
-          "$ref": "../components/schemas/LogLevel.json"
+          "$ref": "https://xynolog.org/protocol/LogLevel.json"
         },
         "worker": {
           "type": "object",
           "description": "The Worker.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             }
           },
           "required": [

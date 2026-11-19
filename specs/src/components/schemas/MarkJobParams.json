@@ -1,30 +1,32 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MarkJobParams.json",
   "description": "The parameters of a `mark` job, told apart by `motivation`. Each motivation takes its own parameters and no others: a parameter a job does not take is refused where the job is created.",
   "oneOf": [
     {
-      "$ref": "./HighlightingJobParams.json"
+      "$ref": "https://xynolog.org/protocol/HighlightingJobParams.json"
     },
     {
-      "$ref": "./CommentingJobParams.json"
+      "$ref": "https://xynolog.org/protocol/CommentingJobParams.json"
     },
     {
-      "$ref": "./AssessingJobParams.json"
+      "$ref": "https://xynolog.org/protocol/AssessingJobParams.json"
     },
     {
-      "$ref": "./LinkingJobParams.json"
+      "$ref": "https://xynolog.org/protocol/LinkingJobParams.json"
     },
     {
-      "$ref": "./TaggingJobParams.json"
+      "$ref": "https://xynolog.org/protocol/TaggingJobParams.json"
     }
   ],
   "discriminator": {
     "propertyName": "motivation",
     "mapping": {
-      "highlighting": "./HighlightingJobParams.json",
-      "commenting": "./CommentingJobParams.json",
-      "assessing": "./AssessingJobParams.json",
-      "linking": "./LinkingJobParams.json",
-      "tagging": "./TaggingJobParams.json"
+      "highlighting": "https://xynolog.org/protocol/HighlightingJobParams.json",
+      "commenting": "https://xynolog.org/protocol/CommentingJobParams.json",
+      "assessing": "https://xynolog.org/protocol/AssessingJobParams.json",
+      "linking": "https://xynolog.org/protocol/LinkingJobParams.json",
+      "tagging": "https://xynolog.org/protocol/TaggingJobParams.json"
     }
   }
 }

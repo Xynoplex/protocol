@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistEventsResponse.json",
   "type": "object",
   "description": "A page of one stream's events from one sequence number, inclusive, in log order, and the sequence number of the stream's last event: the Archivist's answer to `GET /events/{resourceId}`.",
   "properties": {
     "events": {
       "type": "array",
       "items": {
-        "$ref": "../components/schemas/StoredEventResponse.json"
+        "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
       }
     },
     "lastSequence": {

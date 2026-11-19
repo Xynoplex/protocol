@@ -20,6 +20,10 @@ type discriminator = {
    schema is a layer whose children are schemas, and [map] rewrites a layer's
    children with nothing else of it changed. *)
 type 'a layer = {
+  schema : unit option;
+      (** [$schema], which states JSON Schema 2020-12 ([Decode.dialect]) and
+          nothing else. *)
+  id : string option;
   ref_ : Decode.reference option;
   comment : string option;
   title : string option;
@@ -58,6 +62,8 @@ and schema = t layer
 (* A schema that states nothing. *)
 let empty : schema =
   {
+    schema = None;
+    id = None;
     ref_ = None;
     comment = None;
     title = None;
@@ -96,6 +102,8 @@ let empty : schema =
    one this must place. *)
 let children
     {
+      schema = _;
+      id = _;
       ref_ = _;
       comment = _;
       title = _;
@@ -239,6 +247,8 @@ let rec para ~boolean ~schema = function
    names every field, so a keyword the model learns is one this must name. *)
 let keywords
     {
+      schema;
+      id;
       ref_;
       comment;
       title;
@@ -273,6 +283,8 @@ let keywords
   let is name value = if Option.is_some value then [ name ] else [] in
   List.concat
     [
+      is "$schema" schema;
+      is "$id" id;
       is "$ref" ref_;
       is "$comment" comment;
       is "title" title;
@@ -420,6 +432,10 @@ let rec decode cursor =
 and schema cursor =
   Decode.obj
     (fun o ->
+      let schema =
+        Decode.optional o "$schema" (Decode.literal Decode.dialect)
+      in
+      let id = Decode.optional o "$id" Decode.non_empty_string in
       let ref_ = Decode.optional o "$ref" Decode.reference in
       let comment = Decode.optional o "$comment" Decode.string in
       let title = Decode.optional o "title" Decode.string in
@@ -461,6 +477,8 @@ and schema cursor =
       let not_ = Decode.optional o "not" decode in
       let discriminator = Decode.optional o "discriminator" discriminator in
       {
+        schema;
+        id;
         ref_;
         comment;
         title;

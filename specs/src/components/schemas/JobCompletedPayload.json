@@ -1,19 +1,21 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobCompletedPayload.json",
   "type": "object",
   "description": "Payload for job:completed domain event",
   "properties": {
     "jobId": {
-      "$ref": "./JobId.json"
+      "$ref": "https://xynolog.org/protocol/JobId.json"
     },
     "jobType": {
-      "$ref": "JobType.json"
+      "$ref": "https://xynolog.org/protocol/JobType.json"
     },
     "attempt": {
       "type": "integer",
       "description": "Which attempt produced this event, 1-based (a first run is 1). ALWAYS present: the queue re-runs a failed job silently, so an operator reading progress or a terminal record has no other way to tell a re-run from a first run — and provider spend, already counted in xynolog_inference_tokens_total, cannot be attributed to a repeated document without it. Stated rather than inferred from absence, because 'attempt 1' is a fact the emitter always knows."
     },
     "annotationId": {
-      "$ref": "./AnnotationId.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationId.json",
       "description": "Annotation this job was attached to, when applicable"
     },
     "totalSteps": {
@@ -24,7 +26,7 @@
       "description": "For detection: total entities found"
     },
     "resultResourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "For generation: ID of generated resource"
     },
     "annotationUri": {
@@ -37,7 +39,7 @@
       "description": "Full result object for extensibility"
     },
     "durability": {
-      "$ref": "./DurabilityEvidence.json"
+      "$ref": "https://xynolog.org/protocol/DurabilityEvidence.json"
     }
   },
   "required": [

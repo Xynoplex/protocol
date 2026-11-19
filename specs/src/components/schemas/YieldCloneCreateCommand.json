@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/YieldCloneCreateCommand.json",
   "type": "object",
   "description": "Bus command to create a cloned resource from a clone token. Bytes are stored by the upload path BEFORE this command is emitted, because bytes travel over HTTP and never over the bus — the command carries the storage coordinates, never content.",
   "properties": {
     "_userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "Authenticated user's DID, injected by the /bus/emit gateway. Clients do not set this."
     },
     "token": {
@@ -23,7 +25,7 @@
       "type": "integer"
     },
     "format": {
-      "$ref": "./ContentFormat.json"
+      "$ref": "https://xynolog.org/protocol/ContentFormat.json"
     },
     "archiveOriginal": {
       "type": "boolean"

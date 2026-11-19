@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseResourcesResult.json",
   "type": "object",
   "description": "Result of browsing resources",
   "properties": {
     "response": {
-      "$ref": "./ListResourcesResponse.json"
+      "$ref": "https://xynolog.org/protocol/ListResourcesResponse.json"
     }
   },
   "required": [

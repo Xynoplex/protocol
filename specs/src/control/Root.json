@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Root.json",
   "title": "Root",
   "type": "object",
   "description": "One knowledge base this machine knows: a registered or running local clone, or a codespace stack recorded here. Registration, the directory, the stack and the forward are separate facts, each stated as it is.",
   "properties": {
     "placement": {
-      "$ref": "../discovery/DiscoveredKB.json#/properties/placement"
+      "$ref": "https://xynolog.org/protocol/DiscoveredKB.json#/properties/placement"
     },
     "path": {
       "type": "string",
@@ -35,10 +37,10 @@
       "description": "When a command last used it, in RFC 3339, as the registry records it."
     },
     "did": {
-      "$ref": "../discovery/DiscoveredKB.json#/properties/did"
+      "$ref": "https://xynolog.org/protocol/DiscoveredKB.json#/properties/did"
     },
     "siteName": {
-      "$ref": "../discovery/DiscoveredKB.json#/properties/siteName"
+      "$ref": "https://xynolog.org/protocol/DiscoveredKB.json#/properties/siteName"
     },
     "identityError": {
       "type": "string",
@@ -56,7 +58,7 @@
       "description": "For a present local root: the Inference documents its clone has, as start --config names them."
     },
     "repo": {
-      "$ref": "../discovery/DiscoveredKB.json#/properties/repo"
+      "$ref": "https://xynolog.org/protocol/DiscoveredKB.json#/properties/repo"
     },
     "codespace": {
       "type": "string",

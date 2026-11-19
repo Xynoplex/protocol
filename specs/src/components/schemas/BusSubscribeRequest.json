@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BusSubscribeRequest.json",
   "type": "object",
   "description": "Subscription matrix for the bus stream. `global` channels are delivered unscoped; each `scoped` entry subscribes the connection to one resource scope's channels, optionally resuming from that scope's last-seen persisted event id. At least one global channel or one scoped entry is required, and no scope may appear in two entries.",
   "properties": {
@@ -31,7 +33,7 @@
         "additionalProperties": false,
         "properties": {
           "scope": {
-            "$ref": "./ResourceId.json",
+            "$ref": "https://xynolog.org/protocol/ResourceId.json",
             "description": "Resource scope (a resourceId)."
           },
           "channels": {

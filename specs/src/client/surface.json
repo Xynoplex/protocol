@@ -60,7 +60,7 @@
             {
               "parameter": "type",
               "schema": {
-                "$ref": "../components/schemas/FrameAddEntityTypeCommand.json#/properties/tag"
+                "$ref": "https://xynolog.org/protocol/FrameAddEntityTypeCommand.json#/properties/tag"
               },
               "required": true
             }
@@ -86,7 +86,7 @@
             {
               "parameter": "types",
               "schema": {
-                "$ref": "../components/schemas/GetEntityTypesResponse.json#/properties/entityTypes"
+                "$ref": "https://xynolog.org/protocol/GetEntityTypesResponse.json#/properties/entityTypes"
               },
               "required": true
             }
@@ -125,7 +125,7 @@
             {
               "parameter": "schema",
               "schema": {
-                "$ref": "../components/schemas/TagSchema.json"
+                "$ref": "https://xynolog.org/protocol/TagSchema.json"
               },
               "required": true
             }
@@ -169,7 +169,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -195,7 +195,7 @@
             {
               "parameter": "filters",
               "schema": {
-                "$ref": "../components/schemas/BrowseResourcesRequest.json"
+                "$ref": "https://xynolog.org/protocol/BrowseResourcesRequest.json"
               },
               "required": false
             }
@@ -249,7 +249,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -275,14 +275,14 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -353,7 +353,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -379,7 +379,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -405,7 +405,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -431,7 +431,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -457,7 +457,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -483,7 +483,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -509,7 +509,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -535,14 +535,14 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -570,14 +570,14 @@
             {
               "parameter": "dirPath",
               "schema": {
-                "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/path"
+                "$ref": "https://xynolog.org/protocol/BrowseDirectoryRequest.json#/properties/path"
               },
               "required": false
             },
             {
               "parameter": "sort",
               "schema": {
-                "$ref": "../components/schemas/BrowseDirectoryRequest.json#/properties/sort"
+                "$ref": "https://xynolog.org/protocol/BrowseDirectoryRequest.json#/properties/sort"
               },
               "required": false
             }
@@ -627,7 +627,7 @@
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -653,7 +653,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -679,7 +679,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -712,7 +712,7 @@
             {
               "parameter": "input",
               "schema": {
-                "$ref": "../components/schemas/CreateAnnotationRequest.json"
+                "$ref": "https://xynolog.org/protocol/CreateAnnotationRequest.json"
               },
               "required": true
             }
@@ -750,14 +750,14 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -785,7 +785,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -811,7 +811,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -837,21 +837,21 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "current",
               "schema": {
-                "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/currentEntityTypes"
+                "$ref": "https://xynolog.org/protocol/MarkUpdateEntityTypesCommand.json#/properties/currentEntityTypes"
               },
               "required": true
             },
             {
               "parameter": "updated",
               "schema": {
-                "$ref": "../components/schemas/MarkUpdateEntityTypesCommand.json#/properties/updatedEntityTypes"
+                "$ref": "https://xynolog.org/protocol/MarkUpdateEntityTypesCommand.json#/properties/updatedEntityTypes"
               },
               "required": true
             }
@@ -891,14 +891,14 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "params",
               "schema": {
-                "$ref": "../components/schemas/MarkJobParams.json"
+                "$ref": "https://xynolog.org/protocol/MarkJobParams.json"
               },
               "required": true
             }
@@ -1026,21 +1026,21 @@
             {
               "parameter": "source",
               "schema": {
-                "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/source"
+                "$ref": "https://xynolog.org/protocol/MarkRequestedEvent.json#/properties/source"
               },
               "required": true
             },
             {
               "parameter": "selector",
               "schema": {
-                "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/selector"
+                "$ref": "https://xynolog.org/protocol/MarkRequestedEvent.json#/properties/selector"
               },
               "required": true
             },
             {
               "parameter": "motivation",
               "schema": {
-                "$ref": "../components/schemas/MarkRequestedEvent.json#/properties/motivation"
+                "$ref": "https://xynolog.org/protocol/MarkRequestedEvent.json#/properties/motivation"
               },
               "required": true
             }
@@ -1074,7 +1074,7 @@
             {
               "parameter": "input",
               "schema": {
-                "$ref": "../components/schemas/MarkSubmitEvent.json"
+                "$ref": "https://xynolog.org/protocol/MarkSubmitEvent.json"
               },
               "required": true
             }
@@ -1110,7 +1110,7 @@
             {
               "parameter": "input",
               "schema": {
-                "$ref": "../components/schemas/ResourceErrorEvent.json"
+                "$ref": "https://xynolog.org/protocol/ResourceErrorEvent.json"
               },
               "required": true
             }
@@ -1146,21 +1146,21 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             },
             {
               "parameter": "operations",
               "schema": {
-                "$ref": "../components/schemas/BindUpdateBodyCommand.json#/properties/operations"
+                "$ref": "https://xynolog.org/protocol/BindUpdateBodyCommand.json#/properties/operations"
               },
               "required": true
             }
@@ -1198,7 +1198,7 @@
             {
               "parameter": "input",
               "schema": {
-                "$ref": "../components/schemas/BindInitiateCommand.json"
+                "$ref": "https://xynolog.org/protocol/BindInitiateCommand.json"
               },
               "required": true
             }
@@ -1236,7 +1236,7 @@
             {
               "parameter": "input",
               "schema": {
-                "$ref": "../components/schemas/ResourceErrorEvent.json"
+                "$ref": "https://xynolog.org/protocol/ResourceErrorEvent.json"
               },
               "required": true
             }
@@ -1272,21 +1272,21 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             },
             {
               "parameter": "options",
               "schema": {
-                "$ref": "../components/schemas/GatherAnnotationOptions.json"
+                "$ref": "https://xynolog.org/protocol/GatherAnnotationOptions.json"
               },
               "required": false
             }
@@ -1354,14 +1354,14 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "options",
               "schema": {
-                "$ref": "types/GatherResourceOptions.json"
+                "$ref": "https://xynolog.org/protocol/GatherResourceOptions.json"
               },
               "required": false
             }
@@ -1438,7 +1438,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -1470,28 +1470,28 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "referenceId",
               "schema": {
-                "$ref": "../components/schemas/MatchSearchRequest.json#/properties/referenceId"
+                "$ref": "https://xynolog.org/protocol/MatchSearchRequest.json#/properties/referenceId"
               },
               "required": true
             },
             {
               "parameter": "context",
               "schema": {
-                "$ref": "../components/schemas/MatchSearchRequest.json#/properties/context"
+                "$ref": "https://xynolog.org/protocol/MatchSearchRequest.json#/properties/context"
               },
               "required": true
             },
             {
               "parameter": "options",
               "schema": {
-                "$ref": "types/MatchSearchOptions.json"
+                "$ref": "https://xynolog.org/protocol/MatchSearchOptions.json"
               },
               "required": false
             }
@@ -1550,14 +1550,14 @@
             {
               "parameter": "input",
               "schema": {
-                "$ref": "../components/schemas/MatchSearchRequest.json"
+                "$ref": "https://xynolog.org/protocol/MatchSearchRequest.json"
               },
               "required": true
             },
             {
               "parameter": "correlationId",
               "schema": {
-                "$ref": "../components/schemas/BusFrame.json#/properties/correlationId"
+                "$ref": "https://xynolog.org/protocol/BusFrame.json#/properties/correlationId"
               },
               "required": true
             }
@@ -1596,14 +1596,14 @@
             {
               "parameter": "search",
               "schema": {
-                "$ref": "../components/schemas/MatchResourcesRequest.json#/properties/search"
+                "$ref": "https://xynolog.org/protocol/MatchResourcesRequest.json#/properties/search"
               },
               "required": true
             },
             {
               "parameter": "filters",
               "schema": {
-                "$ref": "types/ResourceSearchFilters.json"
+                "$ref": "https://xynolog.org/protocol/ResourceSearchFilters.json"
               },
               "required": false
             }
@@ -1670,7 +1670,7 @@
             {
               "parameter": "data",
               "schema": {
-                "$ref": "types/PutBinaryRequest.json"
+                "$ref": "https://xynolog.org/protocol/PutBinaryRequest.json"
               },
               "required": true
             }
@@ -1704,7 +1704,7 @@
             {
               "parameter": "params",
               "schema": {
-                "$ref": "../components/schemas/GenerationJobParams.json"
+                "$ref": "https://xynolog.org/protocol/GenerationJobParams.json"
               },
               "required": true
             },
@@ -1780,7 +1780,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -1806,7 +1806,7 @@
             {
               "parameter": "token",
               "schema": {
-                "$ref": "../components/schemas/YieldCloneResourceRequest.json#/properties/token"
+                "$ref": "https://xynolog.org/protocol/YieldCloneResourceRequest.json#/properties/token"
               },
               "required": true
             }
@@ -1832,7 +1832,7 @@
             {
               "parameter": "options",
               "schema": {
-                "$ref": "types/CreateFromTokenOptions.json"
+                "$ref": "https://xynolog.org/protocol/CreateFromTokenOptions.json"
               },
               "required": true
             }
@@ -1946,14 +1946,14 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             },
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/BeckonFocusEvent.json#/properties/annotationId"
+                "$ref": "https://xynolog.org/protocol/BeckonFocusEvent.json#/properties/annotationId"
               },
               "required": false
             }
@@ -1990,7 +1990,7 @@
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -2016,7 +2016,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }
@@ -2042,7 +2042,7 @@
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -2068,7 +2068,7 @@
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/BeckonHoverEvent.json#/properties/annotationId"
+                "$ref": "https://xynolog.org/protocol/BeckonHoverEvent.json#/properties/annotationId"
               },
               "required": true
             }
@@ -2103,7 +2103,7 @@
             {
               "parameter": "annotationId",
               "schema": {
-                "$ref": "../components/schemas/AnnotationId.json"
+                "$ref": "https://xynolog.org/protocol/AnnotationId.json"
               },
               "required": true
             }
@@ -2232,7 +2232,7 @@
             {
               "parameter": "jobId",
               "schema": {
-                "$ref": "../components/schemas/JobId.json"
+                "$ref": "https://xynolog.org/protocol/JobId.json"
               },
               "required": true
             }
@@ -2258,21 +2258,21 @@
             {
               "parameter": "jobId",
               "schema": {
-                "$ref": "../components/schemas/JobId.json"
+                "$ref": "https://xynolog.org/protocol/JobId.json"
               },
               "required": true
             },
             {
               "parameter": "options",
               "schema": {
-                "$ref": "types/JobPollOptions.json"
+                "$ref": "https://xynolog.org/protocol/JobPollOptions.json"
               },
               "required": false
             },
             {
               "parameter": "onStatus",
               "calls": {
-                "$ref": "../components/schemas/JobStatusResponse.json"
+                "$ref": "https://xynolog.org/protocol/JobStatusResponse.json"
               },
               "required": false
             }
@@ -2298,7 +2298,7 @@
             {
               "parameter": "jobId",
               "schema": {
-                "$ref": "../components/schemas/JobId.json"
+                "$ref": "https://xynolog.org/protocol/JobId.json"
               },
               "required": true
             }
@@ -2324,7 +2324,7 @@
             {
               "parameter": "options",
               "schema": {
-                "$ref": "types/ClaimOptions.json"
+                "$ref": "https://xynolog.org/protocol/ClaimOptions.json"
               },
               "required": true
             }
@@ -2393,7 +2393,7 @@
             {
               "parameter": "resourceId",
               "schema": {
-                "$ref": "../components/schemas/ResourceId.json"
+                "$ref": "https://xynolog.org/protocol/ResourceId.json"
               },
               "required": true
             }

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ControlRequestCases.json",
   "description": "control/request-cases.json: a line a client sends the control API, and the answer it gets before any operation runs.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -32,7 +34,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "$ref": "./RequestId.json"
+                    "$ref": "https://xynolog.org/protocol/RequestId.json"
                   },
                   "result": {
                     "type": "boolean",
@@ -55,7 +57,7 @@
                   "id": {
                     "anyOf": [
                       {
-                        "$ref": "./RequestId.json"
+                        "$ref": "https://xynolog.org/protocol/RequestId.json"
                       },
                       {
                         "type": "null"
@@ -74,21 +76,21 @@
                         "type": "object",
                         "properties": {
                           "code": {
-                            "$ref": "./ErrorData.json#/properties/code"
+                            "$ref": "https://xynolog.org/protocol/ErrorData.json#/properties/code"
                           },
                           "retryable": {
-                            "$ref": "./ErrorData.json#/properties/retryable"
+                            "$ref": "https://xynolog.org/protocol/ErrorData.json#/properties/retryable"
                           },
                           "fields": {
                             "type": "array",
                             "minItems": 1,
                             "description": "The JSON pointers of the faults the data names, in any order.",
                             "items": {
-                              "$ref": "./FieldFault.json#/properties/field"
+                              "$ref": "https://xynolog.org/protocol/FieldFault.json#/properties/field"
                             }
                           },
                           "supported": {
-                            "$ref": "./ErrorData.json#/properties/supported"
+                            "$ref": "https://xynolog.org/protocol/ErrorData.json#/properties/supported"
                           }
                         },
                         "required": [

@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherFailed.json",
   "description": "The payload of `gather:failed`: a CommandError that names the annotation whose context could not be gathered.",
   "allOf": [
     {
-      "$ref": "./CommandError.json"
+      "$ref": "https://xynolog.org/protocol/CommandError.json"
     },
     {
       "type": "object",
       "properties": {
         "annotationId": {
-          "$ref": "./AnnotationId.json",
+          "$ref": "https://xynolog.org/protocol/AnnotationId.json",
           "description": "The annotation the gather was asked for."
         }
       },

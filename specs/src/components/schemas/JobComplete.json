@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobComplete.json",
   "type": "object",
   "description": "A job its worker completed.",
   "properties": {
@@ -9,10 +11,10 @@
       ]
     },
     "metadata": {
-      "$ref": "./JobMetadata.json"
+      "$ref": "https://xynolog.org/protocol/JobMetadata.json"
     },
     "params": {
-      "$ref": "./JobParams.json"
+      "$ref": "https://xynolog.org/protocol/JobParams.json"
     },
     "startedAt": {
       "type": "string",
@@ -23,7 +25,7 @@
       "description": "When it completed."
     },
     "result": {
-      "$ref": "./JobStoredResult.json"
+      "$ref": "https://xynolog.org/protocol/JobStoredResult.json"
     }
   },
   "required": [

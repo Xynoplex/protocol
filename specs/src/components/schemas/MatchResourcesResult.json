@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/MatchResourcesResult.json",
   "type": "object",
   "description": "Result of searching resources by text",
   "properties": {
     "response": {
-      "$ref": "./MatchResourcesResponse.json"
+      "$ref": "https://xynolog.org/protocol/MatchResourcesResponse.json"
     }
   },
   "required": [

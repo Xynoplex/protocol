@@ -10,6 +10,7 @@ let refusals schema value =
   | Ok (schema, _) ->
       List.map snd
         (Validate.errors
+           (Result.get_ok (Decode.ids []))
            (fun _ -> None)
            schema
            (Yojson.Safe.from_string value)

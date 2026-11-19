@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IssuedTokens.json",
   "title": "IssuedTokens",
   "type": "object",
   "description": "The tokens an issuer issued at the end of a sign-in.",

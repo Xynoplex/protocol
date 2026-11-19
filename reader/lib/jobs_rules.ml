@@ -27,7 +27,9 @@ let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
 let component name = Places.components ^ name ^ ".json"
 
 (* The file a [$ref] written in [file] names. *)
-let resolve file target = fst (Decode.resolve { target; file; pointer = "" })
+let resolve ids file target =
+  fst (Decode.resolve ids { target; file; pointer = "" })
+
 let text = function Some (`String s) -> Some s | _ -> None
 
 let texts = function
@@ -39,7 +41,7 @@ let keys = function Some (`Assoc members) -> List.map fst members | _ -> []
 let same a b = List.sort compare a = List.sort compare b
 let shown words = "[" ^ String.concat "," words ^ "]"
 
-let refusals ~(read_json : string -> Yojson.Safe.t option) =
+let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
   let found = ref [] in
   let refuse file pointer fmt =
     Printf.ksprintf
@@ -62,7 +64,8 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
     not
       (same (keys (at "/properties" cancellation)) [ "jobId" ]
       && same (texts (at "/required" cancellation)) [ "jobId" ]
-      && text (at "/properties/jobId/$ref" cancellation) = Some "./JobId.json")
+      && text (at "/properties/jobId/$ref" cancellation)
+         = Some (Decode.base ^ "JobId.json"))
   then
     refuse cancellation_file ""
       "is not exactly one required jobId, a JobId: a cancellation names one \
@@ -101,7 +104,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
         domain_name (shown domain);
     List.map
       (fun (value, ref) ->
-        let member_file = resolve file ref in
+        let member_file = resolve ids file ref in
         let member = schema member_file in
         let selects =
           texts (at ("" / "properties" / property / "enum") member)
@@ -148,7 +151,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
       (show (params_ref created "mark"));
   (match (List.assoc_opt "yield" created, params_ref created "yield") with
   | Some (created_file, _), Some yield_ref -> (
-      let yield_file = resolve created_file yield_ref in
+      let yield_file = resolve ids created_file yield_ref in
       let yield_params = schema yield_file in
       match at "/allOf" yield_params with
       | Some (`List [ asked; input ])
@@ -170,7 +173,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
               "a yield job's input is %s, and an announcement leaves out \
                exactly its context"
               (shown (keys (at "/properties" input)));
-          let asked_file = resolve yield_file asked_ref in
+          let asked_file = resolve ids yield_file asked_ref in
           if List.mem "context" (keys (at "/properties" (schema asked_file)))
           then
             refuse asked_file "/properties/context"
@@ -241,7 +244,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
   let required = Hashtbl.create 8 in
   List.iter
     (fun ref ->
-      let file = resolve results_file ref in
+      let file = resolve ids results_file ref in
       let result = schema file in
       if at "/additionalProperties" result <> Some (`Bool false) then
         refuse file "" "%s is open: another result would decode as it" ref;
@@ -266,7 +269,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
               "a %s completion's result is not a union of results" job_type;
             []
         | Some ref -> (
-            let union_file = resolve file ref in
+            let union_file = resolve ids file ref in
             let union = schema union_file in
             if Option.is_some (at "/discriminator" union) then
               refuse union_file "/discriminator"
@@ -312,7 +315,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
       (shown job_members);
   List.iter
     (fun (status, ref) ->
-      let file = resolve job_file ref in
+      let file = resolve ids job_file ref in
       let selects = texts (at "/properties/status/enum" (schema file)) in
       if selects <> [ status ] then
         refuse file "/properties/status"
@@ -324,7 +327,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
   let rec everything_stated document file pointer path node =
     match text (at "/$ref" node) with
     | Some ref ->
-        let target = resolve file ref in
+        let target = resolve ids file ref in
         everything_stated document target "" path (schema target)
     | None -> (
         if Option.is_some (at "/default" node) then

@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianConfig.json",
   "type": "object",
   "description": "Everything a Librarian reads at boot: nothing in it is defaulted by the Librarian. Whoever starts a Librarian writes it, from the knowledge base's stack documents, and the Librarian reads it from the path its `--config` flag names. This schema is the contract, and a Librarian needs no launcher. Started without `--config`, or with a path that names no file, the Librarian refuses to start and says which. No secret is a value here: the graph database's password, an embedding provider's key and a model provider's key are each named by the environment variable that holds it, and the Librarian's own service account is `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET` in its environment. A document that does not validate is refused at boot, naming each failing field.",
   "properties": {
     "kb": {
-      "$ref": "../components/schemas/KbIdentity.json"
+      "$ref": "https://xynolog.org/protocol/KbIdentity.json"
     },
     "gatewayUrl": {
       "type": "string",
@@ -11,27 +13,27 @@
       "description": "The URL the Librarian reaches the gateway at: its route to the bus."
     },
     "identity": {
-      "$ref": "../components/schemas/ServiceIdentity.json",
+      "$ref": "https://xynolog.org/protocol/ServiceIdentity.json",
       "description": "The issuer the Librarian's service account signs in at."
     },
     "archivist": {
-      "$ref": "../components/schemas/ServiceAddress.json",
+      "$ref": "https://xynolog.org/protocol/ServiceAddress.json",
       "description": "Where the Archivist listens. The Librarian reads a resource's bytes from it, as its service account."
     },
     "graph": {
-      "$ref": "../graph/GraphConfig.json"
+      "$ref": "https://xynolog.org/protocol/GraphConfig.json"
     },
     "vectors": {
-      "$ref": "../vectors/VectorsConfig.json"
+      "$ref": "https://xynolog.org/protocol/VectorsConfig.json"
     },
     "embedding": {
-      "$ref": "../embedding/EmbeddingConfig.json"
+      "$ref": "https://xynolog.org/protocol/EmbeddingConfig.json"
     },
     "matcher": {
-      "$ref": "./LibrarianEngineConfig.json"
+      "$ref": "https://xynolog.org/protocol/LibrarianEngineConfig.json"
     },
     "gatherer": {
-      "$ref": "./LibrarianEngineConfig.json"
+      "$ref": "https://xynolog.org/protocol/LibrarianEngineConfig.json"
     },
     "modelCatalogue": {
       "type": "string",
@@ -76,10 +78,10 @@
       "description": "The port the Librarian answers `/health` on."
     },
     "logLevel": {
-      "$ref": "../components/schemas/LogLevel.json"
+      "$ref": "https://xynolog.org/protocol/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "../components/schemas/LogFormat.json"
+      "$ref": "https://xynolog.org/protocol/LogFormat.json"
     }
   },
   "required": [

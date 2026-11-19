@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ExtractionOutcome.json",
   "description": "The full outcome of text extraction for one representation — the record the anchored-text store holds and the wire serves. Discriminated on `kind`: 'extracted' — the anchored text with its provenance; 'declined' — a named decline. ocrConfidence is extraction quality for operators, deliberately not anchor confidence.",
   "oneOf": [
     {
-      "$ref": "./ExtractedText.json"
+      "$ref": "https://xynolog.org/protocol/ExtractedText.json"
     },
     {
-      "$ref": "./ExtractionDeclined.json"
+      "$ref": "https://xynolog.org/protocol/ExtractionDeclined.json"
     }
   ],
   "discriminator": {
     "propertyName": "kind",
     "mapping": {
-      "extracted": "./ExtractedText.json",
-      "declined": "./ExtractionDeclined.json"
+      "extracted": "https://xynolog.org/protocol/ExtractedText.json",
+      "declined": "https://xynolog.org/protocol/ExtractionDeclined.json"
     }
   }
 }

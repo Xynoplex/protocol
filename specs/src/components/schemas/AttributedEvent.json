@@ -1,15 +1,17 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AttributedEvent.json",
   "type": "object",
   "description": "A persisted event as a history reply carries it: the stored event, and the agent its `userId` identifies. The agent is derived when the reply is made — the DID read into a Person or a Software agent, and a Person's name filled in from the knowledge base's profiles — and is stored nowhere. A Person the record does not name carries no `name`.",
   "allOf": [
     {
-      "$ref": "./StoredEventResponse.json"
+      "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
     },
     {
       "type": "object",
       "properties": {
         "agent": {
-          "$ref": "./Agent.json",
+          "$ref": "https://xynolog.org/protocol/Agent.json",
           "description": "Who `userId` is."
         }
       },

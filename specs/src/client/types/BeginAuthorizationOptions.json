@@ -1,10 +1,12 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BeginAuthorizationOptions.json",
   "title": "BeginAuthorizationOptions",
   "type": "object",
   "description": "What starting an authorization-code grant is told: the knowledge base to sign in to, where the issuer sends the person back, and, re-authenticating, which registered knowledge base it is and what the person believed they chose.",
   "properties": {
     "target": {
-      "$ref": "../../components/schemas/HttpEndpoint.json"
+      "$ref": "https://xynolog.org/protocol/HttpEndpoint.json"
     },
     "redirectUri": {
       "type": "string",

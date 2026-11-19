@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnchoredTextAbsent.json",
   "type": "object",
   "description": "There is no coordinate map to serve, and WHY — the distinction a bare null could not carry.\n\nOne member covers all three absences because none carries a payload; `kind` alone is the fact. Retryability is legible from the name, deliberately: a caller must not need a lookup table to decide whether to come back.",
   "properties": {

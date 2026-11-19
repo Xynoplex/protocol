@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Expected.json",
+  "title": "Expected",
+  "type": "object",
+  "description": "What a person believed they were signing in to: the did and the name of the row they clicked, or of the entry they signed in to again.",
+  "additionalProperties": false,
+  "properties": {
+    "did": {
+      "type": "string",
+      "description": "The did they believed it has."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name they believed it has. Absent when they had none."
+    }
+  },
+  "required": [
+    "did"
+  ]
+}

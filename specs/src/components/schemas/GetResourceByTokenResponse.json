@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GetResourceByTokenResponse.json",
   "type": "object",
   "properties": {
     "sourceResource": {
-      "$ref": "./ResourceDescriptor.json"
+      "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
     },
     "expiresAt": {
       "type": "string",

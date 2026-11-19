@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerFailureClassCases.json",
   "description": "worker/failure-class-cases.json: a job's failure, described as data, and the class a worker reports for it.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "failure": {
             "description": "What was thrown, described as data: a failure object, or a string or null, which are no failure object.",
@@ -101,7 +103,7 @@
           "failureClass": {
             "anyOf": [
               {
-                "$ref": "../components/schemas/FailureClass.json"
+                "$ref": "https://xynolog.org/protocol/FailureClass.json"
               },
               {
                 "type": "null"

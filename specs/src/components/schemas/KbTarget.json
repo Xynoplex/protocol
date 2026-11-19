@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/KbTarget.json",
   "type": "object",
   "description": "Where to connect to a knowledge base: an endpoint, and the labels a client keeps of it. It carries no identity: which knowledge base answers at an address is known only once it has been reached with a token and asked, so a target is what every caller can build before then, and a session's whole input. A client keeps it locally; it is never sent.",
   "properties": {
@@ -11,7 +13,7 @@
       "description": "What a person reads the knowledge base as. Once the knowledge base has described itself, its own name."
     },
     "endpoint": {
-      "$ref": "./KbEndpoint.json"
+      "$ref": "https://xynolog.org/protocol/KbEndpoint.json"
     }
   },
   "required": [

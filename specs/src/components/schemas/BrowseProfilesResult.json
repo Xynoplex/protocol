@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BrowseProfilesResult.json",
   "type": "object",
   "description": "The profiles of the principals asked after: each that has one, keyed by DID. A DID with no profile is absent, and is named by no one.",
   "properties": {
@@ -9,7 +11,7 @@
           "type": "object",
           "description": "Each profile, keyed by DID.",
           "additionalProperties": {
-            "$ref": "./Profile.json"
+            "$ref": "https://xynolog.org/protocol/Profile.json"
           }
         }
       },

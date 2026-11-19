@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/VoyageEmbeddingConfig.json",
   "type": "object",
   "description": "An embedding model served by Voyage AI. No service has been run against Voyage itself.",
   "properties": {

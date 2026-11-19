@@ -12,7 +12,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/HealthResponse.json"
+              "$ref": "https://xynolog.org/protocol/HealthResponse.json"
             }
           }
         }

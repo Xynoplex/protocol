@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobClaimedResult.json",
   "type": "object",
   "description": "The reply to a successful `job:claim`: the claimed job, now running under the claimant.",
   "properties": {
     "response": {
-      "$ref": "./JobRunning.json"
+      "$ref": "https://xynolog.org/protocol/JobRunning.json"
     }
   },
   "required": [

@@ -1,17 +1,19 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/KnowledgeIndex.json",
   "title": "KnowledgeIndex",
   "type": "object",
   "description": "What a knowledge base's record is indexed into, and the services that keep and read the indexes: the Weaver's graph, the Smelter's vectors and anchored text, and the Librarian that answers from them. Each can be rebuilt from the record.",
   "properties": {
     "apiVersion": {
-      "$ref": "./StackApiVersion.json"
+      "$ref": "https://xynolog.org/protocol/StackApiVersion.json"
     },
     "kind": {
       "type": "string",
       "const": "KnowledgeIndex"
     },
     "metadata": {
-      "$ref": "./Metadata.json"
+      "$ref": "https://xynolog.org/protocol/Metadata.json"
     },
     "spec": {
       "type": "object",
@@ -23,7 +25,7 @@
           "description": "The name of the KnowledgeBase document whose record this indexes."
         },
         "logLevel": {
-          "$ref": "../components/schemas/LogLevel.json"
+          "$ref": "https://xynolog.org/protocol/LogLevel.json"
         },
         "graph": {
           "type": "object",
@@ -40,10 +42,10 @@
               "description": "The user the services sign in to the store as."
             },
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "external": {
               "type": "object",
@@ -55,7 +57,7 @@
                   "description": "Where it listens: `bolt://host:port`."
                 },
                 "password": {
-                  "$ref": "./SecretRef.json"
+                  "$ref": "https://xynolog.org/protocol/SecretRef.json"
                 }
               },
               "required": [
@@ -71,7 +73,7 @@
           ],
           "allOf": [
             {
-              "$ref": "./Runner.json"
+              "$ref": "https://xynolog.org/protocol/Runner.json"
             }
           ],
           "additionalProperties": false
@@ -92,10 +94,10 @@
               "additionalProperties": false
             },
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "external": {
               "type": "object",
@@ -113,10 +115,10 @@
                   "description": "The port its REST API listens on."
                 },
                 "smelterToken": {
-                  "$ref": "./SecretRef.json"
+                  "$ref": "https://xynolog.org/protocol/SecretRef.json"
                 },
                 "librarianToken": {
-                  "$ref": "./SecretRef.json"
+                  "$ref": "https://xynolog.org/protocol/SecretRef.json"
                 }
               },
               "required": [
@@ -244,7 +246,7 @@
               "description": "Where the provider's API is reached. The shared Ollama is stated by no endpoint."
             },
             "apiKey": {
-              "$ref": "./SecretRef.json"
+              "$ref": "https://xynolog.org/protocol/SecretRef.json"
             }
           },
           "required": [
@@ -259,10 +261,10 @@
           "description": "The Librarian: it answers gathers and searches from the indexes.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "gather": {
               "type": "object",
@@ -309,10 +311,10 @@
           "description": "The Smelter: it writes the vectors and the anchored text.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             },
             "pdfsAtOnce": {
               "type": "integer",
@@ -332,10 +334,10 @@
           "description": "The Weaver: it writes the graph.",
           "properties": {
             "image": {
-              "$ref": "./Image.json"
+              "$ref": "https://xynolog.org/protocol/Image.json"
             },
             "resources": {
-              "$ref": "./Resources.json"
+              "$ref": "https://xynolog.org/protocol/Resources.json"
             }
           },
           "required": [

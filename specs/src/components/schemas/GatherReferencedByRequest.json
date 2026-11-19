@@ -1,12 +1,14 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherReferencedByRequest.json",
   "type": "object",
   "description": "Request for the annotations elsewhere that refer to a resource. The Librarian answers from the graph.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "motivation": {
-      "$ref": "./Motivation.json",
+      "$ref": "https://xynolog.org/protocol/Motivation.json",
       "description": "The one motivation the annotations answered have. Every annotation that refers to the resource is answered where none is stated."
     }
   },

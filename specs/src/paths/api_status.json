@@ -17,7 +17,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../components/schemas/StatusResponse.json"
+              "$ref": "https://xynolog.org/protocol/StatusResponse.json"
             }
           }
         }

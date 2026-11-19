@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatherResourceRequest.json",
   "type": "object",
   "description": "Request payload sent on the gather:resource-requested bus channel to gather context for a resource.",
   "properties": {
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Branded ResourceId of the resource to gather context for"
     },
     "options": {
-      "$ref": "./GatherResourceRequestOptions.json"
+      "$ref": "https://xynolog.org/protocol/GatherResourceRequestOptions.json"
     }
   },
   "required": [

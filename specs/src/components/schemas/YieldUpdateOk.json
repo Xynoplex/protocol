@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/YieldUpdateOk.json",
   "type": "object",
   "description": "Success reply after updating a yielded resource, matched to the originating command by correlationId.",
   "properties": {
     "response": {
-      "$ref": "./YieldedResource.json",
+      "$ref": "https://xynolog.org/protocol/YieldedResource.json",
       "description": "The updated resource's identity."
     }
   },

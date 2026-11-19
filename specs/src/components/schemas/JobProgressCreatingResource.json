@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobProgressCreatingResource.json",
   "type": "object",
   "description": "Writing the generated resource.",
   "properties": {

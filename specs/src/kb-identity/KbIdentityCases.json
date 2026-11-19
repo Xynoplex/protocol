@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/KbIdentityCases.json",
   "description": "kb-identity/cases.json: the identity a reader computes from a knowledge base's project file.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -14,7 +16,7 @@
         "type": "object",
         "properties": {
           "why": {
-            "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
           },
           "dir": {
             "type": "string",
@@ -36,7 +38,7 @@
             "description": "The name read, or null when the file is refused.",
             "anyOf": [
               {
-                "$ref": "./ProjectConfig.json#/properties/project/properties/name"
+                "$ref": "https://xynolog.org/protocol/ProjectConfig.json#/properties/project/properties/name"
               },
               {
                 "type": "null"
@@ -47,7 +49,7 @@
             "description": "The domain read, or null when no identity is declared.",
             "anyOf": [
               {
-                "$ref": "./ProjectConfig.json#/properties/site/properties/domain"
+                "$ref": "https://xynolog.org/protocol/ProjectConfig.json#/properties/site/properties/domain"
               },
               {
                 "type": "null"
@@ -58,7 +60,7 @@
             "description": "The DID the domain names, or null when no identity is declared.",
             "anyOf": [
               {
-                "$ref": "../KbDid.json"
+                "$ref": "https://xynolog.org/protocol/KbDid.json"
               },
               {
                 "type": "null"

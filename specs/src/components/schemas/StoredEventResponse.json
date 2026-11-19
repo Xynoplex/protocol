@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/StoredEventResponse.json",
   "type": "object",
   "description": "A persisted domain event with metadata. Flat shape — event fields and metadata are peers.",
   "properties": {
@@ -16,11 +18,11 @@
       "description": "When the event occurred"
     },
     "userId": {
-      "$ref": "./UserId.json",
+      "$ref": "https://xynolog.org/protocol/UserId.json",
       "description": "DID of the user who triggered the event"
     },
     "resourceId": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "Resource this event affects (absent for system events)"
     },
     "version": {
@@ -33,7 +35,7 @@
       "description": "Event-type-specific payload"
     },
     "metadata": {
-      "$ref": "EventMetadata.json"
+      "$ref": "https://xynolog.org/protocol/EventMetadata.json"
     }
   },
   "required": [

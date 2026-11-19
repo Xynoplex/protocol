@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ProjectConfig.json",
   "title": "ProjectConfig",
   "type": "object",
   "description": "A knowledge base's committed `.xynolog/config.yaml`: its name, whether its changes are staged in git, and its permanent identity. A deployment's documents never restate any of it.",

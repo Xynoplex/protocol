@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ControlCli.json",
   "description": "control/cli.json: every option of the launcher commands the control API covers, and what it is in the API.",
   "type": "object",
   "properties": {
     "$comment": {
-      "$ref": "../CaseTable.json#/properties/$comment"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
     },
     "commands": {
       "type": "object",
@@ -18,7 +20,7 @@
             "description": "The Go function in cli/internal/launcher whose switch reads the command's options."
           },
           "method": {
-            "$ref": "./ControlMethods.json#/properties/methods/items/properties/name"
+            "$ref": "https://xynolog.org/protocol/ControlMethods.json#/properties/methods/items/properties/name"
           },
           "positionals": {
             "type": "array",
@@ -104,7 +106,7 @@
                   "type": "object",
                   "properties": {
                     "method": {
-                      "$ref": "./ControlMethods.json#/properties/methods/items/properties/name"
+                      "$ref": "https://xynolog.org/protocol/ControlMethods.json#/properties/methods/items/properties/name"
                     }
                   },
                   "required": [

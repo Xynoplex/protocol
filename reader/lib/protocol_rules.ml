@@ -57,7 +57,7 @@ let shape_of = function
       Some (String.concat "," (List.sort compare (List.map fst entries)))
   | _ -> None
 
-let refusals ~(read_json : string -> Yojson.Safe.t option) =
+let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
   let found = ref [] in
   let refuse file pointer fmt =
     Printf.ksprintf
@@ -72,7 +72,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
     | None -> Some (file, node)
     | Some target ->
         let ((named, pointer) as place) =
-          Decode.resolve { target; file; pointer = "" }
+          Decode.resolve ids { target; file; pointer = "" }
         in
         if List.mem place seen then None
         else
@@ -84,7 +84,7 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
   let ref_target file node =
     match text (member "$ref" node) with
     | Some target when not (String.starts_with ~prefix:"#" target) ->
-        Some (fst (Decode.resolve { target; file; pointer = "" }))
+        Some (fst (Decode.resolve ids { target; file; pointer = "" }))
     | _ -> None
   in
   let is_error_body file schema =

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LibrarianScoreCases.json",
   "description": "librarian/score-cases.json: a reference search's request, what each source it reads answers, and the candidates in order with their scores and reasons; or its failure.",
   "allOf": [
     {
-      "$ref": "../CaseTable.json"
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
     }
   ],
   "type": "object",
@@ -18,20 +20,20 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "now": {
                 "type": "string",
                 "description": "The moment the search is made, which recency is counted from."
               },
               "request": {
-                "$ref": "../components/schemas/MatchSearchRequest.json"
+                "$ref": "https://xynolog.org/protocol/MatchSearchRequest.json"
               },
               "resources": {
                 "type": "array",
                 "description": "The description of each resource the case names.",
                 "items": {
-                  "$ref": "../components/schemas/ResourceDescriptor.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                 }
               },
               "graph": {
@@ -45,7 +47,7 @@
                         "type": "array",
                         "description": "The ids it answers, in order.",
                         "items": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         }
                       },
                       {
@@ -68,7 +70,7 @@
                     "type": "array",
                     "description": "What the graph's listing by entity type answers, in order.",
                     "items": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     }
                   },
                   "byId": {
@@ -100,10 +102,10 @@
                           "type": "object",
                           "properties": {
                             "resourceId": {
-                              "$ref": "../components/schemas/ResourceId.json"
+                              "$ref": "https://xynolog.org/protocol/ResourceId.json"
                             },
                             "score": {
-                              "$ref": "../vectors/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
+                              "$ref": "https://xynolog.org/protocol/VectorsStoreCases.json#/properties/cases/items/properties/reads/items/oneOf/0/properties/answers/items/properties/score"
                             }
                           },
                           "required": [
@@ -165,14 +167,14 @@
                         "type": "array",
                         "description": "The ids of the candidates it is asked to score, in the order they are numbered from 1.",
                         "items": {
-                          "$ref": "../components/schemas/ResourceId.json"
+                          "$ref": "https://xynolog.org/protocol/ResourceId.json"
                         }
                       },
                       "answers": {
                         "type": "array",
                         "description": "The elements it answers.",
                         "items": {
-                          "$ref": "./prompt-cases.json#/elements/score"
+                          "$ref": "https://xynolog.org/protocol/LibrarianPromptScore.json"
                         }
                       }
                     },
@@ -213,13 +215,13 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "$ref": "../components/schemas/ResourceId.json"
+                      "$ref": "https://xynolog.org/protocol/ResourceId.json"
                     },
                     "score": {
-                      "$ref": "../components/schemas/ScoredResource.json#/allOf/1/properties/score"
+                      "$ref": "https://xynolog.org/protocol/ScoredResource.json#/allOf/1/properties/score"
                     },
                     "matchReason": {
-                      "$ref": "../components/schemas/ScoredResource.json#/allOf/1/properties/matchReason"
+                      "$ref": "https://xynolog.org/protocol/ScoredResource.json#/allOf/1/properties/matchReason"
                     }
                   },
                   "required": [
@@ -248,20 +250,20 @@
             "type": "object",
             "properties": {
               "why": {
-                "$ref": "../CaseTable.json#/properties/cases/items/properties/why"
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
               },
               "now": {
                 "type": "string",
                 "description": "The moment the search is made, which recency is counted from."
               },
               "request": {
-                "$ref": "../components/schemas/MatchSearchRequest.json"
+                "$ref": "https://xynolog.org/protocol/MatchSearchRequest.json"
               },
               "resources": {
                 "type": "array",
                 "description": "The description of each resource the case names.",
                 "items": {
-                  "$ref": "../components/schemas/ResourceDescriptor.json"
+                  "$ref": "https://xynolog.org/protocol/ResourceDescriptor.json"
                 }
               },
               "graph": {

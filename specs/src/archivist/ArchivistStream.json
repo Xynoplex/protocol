@@ -1,9 +1,11 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistStream.json",
   "type": "object",
   "description": "One stream of the event log, and where it stands: the resource it is of, or `__system__` for the knowledge base's own, and the sequence number of its last event.",
   "properties": {
     "resourceId": {
-      "$ref": "../components/schemas/ResourceId.json"
+      "$ref": "https://xynolog.org/protocol/ResourceId.json"
     },
     "lastSequence": {
       "type": "integer",

@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistHealth.json",
   "type": "object",
   "description": "The Archivist's liveness answer: it serves, and the actors it hosts.",
   "properties": {

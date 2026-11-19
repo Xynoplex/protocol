@@ -1,18 +1,20 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/VectorsConfig.json",
   "description": "The vector index a service writes or searches, and what that kind of index needs to be reached: one of the kinds `xynolog-vectors` has a store for, told apart by `type`.",
   "oneOf": [
     {
-      "$ref": "./QdrantVectorsConfig.json"
+      "$ref": "https://xynolog.org/protocol/QdrantVectorsConfig.json"
     },
     {
-      "$ref": "./MemoryVectorsConfig.json"
+      "$ref": "https://xynolog.org/protocol/MemoryVectorsConfig.json"
     }
   ],
   "discriminator": {
     "propertyName": "type",
     "mapping": {
-      "qdrant": "./QdrantVectorsConfig.json",
-      "memory": "./MemoryVectorsConfig.json"
+      "qdrant": "https://xynolog.org/protocol/QdrantVectorsConfig.json",
+      "memory": "https://xynolog.org/protocol/MemoryVectorsConfig.json"
     }
   }
 }

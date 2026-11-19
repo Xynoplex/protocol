@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/IdentityLocalTarget.json",
   "title": "IdentityLocalTarget",
   "type": "object",
   "description": "The local knowledge base whose launcher-managed identity realm an operation addresses.",

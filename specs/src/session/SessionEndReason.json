@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SessionEndReason.json",
+  "title": "SessionEndReason",
+  "type": "string",
+  "description": "Why a session ended: `expired`, the issuer refused to renew its token; `refused`, the gateway refused a token its issuer had just issued.",
+  "enum": [
+    "expired",
+    "refused"
+  ]
+}

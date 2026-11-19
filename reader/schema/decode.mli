@@ -29,9 +29,30 @@ type reference = { target : string; file : string; pointer : string }
 val reference : cursor -> reference
 (** Decode a ["$ref"]'s string. {!val:run} returns every reference decoded. *)
 
-val resolve : reference -> string * string
+val base : string
+(** What every schema's ["$id"] is under: [https://xynolog.org/protocol/]. A
+    schema's ["$id"] is its file's name under it. *)
+
+val dialect : string
+(** The ["$schema"] every schema states: JSON Schema 2020-12. *)
+
+type ids
+(** Each schema's ["$id"], and the file that states it. *)
+
+val ids : (string * string) list -> (ids, error list) result
+(** The ["$id"]s the files state, each with its file. An ["$id"] two files state
+    is refused. *)
+
+val names : ids -> reference -> (string * string) option
 (** The file a reference names, relative to the specs root, and the JSON Pointer
-    within it, [""] for the whole file. *)
+    within it, [""] for the whole file. A reference names a schema by its
+    ["$id"], within its own file by a fragment, and a path item or a response by
+    its path from the file it is written in. [None] when it names an ["$id"] no
+    schema states. *)
+
+val resolve : ids -> reference -> string * string
+(** {!val:names}, of a reference the reader has read: one that names an ["$id"]
+    no schema states is a bug, raised as [Invalid_argument]. *)
 
 val run :
   file:string ->

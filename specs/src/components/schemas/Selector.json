@@ -1,25 +1,27 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/Selector.json",
   "oneOf": [
     {
-      "$ref": "./TextPositionSelector.json"
+      "$ref": "https://xynolog.org/protocol/TextPositionSelector.json"
     },
     {
-      "$ref": "./TextQuoteSelector.json"
+      "$ref": "https://xynolog.org/protocol/TextQuoteSelector.json"
     },
     {
-      "$ref": "./SvgSelector.json"
+      "$ref": "https://xynolog.org/protocol/SvgSelector.json"
     },
     {
-      "$ref": "./FragmentSelector.json"
+      "$ref": "https://xynolog.org/protocol/FragmentSelector.json"
     }
   ],
   "discriminator": {
     "propertyName": "type",
     "mapping": {
-      "TextPositionSelector": "./TextPositionSelector.json",
-      "TextQuoteSelector": "./TextQuoteSelector.json",
-      "SvgSelector": "./SvgSelector.json",
-      "FragmentSelector": "./FragmentSelector.json"
+      "TextPositionSelector": "https://xynolog.org/protocol/TextPositionSelector.json",
+      "TextQuoteSelector": "https://xynolog.org/protocol/TextQuoteSelector.json",
+      "SvgSelector": "https://xynolog.org/protocol/SvgSelector.json",
+      "FragmentSelector": "https://xynolog.org/protocol/FragmentSelector.json"
     }
   },
   "description": "One W3C selector: a way of finding a segment of a resource. Tell them apart by `type`, which is required on each and single-valued."

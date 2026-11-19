@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnnotationTarget.json",
   "type": "object",
   "properties": {
     "type": {
@@ -9,11 +11,11 @@
       "description": "Stated by the annotation of a span: the target is a part of its source, which the selector picks out. An annotation of a resource as a whole states none."
     },
     "source": {
-      "$ref": "./ResourceId.json",
+      "$ref": "https://xynolog.org/protocol/ResourceId.json",
       "description": "The id of the resource being annotated"
     },
     "selector": {
-      "$ref": "./AnnotationSelector.json",
+      "$ref": "https://xynolog.org/protocol/AnnotationSelector.json",
       "description": "Optional selector to identify a specific segment of the source resource"
     }
   },
