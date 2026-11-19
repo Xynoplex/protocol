@@ -10,7 +10,7 @@ import { createServer, type AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { errorsOf, spec } from '../harness/spec';
+import { errorsOf, servicesSpec } from '../harness/spec';
 import { eachWorkerService, SECOND_WORKER_CLIENT, WORKER_CLIENT, type WorkerServiceWorld } from '../harness/worker-service-world';
 import { startWorkerService, type WorkerSettings } from '../harness/worker-service-process';
 import { health, KB_LOG, logged } from './support';
@@ -49,7 +49,7 @@ const escaped = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\
 
 eachWorkerService("the worker's boot", (world) => {
   it('is configured by a document the spec accepts', async () => {
-    const validate = spec().component('WorkerConfig');
+    const validate = servicesSpec().component('WorkerConfig');
     expect(validate((await world().launch()).settings), errorsOf(validate)).toBe(true);
   });
 

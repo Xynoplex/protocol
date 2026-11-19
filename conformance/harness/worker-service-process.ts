@@ -12,12 +12,12 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { components } from './protocol-core';
+import type { services } from './protocol-core';
 import { collectLines } from './gateway';
 import { call, type Reply } from './http';
 import { runEnvironment } from './paths';
 
-export type WorkerSettings = components['schemas']['WorkerConfig'];
+export type WorkerSettings = services['schemas']['WorkerConfig'];
 
 export interface WorkerEnvironment {
   XYNOLOG_OIDC_CLIENT_KEY?: string;

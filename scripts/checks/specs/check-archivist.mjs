@@ -5,8 +5,8 @@
 // part of that statement is missing, or when two parts that restate one fact
 // disagree:
 //
-//   - a file the record keeps has no schema, or its schema is not a component
-//     of the spec;
+//   - a file the record keeps has no schema, Archivist's own (specs/src/archivist)
+//     or a component (specs/src/components/schemas);
 //   - ArchivistConfig defaults anything, or leaves optional anything but a
 //     job's or an actor's engine, which is absent when it has none;
 //   - the engines' job types are not exactly JobType, or their mark
@@ -24,13 +24,22 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = resolve(fileURLToPath(import.meta.url), '../../../..');
-const SCHEMAS = resolve(REPO, 'specs/src/components/schemas');
+const PLACES = ['specs/src/archivist', 'specs/src/components/schemas'].map((place) => resolve(REPO, place));
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
-const schema = (name) => read(resolve(SCHEMAS, `${name}.json`));
+const fileOf = (name) => PLACES.map((place) => resolve(place, `${name}.json`)).find((file) => existsSync(file));
+const schema = (name) => read(fileOf(name));
 
 const failures = [];
 const fail = (message) => failures.push(message);
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+/** A node read from [file], each reference in it naming the file it resolves to: two schemas in different directories that name one schema say the same. */
+const anchored = (node, file) => {
+  if (Array.isArray(node)) return node.map((member) => anchored(member, file));
+  if (node === null || typeof node !== 'object') return node;
+  return Object.fromEntries(
+    Object.entries(node).map(([key, value]) => [key, key === '$ref' ? resolve(file, '..', value) : anchored(value, file)]),
+  );
+};
 
 const RECORD_SCHEMAS = [
   'ResourceView',
@@ -47,16 +56,10 @@ const CONFIG_SCHEMAS = ['ArchivistConfig', 'ArchivistEngines', 'Engine'];
 const TABLES = ['specs/src/archivist/shard-cases.json'];
 const PROTOCOL = 'contract/ARCHIVIST.md';
 
-const components = read(resolve(REPO, 'specs/src/openapi.json')).components.schemas;
 const present = [];
 for (const name of [...RECORD_SCHEMAS, ...CONFIG_SCHEMAS]) {
-  if (!existsSync(resolve(SCHEMAS, `${name}.json`))) {
-    fail(`${name} has no schema in specs/src/components/schemas`);
-  } else if (components[name]?.$ref !== `components/schemas/${name}.json`) {
-    fail(`${name} is not a component of specs/src/openapi.json`);
-  } else {
-    present.push(name);
-  }
+  if (fileOf(name) === undefined) fail(`${name} has no schema in specs/src/archivist or specs/src/components/schemas`);
+  else present.push(name);
 }
 const has = (name) => present.includes(name);
 
@@ -67,7 +70,7 @@ if (has('ArchivistConfig') && has('ArchivistEngines')) {
     for (const [name, property] of Object.entries(node.properties ?? {})) {
       const at = path ? `${path}.${name}` : name;
       if (!node.required?.includes(name) && !optionalAllowed) fail(`ArchivistConfig leaves ${at} optional`);
-      const resolved = property.$ref === './ArchivistEngines.json' ? schema('ArchivistEngines') : property;
+      const resolved = property.$ref && resolve(fileOf('ArchivistConfig'), '..', property.$ref) === fileOf('ArchivistEngines') ? schema('ArchivistEngines') : property;
       everythingStated(resolved, at, at === 'engines.jobs' || at === 'engines.jobs.mark' || at === 'engines.actors');
     }
   };
@@ -86,14 +89,18 @@ if (has('ArchivistConfig') && has('ArchivistEngines')) {
 }
 
 if (has('AnchoredTextEntry')) {
-  const [extracted, declined] = schema('AnchoredTextEntry').oneOf.map((member) => read(resolve(SCHEMAS, member.$ref)));
+  const entry = fileOf('AnchoredTextEntry');
+  const [extracted, declined] = read(entry).oneOf.map((member) => {
+    const file = resolve(entry, '..', member.$ref);
+    return anchored(read(file), file);
+  });
   const provenance = Object.fromEntries(
-    Object.entries(schema('ExtractedText').allOf[1].properties).filter(([name]) => name !== 'kind'),
+    Object.entries(anchored(schema('ExtractedText'), fileOf('ExtractedText')).allOf[1].properties).filter(([name]) => name !== 'kind'),
   );
   for (const [name, property] of Object.entries(provenance)) {
     if (!same(extracted.properties[name], property)) fail(`AnchoredTextEntry's ${name} is not ExtractedText's`);
   }
-  if (!same(declined.properties.declined, schema('ExtractionDeclined').properties.declined)) {
+  if (!same(declined.properties.declined, anchored(schema('ExtractionDeclined'), fileOf('ExtractionDeclined')).properties.declined)) {
     fail(`AnchoredTextEntry's declined is not ExtractionDeclined's`);
   }
 }

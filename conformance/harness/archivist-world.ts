@@ -26,7 +26,7 @@ import type { ServiceAccount } from './issuer';
 import { eventually, freePort } from './net';
 import { SPEC_SOURCE } from './paths';
 import { SERVICE_ROLE, WORKER_ROLE } from './roles';
-import { errorsOf, operationFor, registry, spec, type Method } from './spec';
+import { errorsOf, operationFor, registry, servicesSpec, spec, type Method } from './spec';
 import type { BusStream } from './stream';
 import { endCase, PARTICIPANT_CLIENT, World } from './world';
 
@@ -491,7 +491,7 @@ export class ArchivistWorld {
     if (entry !== undefined) {
       await this.stateStamp(stamp);
       const document = { v: 3, stamp, ...entry };
-      const validate = spec().component('AnchoredTextEntry');
+      const validate = servicesSpec().component('AnchoredTextEntry');
       if (!validate(document)) throw new Error(`the suite's anchored-text entry is not an AnchoredTextEntry (${errorsOf(validate)})`);
       const stored = await this.storeAnchoredText(resourceId, { contentChecksum: checksum, entry: document });
       if (stored.status !== 204) throw new Error(`the anchored-text entry was not stored: ${stored.status} ${stored.text}`);

@@ -44,7 +44,7 @@ subscriber, not as one member of a competing group, so a second dispatcher would
 ## Configuration
 
 **The dispatcher reads one document, named by its `--config` flag,** and defaults nothing. The
-document is a [`DispatcherConfig`](../specs/src/components/schemas/DispatcherConfig.json): the knowledge base it serves ([`KbIdentity`](../specs/src/components/schemas/KbIdentity.json): its name and domain, which its telemetry names it by), the
+document is a [`DispatcherConfig`](../specs/src/dispatcher/DispatcherConfig.json): the knowledge base it serves ([`KbIdentity`](../specs/src/components/schemas/KbIdentity.json): its name and domain, which its telemetry names it by), the
 gateway's URL, the issuer its service account signs in at, the broker holding the queue, the port it
 answers `/health` on, the queue's clocks, and its log level and format. Its image passes
 `--config /etc/xynolog/dispatcher.json`, and the launcher writes the document there, from the
@@ -618,7 +618,7 @@ dead-worker sweep's.
 
 The dispatcher answers a request for exactly `/health`, any method, on the document's `port` (24105
 as deployed) with `200`, `Content-Type: application/json` and `{"status":"ok","queue":"jetstream"}`
-([`DispatcherHealth`](../specs/src/components/schemas/DispatcherHealth.json)). Any other path is
+([`DispatcherHealth`](../specs/src/dispatcher/DispatcherHealth.json)). Any other path is
 `404` with an empty body.
 
 It begins answering only after its boot has done everything else, in this order: authenticate as its

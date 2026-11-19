@@ -14,9 +14,12 @@
 //     "code points". These are the members that carry an offset or a length of
 //     text on the wire, in the record, in a store or in what a client hands
 //     its caller;
-//   - any description of a component schema or a client type speaks of an offset, of
-//     characters, or of code units, and does not say "code points". A member
+//   - any description of a component schema, a client type or a service's
+//     schema (one at the top of an area that is no table's) speaks of an
+//     offset, of characters, or of code units, and does not say "code points". A member
 //     added beside the listed ones is held by this, whatever it is called;
+//   - a table's schema, named here as reader/schema/places.ml names it, is not
+//     there: this check's copy of that rule no longer agrees with the reader's;
 //   - a case table listed below, whose cases count offsets or lengths of text,
 //     has no character outside the Basic Multilingual Plane: only such a
 //     character tells a count of code points from one of UTF-16 code units or
@@ -24,12 +27,26 @@
 //
 // It reads the source files, so it cannot pass on a stale bundle.
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = resolve(fileURLToPath(import.meta.url), '../../../..');
-const DIRECTORIES = ['specs/src/components/schemas', 'specs/src/client/types'];
+const SPECS = 'specs/src';
+const AREAS = readdirSync(resolve(REPO, SPECS))
+  .filter((name) => name !== 'components' && name !== 'paths' && statSync(resolve(REPO, SPECS, name)).isDirectory())
+  .map((name) => `${SPECS}/${name}`);
+const DIRECTORIES = [`${SPECS}/components/schemas`, `${SPECS}/client/types`, ...AREAS];
+const pascal = (words) => words.split('-').map((word) => word[0].toUpperCase() + word.slice(1)).join('');
+/** The schemas of an area's tables, named as reader/schema/places.ml names them: jobs/retry-cases.json's is JobsRetryCases.json. */
+const tableSchemas = new Set(
+  AREAS.flatMap((area) => {
+    const name = area.slice(`${SPECS}/`.length);
+    return readdirSync(resolve(REPO, area))
+      .filter((file) => /^[a-z][a-z0-9-]*\.json$/.test(file) && file !== 'openapi.json')
+      .map((file) => `${area}/${pascal(name)}${pascal(file.slice(0, -'.json'.length))}.json`);
+  }),
+);
 
 /** The members that carry an offset into a text, or a length of one: schema, then the path to the member. */
 const MEMBERS = [
@@ -56,24 +73,34 @@ const SAYS_THE_UNIT = /code points?/i;
 const SPEAKS_OF_A_COUNT_OF_TEXT = /\boffsets?\b|\bcharacters?\b|\bchars?\b|utf-16|\bcode units?\b/i;
 
 const failures = [];
-/** Every schema by its name, with the file it is in. */
+for (const schema of tableSchemas) {
+  if (!existsSync(resolve(REPO, schema))) failures.push(`${schema} is not there: this check names a table's schema as reader/schema/places.ml does, and the two no longer agree`);
+}
+/** Every schema by its file, with its name. Two files may share a name (stack/'s and components/' KnowledgeBase). */
 const schemas = new Map(
   DIRECTORIES.flatMap((directory) =>
     readdirSync(resolve(REPO, directory))
-      .filter((name) => name.endsWith('.json'))
+      .filter((name) => /^[A-Z].*\.json$/.test(name) && !tableSchemas.has(`${directory}/${name}`))
       .map((name) => [
-        name.slice(0, -'.json'.length),
-        { file: `${directory}/${name}`, document: JSON.parse(readFileSync(resolve(REPO, directory, name), 'utf8')) },
+        `${directory}/${name}`,
+        { name: name.slice(0, -'.json'.length), document: JSON.parse(readFileSync(resolve(REPO, directory, name), 'utf8')) },
       ]),
   ),
 );
+/** The one file of the schema a member below names. */
+const named = (schema) => {
+  const files = [...schemas].filter(([, { name }]) => name === schema).map(([file]) => file);
+  if (files.length > 1) failures.push(`${schema} is listed below, and names ${files.length} files: ${files.join(', ')}`);
+  return files[0];
+};
 
 /** The listed members, as the sweep names a place: it leaves them to the check above. */
-const listed = new Set(MEMBERS.map(([schema, path]) => `${schema} #/${path.join('/')}`));
+const listed = new Set(MEMBERS.map(([schema, path]) => `${named(schema)} #/${path.join('/')}`));
 
 for (const [schema, path] of MEMBERS) {
-  const at = `${schemas.get(schema)?.file ?? schema} #/${path.join('/')}`;
-  const member = path.reduce((node, name) => node?.[name], schemas.get(schema)?.document);
+  const file = named(schema);
+  const at = `${file ?? schema} #/${path.join('/')}`;
+  const member = path.reduce((node, name) => node?.[name], schemas.get(file)?.document);
   if (member === undefined) {
     failures.push(`${at} is listed as carrying an offset or a length of text, and is not there`);
   } else if (typeof member.description !== 'string' || !SAYS_THE_UNIT.test(member.description)) {
@@ -81,22 +108,22 @@ for (const [schema, path] of MEMBERS) {
   }
 }
 
-function sweep(node, pointer, schema) {
+function sweep(node, pointer, file) {
   if (Array.isArray(node)) {
-    node.forEach((member, index) => sweep(member, `${pointer}/${index}`, schema));
+    node.forEach((member, index) => sweep(member, `${pointer}/${index}`, file));
     return;
   }
   if (node === null || typeof node !== 'object') return;
   const { description } = node;
   const speaks = typeof description === 'string' && SPEAKS_OF_A_COUNT_OF_TEXT.test(description) && !SAYS_THE_UNIT.test(description);
-  if (speaks && !listed.has(`${schema} ${pointer}`)) {
+  if (speaks && !listed.has(`${file} ${pointer}`)) {
     failures.push(
-      `${schemas.get(schema).file} ${pointer} speaks of an offset or of characters and does not say "code points": ${JSON.stringify(description.slice(0, 90))}`,
+      `${file} ${pointer} speaks of an offset or of characters and does not say "code points": ${JSON.stringify(description.slice(0, 90))}`,
     );
   }
-  for (const [name, member] of Object.entries(node)) sweep(member, `${pointer}/${name}`, schema);
+  for (const [name, member] of Object.entries(node)) sweep(member, `${pointer}/${name}`, file);
 }
-for (const [schema, { document }] of schemas) sweep(document, '#', schema);
+for (const [file, { document }] of schemas) sweep(document, '#', file);
 
 for (const table of COUNTING_TABLES) {
   if (!/[\u{10000}-\u{10FFFF}]/u.test(readFileSync(resolve(REPO, 'specs/src', table), 'utf8'))) {

@@ -97,7 +97,7 @@ one after another.
 
 **A Librarian is given its settings as the protocol's configuration
 document,**
-[`LibrarianConfig`](../../specs/src/components/schemas/LibrarianConfig.json),
+[`LibrarianConfig`](../../specs/src/librarian/LibrarianConfig.json),
 at the path its `--config` flag names. The harness writes the document
 ([harness/librarian-process.ts](../harness/librarian-process.ts)) into a home
 directory of the world's own. It states no state volume: a Librarian mounts

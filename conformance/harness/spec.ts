@@ -197,6 +197,13 @@ export function spec(): Spec {
   return cached;
 }
 
+let servicesCached: Spec | undefined;
+/** The services' own schemas the suites read (harness/service-schemas.json). */
+export function servicesSpec(): Spec {
+  servicesCached ??= new Spec(inject('servicesSpecPath'));
+  return servicesCached;
+}
+
 let archivistCached: Spec | undefined;
 /** The Archivist's HTTP surface. */
 export function archivistSpec(): Spec {

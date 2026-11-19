@@ -41,7 +41,7 @@ holds the count.
 ## Configuration
 
 - **B1.** A Worker service reads one document, a
-  [`WorkerConfig`](../specs/src/components/schemas/WorkerConfig.json),
+  [`WorkerConfig`](../specs/src/worker/WorkerConfig.json),
   from the path its `--config` flag names: `--config <path>` or
   `--config=<path>`. It defaults nothing the document leaves out, and reads no
   other configuration. Started without the flag, or with no path after it, it
@@ -233,7 +233,7 @@ again), `working` (confirmed, its engines claiming), or `refused`.
 - **H1.** The service answers `GET /health` on the document's `port`, with no
   token asked, once a knowledge base is confirmed ([R4](#knowledge-bases)):
   `200`, `application/json`, and a
-  [`WorkerHealth`](../specs/src/components/schemas/WorkerHealth.json):
+  [`WorkerHealth`](../specs/src/worker/WorkerHealth.json):
   `{"status": "ok", "knowledgeBases": [...]}`.
   `knowledgeBases` has one entry for each of the document's, in its order:
   its `domain` and its `state` ([Knowledge bases](#knowledge-bases)), and, for

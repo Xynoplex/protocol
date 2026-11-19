@@ -40,12 +40,12 @@ table states.
 ## Settings
 
 A Weaver reads its settings from a configuration document, the protocol's
-[`WeaverConfig`](../specs/src/components/schemas/WeaverConfig.json), at the
+[`WeaverConfig`](../specs/src/weaver/WeaverConfig.json), at the
 path its `--config` flag names. The document is resolved: every address in it
 is literal, every credential is named by the variable that holds it, and the
 Weaver defaults nothing it leaves out. It states the knowledge base it serves ([`KbIdentity`](../specs/src/components/schemas/KbIdentity.json): its name and domain, which its telemetry names it by, and which the knowledge base at its gateway must say it is before the Weaver connects to the graph database: [Boot](#boot)); the gateway's
 URL; the issuer the Weaver's service account signs in at; the graph database
-([`GraphConfig`](../specs/src/components/schemas/GraphConfig.json): its
+([`GraphConfig`](../specs/src/graph/GraphConfig.json): its
 kind, and what that kind needs to be reached, with the name of the environment
 variable that holds its password); where the Archivist listens; the file the
 Weaver keeps its cursors in

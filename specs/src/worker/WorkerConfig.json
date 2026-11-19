@@ -22,10 +22,10 @@
       "description": "The port the worker answers `/health` on."
     },
     "logLevel": {
-      "$ref": "./LogLevel.json"
+      "$ref": "../components/schemas/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "./LogFormat.json"
+      "$ref": "../components/schemas/LogFormat.json"
     }
   },
   "required": [

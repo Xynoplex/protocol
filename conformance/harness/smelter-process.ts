@@ -16,7 +16,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { components } from './protocol-core';
+import type { services } from './protocol-core';
 import { collectLines } from './gateway';
 import { call } from './http';
 import { runEnvironment } from './paths';
@@ -27,7 +27,7 @@ export const SMELTER_HEALTH_PORT = 24101;
 /** The file, in a Smelter's home, it is told to keep its cursors in (SMELTER.md § Settings). */
 export const CURSORS = 'cursors.json';
 
-type SmelterDocument = components['schemas']['SmelterConfig'];
+type SmelterDocument = services['schemas']['SmelterConfig'];
 
 /** An object as a case may leave it: any of its members undefined. A union is left as each of its kinds is. */
 type Leavable<T> = T extends unknown ? { [Member in keyof T]: T[Member] | undefined } : never;
@@ -46,9 +46,9 @@ export interface SmelterSettings {
   /** Where the Archivist is, for a resource's bytes. */
   archivist?: SmelterDocument['archivist'];
   /** The vector database: its kind, its host and port, and the variable its token is in. */
-  vectors: Leavable<components['schemas']['QdrantVectorsConfig']>;
+  vectors: Leavable<services['schemas']['QdrantVectorsConfig']>;
   /** The embedding provider: its kind, its model and its address. */
-  embedding: Leavable<components['schemas']['OllamaEmbeddingConfig']>;
+  embedding: Leavable<services['schemas']['OllamaEmbeddingConfig']>;
   /** The two numbers a text is cut by: a chunk's size, and how far one chunk overlaps the next. */
   chunking?: SmelterDocument['chunking'];
   /** How many PDFs it works on at once. */

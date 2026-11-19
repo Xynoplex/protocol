@@ -3,7 +3,7 @@
   "description": "Everything the dispatcher reads at boot: nothing in it is defaulted by the dispatcher. The launcher writes it for the dispatcher it starts, from the knowledge base's stack documents, and the dispatcher reads it from the path its `--config` flag names (its image passes `/etc/xynolog/dispatcher.json`). Started without `--config`, or with a path that names no file, the dispatcher refuses to start and says which. Secrets are never values here: a field that needs one names the environment variable holding it. The dispatcher's other inputs are the environment variables specs/src/service-environment/variables.json lists for it, and the ones this document names. A document that does not validate is refused at boot, naming each failing field.",
   "properties": {
     "kb": {
-      "$ref": "./KbIdentity.json"
+      "$ref": "../components/schemas/KbIdentity.json"
     },
     "gatewayUrl": {
       "type": "string",
@@ -13,7 +13,7 @@
     "identity": {
       "allOf": [
         {
-          "$ref": "./ServiceIdentity.json"
+          "$ref": "../components/schemas/ServiceIdentity.json"
         }
       ],
       "description": "The issuer the dispatcher's service account signs in at."
@@ -101,10 +101,10 @@
       "additionalProperties": false
     },
     "logLevel": {
-      "$ref": "./LogLevel.json"
+      "$ref": "../components/schemas/LogLevel.json"
     },
     "logFormat": {
-      "$ref": "./LogFormat.json"
+      "$ref": "../components/schemas/LogFormat.json"
     }
   },
   "required": [

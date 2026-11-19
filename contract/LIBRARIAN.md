@@ -57,23 +57,23 @@ the vector index no collection, no payload index and no point.
 ## Settings
 
 A Librarian reads its settings from a configuration document, the protocol's
-[`LibrarianConfig`](../specs/src/components/schemas/LibrarianConfig.json),
+[`LibrarianConfig`](../specs/src/librarian/LibrarianConfig.json),
 at the path its `--config` flag names. The document is resolved: every address
 in it is literal, every credential is named by the variable that holds it, and
 the Librarian defaults nothing it leaves out. It states
 the knowledge base it serves ([`KbIdentity`](../specs/src/components/schemas/KbIdentity.json): its name and domain, which its telemetry names it by, and which the knowledge base at its gateway must say it is before the Librarian reaches its stores: [Boot](#boot)); the gateway's URL; the issuer the Librarian's service account signs in at;
 the Archivist's host and port, for a resource's bytes; the graph database
-([`GraphConfig`](../specs/src/components/schemas/GraphConfig.json): its
+([`GraphConfig`](../specs/src/graph/GraphConfig.json): its
 kind, and what that kind needs to be reached, with the name of the
 environment variable that holds its password); the vector index
-([`VectorsConfig`](../specs/src/components/schemas/VectorsConfig.json): its
+([`VectorsConfig`](../specs/src/vectors/VectorsConfig.json): its
 kind, and what that kind needs to be reached, with the name of the variable
 that holds the token the Librarian presents to it); the embedding provider
-([`EmbeddingConfig`](../specs/src/components/schemas/EmbeddingConfig.json):
+([`EmbeddingConfig`](../specs/src/embedding/EmbeddingConfig.json):
 its kind, its model and where it is reached, with the name of the variable
 that holds its key, for a provider that takes one); a model for each of its
 two actors, the Matcher and the Gatherer
-([`LibrarianEngineConfig`](../specs/src/components/schemas/LibrarianEngineConfig.json):
+([`LibrarianEngineConfig`](../specs/src/librarian/LibrarianEngineConfig.json):
 its engine, a provider and a model; the address the provider is reached at, and the name
 of the variable that holds its key, for a provider that takes one); the
 settle bound, which is how long a gather of a resource waits for the Smelter,
