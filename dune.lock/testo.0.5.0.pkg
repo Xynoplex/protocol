@@ -1,0 +1,19 @@
+(version 0.5.0)
+
+(build
+ (all_platforms
+  ((action
+    (progn
+     (when %{pkg-self:dev} (run dune subst))
+     (run dune build -p %{pkg-self:name} -j %{jobs} @install))))))
+
+(depends
+ (all_platforms
+  (dune ocaml cmdliner fpath re testo-util)))
+
+(source
+ (fetch
+  (url
+   https://github.com/mjambon/testo/releases/download/0.5.0/testo-0.5.0.tbz)
+  (checksum
+   sha512=83c7531e5c190e105b67579475d0b24f2a397feee71961d0acfa93c6ddb06b902f9156ba7e08acb24be6ee317d822b44d0cf825ea0f3374c9405ae65bcea8e79)))

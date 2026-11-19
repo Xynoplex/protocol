@@ -1,0 +1,37 @@
+; The OCaml harness: what every suite's program is built from.
+(library
+ (name xynolog_conformance)
+ (package xynolog-conformance)
+ (flags
+  (:standard -open Xynolog_protocol_schema))
+ (libraries
+  xynolog-protocol
+  xynolog-protocol.schema
+  eio
+  eio.unix
+  eio_main
+  cohttp
+  cohttp-eio
+  http
+  uri
+  yojson
+  re
+  jose
+  mirage-crypto
+  mirage-crypto-pk
+  mirage-crypto-rng
+  mirage-crypto-rng.unix
+  digestif
+  base64
+  decompress.de
+  decompress.gz
+  pbrt
+  opentelemetry.proto
+  neodriver_core
+  neodriver_eio
+  nats-client
+  testo
+  ohex
+  ptime
+  ptime.clock.os
+  unix))

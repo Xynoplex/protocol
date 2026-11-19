@@ -1,0 +1,2 @@
+; Only the OCaml harness is dune's; the TypeScript harness beside it is npm's.
+(dirs ocaml)

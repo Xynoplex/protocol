@@ -1,0 +1,19 @@
+(version 0.9.0)
+
+(build
+ (all_platforms
+  ((action
+    (progn
+     (when %{pkg-self:dev} (run dune subst))
+     (run dune build -p %{pkg-self:name} -j %{jobs} @install))))))
+
+(depends
+ (all_platforms
+  (dune ocaml)))
+
+(source
+ (fetch
+  (url
+   https://github.com/tomob/ocaml-neo4j-driver/archive/refs/tags/0.9.0.tar.gz)
+  (checksum
+   sha512=5a549def4604dad102ed7b2b667d4ed3fc550a024268cfbc2e09738f1562a029cfcdb0ae0388f1a7fbb9e0088d6332e37f8c8226084c83cfa16ebb9f2fd9f8df)))
