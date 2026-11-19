@@ -13,6 +13,10 @@ make bundle
 
 `specs/openapi.json` and `specs/archivist.openapi.json` are outputs for type generation and conformance runs. Edit only files under `src/`. `make lint` applies the Redocly rules; `make check` runs protocol-specific consistency gates, including each table's schema.
 
+## Layout
+
+`src/openapi.json`, `src/paths/` and `src/components/` are the gateway's public API: what it serves over HTTP and carries on the bus. Its document lists every schema of `components/schemas/`, and the client's discovery document's (`discovery/`); a component schema refers only to component schemas, and so does every route of the gateway's. `src/control/` is the launcher's control API. A service's own schemas, such as its configuration document and its health answer, are in its area: `archivist/` (beside Archivist's own document), `dispatcher/`, `gateway/`, `librarian/`, `smelter/`, `weaver/` and `worker/`, and the stores' and the embedding model's in `graph/`, `vectors/` and `embedding/`. A component schema that only Archivist's document reaches is Archivist's, so its place is `archivist/`. The reader (`make reader`) holds all of this.
+
 ## Case tables
 
 A file under `src/` whose name ends in `cases.json` states behavior case by case. Its `$comment` describes the rule, and its cases state it; a table names no consumer, and each consumer records which of its tests runs it. [`src/CaseTable.json`](src/CaseTable.json) is the schema of what every case table carries. Each consumer repository owns its implementation tests and uses the pinned protocol revision as input.
