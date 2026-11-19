@@ -52,6 +52,7 @@ reader() {
         harness=conformance/harness/generated/protocol
         mkdir -p "$harness"
         cp _build/default/reader/js/protocol.ts "$harness/protocol.ts"
+        cp _build/default/reader/js/bus.ts "$harness/bus.ts"
         cp _build/default/reader/js/validate.bc.js "$harness/validate.cjs"
         cp reader/js/validate.d.cts "$harness/validate.d.cts"
         chmod u+w "$harness"/*
