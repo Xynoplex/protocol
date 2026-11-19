@@ -491,6 +491,16 @@ let service_environment
         "service-environment/variables.json lists no variables for the service"
   | names -> names
 
+(* A duration client/timing.json states, in milliseconds. *)
+let client_timing name =
+  match
+    List.find_opt
+      (fun (row : Tables.Client_timing.timing_item) -> row.name = name)
+      (tables ()).client_timing.timing
+  with
+  | Some { value = Integer ms; _ } when String.ends_with ~suffix:"Ms" name -> ms
+  | _ -> failwith ("client/timing.json states no duration " ^ name)
+
 (* ── Knowledge bases and principals ───────────────────────────────────── *)
 
 type kb = { name : string; domain : string; did : string; resource : string }

@@ -3,7 +3,8 @@
    [--config <document>] and an environment. The document is the protocol's
    configuration document for it (WeaverConfig, SmelterConfig,
    LibrarianConfig), held to its schema and written into a home directory of
-   the process's own. The environment holds what
+   the process's own; a Librarian that must refuse to start is given one its
+   schema may refuse. The environment holds what
    specs/src/service-environment/variables.json lists for the service, the
    secrets its document names a variable for, and the process's own home,
    temporary directory and PATH; nothing else from the harness's own. Each
@@ -55,12 +56,12 @@ let rec named_variables (document : Yojson.Safe.t) =
   | `List items -> List.concat_map named_variables items
   | _ -> []
 
-(* Start a service on [document] and [env], each held to the spec first;
-   [own] is the process's home and temporary directory, which no table
-   lists. *)
-let launch name ~service ~command ~schema ~home ~file ?(own = []) document env =
-  Gateway.held_to schema document;
-  Gateway.check_environment service ~named:(named_variables document) env;
+(* Start a service on [document] and [env], the environment held to the
+   spec first: every variable is one the service reads, or one [named] names
+   for a secret. [own] is the process's home and temporary directory, which
+   no table lists. *)
+let launch name ~service ~command ~home ~file ?(own = []) ~named document env =
+  Gateway.check_environment service ~named env;
   ensure_dir home;
   let path = home // file in
   Gateway.write_json path document;
@@ -86,12 +87,15 @@ let start_weaver w =
   ensure_dir w.weaver_home;
   ensure_dir temporary;
   let origin = Printf.sprintf "http://127.0.0.1:%d" w.weaver.health_port in
+  let document =
+    w.weaver_document (`String (temporary // "weaver-cursors.json"))
+  in
+  Gateway.held_to "WeaverConfig" document;
   let process =
     launch "Weaver" ~service:Weaver ~command:w.weaver.command
-      ~schema:"WeaverConfig" ~home:w.weaver_home ~file:"weaver.json"
+      ~home:w.weaver_home ~file:"weaver.json"
       ~own:[ ("HOME", w.weaver_home); ("TMPDIR", temporary) ]
-      (w.weaver_document (`String (temporary // "weaver-cursors.json")))
-      w.weaver_env
+      ~named:(named_variables document) document w.weaver_env
   in
   Process.until_ready process ~timeout:120.0 "finish starting" (fun () ->
       match health "WeaverHealth" origin with
@@ -119,12 +123,15 @@ type smelter = {
    due again. *)
 let start_smelter s =
   refuse_if_answered "Smelter" smelter_origin;
+  let document =
+    s.smelter_document (`String (s.smelter_home // "cursors.json"))
+  in
+  Gateway.held_to "SmelterConfig" document;
   let process =
     launch "Smelter" ~service:Smelter ~command:s.smelter_command
-      ~schema:"SmelterConfig" ~home:s.smelter_home ~file:"smelter.json"
+      ~home:s.smelter_home ~file:"smelter.json"
       ~own:[ ("HOME", s.smelter_home) ]
-      (s.smelter_document (`String (s.smelter_home // "cursors.json")))
-      s.smelter_env
+      ~named:(named_variables document) document s.smelter_env
   in
   Process.until_ready process ~timeout:120.0 "finish starting" (fun () ->
       match health "SmelterHealth" smelter_origin with
@@ -147,14 +154,49 @@ type librarian = {
 
 let librarian_origin l = Printf.sprintf "http://127.0.0.1:%d" l.librarian_port
 
+let spawn_librarian l ~named =
+  refuse_if_answered "Librarian" (librarian_origin l);
+  launch "Librarian" ~service:Librarian ~command:l.librarian_command
+    ~home:l.librarian_home ~file:"librarian.json" ~named l.librarian_document
+    l.librarian_env
+
 (* Start a Librarian and wait until its health answers. *)
 let start_librarian l =
-  refuse_if_answered "Librarian" (librarian_origin l);
+  Gateway.held_to "LibrarianConfig" l.librarian_document;
   let process =
-    launch "Librarian" ~service:Librarian ~command:l.librarian_command
-      ~schema:"LibrarianConfig" ~home:l.librarian_home ~file:"librarian.json"
-      l.librarian_document l.librarian_env
+    spawn_librarian l ~named:(named_variables l.librarian_document)
   in
   Process.until_ready process ~timeout:120.0 "serve" (fun () ->
       health "LibrarianHealth" (librarian_origin l) <> None);
   process
+
+(* Start a Librarian that must refuse to start: it exits without its health
+   ever answering. Its exit code (None when a signal ended it) and its
+   output. Its document is not held to the schema, since a document it must
+   refuse may be no LibrarianConfig; [named] is what the document it was
+   changed from names for its secrets. One that serves, and one that has
+   neither served nor exited by [timeout] seconds, is a failure. *)
+let refused_librarian l ~named ~timeout =
+  let process = spawn_librarian l ~named in
+  let deadline = Run.now () +. timeout in
+  let rec watch () =
+    if not (Process.running process) then ()
+    else if Call.reach (librarian_origin l) "GET" "/health" <> None then (
+      Process.crash process;
+      failwith
+        ("the Librarian served although it should have refused to start:\n"
+        ^ String.concat "\n" (Process.output process)))
+    else if Run.now () > deadline then (
+      Process.crash process;
+      failwith
+        (Printf.sprintf
+           "the Librarian had neither refused to start nor served after %g s:\n\
+            %s"
+           timeout
+           (String.concat "\n" (Process.output process))))
+    else (
+      Run.sleep 0.05;
+      watch ())
+  in
+  watch ();
+  (Eio.Promise.await process.exited, Process.output process)
