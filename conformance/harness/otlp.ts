@@ -12,12 +12,15 @@ import type { AddressInfo } from 'node:net';
 import { isDeepStrictEqual } from 'node:util';
 import { metricsRequest, traceRequest } from './otlp-protobuf';
 
+/** An attribute's value as OTLP carried it: a string, a boolean, or a number (an int64 or a double). */
+export type AttributeValue = string | boolean | number;
+
 export interface ReceivedSpan {
   name: string;
   kind: number;
   /** The attributes of the resource it was exported under. */
   resource: Record<string, unknown>;
-  attributes: Record<string, unknown>;
+  attributes: Record<string, AttributeValue | undefined>;
   traceId: string;
   parentSpanId: string | undefined;
 }
@@ -25,8 +28,8 @@ export interface ReceivedSpan {
 export interface ReceivedMetric {
   /** What its data points came as: `counter` (a monotonic sum), `up-down counter`, `gauge`, `histogram`. */
   readonly instruments: Set<string>;
-  /** Attribute key → every value it carried. */
-  readonly attributes: Map<string, Set<string>>;
+  /** Attribute key → every value it carried, as it was carried. */
+  readonly attributes: Map<string, Set<AttributeValue | undefined>>;
   /** Every value its sum and gauge data points carried, in arrival order. */
   readonly values: number[];
   /** The attributes of each resource it was exported under, each once, in arrival order. */
@@ -45,14 +48,15 @@ const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const str = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
 
 /** OTLP's AnyValue, reduced to the scalar it carries; an int64, which JSON may carry as a string, as a number. */
-function valueOf(v: unknown): unknown {
+function valueOf(v: unknown): AttributeValue | undefined {
   if (!isObject(v)) return undefined;
   if (v['intValue'] !== undefined) return Number(v['intValue']);
-  return v['stringValue'] ?? v['boolValue'] ?? v['doubleValue'];
+  const scalar = v['stringValue'] ?? v['boolValue'] ?? v['doubleValue'];
+  return typeof scalar === 'string' || typeof scalar === 'boolean' || typeof scalar === 'number' ? scalar : undefined;
 }
 
-function attributes(kvs: unknown): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
+function attributes(kvs: unknown): Record<string, AttributeValue | undefined> {
+  const out: Record<string, AttributeValue | undefined> = {};
   for (const kv of list(kvs)) if (isObject(kv) && typeof kv['key'] === 'string') out[kv['key']] = valueOf(kv['value']);
   return out;
 }
@@ -107,7 +111,7 @@ export async function startOtlp(): Promise<OtlpReceiver> {
               for (const m of list(sm['metrics'])) {
                 const name = isObject(m) ? str(m['name']) : undefined;
                 if (!isObject(m) || !name) continue;
-                const metric: ReceivedMetric = metrics.get(name) ?? { instruments: new Set<string>(), attributes: new Map<string, Set<string>>(), values: [], resources: [] };
+                const metric: ReceivedMetric = metrics.get(name) ?? { instruments: new Set<string>(), attributes: new Map<string, Set<AttributeValue | undefined>>(), values: [], resources: [] };
                 metrics.set(name, metric);
                 if (!metric.resources.some((seen) => isDeepStrictEqual(seen, resource))) metric.resources.push(resource);
                 for (const kind of ['sum', 'gauge', 'histogram']) {
@@ -117,8 +121,8 @@ export async function startOtlp(): Promise<OtlpReceiver> {
                   for (const point of list(data['dataPoints'])) {
                     if (!isObject(point)) continue;
                     for (const [key, value] of Object.entries(attributes(point['attributes']))) {
-                      const seen = metric.attributes.get(key) ?? new Set<string>();
-                      metric.attributes.set(key, seen.add(String(value)));
+                      const seen = metric.attributes.get(key) ?? new Set<AttributeValue | undefined>();
+                      metric.attributes.set(key, seen.add(value));
                     }
                     // OTLP/JSON carries an int64 as a string.
                     const value = Number(point['asInt'] ?? point['asDouble']);

@@ -8,11 +8,11 @@
       "additionalProperties": false,
       "properties": {
         "did": {
-          "allOf": [{ "$ref": "../components/schemas/UserId.json" }],
+          "$ref": "../components/schemas/UserId.json",
           "description": "The did it reports for itself."
         },
         "description": {
-          "allOf": [{ "$ref": "../components/schemas/KbDescription.json" }],
+          "$ref": "../components/schemas/KbDescription.json",
           "description": "What it says of itself."
         }
       },
@@ -25,15 +25,15 @@
       "additionalProperties": false,
       "properties": {
         "endpoint": {
-          "allOf": [{ "$ref": "../components/schemas/KbEndpoint.json" }],
+          "$ref": "../components/schemas/KbEndpoint.json",
           "description": "Where the sign-in was."
         },
         "description": {
-          "allOf": [{ "$ref": "../components/schemas/KbDescription.json" }],
+          "$ref": "../components/schemas/KbDescription.json",
           "description": "What the knowledge base said of itself, asked with the new token."
         },
         "session": {
-          "allOf": [{ "$ref": "../session/stored.json#/storedSession" }],
+          "$ref": "../session/stored.json#/storedSession",
           "description": "The tokens, as a registry keeps them."
         },
         "kbId": {
@@ -75,11 +75,11 @@
       "additionalProperties": false,
       "properties": {
         "kb": {
-          "allOf": [{ "$ref": "../components/schemas/KnowledgeBase.json" }],
+          "$ref": "../components/schemas/KnowledgeBase.json",
           "description": "The entry the sign-in made or signed in to again."
         },
         "expected": {
-          "allOf": [{ "$ref": "#/types/Expected" }],
+          "$ref": "#/types/Expected",
           "description": "What the person believed they were signing in to. Absent when they named nothing."
         }
       },

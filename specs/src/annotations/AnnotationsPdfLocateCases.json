@@ -152,11 +152,9 @@
             "additionalProperties": false
           },
           "span": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/properties/cases/items/properties/span"
-              }
+            "anyOf": [
+              { "$ref": "#/properties/cases/items/properties/span" },
+              { "type": "null" }
             ]
           }
         },

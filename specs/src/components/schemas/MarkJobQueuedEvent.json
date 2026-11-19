@@ -12,19 +12,11 @@
       ]
     },
     "resourceId": {
-      "allOf": [
-        {
-          "$ref": "./ResourceId.json"
-        }
-      ],
+      "$ref": "./ResourceId.json",
       "description": "The resource the job is about."
     },
     "userId": {
-      "allOf": [
-        {
-          "$ref": "./UserId.json"
-        }
-      ],
+      "$ref": "./UserId.json",
       "description": "The DID of the principal whose `job:create` created the job."
     },
     "params": {

@@ -60,27 +60,15 @@
       "description": "Where each word of `text` is, line by line, in reading order."
     },
     "method": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ExtractionMethod.json"
-        }
-      ],
+      "$ref": "../components/schemas/ExtractionMethod.json",
       "description": "How the text was extracted."
     },
     "pdfClass": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/PdfClass.json"
-        }
-      ],
+      "$ref": "../components/schemas/PdfClass.json",
       "description": "PDF classification, when the source was a PDF."
     },
     "ocrConfidence": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/OcrConfidence.json"
-        }
-      ],
+      "$ref": "../components/schemas/OcrConfidence.json",
       "description": "How well the engine read the pixels, when any of this text came from OCR."
     },
     "unreadPages": {

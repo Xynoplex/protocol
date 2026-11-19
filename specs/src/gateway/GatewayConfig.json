@@ -38,11 +38,7 @@
       "additionalProperties": false
     },
     "archivist": {
-      "allOf": [
-        {
-          "$ref": "../components/schemas/ServiceAddress.json"
-        }
-      ],
+      "$ref": "../components/schemas/ServiceAddress.json",
       "description": "Where the Archivist listens."
     },
     "signal": {

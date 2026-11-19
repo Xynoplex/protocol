@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "id": {
-      "allOf": [{ "$ref": "./AnnotationId.json" }],
+      "$ref": "./AnnotationId.json",
       "description": "Reference annotation ID"
     },
     "resourceName": {
@@ -14,7 +14,7 @@
       "type": "object",
       "properties": {
         "source": {
-          "allOf": [{ "$ref": "./ResourceId.json" }],
+          "$ref": "./ResourceId.json",
           "description": "ID of resource containing the reference"
         },
         "selector": {

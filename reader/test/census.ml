@@ -135,11 +135,38 @@ let () =
         prerr_endline "usage: census.exe SPECS";
         exit 2
   in
-  (match Spec.load specs with
-  | Ok _ -> ()
-  | Error errors ->
-      List.iter (fun e -> prerr_endline (Decode.error_to_string e)) errors;
-      Printf.eprintf "Protocol has %d refusals\n" (List.length errors);
+  let spec =
+    match Spec.load specs with
+    | Ok spec -> spec
+    | Error errors ->
+        List.iter (fun e -> prerr_endline (Decode.error_to_string e)) errors;
+        Printf.eprintf "Protocol has %d refusals\n" (List.length errors);
+        exit 1
+  in
+  (* A table's value is of the type its schema states, through a reference
+     into another table's schema too: content.get's content.stream, which
+     sdk-telemetry states through service-telemetry's attribute, is the
+     boolean true. *)
+  let content_get =
+    List.find
+      (fun (span : Tables.Sdk_telemetry_telemetry.spans_item) ->
+        span.name = "content.get")
+      spec.tables.sdk_telemetry_telemetry.spans
+  in
+  (match
+     List.find_map
+       (fun (attribute :
+              Tables.Sdk_telemetry_telemetry
+              .service_telemetry_telemetry_attributes_item) ->
+         if attribute.key = "content.stream" then Some attribute.values
+         else None)
+       content_get.attributes
+   with
+  | Some (Some [ Boolean true ]) -> ()
+  | _ ->
+      prerr_endline
+        "sdk-telemetry/telemetry.json: content.get's content.stream is not the \
+         boolean true";
       exit 1);
   refused specs ~why:"has a file the model does not know"
     (fun copied -> write (Filename.concat copied "retry/notes.txt") "")
@@ -258,8 +285,7 @@ let () =
   surface specs ~why:"gives an argument its parameter's schema refuses"
     "namespaces/7/methods/4/cases/0/args/annotationId"
     (fun _ -> `Int 5)
-    "/namespaces/7/methods/4/cases/0/args/annotationId: is 5, which is no \
-     string";
+    "/namespaces/7/methods/4/cases/0/args/annotationId: is none of the anyOf";
   surface specs ~why:"misspells a member of an object argument"
     "namespaces/5/methods/0/cases/1/args/options"
     (members
@@ -372,4 +398,5 @@ let () =
      gateway route or a component that refers into a service's area, \
      Archivist's own schema among the components, a client surface case whose \
      arguments are not its method's parameters, a reply's list neither bounded \
-     nor named, or an offset whose unit is unsaid"
+     nor named, or an offset whose unit is unsaid; and it reads each value as \
+     the type its schema states"

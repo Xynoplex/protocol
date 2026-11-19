@@ -8,17 +8,17 @@
    A table's schema is read in the table dialect: every node of it is one a
    type is derived from, and any other is refused, so the dialect is what
    this derives. A node is:
-   - a [$ref], with nothing but a [$comment] beside it: the type of what it
+   - a [$ref], with nothing but annotations beside it: the type of what it
      names, once; or, when it names JsonSchema.json, [Schema.t];
-   - [{ "nullable": true, "allOf": [{ "$ref": … }] }]: that, or null;
+   - [{ "anyOf": [{ "$ref": … }, { "type": "null" }] }]: that, or null;
    - [{ "$comment": … }] alone: JSON by nature, [Yojson.Safe.t];
    - a [oneOf] of closed objects, any two told apart, and at most one member
-     of each other type, with ["nullable": true] beside it when it may be
-     null: a variant. A member is named by the value it fixes a property all
-     the objects require to; else, beside other types, an object is
-     [Object] and each other member its type; else by its [title];
+     of each other type, with [{ "type": "null" }] its last member when it
+     may be null: a variant. A member is named by the value it fixes a
+     property all the objects require to; else, beside other types, an object
+     is [Object] and each other member its type; else by its [title];
    - a node of one [type], with only the keywords that type takes, and
-     ["nullable": true] when it may be null. A string, an integer, a number
+     [[T, "null"]] its type when it may be null. A string, an integer, a number
      or a boolean is OCaml's; one [enum] value or a [const] is that value's
      type, holding the value, which the decoder checks; a string [enum] is a
      variant, with its values ([_value]) and its constructors in order
@@ -29,11 +29,14 @@
    states the values of another in the table's module is that one's type. A
    member named [$ref] is a reference, which the reader resolves.
 
-   What a [$ref] names outside the schema's own file (a component, or
-   CaseTable's) is derived where it can be, by the same rules with its
-   annotations and formats read as such; where it cannot (an open object, an
-   [allOf], a [oneOf] the components state) it is [Yojson.Safe.t], which the
-   table's validation against its schema holds to what it names.
+   What a [$ref] names in another table's schema is a node of that schema,
+   in the table dialect as its own table's model reads it, and is derived
+   by these rules, named for that schema's file. What it names elsewhere
+   outside the schema's own file (a component, or CaseTable's) is derived
+   where it can be, by the same rules with its annotations and formats read
+   as such; where it cannot (an open object, an [allOf], a [oneOf] the
+   components state) it is [Yojson.Safe.t], which the table's validation
+   against its schema holds to what it names.
 
    A case table's schema extends CaseTable.json: its [allOf] is that alone,
    and it admits each of CaseTable's properties with [true] but [cases],
@@ -51,6 +54,8 @@ let root =
       prerr_endline "usage: derive.exe SPECS";
       exit 2
 
+(* Every table's schema, from specs/src: each in the table dialect. *)
+let table_schemas = List.map Places.schema_of (Places.tables root)
 let refusals = ref []
 
 exception Stop
@@ -289,7 +294,7 @@ let candidates ~own file pointer =
     | "items" :: rest -> "item" :: words (at ^ "/items") rest
     | "additionalProperties" :: rest ->
         "value" :: words (at ^ "/additionalProperties") rest
-    | (("oneOf" | "allOf") as key) :: index :: rest -> (
+    | (("oneOf" | "anyOf") as key) :: index :: rest -> (
         let at = at ^ "/" ^ key ^ "/" ^ index in
         match Hashtbl.find_opt places (file, at) with
         | Some name when key = "oneOf" -> name :: words at rest
@@ -331,6 +336,12 @@ let candidates ~own file pointer =
 
 let annotations = [ "$comment"; "title"; "description" ]
 
+(* Whether [s] is [{ "type": "null" }], the alternative of a node that may be
+   null. *)
+let is_null = function
+  | Schema.Schema l -> Schema.keywords l = [ "type" ] && l.type_ = Some [ Null ]
+  | Boolean_schema _ -> false
+
 let takes = function
   | Schema.String -> [ "enum"; "const"; "minLength"; "maxLength"; "pattern" ]
   | Integer | Number -> [ "enum"; "const"; "minimum"; "maximum" ]
@@ -344,6 +355,7 @@ let takes = function
         "maxProperties";
       ]
   | Array -> [ "items"; "minItems"; "maxItems"; "uniqueItems" ]
+  | Null -> []
 
 let type_words = "string, integer, number, boolean, object, array"
 
@@ -411,6 +423,7 @@ let kinds = function
   | Number -> [ "Int"; "Number" ]
   | Boolean -> [ "Bool" ]
   | Array -> [ "Array" ]
+  | Null -> [ "Null" ]
   | Object -> [ "Object" ]
 
 let is_why_of_case_table file (s : Schema.t) =
@@ -453,30 +466,23 @@ and node ~strict ~own file pointer s =
               refuse file (pointer / k) "is beside what this node is")
           present
       in
-      let nullable ty =
-        match l.nullable with
-        | None -> ty
-        | Some true -> Nullable ty
-        | Some false ->
-            if strict then
-              refuse file (pointer / "nullable")
-                "must be true, or be left out of a node whose value is never \
-                 null"
-            else ty
-      in
       match l with
       | { ref_ = Some r; _ } -> (
           if
             strict
-            && List.exists (fun k -> k <> "$ref" && k <> "$comment") present
+            && List.exists
+                 (fun k -> k <> "$ref" && not (List.mem k annotations))
+                 present
           then
             refuse file pointer
-              "has keywords beside its $ref, which OpenAPI 3.0 does not read";
+              "has keywords beside its $ref, where only $comment, title or \
+               description is said of a reference";
           match target r with
           | tfile, "" when tfile = Places.json_schema -> Json_schema
           | tfile, tpointer ->
               derive
-                ~strict:(strict && tfile = file)
+                ~strict:
+                  (strict && (tfile = file || List.mem tfile table_schemas))
                 ~own:(own && tfile = file)
                 tfile tpointer (schema_at tfile tpointer))
       | _ when present = [ "$comment" ] ->
@@ -484,26 +490,42 @@ and node ~strict ~own file pointer s =
             refuse file pointer
               "is JSON by nature, and must say what it is in $comment";
           Json
-      | { all_of = Some parts; _ } ->
+      | { all_of = Some _; _ } ->
+          fail
+            "is an allOf, which a table's schema says only where it extends \
+             CaseTable.json"
+      | { any_of = Some members; _ } ->
           if not strict then Json
           else (
-            beside ("allOf" :: "nullable" :: annotations);
-            match (l.nullable, parts) with
-            | Some true, [ (Schema { ref_ = Some _; _ } as part) ] ->
+            beside ("anyOf" :: annotations);
+            match members with
+            | [ (Schema { ref_ = Some _; _ } as named); null ] when is_null null
+              ->
                 Nullable
-                  (derive ~strict ~own file (pointer / "allOf" / "0") part)
+                  (derive ~strict ~own file (pointer / "anyOf" / "0") named)
             | _ ->
                 refuse file pointer
-                  "must be { \"nullable\": true, \"allOf\": [{ \"$ref\": … }] \
-                   }: an allOf in a table's schema is a $ref that may be null")
+                  "must be { \"anyOf\": [{ \"$ref\": … }, { \"type\": \"null\" \
+                   }] }: an anyOf in a table's schema is a $ref that may be \
+                   null")
       | { one_of = Some members; _ } ->
           if not strict then Json
           else (
-            beside ("oneOf" :: "nullable" :: annotations);
-            nullable (variant ~own file pointer members))
-      | { type_ = Some [ t ]; _ } -> (
+            beside ("oneOf" :: annotations);
+            match List.rev members with
+            | null :: rest when is_null null ->
+                Nullable (variant ~own file pointer (List.rev rest))
+            | _ -> variant ~own file pointer members)
+      | { type_ = Some [ Null ]; _ } when strict ->
+          refuse file pointer
+            "is null alone, which a table's schema says only as the last \
+             member of a oneOf or the second of an anyOf"
+      | { type_ = Some (([ t ] | [ t; Null ]) as types); _ } when t <> Null -> (
+          let nullable ty =
+            if List.mem Schema.Null types then Nullable ty else ty
+          in
           if strict then (
-            beside (("type" :: "nullable" :: annotations) @ takes t);
+            beside (("type" :: annotations) @ takes t);
             match (l.enum, l.const) with
             | Some values, _ ->
                 List.iter
@@ -524,7 +546,7 @@ and node ~strict ~own file pointer s =
                   values
             | _ -> ());
           match t with
-          | String | Integer | Number | Boolean ->
+          | String | Integer | Number | Boolean | Null ->
               nullable (scalar ~strict ~own file pointer t l)
           | Array -> (
               match l.items with

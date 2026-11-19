@@ -35,11 +35,7 @@
       "description": "W3C Web Annotation target: the id of the resource annotated, when the whole of it is, or an object with source and optional selector (fragment)"
     },
     "body": {
-      "allOf": [
-        {
-          "$ref": "./AnnotationBodies.json"
-        }
-      ],
+      "$ref": "./AnnotationBodies.json",
       "description": "W3C Web Annotation body. Optional per the W3C spec — annotations whose motivation alone is meaningful (highlighting) legitimately omit it. Present values are either a single body or a non-empty array of bodies; there is no empty array."
     },
     "creator": {
@@ -56,19 +52,11 @@
       "format": "date-time"
     },
     "generator": {
-      "allOf": [
-        {
-          "$ref": "./OneOrMoreAgents.json"
-        }
-      ],
+      "$ref": "./OneOrMoreAgents.json",
       "description": "Web Annotation generator — the Software peer that produced the annotation, when software did. Absent for a person's own annotation. An emitter may supply it to carry the model's parameters, but its identity must be the emitter's own: the knowledge base refuses a generator naming anyone else, and supplies it from the verified emitter when omitted. One producer per write — a write carrying the array form is refused."
     },
     "wasAttributedTo": {
-      "allOf": [
-        {
-          "$ref": "./OneOrMoreAgents.json"
-        }
-      ],
+      "$ref": "./OneOrMoreAgents.json",
       "description": "PROV-O wasAttributedTo — every party responsible for this annotation, DERIVED by the knowledge base from `creator` and the verified executor of the write: `[creator, generator]` when one agent requested the work and software produced it; collapsed to the one agent when requester and producer are the same. Never accepted from an emitter."
     }
   },

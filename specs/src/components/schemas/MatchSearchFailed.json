@@ -8,11 +8,7 @@
       "type": "object",
       "properties": {
         "referenceId": {
-          "allOf": [
-            {
-              "$ref": "./AnnotationId.json"
-            }
-          ],
+          "$ref": "./AnnotationId.json",
           "description": "The reference the search was asked for."
         }
       },

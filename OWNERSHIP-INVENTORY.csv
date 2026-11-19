@@ -125,6 +125,7 @@ conformance/harness/smelter-setup.ts,Portable conformance,xynolog/protocol,Proto
 conformance/harness/smelter-world.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/spec.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/stream.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/harness/telemetry.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/telemetry.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/weaver-process.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/weaver-setup.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -453,7 +454,6 @@ scripts/checks/specs/check-identifiers.mjs,Protocol validation tooling,xynolog/p
 scripts/checks/specs/check-jobs.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-ownership-inventory.mjs,Protocol validation tooling,xynolog/protocol,Ensures each tracked file remains classified in this inventory.
 scripts/checks/specs/check-protocol.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
-scripts/checks/specs/check-reference-forms.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-registry-form.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/checks/specs/check-registry-prose.mjs,Protocol validation tooling,xynolog/protocol,"Validates protocol-owned definitions, without consumer checkout assumptions."
 scripts/make-target.sh,Repository build tooling,xynolog/protocol,"Runs protocol Node and npm tasks, and the reader, inside the detected container runtime."

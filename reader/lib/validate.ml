@@ -1,5 +1,6 @@
-(* Whether a value is what a schema says, in OpenAPI 3.0's reading of the
-   keywords Schema knows, following each [$ref] into what it names. [format]
+(* Whether a value is what a schema says, in JSON Schema 2020-12's reading of
+   the keywords Schema knows: a [$ref] holds the value to what it names, and
+   to the keywords beside it. [format]
    and [discriminator] are annotations: the type and the [oneOf] decide. A
    [pattern] is matched as ECMA-262 does it, unanchored; Protocol's are all
    in the syntax ocaml-re's Perl reading shares with it. *)
@@ -48,6 +49,7 @@ let is_type (t : Schema.type_name) (value : Yojson.Safe.t) =
   | Integer, `Float f -> Float.is_integer f
   | Number, (`Int _ | `Float _) -> true
   | Boolean, `Bool _ -> true
+  | Null, `Null -> true
   | Object, `Assoc _ -> true
   | Array, `List _ -> true
   | _ -> false
@@ -67,20 +69,22 @@ let rec errors (schemas : schemas) (schema : Schema.t) value path =
   match schema with
   | Boolean_schema true -> []
   | Boolean_schema false -> [ (path, "is admitted by no schema") ]
-  | Schema s -> (
-      match s.ref_ with
-      | Some r -> (
-          let file, pointer = Decode.resolve r in
-          match schemas { file; pointer } with
-          | Some target -> errors schemas target value path
-          | None ->
-              [
-                ( path,
-                  Printf.sprintf "is held to %s, which names nothing" r.target
-                );
-              ])
-      | None when value = `Null && s.nullable = Some true -> []
-      | None -> layer schemas s value path)
+  | Schema s ->
+      let named =
+        match s.ref_ with
+        | None -> []
+        | Some r -> (
+            let file, pointer = Decode.resolve r in
+            match schemas { file; pointer } with
+            | Some target -> errors schemas target value path
+            | None ->
+                [
+                  ( path,
+                    Printf.sprintf "is held to %s, which names nothing" r.target
+                  );
+                ])
+      in
+      named @ layer schemas s value path
 
 and layer schemas (s : Schema.schema) value path =
   let found = ref [] in
