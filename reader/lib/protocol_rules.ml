@@ -5,15 +5,15 @@
 
    - every security scheme is described, and every one an operation names is
      defined;
-   - every operation says whether it is public, and a protected one declares
-     a 401 that carries WWW-Authenticate;
+   - a protected operation declares a 401 that carries WWW-Authenticate
+     (that each says whether it is public is Openapi's model's);
    - every operation declares a 500, one with a request body a 400, and one
      with a JSON body its [x-xynolog-limits.maxBodyBytes] and a 413;
-   - a 429 carries Retry-After;
+   - a 429 carries Retry-After (that a declared header has a schema is
+     Openapi's model's);
    - every response but a 204 or a 3xx has a body with a schema, and an
      error's is application/json and ErrorResponse, or an [allOf] that
      refines it;
-   - a declared header has a schema;
    - a stream is a [oneOf] of its messages, each requiring a one-value
      [event] and a [data], and each [id] format has a pattern;
    - a limit is a positive integer, or a baseline with coefficients by role,
@@ -312,14 +312,11 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
                           in
                           let at = "" / method_ in
                           let requirements =
+                            (* Openapi's model refuses an operation that
+                               does not say [security]. *)
                             match member "security" op with
                             | Some (`List requirements) -> requirements
-                            | _ ->
-                                refuse file at
-                                  "%s: declares no `security` — say [] for a \
-                                   public route"
-                                  where;
-                                []
+                            | _ -> []
                           in
                           List.iter
                             (fun requirement ->
@@ -379,17 +376,6 @@ let refusals ~(read_json : string -> Yojson.Safe.t option) =
                                   let headers =
                                     members (member "headers" response)
                                   in
-                                  List.iter
-                                    (fun (header, declared) ->
-                                      match deref response_file declared with
-                                      | Some (_, h)
-                                        when Option.is_none (member "schema" h)
-                                        ->
-                                          refuse file pointer
-                                            "%s: header %s has no schema" label
-                                            header
-                                      | _ -> ())
-                                    headers;
                                   let carries name =
                                     List.exists
                                       (fun (h, _) ->
