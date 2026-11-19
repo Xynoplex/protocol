@@ -47,16 +47,16 @@ cleared, and a Smelter that starts afterwards fills it again.
 ## Settings
 
 A Smelter reads its settings from a configuration document, the protocol's
-[`SmelterConfig`](../specs/src/components/schemas/SmelterConfig.json), at
+[`SmelterConfig`](../specs/src/smelter/SmelterConfig.json), at
 the path its `--config` flag names. The document is resolved: every address in
 it is literal, every credential is named by the variable that holds it, and the
 Smelter defaults nothing it leaves out. It states the knowledge base it serves ([`KbIdentity`](../specs/src/components/schemas/KbIdentity.json): its name and domain, which its telemetry names it by, and which the knowledge base at its gateway must say it is before the Smelter reaches its index: [Boot](#boot)); the
 gateway's URL; the issuer the Smelter's service account signs in at; where
 the Archivist is, for a resource's bytes; the embedding provider
-([`EmbeddingConfig`](../specs/src/components/schemas/EmbeddingConfig.json):
+([`EmbeddingConfig`](../specs/src/embedding/EmbeddingConfig.json):
 its kind, its model and where it is reached, with the name of the environment
 variable that holds its key, for a provider that takes one); the vector index
-([`VectorsConfig`](../specs/src/components/schemas/VectorsConfig.json): its
+([`VectorsConfig`](../specs/src/vectors/VectorsConfig.json): its
 kind, and what that kind needs to be reached, with the name of the variable
 that holds the token the Smelter presents to it); the two numbers a text is cut
 by, a chunk's size and how far one chunk overlaps the next; how many PDFs it
@@ -367,7 +367,7 @@ states what each kind of document becomes.
   *Held by `smelter/tests/test_anchored_text_store.py` and `smelter/pdf`.*
 - **What deriving a PDF's text came to is stored under the checksum of the
   bytes, a decline as well as a text,** as an
-  [`AnchoredTextEntry`](../specs/src/components/schemas/AnchoredTextEntry.json).
+  [`AnchoredTextEntry`](../specs/src/archivist/AnchoredTextEntry.json).
   *Held by `smelter/tests/test_anchored_text_store.py`, `smelter/tests/test_smelter.py` and `smelter/pdf`.*
 - **The entry is stored before the decision is signalled,** so whoever hears
   that content was settled finds its entry.

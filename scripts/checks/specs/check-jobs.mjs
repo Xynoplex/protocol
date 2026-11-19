@@ -161,22 +161,27 @@ for (const [status, ref] of Object.entries(mapping)) {
   }
 }
 
-// A document's schema, followed through what it refers to and into what it
-// lists: a part stated in a file of its own is held as the rest is.
-function everythingStated(document, node, path) {
-  if ('$ref' in node) return everythingStated(document, read(resolve(SCHEMAS, node.$ref)), path);
+// A document's schema, read from [file], followed through what it refers to
+// and into what it lists: a part stated in a file of its own is held as the
+// rest is.
+function everythingStated(document, node, path, file) {
+  if ('$ref' in node) {
+    const target = resolve(file, '..', node.$ref);
+    return everythingStated(document, read(target), path, target);
+  }
   if ('default' in node) fail(`${document} defaults ${path}`);
-  if (node.type === 'array') return everythingStated(document, node.items, `${path}[]`);
+  if (node.type === 'array') return everythingStated(document, node.items, `${path}[]`, file);
   if (node.type !== 'object') return;
   for (const [name, property] of Object.entries(node.properties)) {
     const at = path ? `${path}.${name}` : name;
     if (!node.required?.includes(name) && !name.endsWith('Env')) fail(`${document} leaves ${at} optional`);
-    everythingStated(document, property, at);
+    everythingStated(document, property, at, file);
   }
 }
-for (const document of ['DispatcherConfig', 'WorkerConfig']) {
-  if (!existsSync(resolve(SCHEMAS, `${document}.json`))) fail(`${document} is not a schema`);
-  else everythingStated(document, schema(document), '');
+for (const [document, area] of [['DispatcherConfig', 'dispatcher'], ['WorkerConfig', 'worker']]) {
+  const file = resolve(REPO, 'specs/src', area, `${document}.json`);
+  if (!existsSync(file)) fail(`${document} is not a schema of specs/src/${area}`);
+  else everythingStated(document, read(file), '', file);
 }
 
 if (failures.length > 0) {

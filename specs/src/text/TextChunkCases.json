@@ -9,7 +9,7 @@
   "properties": {
     "$comment": true,
     "defaults": {
-      "$ref": "../components/schemas/SmelterConfig.json#/properties/chunking"
+      "$ref": "../smelter/SmelterConfig.json#/properties/chunking"
     },
     "cases": {
       "type": "array",
@@ -29,7 +29,7 @@
             "description": "Its length in code points divided by four, rounded up."
           },
           "chunking": {
-            "$ref": "../components/schemas/SmelterConfig.json#/properties/chunking"
+            "$ref": "../smelter/SmelterConfig.json#/properties/chunking"
           },
           "chunks": {
             "type": "array",

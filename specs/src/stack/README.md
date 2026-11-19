@@ -13,7 +13,7 @@ deployment elsewhere edits its own copy.
 |---|---|---|
 | `KnowledgeBase` | [`KnowledgeBase.json`](KnowledgeBase.json) | the Gateway, the Dispatcher, the Archivist, the broker between them, and the issuer the knowledge base trusts: the machine's (`shared`, with the lifespan of the knowledge base's realm), or somebody else's (`external`) |
 | `KnowledgeIndex` | [`KnowledgeIndex.json`](KnowledgeIndex.json) | the graph store, the vector store, the embedding model, and the Librarian, the Smelter and the Weaver |
-| `Inference` | [`Inference.json`](Inference.json) | the providers a machine reaches, and the engine for each job and each Librarian actor ([`ArchivistEngines`](../components/schemas/ArchivistEngines.json)) |
+| `Inference` | [`Inference.json`](Inference.json) | the providers a machine reaches, and the engine for each job and each Librarian actor ([`ArchivistEngines`](../archivist/ArchivistEngines.json)) |
 
 Every kind's `apiVersion` is [`ApiVersion.json`](ApiVersion.json)'s:
 `xynolog.org/v1alpha1`. The objects the kinds share are

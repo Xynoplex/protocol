@@ -47,7 +47,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/RepresentationNotFound.json"
+              "$ref": "../RepresentationNotFound.json"
             }
           }
         }

@@ -15,7 +15,7 @@ implementation joins by adding its entry, and every case runs against every
 entry.
 
 A Smelter is given its settings as the protocol's configuration document,
-[`SmelterConfig`](../../specs/src/components/schemas/SmelterConfig.json),
+[`SmelterConfig`](../../specs/src/smelter/SmelterConfig.json),
 at the path its `--config` flag names. The harness writes the document
 ([harness/smelter-process.ts](../harness/smelter-process.ts)) into a home of
 the process's own. A refusal to start names the member of the document that

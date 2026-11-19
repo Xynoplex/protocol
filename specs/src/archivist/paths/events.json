@@ -14,7 +14,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../../components/schemas/ArchivistStreamsResponse.json"
+              "$ref": "../ArchivistStreamsResponse.json"
             }
           }
         }

@@ -5,7 +5,7 @@
     "events": {
       "type": "array",
       "items": {
-        "$ref": "StoredEventResponse.json"
+        "$ref": "../components/schemas/StoredEventResponse.json"
       }
     },
     "lastSequence": {

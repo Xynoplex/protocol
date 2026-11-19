@@ -179,7 +179,7 @@
             "uniqueItems": true,
             "description": "The only signal planes a gateway row arrives on.",
             "items": {
-              "$ref": "../components/schemas/GatewayConfig.json#/properties/signal/properties/type"
+              "$ref": "../gateway/GatewayConfig.json#/properties/signal/properties/type"
             }
           },
           "meaning": {
