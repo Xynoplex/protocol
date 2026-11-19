@@ -64,12 +64,13 @@ let () =
       | Ok spec ->
           Printf.printf
             "Protocol read: 2 OpenAPI documents, %d path items, %d responses, \
-             %d JSON Schemas, and %d tables, each what its schema says; each \
-             JSON file spelled as JSON.stringify spells it, and every tracked \
-             file owned\n"
+             %d JSON Schemas (%d of them services'), and %d tables, each what \
+             its schema says; each JSON file spelled as JSON.stringify spells \
+             it, and every tracked file owned\n"
             (List.length spec.path_items)
             (List.length spec.responses)
             (List.length spec.schemas)
+            (List.length spec.services)
             (List.length spec.table_files)
       | Error errors -> refused errors)
   | _ ->
