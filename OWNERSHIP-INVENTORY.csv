@@ -981,12 +981,12 @@ specs/src/librarian/LibrarianDeriveViewsCases.json,Normative protocol source,xyn
 specs/src/librarian/LibrarianEngineConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianKnowledgeGraphCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianPromptCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
-specs/src/librarian/LibrarianPromptScore.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianReplyCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianScoreCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianSearchCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/LibrarianWindowCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/derive-views-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/librarian/elements/LibrarianPromptScore.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/knowledge-graph-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/prompt-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/librarian/reply-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
