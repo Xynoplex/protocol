@@ -7,10 +7,12 @@ import { isDeepStrictEqual } from 'node:util';
 import { kbDid } from './protocol-core';
 import { eventually } from './net';
 import type { AttributeValue, OtlpReceiver } from './otlp';
+import type { SdkTelemetryTelemetry, ServiceTelemetryTelemetry } from './generated/protocol/protocol';
+import type { Plane } from './gateway';
 import { resourceKeys, sdkTelemetry, spanPattern, telemetry, type Telemetry, type TelemetryRow, type TelemetryService } from './spec';
 
 /** OTLP's span kinds, by the names the spec uses. */
-export const SPAN_KIND: Record<string, number> = { internal: 1, server: 2, client: 3, producer: 4, consumer: 5 };
+export const SPAN_KIND: Record<ServiceTelemetryTelemetry.Kind, number> = { internal: 1, server: 2, client: 3, producer: 4, consumer: 5 };
 
 /** A resource's attributes, as a failing case shows them. */
 const shown = (resource: Record<string, unknown>): string => `{${Object.keys(resource).sort().map((key) => `${key}=${String(resource[key])}`).join(', ')}}`;
@@ -44,8 +46,8 @@ export function received(otlp: OtlpReceiver): string {
 }
 
 /** The rows a service's cases must make it export: always, or by their traffic, on `plane` where rows name planes. */
-export function expectedOn(rows: TelemetryRow[], plane?: string): TelemetryRow[] {
-  return rows.filter((r) => (r.when === 'export' || r.when === 'traffic') && (!r.planes || (plane !== undefined && r.planes.includes(plane))));
+export function expectedOn<R extends TelemetryRow>(rows: R[], plane?: Plane): R[] {
+  return rows.filter((r) => (!('when' in r) || r.when === 'export' || r.when === 'traffic') && (!('planes' in r) || r.planes === undefined || (plane !== undefined && r.planes.includes(plane))));
 }
 
 /** The resource attribute a service names the knowledge base it serves by. */
@@ -63,7 +65,7 @@ const KB = 'xynolog.kb';
  * service. Judged on everything the receiver got, so run it after the cases
  * that make the traffic.
  */
-export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryService, kb: string | null, plane?: string): Promise<string[]> {
+export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryService, kb: string | null, plane?: Plane): Promise<string[]> {
   const keys = resourceKeys(service);
   if (keys.includes(KB) && kb === null) throw new Error(`the table says the ${service} names its knowledge base in its resource (${KB}), and the case handed it none`);
   if (!keys.includes(KB) && kb !== null) throw new Error(`the case handed the ${service} the knowledge base ${kb}, and the table says its resource names none`);
@@ -96,11 +98,11 @@ export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryServ
  * row names is not the SDK's to answer for; what arrives under a row's name is.
  * A driver that uses one `transport` alone is held to that transport's rows.
  */
-export function outsideTheSdkTable(otlp: OtlpReceiver, transport?: string): Promise<string[]> {
+export function outsideTheSdkTable(otlp: OtlpReceiver, transport?: SdkTelemetryTelemetry.Transport): Promise<string[]> {
   return heldTo(otlp, sdkTelemetry(transport), 'an SDK', undefined, false);
 }
 
-async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: string, plane: string | undefined, whole: boolean): Promise<string[]> {
+async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: string, plane: Plane | undefined, whole: boolean): Promise<string[]> {
   for (const row of expectedOn(spans, plane)) {
     const pattern = spanPattern(row);
     await eventually(`a ${row.name} span`, 15_000, () => otlp.spans.find((s) => pattern.test(s.name)));
@@ -133,7 +135,7 @@ async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: st
       if (whole) unlisted.push(`a metric ${name}, which the spec does not list for ${who}`);
       continue;
     }
-    for (const instrument of metric.instruments) if (instrument !== row.kind) unlisted.push(`${name} arrived as a ${instrument}, not a ${row.kind}`);
+    for (const instrument of metric.instruments) if (instrument !== row.instrument) unlisted.push(`${name} arrived as a ${instrument}, not a ${row.instrument}`);
     unlisted.push(...outsideTheRow(name, row, metric.attributes));
   }
   return [...new Set(unlisted)];

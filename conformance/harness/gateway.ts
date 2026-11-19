@@ -11,15 +11,18 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { services } from './protocol-core';
+import { GatewayConfig } from './generated/protocol/protocol';
+import type { ServiceSchemas } from './protocol-core';
 import { inject } from 'vitest';
 import { freePort } from './net';
 import { runEnvironment } from './paths';
 import { serviceEnvironment } from './spec';
 
-export type Plane = 'in-process' | 'nats';
+/** A signal plane a gateway carries the bus on: its document's `signal.type`. */
+export type Plane = GatewayConfig.Type;
+export const PLANES = GatewayConfig.typeAll;
 
-type Document = services['schemas']['GatewayConfig'];
+type Document = ServiceSchemas['GatewayConfig'];
 
 /** Everything a gateway is configured with: the document, with the fields a case may delete optional. */
 export interface GatewaySettings extends Omit<Document, 'kb' | 'identity' | 'archivist' | 'capacity'> {

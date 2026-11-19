@@ -4,7 +4,6 @@
  * bundled OpenAPI document, the validators compile its schemas, and the
  * bus subject comes from the job-storage specification.
  */
-import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ErrorObject } from 'ajv';
@@ -12,9 +11,9 @@ import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import type { CryptoKey, JWK, JWTPayload } from 'jose';
 import { Spec } from './spec';
 import type { components } from './generated/openapi-types';
-import type { components as services } from './generated/services-types';
+import { jobsStorage, type ServiceSchemas } from './generated/protocol/protocol';
 
-export type { components, services };
+export type { components, ServiceSchemas };
 export type Annotation = components['schemas']['Annotation'];
 export type ResourceDescriptor = components['schemas']['ResourceDescriptor'];
 export type ResourceId = string & { readonly __brand: 'ResourceId' };
@@ -52,11 +51,7 @@ export const resourceId = (value: string): ResourceId => value as ResourceId;
 export const annotationId = (value: string): AnnotationId => value as AnnotationId;
 export const kbDid = (domain: string): string => `did:web:${domain}`;
 
-export const JOBS_STREAM_SUBJECTS = (() => {
-  const file = new URL('../../specs/src/jobs/storage.json', import.meta.url);
-  const storage = JSON.parse(readFileSync(file, 'utf8')) as { stream: { subjectRoot: string } };
-  return [`${storage.stream.subjectRoot}.>`] as const;
-})();
+export const JOBS_STREAM_SUBJECTS = [`${jobsStorage.stream.subjectRoot}.>`] as const;
 
 const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const spec = new Spec(join(root, 'specs/openapi.json'));

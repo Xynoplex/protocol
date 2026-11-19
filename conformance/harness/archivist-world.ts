@@ -24,9 +24,10 @@ import { startArchivistProcess, type ArchivistEnvironment, type ArchivistProcess
 import { archivistNonConformance, type CallOptions, type Reply } from './http';
 import type { ServiceAccount } from './issuer';
 import { eventually, freePort } from './net';
-import { SPEC_SOURCE } from './paths';
 import { SERVICE_ROLE, WORKER_ROLE } from './roles';
-import { errorsOf, operationFor, registry, servicesSpec, spec, type Method } from './spec';
+import { errorsOf, operationFor, spec, type Method } from './spec';
+import { busRegistry } from './generated/protocol/protocol';
+import { serviceRefusals } from './services';
 import type { BusStream } from './stream';
 import { endCase, PARTICIPANT_CLIENT, World } from './world';
 
@@ -91,7 +92,7 @@ export function unstamped<T extends Record<string, unknown>>(payload: T): T {
 }
 
 /** The persisted channels: the facts. */
-export const FACTS: readonly string[] = registry().channels.filter((c) => c.shape === 'storedEvent').map((c) => c.channel);
+export const FACTS: readonly string[] = busRegistry.channels.filter((c) => c.shape === 'storedEvent').map((c) => c.channel);
 
 /** The two-level shard of a key, as specs/src/archivist/shard-cases.json states the arithmetic. */
 export function shardOf(key: string): string {
@@ -108,7 +109,7 @@ function holdToRegistry(stream: BusStream): void {
   stream.on((message) => {
     const frame = message.frame;
     if (!frame) return;
-    const channel = registry().channels.find((c) => c.channel === frame.channel);
+    const channel = busRegistry.channels.find((c) => c.channel === frame.channel);
     if (!channel) {
       stream.violations.push(`a frame on ${frame.channel}, which the registry does not declare`);
       return;
@@ -287,7 +288,7 @@ export class ArchivistWorld {
   // ── Participants ──────────────────────────────────────────────────────────
 
   private async client(token: string, did: string, channels: string[], scopes: string[]): Promise<BusClient> {
-    const replies = registry().operations.flatMap((op) => [op.result, op.failure]);
+    const replies = busRegistry.operations.flatMap((op) => [op.result, op.failure]);
     const clientId = randomUUID();
     const stream = await this.world.subscribe(token, {
       clientId,
@@ -491,8 +492,8 @@ export class ArchivistWorld {
     if (entry !== undefined) {
       await this.stateStamp(stamp);
       const document = { v: 3, stamp, ...entry };
-      const validate = servicesSpec().component('AnchoredTextEntry');
-      if (!validate(document)) throw new Error(`the suite's anchored-text entry is not an AnchoredTextEntry (${errorsOf(validate)})`);
+      const refusals = serviceRefusals('AnchoredTextEntry', document);
+      if (refusals.length > 0) throw new Error(`the suite's anchored-text entry is not an AnchoredTextEntry (${refusals.join('; ')})`);
       const stored = await this.storeAnchoredText(resourceId, { contentChecksum: checksum, entry: document });
       if (stored.status !== 204) throw new Error(`the anchored-text entry was not stored: ${stored.status} ${stored.text}`);
     }
@@ -615,9 +616,4 @@ export function anchoredEntry(text: string): Omit<ExtractedText, 'kind' | 'items
     offset += codePoints + 1;
   }
   return { text, lines, method: 'ocr' };
-}
-
-/** The shard table every implementation runs. */
-export function shardCases(): Array<{ why: string; key: string; shard: string }> {
-  return (JSON.parse(readFileSync(join(SPEC_SOURCE, 'archivist/shard-cases.json'), 'utf8')) as { cases: Array<{ why: string; key: string; shard: string }> }).cases;
 }

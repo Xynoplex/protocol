@@ -19,7 +19,7 @@
  */
 import { generateKeyPairSync, randomBytes, type KeyObject } from 'node:crypto';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import type { components, services } from './protocol-core';
+import type { components, ServiceSchemas } from './protocol-core';
 import { startAnthropic, type ModelFacts, type StandInAnthropic } from './anthropic';
 import { startClientProxy, type ClientProxy, type ProxiedRequest } from './client-proxy';
 import { everyJob } from './dispatcher-world';
@@ -67,8 +67,8 @@ export type JobType = components['schemas']['JobType'];
 export type FailureClass = components['schemas']['FailureClass'];
 export type Annotation = components['schemas']['Annotation'];
 type ResourceDescriptor = components['schemas']['ResourceDescriptor'];
-type WorkerEngineConfig = services['schemas']['WorkerEngineConfig'];
-type WorkerKnowledgeBaseConfig = services['schemas']['WorkerKnowledgeBaseConfig'];
+type WorkerEngineConfig = ServiceSchemas['WorkerEngineConfig'];
+type WorkerKnowledgeBaseConfig = ServiceSchemas['WorkerKnowledgeBaseConfig'];
 
 /** An engine a case's worker runs: a provider and a model. */
 export interface Engine {

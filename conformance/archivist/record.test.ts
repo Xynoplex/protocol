@@ -6,7 +6,8 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, appendFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { expect, it } from 'vitest';
-import { highlight, shardCases, shardOf, withArchivist, type ArchivistWorld } from '../harness/archivist-world';
+import { archivistShardCases } from '../harness/generated/protocol/protocol';
+import { highlight, shardOf, withArchivist, type ArchivistWorld } from '../harness/archivist-world';
 
 const TEXT = 'The record survives the process that keeps it.\n';
 
@@ -19,7 +20,7 @@ async function annotated(world: ArchivistWorld, name: string): Promise<{ id: str
 
 withArchivist('the record, across restarts', (world) => {
   it('agrees with the shard table', () => {
-    for (const { key, shard } of shardCases()) expect(shardOf(key), key).toBe(shard);
+    for (const { key, shard } of archivistShardCases.cases) expect(shardOf(key), key).toBe(shard);
   });
 
   it('numbers a stream on from where it stopped, after a stop and after a crash', async () => {

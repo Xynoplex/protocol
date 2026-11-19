@@ -12,7 +12,11 @@
 
    The files are read as JSON, not through the model, so a bundle keeps
    every member Protocol writes. Redocly's bundle of the same document is
-   this one as parsed JSON. *)
+   this one as parsed JSON.
+
+   The services' bundle, specs/services.json, is of no document: its
+   components are each service's schema (Places.service_schemas), by its
+   stem, which the conformance harness holds a service's values to. *)
 
 exception Refused of Decode.error
 
@@ -163,8 +167,8 @@ let object_ file what = function
   | `Assoc members -> members
   | _ -> refuse file "" "%s is no object" what
 
-(* The document whose root is [file] under [specs], bundled. *)
-let document ~specs file =
+(* The document [members], written in [file] under [specs], bundled. *)
+let bundle ~specs file members =
   let st =
     {
       specs;
@@ -175,7 +179,7 @@ let document ~specs file =
     }
   in
   match
-    let members = object_ file "the document" (parse st file) in
+    let members = members st in
     let path_items =
       match List.assoc_opt "paths" members with
       | Some paths ->
@@ -257,11 +261,37 @@ let document ~specs file =
   | bundled -> Ok bundled
   | exception Refused error -> Error error
 
-(* Each document's bundle, written under the repository's [root]. *)
+(* The document whose root is [file] under [specs], bundled. *)
+let document ~specs file =
+  bundle ~specs file (fun st -> object_ file "the document" (parse st file))
+
+(* The services' schemas, [Places.service_schemas], as one file: each a
+   component schema named as its file. A service's schema is read by its
+   name there, as the conformance harness reads it. *)
+let services_bundle = "specs/services.json"
+
+let services ~specs =
+  bundle ~specs "services.json" (fun _ ->
+      [
+        ( "components",
+          `Assoc
+            [
+              ( "schemas",
+                `Assoc
+                  (List.map
+                     (fun file ->
+                       (stem file, `Assoc [ ("$ref", `String file) ]))
+                     (Places.service_schemas specs)) );
+            ] );
+      ])
+
+(* Each document's bundle, and the services', written under the repository's
+   [root]. *)
 let write ~root =
+  let specs = Filename.concat root Repository.specs in
   List.concat_map
-    (fun (source, bundled) ->
-      match document ~specs:(Filename.concat root Repository.specs) source with
+    (fun (source, bundled, json) ->
+      match json with
       | Error error -> [ error ]
       | Ok json -> (
           match Repository.canonical json with
@@ -281,4 +311,7 @@ let write ~root =
                       what;
                 };
               ]))
-    documents
+    (List.map
+       (fun (source, bundled) -> (source, bundled, document ~specs source))
+       documents
+    @ [ ("services.json", services_bundle, services ~specs) ])

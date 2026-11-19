@@ -27,9 +27,7 @@
  * the table's cases.
  */
 import { createHash, createHmac } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { SPEC_SOURCE } from './paths';
+import { vectorsPayloadCases, type VectorsPayloadCases, type VectorsTokenCases } from './generated/protocol/protocol';
 
 /** The port Qdrant's REST interface answers on. */
 export const QDRANT_PORT = 6333;
@@ -44,7 +42,7 @@ export interface VectorDatabase {
 export const VECTORS_TOKEN = 'QDRANT_TOKEN';
 
 /** A knowledge base's collections, by their words: the two that are searched, and the declined. */
-export type Collection = 'resources' | 'annotations' | 'declined';
+export type Collection = keyof VectorsPayloadCases.Collections;
 
 /** A point of the index: its id, its payload whole, and its vector where one was asked for. */
 export interface Point {
@@ -83,27 +81,15 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 // ── What the table states ──────────────────────────────────────────────────
 
 const TABLE = 'vectors/payload-cases.json';
-const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, TABLE), 'utf8'));
-
-/** What the table states of a collection, under its word. */
-function stated(collection: Collection): Record<string, unknown> {
-  const one = isObject(table) && isObject(table['collections']) ? table['collections'][collection] : undefined;
-  if (!isObject(one)) throw new Error(`specs/src/${TABLE} states no collection of ${collection}`);
-  return one;
-}
 
 /** What a collection's vectors are compared by, in Qdrant's word for it, as the table states. */
 function distanceOf(collection: Collection): string {
-  const distance = stated(collection)['distance'];
-  if (typeof distance !== 'string') throw new Error(`specs/src/${TABLE} states no distance of the ${collection}`);
-  return distance;
+  return vectorsPayloadCases.collections[collection].distance;
 }
 
 /** The words of every collection the table states a knowledge base's index has. */
 function words(): string[] {
-  const all = isObject(table) && isObject(table['collections']) ? Object.keys(table['collections']) : [];
-  if (all.length === 0) throw new Error(`specs/src/${TABLE} states no collections of an index`);
-  return all;
+  return Object.keys(vectorsPayloadCases.collections);
 }
 
 /**
@@ -118,13 +104,8 @@ export function collectionNames(kb: string): Record<string, string> {
 
 // ── The tokens ─────────────────────────────────────────────────────────────
 
-/** The services that present a token to the index, by the token table's names for them. */
-export type Holder = 'smelter' | 'librarian';
-
-/** What a token says its holder may do: global manage, or a read of each collection it names. */
-export interface Claims {
-  access: 'm' | Array<{ collection: string; access: 'r' }>;
-}
+/** The claims of each service's token, by the token table's names for the services that present one to the index. */
+type Claims = VectorsTokenCases.Claims;
 
 /**
  * The claims of each service's token for the knowledge base whose DID is
@@ -132,7 +113,7 @@ export interface Claims {
  * collection for nothing less; and the Librarian's, a read of each of that
  * knowledge base's collections, in the payload table's order.
  */
-export function claimsFor(kb: string): Record<Holder, Claims> {
+export function claimsFor(kb: string): Claims {
   return {
     smelter: { access: 'm' },
     librarian: { access: Object.values(collectionNames(kb)).map((collection) => ({ collection, access: 'r' })) },
@@ -140,28 +121,18 @@ export function claimsFor(kb: string): Record<Holder, Claims> {
 }
 
 /** A token for the Qdrant whose API key is `key`: a JSON Web Token of `claims` and no others, signed by HS256 with the key's UTF-8 bytes. */
-export function minted(key: string, claims: Claims): string {
+export function minted(key: string, claims: Claims[keyof Claims]): string {
   const signed = [{ alg: 'HS256', typ: 'JWT' }, claims].map((part) => Buffer.from(JSON.stringify(part), 'utf8').toString('base64url')).join('.');
   return `${signed}.${createHmac('sha256', Buffer.from(key, 'utf8')).update(signed).digest('base64url')}`;
 }
 
 /** The payloads the table states for the points of a collection. */
-function statedPayloads(collection: Collection): Record<string, unknown>[] {
-  const cases = isObject(table) && Array.isArray(table['cases']) ? table['cases'] : [];
-  return cases.flatMap((one): unknown[] => {
-    if (!isObject(one)) return [];
-    if (collection === 'declined') {
-      const stored = one['declineStored'];
-      return isObject(stored) && isObject(stored['point']) ? [stored['point']['payload']] : [];
-    }
-    if (collection === 'annotations') {
-      const stored = one['annotationStored'];
-      return isObject(stored) && isObject(stored['point']) ? [stored['point']['payload']] : [];
-    }
-    const stored = one['resourceStored'];
-    const points = isObject(stored) && Array.isArray(stored['points']) ? stored['points'] : [];
-    return points.map((point: unknown) => (isObject(point) ? point['payload'] : undefined));
-  }).filter(isObject);
+function statedPayloads(collection: Collection): object[] {
+  return vectorsPayloadCases.cases.flatMap((one): object[] => {
+    if (collection === 'declined') return 'declineStored' in one ? [one.declineStored.point.payload] : [];
+    if (collection === 'annotations') return 'annotationStored' in one ? [one.annotationStored.point.payload] : [];
+    return 'resourceStored' in one ? one.resourceStored.points.map((point) => point.payload) : [];
+  });
 }
 
 /** A payload member the table states for every point of a collection: its name, or a failure when the table no longer states it. */

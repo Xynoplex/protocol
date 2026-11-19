@@ -28,9 +28,9 @@ import { startClientProxy, type ClientProxy, type ProxiedRequest } from '../harn
 import type { Plane } from '../harness/gateway';
 import { call, nonConformance, type Reply } from '../harness/http';
 import { startOtlp, type OtlpReceiver } from '../harness/otlp';
-import { SPEC_SOURCE } from '../harness/paths';
 import { SERVICE_ROLE, WORKER_ROLE } from '../harness/roles';
-import { errorsOf, registry, spec, type Method } from '../harness/spec';
+import { errorsOf, spec, type Method } from '../harness/spec';
+import { busRegistry, errorsCodes } from '../harness/generated/protocol/protocol';
 import { outsideTheSdkTable } from '../harness/telemetry';
 import type { World } from '../harness/world';
 import { Driver, type DeliveredFrame, type ObservedState, type Outcome, type ReportedFailure } from './driver';
@@ -137,18 +137,9 @@ export function casesIn(dir: string): Case[] {
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-/** The error codes a client may report, from the table every SDK generates its own from. */
+/** The error codes a client may report, from the table every SDK generates its own from: every section's. */
 function vocabulary(): Set<string> {
-  const table: unknown = JSON.parse(readFileSync(join(SPEC_SOURCE, 'errors/codes.json'), 'utf8'));
-  const codes = new Set<string>();
-  if (isObject(table)) {
-    for (const section of Object.values(table)) {
-      if (!isObject(section) || !Array.isArray(section['codes'])) continue;
-      for (const entry of section['codes']) if (isObject(entry) && typeof entry['code'] === 'string') codes.add(entry['code']);
-    }
-  }
-  if (codes.size === 0) throw new Error('errors/codes.json lists no codes');
-  return codes;
+  return new Set(Object.values(errorsCodes).flatMap((section) => (typeof section === 'string' ? [] : section.codes.map((entry) => entry.code))));
 }
 
 /** A request as a case reads it: the operation the spec declares for it, and what it carried. */
@@ -947,7 +938,7 @@ export async function runCase(world: World, command: readonly string[], kase: Ca
   const resources = Array.from({ length: 3 }, () => `res-${randomUUID()}`).sort();
   for (const [index, resource] of resources.entries()) run.bind(`r${index + 1}`, resource);
   for (const name of ['a1', 'a2']) run.bind(name, `ann-${randomUUID()}`);
-  run.bind('resourceScopedChannels', [...registry().audience.scoped].sort());
+  run.bind('resourceScopedChannels', [...busRegistry.audience.scoped].sort());
 
   let at = 0;
   try {

@@ -21,7 +21,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
-import { kbDid, type components, type services } from './protocol-core';
+import { kbDid, type components, type ServiceSchemas } from './protocol-core';
 import { ArchivistWorld, sha256, shardOf, unstamped, type Answer, type BusClient } from './archivist-world';
 import { eventually } from './net';
 import { startOllamaEmbed, type StandInEmbedder } from './ollama-embed';
@@ -37,7 +37,8 @@ import {
   type SmelterProcess,
   type SmelterSettings,
 } from './smelter-process';
-import { errorsOf, servicesSpec, spec } from './spec';
+import { errorsOf, spec } from './spec';
+import { isService, serviceRefusals } from './services';
 import type { BusStream } from './stream';
 import { endCase } from './world';
 
@@ -54,7 +55,7 @@ const PERSON = 'ada';
 export type Settled = components['schemas']['SmeltSettled'];
 
 /** One entry of the anchored-text store. */
-export type AnchoredTextEntry = services['schemas']['AnchoredTextEntry'];
+export type AnchoredTextEntry = ServiceSchemas['AnchoredTextEntry'];
 
 /** What a case may change of how the world's Smelter is launched. */
 type Change = Partial<Pick<SmelterLaunch, 'settings' | 'env'>>;
@@ -414,9 +415,8 @@ export class SmelterWorld {
     const path = this.entryPath(checksum);
     if (!existsSync(path)) return undefined;
     const parsed: unknown = JSON.parse(readFileSync(path, 'utf8'));
-    const validate = servicesSpec().component('AnchoredTextEntry');
-    if (!validate(parsed)) throw new Error(`${path} is not an AnchoredTextEntry (${errorsOf(validate)})`);
-    return parsed as AnchoredTextEntry;
+    if (!isService('AnchoredTextEntry', parsed)) throw new Error(`${path} is not an AnchoredTextEntry (${serviceRefusals('AnchoredTextEntry', parsed).join('; ')})`);
+    return parsed;
   }
 
   /** Take the entry for bytes of this checksum out of the store, behind a Smelter's back. */

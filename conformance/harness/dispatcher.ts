@@ -12,13 +12,13 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { services } from './protocol-core';
+import type { ServiceSchemas } from './protocol-core';
 import { inject } from 'vitest';
 import { call, type Reply } from './http';
 import { runEnvironment } from './paths';
 import { serviceEnvironment } from './spec';
 
-export type DispatcherSettings = services['schemas']['DispatcherConfig'];
+export type DispatcherSettings = ServiceSchemas['DispatcherConfig'];
 export type DispatcherTiming = DispatcherSettings['timing'];
 
 export interface DispatcherEnvironment {

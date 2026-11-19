@@ -118,8 +118,8 @@ conformance/harness/proxy.ts,Portable conformance,xynolog/protocol,Protocol-owne
 conformance/harness/qdrant.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/roles.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/sdk-setup.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/service-schemas.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/services-document.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/harness/services.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/harness/services.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/smelter-process.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/smelter-setup.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/smelter-world.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -400,6 +400,9 @@ dune.lock/either.1.0.0.pkg,Repository governance and documentation,xynolog/proto
 dune.lock/fix.20250919.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/fmt.0.11.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/fpath.0.7.3.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/gen.1.1.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/js_of_ocaml-compiler.6.5.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/js_of_ocaml.6.5.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/lock.dune,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/menhir.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/menhirCST.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
@@ -407,6 +410,7 @@ dune.lock/menhirGLR.20260209.pkg,Repository governance and documentation,xynolog
 dune.lock/menhirLib.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/menhirSdk.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-base-compiler.5.5.2.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/ocaml-compiler-libs.v0.17.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-compiler.5.5.2.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-syntax-shims.1.0.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-version.4.1.5.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
@@ -417,7 +421,11 @@ dune.lock/ocamlfind.1.9.8+dune.pkg,Repository governance and documentation,xynol
 dune.lock/ocamlformat-lib.0.29.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocamlformat.0.29.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocp-indent.1.10.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/ppx_derivers.1.2.1.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/ppxlib.0.39.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/re.1.14.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/sedlex.3.8.1.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
+dune.lock/seq.base.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/sexplib0.v0.17.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/stdio.v0.17.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/stdlib-shims.0.3.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
@@ -432,6 +440,9 @@ reader/bin/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protoc
 reader/bin/main.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/derive.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/js/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/js/validate.d.cts,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/js/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/archivist_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/bundle.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/client_surface.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -445,7 +456,6 @@ reader/lib/registry_rules.ml,Protocol validation tooling,xynolog/protocol,"The r
 reader/lib/reply_bounds.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/repository.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/spec.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
-reader/lib/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/decode.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/decode.mli,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -453,6 +463,7 @@ reader/schema/openapi.ml,Protocol validation tooling,xynolog/protocol,"The reade
 reader/schema/pattern.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/places.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/schema.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/schema/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/archivist_contract.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/bundle.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/census.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -462,6 +473,7 @@ reader/test/registry_rules.ml,Protocol validation tooling,xynolog/protocol,"The 
 reader/test/repository.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/schema.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/strict.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/test/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 scripts/make-target.sh,Repository build tooling,xynolog/protocol,"Runs protocol Node and npm tasks, and the reader, inside the detected container runtime."
 specs/.gitignore,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/.redocly.lint-ignore.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."

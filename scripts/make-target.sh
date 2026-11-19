@@ -20,9 +20,11 @@ esac
 # contract documents that name what the specs state, the bus registry's
 # spelling, and the ownership inventory against what Git tracks, so the copy
 # carries .git. "bundle": it builds, and bundles each OpenAPI document of
-# specs/src into specs/, which it hands the checkout as a tar stream on
-# standard output, its progress on standard error, so the bundles are the
-# checkout's user's. "check-and-bundle": both.
+# specs/src, and the services' schemas, into specs/; and, once the bundling
+# has read every table through its schema, hands the conformance harness
+# what the reader writes for it (reader/js) in harness/generated/protocol.
+# Both reach the checkout as a tar stream on standard output, its progress on
+# standard error, so they are the checkout's user's. "check-and-bundle": both.
 reader() {
   bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT" >&2
   "$RUNTIME" run --rm \
@@ -47,7 +49,13 @@ reader() {
       if [[ "$0" != check ]]; then
         printf "==> Bundling the specifications\n"
         dune exec -- xynolog-protocol bundle .
-        tar -C specs -cf - openapi.json archivist.openapi.json >&3
+        harness=conformance/harness/generated/protocol
+        mkdir -p "$harness"
+        cp _build/default/reader/js/protocol.ts "$harness/protocol.ts"
+        cp _build/default/reader/js/validate.bc.js "$harness/validate.cjs"
+        cp reader/js/validate.d.cts "$harness/validate.d.cts"
+        chmod u+w "$harness"/*
+        tar -cf - specs/openapi.json specs/archivist.openapi.json specs/services.json "$harness" >&3
       fi' "$1"
 }
 
@@ -57,11 +65,11 @@ case "$TARGET" in
     exit
     ;;
   bundle)
-    reader bundle | tar -C "$ROOT/specs" -xf -
+    reader bundle | tar -C "$ROOT" -xf -
     exit
     ;;
-  validate) reader check-and-bundle | tar -C "$ROOT/specs" -xf - ;;
-  conformance-typecheck|conformance-fixtures) reader bundle | tar -C "$ROOT/specs" -xf - ;;
+  validate) reader check-and-bundle | tar -C "$ROOT" -xf - ;;
+  conformance-typecheck|conformance-fixtures) reader bundle | tar -C "$ROOT" -xf - ;;
 esac
 
 case "$TARGET" in

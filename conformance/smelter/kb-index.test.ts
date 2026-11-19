@@ -12,31 +12,16 @@
  * token of each service it starts with the claims
  * specs/src/vectors/token-cases.json states, and no others.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { kbDid } from '../harness/protocol-core';
 import { jwtVerify } from 'jose';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
-import { SPEC_SOURCE } from '../harness/paths';
-import { claimsFor, collectionNames, collectionsAt, minted, vectorIndex, type Claims, type Collection, type Holder, type Point } from '../harness/qdrant';
+import { vectorsPayloadCases, vectorsTokenCases } from '../harness/generated/protocol/protocol';
+import { claimsFor, collectionNames, collectionsAt, minted, vectorIndex, type Collection, type Point } from '../harness/qdrant';
 import { kbIdentity } from '../harness/spec';
 import { eachSmelter } from '../harness/smelter-world';
 
-/** What of the payload table these cases read: its stored points, and the names it gives knowledge bases' collections. */
-interface Stated {
-  cases: Array<{
-    why: string;
-    resourceStored?: { chunks: Array<{ embedding: number[] }>; points: Array<{ qdrantId: string; payload: Record<string, unknown> }> };
-    annotationStored?: { embedding: number[]; point: { qdrantId: string; payload: Record<string, unknown> } };
-    declineStored?: { point: { qdrantId: string; payload: Record<string, unknown> } };
-    collectionsNamed?: { kb: string; names: Record<string, string> };
-  }>;
-}
-
-const table = JSON.parse(readFileSync(join(SPEC_SOURCE, 'vectors/payload-cases.json'), 'utf8')) as Stated;
-
 /** Each knowledge base the table names the collections of, with their names. */
-const NAMED = table.cases.flatMap((one) => (one.collectionsNamed === undefined ? [] : [{ why: one.why, ...one.collectionsNamed }]));
+const NAMED = vectorsPayloadCases.cases.flatMap((one) => ('collectionsNamed' in one ? [{ why: one.why, ...one.collectionsNamed }] : []));
 
 describe("a knowledge base's collections, as the suite names them", () => {
   it.each(NAMED)('$why', ({ kb, names }) => {
@@ -44,15 +29,8 @@ describe("a knowledge base's collections, as the suite names them", () => {
   });
 });
 
-/** What of the token table these cases read: each knowledge base, and the claims of the token each service is minted for it. */
-interface TokenCases {
-  cases: Array<{ why: string; kb: string; claims: Record<Holder, Claims> }>;
-}
-
-const tokenCases = JSON.parse(readFileSync(join(SPEC_SOURCE, 'vectors/token-cases.json'), 'utf8')) as TokenCases;
-
 describe('the tokens the suite mints for the services it starts', () => {
-  it.each(tokenCases.cases)('$why', async ({ kb, claims }) => {
+  it.each(vectorsTokenCases.cases)('$why', async ({ kb, claims }) => {
     const { key } = inject('vectorDatabase');
     const carried: Record<string, unknown> = {};
     for (const [holder, made] of Object.entries(claimsFor(kb))) {
@@ -83,9 +61,9 @@ function first<T>(found: T | undefined, what: string): T {
   return found;
 }
 
-const stored = first(table.cases.find((one) => one.resourceStored)?.resourceStored, 'resource stored');
-const annotated = first(table.cases.find((one) => one.annotationStored)?.annotationStored, 'annotation stored');
-const declined = first(table.cases.find((one) => one.declineStored)?.declineStored, 'decline stored');
+const stored = first(vectorsPayloadCases.cases.flatMap((one) => ('resourceStored' in one ? [one.resourceStored] : []))[0], 'resource stored');
+const annotated = first(vectorsPayloadCases.cases.flatMap((one) => ('annotationStored' in one ? [one.annotationStored] : []))[0], 'annotation stored');
+const declined = first(vectorsPayloadCases.cases.flatMap((one) => ('declineStored' in one ? [one.declineStored] : []))[0], 'decline stored');
 
 /**
  * What the other knowledge base's index holds: the points the table states of

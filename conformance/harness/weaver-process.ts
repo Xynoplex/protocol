@@ -16,13 +16,13 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { services } from './protocol-core';
+import type { ServiceSchemas } from './protocol-core';
 import { collectLines } from './gateway';
 import { call } from './http';
 import type { WeaverService } from './implementations';
 import { runEnvironment } from './paths';
 
-type WeaverDocument = services['schemas']['WeaverConfig'];
+type WeaverDocument = ServiceSchemas['WeaverConfig'];
 
 /** What a test chooses of a Weaver's document; the harness fills in the rest. */
 export interface WeaverSettings {
