@@ -45,6 +45,6 @@ conformance-typecheck:
 conformance-fixtures:
 	bash scripts/make-target.sh conformance-fixtures
 
-## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives
+## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives, and the contract documents that name what they state
 reader:
 	bash scripts/make-target.sh reader

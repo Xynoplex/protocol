@@ -30,3 +30,16 @@
  (flags
   (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
  (libraries xynolog_protocol yojson alcotest))
+
+; contract/ARCHIVIST.md names what the Archivist keeps and answers.
+(test
+ (name archivist_contract)
+ (modules archivist_contract)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol re)
+ (deps
+  (source_tree %{project_root}/specs/src)
+  %{project_root}/contract/ARCHIVIST.md)
+ (action
+  (run %{test} %{project_root})))

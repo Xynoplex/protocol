@@ -510,9 +510,12 @@ let load root =
   in
   let offset_units = Offset_units.refusals ~root ~read_json files in
   let registry_rules = Registry_rules.refusals ~read_json tables.bus_registry in
+  let jobs_rules = Jobs_rules.refusals ~read_json in
+  let archivist_rules = Archivist_rules.refusals ~read_json in
   let census =
     census @ stray_case_tables @ orphan_schemas @ validation @ public_api
-    @ client_surface @ reply_bounds @ offset_units @ registry_rules
+    @ client_surface @ reply_bounds @ offset_units @ registry_rules @ jobs_rules
+    @ archivist_rules
   in
   match (schemas, census @ unresolved) with
   | Ok schemas, [] ->
