@@ -284,6 +284,43 @@ let () =
     (fun _ -> `String (id "JobId.json"))
     "/apiVersion: names https://xynolog.org/protocol/JobId.json, \
      components/schemas/JobId.json, which is not a schema of control/";
+  let statuses values = `List (List.map (fun status -> `Int status) values) in
+  changed specs ~why:"has a retry set's statuses out of order"
+    "retry/rules.json" "boot/statuses"
+    (fun _ -> statuses [ 503; 429; 504 ])
+    "/boot/statuses: is not in ascending order";
+  changed specs ~why:"has a retry set name a status its statusFrom covers"
+    "retry/rules.json" "job/statuses"
+    (fun _ -> statuses [ 408; 429; 502 ])
+    "/job/statusFrom: is 500, and /job/statuses names 502, which it covers";
+  changed specs ~why:"has a retry set name a status no row of its rule retries"
+    "retry/rules.json" "boot/statuses"
+    (fun _ -> statuses [ 429; 503; 504; 507 ])
+    "/boot/statuses/3: is 507, and no row of retry/cases.json's boot rule \
+     retries it";
+  refused specs ~why:"has a retry row a status set disagrees with"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "retry/rules.json")
+        (update [ "transport"; "statuses" ] (fun _ ->
+             statuses [ 408; 413; 429; 500; 502; 503 ])))
+    "retry/cases.json: /rules/26/retries: is true, and retry/rules.json's \
+     transport set says false";
+  refused specs ~why:"has a retry row the idempotent methods disagree with"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "retry/rules.json")
+        (update [ "transport"; "idempotentMethods" ] (fun _ ->
+             `List [ `String "GET"; `String "HEAD"; `String "PUT" ])))
+    "retry/cases.json: /rules/28/retries: is true, and retry/rules.json's \
+     transport set says false";
+  refused specs ~why:"has a retry row the no-response verdict disagrees with"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "retry/rules.json")
+        (update [ "refresh"; "noResponse" ] (fun _ -> `Bool false)))
+    "retry/cases.json: /rules/36/retries: is true, and retry/rules.json's \
+     refresh set says false";
   changed specs ~why:"names a schema by its path"
     "components/schemas/JobCancelRequest.json" "properties/jobId/$ref"
     (fun _ -> `String "./JobId.json")
@@ -1032,5 +1069,6 @@ let () =
      bounded nor named, an offset whose unit is unsaid, a job protocol that \
      disagrees with itself, an Archivist stated short, an id nothing checks, a \
      client type that disagrees with what restates it, a control schema named \
-     by other than its $id, or a protocol fact left to the code; and it reads \
-     each value as the type its schema states"
+     by other than its $id, a retry row its rule's sets disagree with, or a \
+     protocol fact left to the code; and it reads each value as the type its \
+     schema states"

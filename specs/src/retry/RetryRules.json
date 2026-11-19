@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RetryRules.json",
+  "description": "retry/rules.json: what each of the four retry rules retries, as sets. retry/cases.json's rows are examples of them.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "boot": {
+      "type": "object",
+      "description": "A boot pass or a bus request, asked about a response's status.",
+      "properties": {
+        "statuses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The statuses the rule retries, in ascending order.",
+          "items": {
+            "$ref": "https://xynolog.org/protocol/HttpStatus.json"
+          }
+        }
+      },
+      "required": [
+        "statuses"
+      ],
+      "additionalProperties": false
+    },
+    "job": {
+      "type": "object",
+      "description": "A job's retry budget, asked about a response's status.",
+      "properties": {
+        "statuses": {
+          "$ref": "#/properties/boot/properties/statuses"
+        },
+        "statusFrom": {
+          "$ref": "https://xynolog.org/protocol/HttpStatus.json",
+          "description": "Every status at or above this one is retried too. It is above every status of `statuses`."
+        }
+      },
+      "required": [
+        "statuses",
+        "statusFrom"
+      ],
+      "additionalProperties": false
+    },
+    "transport": {
+      "type": "object",
+      "description": "An HTTP client's request, asked about a response's status, the request's method, and whether it carries an `Idempotency-Key`. It is retried at one of `statuses` when it carries a key or its method is one of `idempotentMethods`, and at no other status.",
+      "properties": {
+        "statuses": {
+          "$ref": "#/properties/boot/properties/statuses"
+        },
+        "idempotentMethods": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The methods a repeat of which cannot cause a second effect (RFC 9110 § 9.2.2), in capitals. A request's method is read in any case.",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]+$"
+          }
+        }
+      },
+      "required": [
+        "statuses",
+        "idempotentMethods"
+      ],
+      "additionalProperties": false
+    },
+    "refresh": {
+      "type": "object",
+      "description": "Exchanging a refresh token at its issuer, asked about the issuer's answer.",
+      "properties": {
+        "statuses": {
+          "$ref": "#/properties/boot/properties/statuses"
+        },
+        "statusFrom": {
+          "$ref": "#/properties/job/properties/statusFrom"
+        },
+        "noResponse": {
+          "type": "boolean",
+          "description": "Whether the exchange is retried when the issuer gave no answer at all."
+        }
+      },
+      "required": [
+        "statuses",
+        "statusFrom",
+        "noResponse"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "boot",
+    "job",
+    "transport",
+    "refresh"
+  ],
+  "additionalProperties": false
+}

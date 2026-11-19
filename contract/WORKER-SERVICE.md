@@ -190,7 +190,7 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   service does not sign in there again. A knowledge base is refused when its
   issuer refuses the sign-in, and when its gateway refuses to name the agent,
   in the answers the SDK's sign-in does not try again
-  ([`specs/src/retry/cases.json`](../specs/src/retry/cases.json), the
+  ([`specs/src/retry/rules.json`](../specs/src/retry/rules.json), the
   `refresh` rule: the same account gets the same answer); when a claim there
   is refused as `unauthorized` ([P3](#stopping)); and as R1 says. The service
   says each refusal once in its log, at `error`, as `Knowledge base refused
