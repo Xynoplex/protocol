@@ -2,26 +2,12 @@
    the keywords Schema knows: a [$ref] holds the value to what it names, and
    to the keywords beside it. [format]
    and [discriminator] are annotations: the type and the [oneOf] decide. A
-   [pattern] is matched as ECMA-262 does it, unanchored; Protocol's are all
-   in the syntax ocaml-re's Perl reading shares with it. *)
+   [pattern] is matched as ECMA-262 does it ([Pattern]). *)
 
 type place = { file : string; pointer : string }
 
 (* The schema at a place, which the caller reads from its files. *)
 type schemas = place -> Schema.t option
-
-let patterns = Hashtbl.create 64
-
-let matches pattern text =
-  let compiled =
-    match Hashtbl.find_opt patterns pattern with
-    | Some re -> re
-    | None ->
-        let re = Re.compile (Re.Perl.re pattern) in
-        Hashtbl.replace patterns pattern re;
-        re
-  in
-  Re.execp compiled text
 
 (* A string's length in code points, as JSON Schema counts it. *)
 let code_points text =
@@ -133,7 +119,8 @@ and layer schemas (s : Schema.schema) value path =
               say (Printf.sprintf "is longer than %d code points" n))
           s.max_length;
         Option.iter
-          (fun p -> if not (matches p text) then say ("does not match " ^ p))
+          (fun p ->
+            if not (Pattern.matches p text) then say ("does not match " ^ p))
           s.pattern
     | _ -> ());
     (match number value with

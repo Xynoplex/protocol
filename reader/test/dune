@@ -12,6 +12,13 @@
   (:standard -open Xynolog_protocol_schema))
  (libraries xynolog_protocol_schema alcotest))
 
+(test
+ (name pattern)
+ (modules pattern)
+ (flags
+  (:standard -open Xynolog_protocol_schema))
+ (libraries xynolog_protocol_schema alcotest))
+
 ; The model reads every file of specs/src, and refuses copies of it changed.
 (test
  (name census)
