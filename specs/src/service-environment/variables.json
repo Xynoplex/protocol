@@ -1,5 +1,5 @@
 {
-  "$comment": "Every environment variable a Xynolog service written in Rust reads, beside its configuration document (GatewayConfig, DispatcherConfig, ArchivistConfig) and the broker variables that document names (the gateway's signal.userEnv and signal.passwordEnv, the dispatcher's queue.userEnv and queue.passwordEnv). A service, in any language, reads the rows that list it and no variable the table does not list for it — beyond the standard OTEL_* variables an OpenTelemetry SDK reads on its own, and the options variable of the allocator it links (jemalloc's _RJEM_MALLOC_CONF, which it reads before any of its code runs), which the table neither promises nor refuses. `services` names the services that read each. `readBy` says what reads it: `service`, the service's own code — which lint:service-environment scans in both directions, over each service's crate and every workspace crate it links: a read not listed for that service fails it, and so does a row nothing in it reads; `opentelemetry`, the OpenTelemetry SDK. `providedBy` says what sets each where the launcher runs the service: `launcher` (lint:service-environment checks the service's line of the launcher's boot golden passes it), `image` (the image or its supervisor sets it; checked there too), or `operator` (nothing sets it; an operator may). A service's conformance suite sets only the rows that list it, and exercises each by name; one gateway case also sets a variable a runtime would read for itself (TOKIO_WORKER_THREADS), to show that it changes nothing.",
+  "$comment": "Every environment variable a Xynolog service but the worker reads, beside its configuration document (GatewayConfig, DispatcherConfig, ArchivistConfig, LibrarianConfig, WeaverConfig, SmelterConfig) and the variables that document names (the gateway's signal.userEnv and signal.passwordEnv, the dispatcher's queue.userEnv and queue.passwordEnv, and the Librarian's, the Weaver's and the Smelter's secrets for their stores and providers). The worker's are WORKER-SERVICE.md § Environment's. A service, in any language, reads the rows that list it and no variable the table does not list for it — beyond the standard OTEL_* variables an OpenTelemetry SDK reads on its own, and the options variable of the allocator it links (jemalloc's _RJEM_MALLOC_CONF, which it reads before any of its code runs), which the table neither promises nor refuses. `services` names the services that read each. `readBy` says what reads it: `service`, the service's own code, Xynolog's SDK and libraries among it — which, for a service written in Rust, lint:service-environment scans in both directions, over its crate and every workspace crate it links: a read not listed for that service fails it, and so does a row nothing in it reads; `opentelemetry`, the OpenTelemetry SDK. `providedBy` says what sets each where the launcher runs the service: `launcher` (lint:service-environment checks the service's line of the launcher's boot golden passes it), `image` (the image or its supervisor sets it; checked there too), or `operator` (nothing sets it; an operator may). A service's conformance suite sets only the rows that list it, and exercises each by name; one gateway case also sets a variable a runtime would read for itself (TOKIO_WORKER_THREADS), to show that it changes nothing.",
   "variables": [
     {
       "name": "JWT_SECRET",
@@ -16,19 +16,25 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "launcher",
       "required": true,
-      "effect": "The client id of the service's own account at the issuer, whose token the service signs in with: the gateway's reaches the Archivist, and the dispatcher's and the Archivist's are each one's bearer at the bus. Unset, the service refuses to start."
+      "effect": "The client id of the service's own account at the issuer, whose token the service signs in with: the gateway's reaches the Archivist, and every other service's is its bearer at the bus. Unset, the service refuses to start."
     },
     {
       "name": "XYNOLOG_OIDC_CLIENT_SECRET",
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "launcher",
@@ -40,7 +46,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "launcher",
@@ -52,19 +61,25 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "operator",
       "required": false,
-      "effect": "The `service.name` exported spans and metrics carry; `xynolog-gateway`, `xynolog-dispatcher` or `xynolog-archivist` when unset."
+      "effect": "The `service.name` exported spans and metrics carry; `xynolog-` and the service's name, such as `xynolog-gateway`, when unset."
     },
     {
       "name": "OTEL_SDK_DISABLED",
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "operator",
@@ -76,7 +91,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "operator",
@@ -88,7 +106,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "operator",
@@ -100,7 +121,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "operator",
@@ -112,7 +136,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "opentelemetry",
       "providedBy": "operator",
@@ -124,7 +151,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "operator",
@@ -136,7 +166,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "image",
@@ -148,7 +181,10 @@
       "services": [
         "gateway",
         "dispatcher",
-        "archivist"
+        "archivist",
+        "librarian",
+        "weaver",
+        "smelter"
       ],
       "readBy": "service",
       "providedBy": "image",

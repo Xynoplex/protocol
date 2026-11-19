@@ -21,8 +21,8 @@
    a case makes, the world has the stand-in answer what the real Archivist
    answers.
 
-   The operations a Librarian answers are the registry's match: and gather:
-   operations, read from it; nothing here restates them.
+   The operations a Librarian answers are those the registry says it
+   answers (answeredBy); nothing here restates them.
 
    Partly ported: no refused boots, entity types, archiving or unannotating,
    since no case ported here asks for them. *)
@@ -454,15 +454,13 @@ type reply = Answered of Yojson.Safe.t | Failed of Yojson.Safe.t
 (* Ask one of the Librarian's operations, as a person who is signed in, and
    read the one reply, held to what the registry says its channel carries. *)
 let ask ?(as_ = person_sub) ?(timeout = 30.0) t operation payload =
-  if
-    not
-      (String.starts_with ~prefix:"match:" operation
-      || String.starts_with ~prefix:"gather:" operation)
-  then
-    failwith
-      (operation
-     ^ " is no operation a Librarian answers: the registry's match: and \
-        gather: operations are");
+  (match (Protocol.operation_for operation).answered_by with
+  | Librarian -> ()
+  | _ ->
+      failwith
+        (operation
+       ^ " is no operation a Librarian answers: the registry's answeredBy \
+          names another service"));
   let answer =
     Archivist_world.request ~timeout (person t as_) operation payload
   in

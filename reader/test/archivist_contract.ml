@@ -17,7 +17,7 @@ let prose =
 let messages errors = List.map Decode.error_to_string errors
 
 (* A root whose ARCHIVIST.md is [text], beside Protocol's own Archivist
-   API. *)
+   API and tables. *)
 let rooted text =
   let copied = Filename.temp_dir "archivist" "" in
   List.iter
@@ -28,10 +28,19 @@ let rooted text =
         Out_channel.output_string out text)
   in
   Option.iter (write Archivist_rules.protocol) text;
-  write "specs/src/archivist/openapi.json"
-    (In_channel.with_open_bin
-       (Filename.concat root "specs/src/archivist/openapi.json")
-       In_channel.input_all);
+  List.iter
+    (fun file ->
+      write file
+        (In_channel.with_open_bin
+           (Filename.concat root file)
+           In_channel.input_all))
+    ("specs/src/archivist/openapi.json"
+    :: List.filter_map
+         (fun table ->
+           if String.starts_with ~prefix:"archivist/" table then
+             Some ("specs/src/" ^ table)
+           else None)
+         (Places.tables (Filename.concat root "specs/src")));
   copied
 
 let without term = Re.replace_string (Re.compile (Re.str term)) ~by:"" prose
@@ -71,6 +80,9 @@ let () =
   refused ~why:"leaves out the shard table"
     (Some (without "shard-cases.json"))
     registry "does not name the table shard-cases.json";
+  refused ~why:"leaves out the layout table"
+    (Some (without "layout.json"))
+    registry "does not name the table layout.json";
   refused ~why:"leaves out a persisted event"
     (Some (without ("`" ^ persisted ^ "`")))
     registry
@@ -83,6 +95,6 @@ let () =
     "is read against a bus registry that names no persisted event: the check \
      has lost what it reads";
   print_endline
-    "ARCHIVIST.md names every record schema, the configuration, the shard \
-     table, every persisted event and every Archivist route, and a copy that \
-     leaves one out is refused"
+    "ARCHIVIST.md names every record schema, the configuration, every table of \
+     archivist/, every persisted event and every Archivist route, and a copy \
+     that leaves one out is refused"

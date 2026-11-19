@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WeaverHealth.json",
+  "type": "object",
+  "description": "The Weaver's health answer (WEAVER.md § Health). `status` is `ok` whenever the Weaver answers: it says nothing of whether the Weaver can reach the gateway or the graph.",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok"
+      ]
+    },
+    "kb": {
+      "$ref": "https://xynolog.org/protocol/KbDid.json",
+      "description": "The DID of the knowledge base it serves: the one its settings name, which that knowledge base said it is before the Weaver connected to the graph database."
+    },
+    "following": {
+      "$ref": "https://xynolog.org/protocol/FollowerFollowing.json"
+    },
+    "reconcile": {
+      "type": "object",
+      "description": "How far the reconcile its first sweep is followed by has got (WEAVER.md § Reconcile): the pass's `summary` when it is done, or its `error` when it failed.",
+      "properties": {
+        "phase": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "running",
+            "done",
+            "failed"
+          ]
+        },
+        "summary": {
+          "type": "object",
+          "description": "What the pass found and did.",
+          "properties": {
+            "resourcesChecked": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources it checked."
+            },
+            "divergent": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many of them were divergent: the graph held them otherwise than the record."
+            },
+            "healed": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many divergent resources it rebuilt."
+            },
+            "healFailures": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many it did not heal, because the rebuild stopped at an event it could not apply."
+            },
+            "orphaned": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many orphaned views it found: resources the catalog lists and the record holds no events for. Each is counted, and not healed."
+            }
+          },
+          "required": [
+            "resourcesChecked",
+            "divergent",
+            "healed",
+            "healFailures",
+            "orphaned"
+          ],
+          "additionalProperties": false
+        },
+        "error": {
+          "type": "string",
+          "description": "Why it failed."
+        }
+      },
+      "required": [
+        "phase"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "status",
+    "kb",
+    "following",
+    "reconcile"
+  ],
+  "additionalProperties": false
+}

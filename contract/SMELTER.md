@@ -643,6 +643,8 @@ in prose.
 
 ## Health
 
+The answer is a [`SmelterHealth`](../specs/src/smelter/SmelterHealth.json).
+
 A Smelter's health answers for the Smelter alone, and from what it holds: to
 answer, it asks nothing of the gateway, of its embedding provider or of its
 vector database. Whether each of those is up is its own to say, and whoever
@@ -740,6 +742,8 @@ every resource had a cursor at its start.
   *Held by `images/shared/python/service/tests/test_log.py`.*
 
 ## Environment
+
+[`variables.json`](../specs/src/service-environment/variables.json) lists these for the Smelter, but the variables its document names.
 
 A Smelter's own code reads these from its environment, beside its document,
 and no others:

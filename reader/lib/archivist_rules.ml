@@ -10,9 +10,10 @@
    - The anchored-text entry's provenance is ExtractedText's, and its decline
      classes are ExtractionDeclined's.
    - contract/ARCHIVIST.md names each record schema but the anchored-text
-     entries, ArchivistConfig, the shard table, every persisted event of the
-     bus and every route of Archivist's HTTP surface. That one reads outside
-     specs/src, so the repository's check holds it, not [Spec.load]. *)
+     entries, ArchivistConfig, each table of archivist/, every persisted
+     event of the bus and every route of Archivist's HTTP surface. That one
+     reads outside specs/src, so the repository's check holds it, not
+     [Spec.load]. *)
 
 let record_schemas =
   [
@@ -28,7 +29,6 @@ let record_schemas =
   ]
 
 let config_schemas = [ "ArchivistConfig"; "ArchivistEngines"; "Engine" ]
-let tables = [ "archivist/shard-cases.json" ]
 let protocol = "contract/ARCHIVIST.md"
 let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
 
@@ -223,7 +223,9 @@ let contract ~root (registry : Tables.Bus_registry.t) =
       @ [ "ArchivistConfig" ])
     @ List.concat_map
         (fun table -> named "the table" (Filename.basename table))
-        tables
+        (List.filter
+           (String.starts_with ~prefix:"archivist/")
+           (Places.tables (Filename.concat root "specs/src")))
     @ (if persisted = [] then
          [
            refuse

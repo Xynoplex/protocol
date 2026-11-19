@@ -188,7 +188,9 @@ let () =
     "retry/cases.json: /: the model reads this file, and Protocol has none";
   refused specs ~why:"has a service's area with no schema of the service's"
     (fun copied ->
-      Sys.remove (Filename.concat copied "weaver/WeaverConfig.json"))
+      List.iter
+        (fun schema -> Sys.remove (Filename.concat copied ("weaver/" ^ schema)))
+        [ "WeaverConfig.json"; "WeaverHealth.json" ])
     "weaver: /: is a service's area (Places.services) and holds no schema of \
      the service's";
   refused specs ~why:"has a reference naming nothing"

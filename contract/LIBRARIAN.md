@@ -1008,6 +1008,8 @@ opens its health port.
 
 ## Health
 
+The answer is a [`LibrarianHealth`](../specs/src/librarian/LibrarianHealth.json).
+
 - **`GET /health`, on the port its document states, answers `200` with a
   JSON object:** `status`; `kb`; and `actors`, the two it runs, `matcher`
   and `gatherer`. Any other path answers `404`.
@@ -1068,6 +1070,8 @@ opens its health port.
   *Held by `images/shared/python/service/tests/test_log.py`.*
 
 ## Environment
+
+[`variables.json`](../specs/src/service-environment/variables.json) lists these for the Librarian, but the variables its document names.
 
 A Librarian's own code reads these from its environment, beside its document,
 and no others:

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SmelterChunking.json",
+  "type": "object",
+  "description": "The two numbers a text is cut by before it is embedded, both in tokens, a token being taken as four code points.",
+  "properties": {
+    "chunkSize": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The size of a chunk."
+    },
+    "overlap": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How much of a chunk the next one repeats."
+    }
+  },
+  "required": [
+    "chunkSize",
+    "overlap"
+  ],
+  "additionalProperties": false
+}

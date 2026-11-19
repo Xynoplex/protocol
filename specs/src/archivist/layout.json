@@ -1,0 +1,27 @@
+{
+  "$comment": "AUTHORITY for where the Archivist keeps the record on disk (ARCHIVIST.md § The record on disk), as far as a reader of its files needs it: each file's tree, `root` (the working tree) or `stateHome` (the state directory), and its path in that tree. A path's `{resourceId}` is the resource's id, and its `{shard}` the id's two-level shard, `<ab>/<cd>`, as archivist/shard-cases.json states the arithmetic. A stream is a directory of event files, named by `eventFile`, numbered from `first` in `digits` decimal digits, each holding at most `maxEvents` events, the next event opening the next file; each line of one is a stored event, compact JSON ended by a single newline, as `storedEvent` names it. A resource's view is JSON indented by two spaces, as `view.schema` names it.",
+  "eventStream": {
+    "tree": "root",
+    "path": ".xynolog/events/{shard}/{resourceId}"
+  },
+  "systemStream": {
+    "tree": "root",
+    "path": ".xynolog/events/__system__"
+  },
+  "eventFile": {
+    "name": "events-{number}.jsonl",
+    "digits": 6,
+    "first": 1,
+    "maxEvents": 10000
+  },
+  "storedEvent": {
+    "$ref": "https://xynolog.org/protocol/StoredEventResponse.json"
+  },
+  "view": {
+    "tree": "stateHome",
+    "path": "resources/{shard}/{resourceId}.json",
+    "schema": {
+      "$ref": "https://xynolog.org/protocol/ResourceView.json"
+    }
+  }
+}

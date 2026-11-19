@@ -55,6 +55,7 @@ let base : Yojson.Safe.t =
                 ("request", `String "demo:limits-requested");
                 ("result", `String "demo:limits-result");
                 ("failure", `String "demo:limits-failed");
+                ("answeredBy", `String "librarian");
                 ("docs", docs);
               ];
           ] );
@@ -286,6 +287,7 @@ let axes =
                    ("request", `String "demo:again");
                    ("result", `String "demo:limits-result");
                    ("failure", `String "demo:limits-failed");
+                   ("answeredBy", `String "librarian");
                    ("docs", docs);
                  ]))
          "/operations/1/result: \"demo:limits-result\" is the result of both \
@@ -299,6 +301,7 @@ let axes =
                  ("request", `String "demo:limits-result");
                  ("result", `String "demo:happened");
                  ("failure", `String "demo:internal");
+                 ("answeredBy", `String "librarian");
                  ("docs", docs);
                ])
             base)

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistLayout.json",
+  "description": "archivist/layout.json: where the Archivist keeps the record on disk.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "eventStream": {
+      "type": "object",
+      "description": "A resource's event stream: a directory of event files.",
+      "properties": {
+        "tree": {
+          "type": "string",
+          "enum": [
+            "root",
+            "stateHome"
+          ],
+          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*\\{shard\\}/\\{resourceId\\}$",
+          "description": "Its path in its tree, `/`-separated."
+        }
+      },
+      "required": [
+        "tree",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "systemStream": {
+      "type": "object",
+      "description": "The knowledge base's own stream, of the events that name no resource. It is not sharded.",
+      "properties": {
+        "tree": {
+          "type": "string",
+          "enum": [
+            "root",
+            "stateHome"
+          ],
+          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*$",
+          "description": "Its path in its tree, `/`-separated."
+        }
+      },
+      "required": [
+        "tree",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "eventFile": {
+      "type": "object",
+      "description": "The files of a stream.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[^{}/]*\\{number\\}[^{}/]*$",
+          "description": "A file's name, `{number}` its number in `digits` decimal digits."
+        },
+        "digits": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many decimal digits a file's number is written in, with leading zeros."
+        },
+        "first": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The first file's number. It is created, empty, with the stream's directory."
+        },
+        "maxEvents": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The most events a file holds."
+        }
+      },
+      "required": [
+        "name",
+        "digits",
+        "first",
+        "maxEvents"
+      ],
+      "additionalProperties": false
+    },
+    "storedEvent": {
+      "$ref": "https://xynolog.org/protocol/JsonSchema.json",
+      "description": "The schema a stored event, one line of an event file, is."
+    },
+    "view": {
+      "type": "object",
+      "description": "A resource's view, in the state directory.",
+      "properties": {
+        "tree": {
+          "type": "string",
+          "enum": [
+            "root",
+            "stateHome"
+          ],
+          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*\\{shard\\}/\\{resourceId\\}[^{}/]*$",
+          "description": "Its path in its tree, `/`-separated."
+        },
+        "schema": {
+          "$ref": "https://xynolog.org/protocol/JsonSchema.json",
+          "description": "The schema a view is."
+        }
+      },
+      "required": [
+        "tree",
+        "path",
+        "schema"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "eventStream",
+    "systemStream",
+    "eventFile",
+    "storedEvent",
+    "view"
+  ],
+  "additionalProperties": false
+}

@@ -90,45 +90,101 @@ let shard_of key =
 
 let ( // ) = Filename.concat
 
-let sharded key =
-  List.fold_left ( // ) "" (String.split_on_char '/' (shard_of key))
+(* Where the Archivist keeps the record on disk (archivist/layout.json). *)
+let layout () = (Protocol.tables ()).archivist_layout
+
+module Layout = Xynolog_protocol.Tables.Archivist_layout
+
+(* The file or directory at [path], a template of layout.json's, in [tree],
+   for the resource [resource_id]. *)
+let placed t (tree : Layout.tree) path resource_id =
+  let filled =
+    List.fold_left
+      (fun text (hole, value) ->
+        Re.replace_string (Re.compile (Re.str hole)) ~by:value text)
+      path
+      [ ("{shard}", shard_of resource_id); ("{resourceId}", resource_id) ]
+  in
+  List.fold_left ( // )
+    (match tree with Root -> t.dirs.root | State_home -> t.dirs.state_home)
+    (String.split_on_char '/' filled)
 
 let stream_dir t resource_id =
-  t.dirs.root // ".xynolog" // "events" // sharded resource_id // resource_id
+  let stream = (layout ()).event_stream in
+  placed t stream.tree stream.path resource_id
 
-(* A stream's events, oldest first: every line of its files, in order. *)
+(* The name of a stream's event file [number]. *)
+let event_file_name number =
+  let file = (layout ()).event_file in
+  Re.replace_string
+    (Re.compile (Re.str "{number}"))
+    ~by:(Printf.sprintf "%0*d" file.digits number)
+    file.name
+
+(* A stream's events, oldest first: every line of its files, in order. Its
+   files are the layout's, numbered from the first with none missing, none
+   over the layout's bound, and every line a stored event. *)
 let stored t resource_id =
   let dir = stream_dir t resource_id in
   if not (Sys.file_exists dir) then []
   else
+    let layout = layout () in
+    let files = List.sort compare (Array.to_list (Sys.readdir dir)) in
+    let expected =
+      List.mapi
+        (fun at _ -> event_file_name (layout.event_file.first + at))
+        files
+    in
+    if files <> expected then
+      failwith
+        (Printf.sprintf
+           "%s holds %s, and archivist/layout.json says a stream's files are %s"
+           dir (String.concat ", " files)
+           (String.concat ", " expected));
     List.concat_map
       (fun file ->
-        let text =
-          In_channel.with_open_bin (dir // file) In_channel.input_all
+        let lines =
+          List.filter
+            (fun line -> line <> "")
+            (String.split_on_char '\n'
+               (In_channel.with_open_bin (dir // file) In_channel.input_all))
         in
-        List.filter_map
+        if List.length lines > layout.event_file.max_events then
+          failwith
+            (Printf.sprintf
+               "%s holds %d events, and archivist/layout.json says a file \
+                holds at most %d"
+               (dir // file) (List.length lines) layout.event_file.max_events);
+        List.map
           (fun line ->
-            if line = "" then None else Some (Yojson.Safe.from_string line))
-          (String.split_on_char '\n' text))
-      (List.sort compare (Array.to_list (Sys.readdir dir)))
+            let event = Yojson.Safe.from_string line in
+            (match Protocol.refusals layout.stored_event event with
+            | [] -> ()
+            | refusals ->
+                failwith
+                  (Printf.sprintf
+                     "%s holds a line that is no stored event (%s): %s"
+                     (dir // file)
+                     (String.concat "; " refusals)
+                     line));
+            event)
+          lines)
+      files
 
-let document_at path schema =
+(* A resource's view file, held to the schema the layout names. *)
+let view t resource_id =
+  let view = (layout ()).view in
+  let path = placed t view.tree view.path resource_id in
   if not (Sys.file_exists path) then None
   else
     let json = Yojson.Safe.from_file path in
-    match Protocol.against schema json with
+    match Protocol.refusals view.schema json with
     | [] -> Some json
     | refusals ->
         failwith
-          (Printf.sprintf "%s is not a %s (%s)" path schema
+          (Printf.sprintf
+             "%s is not what archivist/layout.json says a view is (%s)" path
              (String.concat "; " refusals))
-
-(* A resource's view file, held to the ResourceView schema. *)
-let view t resource_id =
-  document_at
-    (t.dirs.state_home // "resources" // sharded resource_id
-   // (resource_id ^ ".json"))
-    "ResourceView"
 
 (* ── Participants ───────────────────────────────────────────────────── *)
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xynolog.org/protocol/ServiceEnvironmentVariables.json",
-  "description": "service-environment/variables.json: every environment variable a Xynolog service written in Rust reads, beside its configuration document.",
+  "description": "service-environment/variables.json: every environment variable a Xynolog service but the worker reads, beside its configuration document.",
   "type": "object",
   "properties": {
     "$comment": {
