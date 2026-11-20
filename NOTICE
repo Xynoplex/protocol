@@ -3,17 +3,30 @@ Copyright 2026 Xynolog
 
 This product is licensed under the Apache License, Version 2.0.
 
-Carried-forward material
+Xynolog protocol work
 
-The contract and specification material in this repository's baseline
-snapshot, its root commit 033f0de, was carried forward from The AI Alliance's
-Semiont monorepo as it stood through 2026-08-26, under the Apache License,
-Version 2.0. The upstream project is named to identify the source and
-provenance of that material; HISTORY-MAP.md says how it was extracted.
+Beginning 2026-08-27, Xynolog formalized and substantially expanded the
+protocol into machine-readable, validated specifications: OpenAPI definitions
+for the Gateway and Archivist HTTP APIs; a machine-readable definition of the
+launcher Control API; JSON Schema definitions for shared wire types and
+service configuration, health, and messages; normative protocol contracts;
+registries; and behavioral and conformance cases. The August 26 snapshot
+records an earlier protocol instance. The post-boundary protocol model is
+general enough to represent it. The snapshot does not contain the formal
+model, OCaml reader and validator, or code-generation system built afterward.
+The reader validates the specifications, and the code-generation system
+produces protocol artifacts for nine SDK languages. This repository specifies
+protocol interfaces and behavior; service runtime implementations and image
+details are maintained in their respective repositories. This post-boundary
+work is original work owned by Xynolog.
 
-Xynolog work
+Baseline snapshot
 
-All work on the protocol on and after 2026-08-27, every commit after the
-baseline snapshot, is Xynolog's and is owned by Xynolog.
+The repository's root commit, 033f0de, preserves protocol material from The
+AI Alliance's Semiont monorepo through 2026-08-26. It records an earlier
+protocol instance and the provenance of that material, which remains under
+the Apache License, Version 2.0. See HISTORY-MAP.md. The Semiont attribution
+identifies the snapshot's provenance; it does not describe authorship of the
+structure built afterward.
 
 Third-party notices remain with the files or dependencies to which they apply.
