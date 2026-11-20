@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerMessages.json",
+  "description": "worker/messages.json: the words of a Worker service's refusals to start, of the errors it fails a job with, and of the messages it logs that a reader relies on.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "boot": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each refusal to start, written in service-environment/boot-refusals.json's `line`.",
+      "items": {
+        "oneOf": [
+          {
+            "title": "OwnBootRefusal",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The situation's name.",
+                "pattern": "^[a-z][a-z-]*[a-z]$"
+              },
+              "situation": {
+                "type": "string",
+                "minLength": 1,
+                "description": "When it is written, and what fills each `{name}` of its text."
+              },
+              "refusal": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The refusal, in place of the line's `{refusal}`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+              }
+            },
+            "required": [
+              "name",
+              "situation",
+              "refusal"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "title": "SharedBootRefusal",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The situation's name.",
+                "pattern": "^[a-z][a-z-]*[a-z]$"
+              },
+              "situation": {
+                "type": "string",
+                "minLength": 1,
+                "description": "When it is written. What fills its text is the shared row's."
+              },
+              "bootRefusal": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The `name` of the row of service-environment/boot-refusals.json's `refusals` that is this refusal, with `{service}` `worker` and `{schema}` `WorkerConfig`."
+              }
+            },
+            "required": [
+              "name",
+              "situation",
+              "bootRefusal"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each line of the `{reasons}` of `invalid`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "line": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The line, indented by two spaces. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "line"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "job": {
+      "type": "object",
+      "description": "How an error names the job, by its type, as `{job}`: `{motivation}` is a mark job's motivation.",
+      "properties": {
+        "mark": {
+          "type": "string",
+          "minLength": 1
+        },
+        "yield": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "mark",
+        "yield"
+      ],
+      "additionalProperties": false
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each error a job is failed with that is the worker's own: the `error` of its `job:fail`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "error": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The error. `{job}` in it is the job, as `job` names it. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "details": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each `{detail}` of `unreadable`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The detail. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "detail"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "waits": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each `{said}` of `wait-stated`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "said": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The wait, as the header stated it. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "said"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "logged": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each message a Worker service logs that a reader of its output relies on.",
+      "items": {
+        "$ref": "https://xynolog.org/protocol/SmelterMessages.json#/properties/logged/items"
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "boot",
+    "reasons",
+    "job",
+    "errors",
+    "details",
+    "waits",
+    "logged"
+  ],
+  "additionalProperties": false
+}
