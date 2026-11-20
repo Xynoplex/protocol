@@ -13,5 +13,13 @@ let suite : Xynolog_conformance.Suite.t =
       (fun implementations ->
         List.concat_map
           (fun tests -> tests implementations)
-          [ Boot.tests; Index.tests ]);
+          [
+            Boot.tests;
+            Index.tests;
+            Provider.tests;
+            Kb_index.tests;
+            Pdf.tests;
+            Reconcile.tests;
+            Telemetry.tests;
+          ]);
   }

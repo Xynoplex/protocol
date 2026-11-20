@@ -70,6 +70,16 @@ let payload_member word name =
              "specs/src/%s does not state %s in every point of the %s"
              payload_table name word)
 
+(* A payload member the table states for some point of a collection: one a
+   point may be without. *)
+let payload_member_of_some word name =
+  if List.exists (fun p -> member name p <> `Null) (stated_payloads word) then
+    name
+  else
+    failwith
+      (Printf.sprintf "specs/src/%s states %s in no point of the %s"
+         payload_table name word)
+
 (* The claims token-cases.json states for the knowledge base [did], by the
    service: each case's collection names held to the naming arithmetic. *)
 let claims did service =
