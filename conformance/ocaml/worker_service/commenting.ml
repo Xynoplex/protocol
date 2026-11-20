@@ -1,4 +1,4 @@
-(* commenting.test.ts: a mark job of motivation commenting, end to end
+(* A mark job of motivation commenting, end to end
    (WORKER-SERVICE.md § Detection, § The five kinds of mark job): asked with
    instructions, a tone, a density and both of its languages. *)
 

@@ -1,4 +1,4 @@
-(* barriers.test.ts: what a Librarian does when the graph or the vector
+(* What a Librarian does when the graph or the vector
    index is behind the record (LIBRARIAN.md § The knowledge graph, § The two
    waits, § Gathering around a resource, § Text search, § Reference search):
    a gather waits for the Weaver, and says the graph is behind when the

@@ -1,4 +1,4 @@
-(* telemetry.test.ts: what a Librarian exports (LIBRARIAN.md § Telemetry),
+(* What a Librarian exports (LIBRARIAN.md § Telemetry),
    case for case. *)
 
 open Xynolog_conformance

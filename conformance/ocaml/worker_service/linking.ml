@@ -1,4 +1,4 @@
-(* linking.test.ts: a mark job of motivation linking, end to end
+(* A mark job of motivation linking, end to end
    (WORKER-SERVICE.md § Detection, § The five kinds of mark job): one unit
    for each entity type, each an extraction and a count of the same text,
    committed and checkpointed as it finishes. *)

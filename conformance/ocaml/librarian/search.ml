@@ -1,4 +1,4 @@
-(* search.test.ts: what a Librarian finds (LIBRARIAN.md § Reference
+(* What a Librarian finds (LIBRARIAN.md § Reference
    search, § Text search, § What refers to a resource, § Names, § Limits),
    case for case. *)
 

@@ -1,4 +1,4 @@
-(* pdf.test.ts: what a Smelter does with a PDF (SMELTER.md § A PDF's text,
+(* What a Smelter does with a PDF (SMELTER.md § A PDF's text,
    § The anchored-text store, § Rebuild): what it stores of the text it
    derives and of where each word is on a page, what the Archivist then
    serves from that store, and what it does when it is asked to derive

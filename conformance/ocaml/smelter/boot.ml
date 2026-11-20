@@ -1,4 +1,4 @@
-(* boot.test.ts: how a Smelter starts, answers for itself and stops
+(* How a Smelter starts, answers for itself and stops
    (SMELTER.md § Settings, § Boot, § Health, § Stopping): what its health
    reports, what it refuses to start without, that what is recorded while its
    start's reconcile runs is applied then, and that it stops cleanly. With

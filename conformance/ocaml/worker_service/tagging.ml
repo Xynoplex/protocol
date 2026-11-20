@@ -1,4 +1,4 @@
-(* tagging.test.ts: a mark job of motivation tagging, end to end
+(* A mark job of motivation tagging, end to end
    (WORKER-SERVICE.md § Detection, § The five kinds of mark job): one unit
    for each category of the schema the dispatcher handed over with the job,
    each asked of the whole text. *)

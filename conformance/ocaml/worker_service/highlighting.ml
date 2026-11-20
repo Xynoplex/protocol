@@ -1,4 +1,4 @@
-(* highlighting.test.ts: a mark job of motivation highlighting, end to end
+(* A mark job of motivation highlighting, end to end
    (WORKER-SERVICE.md § What a job reads, § Detection, § The five kinds of
    mark job): what it reads, the one request it makes of its model, the
    annotations it commits, what it reports as it goes, and its

@@ -1,4 +1,4 @@
-(* code-points.test.ts: what a job counts in a text with characters outside
+(* What a job counts in a text with characters outside
    the Basic Multilingual Plane (WORKER-SERVICE.md § The request, § Pieces,
    § Anchoring, § The annotation, § Committing, and where a job stands,
    § Progress): Unicode code points. Such a character is one code point,

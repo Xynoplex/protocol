@@ -1,4 +1,4 @@
-(* index.test.ts: the index a Smelter keeps as the record changes (SMELTER.md
+(* The index a Smelter keeps as the record changes (SMELTER.md
    § What each event does, § Indexing a resource, § Indexing an annotation,
    § What it decides): what a text becomes in it when it is recorded,
    updated, archived and unarchived, and an annotation when it is added, has

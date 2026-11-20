@@ -1,4 +1,4 @@
-(* environment.test.ts: what a Worker service reads from its environment
+(* What a Worker service reads from its environment
    beside its service account and its providers' keys (WORKER-SERVICE.md
    § Environment), each variable by name: what the service does with it, and
    without it. Each case starts a worker with the environment it is about,

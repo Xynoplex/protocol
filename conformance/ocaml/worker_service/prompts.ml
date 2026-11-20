@@ -1,4 +1,4 @@
-(* prompts.test.ts: the other ways each kind of mark job is asked
+(* The other ways each kind of mark job is asked
    (WORKER-SERVICE.md § The five kinds of mark job): what a job's
    instructions, tone, density and languages, or the lack of each, make of
    the prompt its model is sent. Each job, its prompt and its request are

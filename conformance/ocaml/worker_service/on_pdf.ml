@@ -1,8 +1,8 @@
-(* pdf.test.ts, named on_pdf beside the harness's Pdf: a mark job on a PDF
-   (WORKER-SERVICE.md § What a job reads, § Anchoring, § Declines): the text
-   is the Smelter's, asked of the gateway, and the worker reads no bytes; a
-   span is anchored by where its text is on the page; and each answer the
-   Smelter can give that is not a text ends the job its own way. *)
+(* A mark job on a PDF (WORKER-SERVICE.md § What a job reads, § Anchoring,
+   § Declines): the text is the Smelter's, asked of the gateway, and the
+   worker reads no bytes; a span is anchored by where its text is on the
+   page; and each answer the Smelter can give that is not a text ends the job
+   its own way. *)
 
 open Xynolog_conformance
 open Support

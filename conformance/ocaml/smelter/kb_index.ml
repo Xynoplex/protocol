@@ -1,4 +1,4 @@
-(* kb-index.test.ts: where a Smelter keeps its knowledge base's index
+(* Where a Smelter keeps its knowledge base's index
    (SMELTER.md § The index): in collections of that knowledge base's own,
    named from its DID as specs/src/vectors/payload-cases.json states.
    Another knowledge base's collections on the same Qdrant are none of its:

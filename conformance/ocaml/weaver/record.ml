@@ -1,4 +1,4 @@
-(* record.test.ts: the graph a Weaver builds from the record (WEAVER.md
+(* The graph a Weaver builds from the record (WEAVER.md
    § The fold, § What the graph holds, § Reconcile): what each resource and
    annotation is in it, read back by the suite's own reader, and whether the
    Weaver's own check of the graph against the record finds anything to

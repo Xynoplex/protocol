@@ -1,4 +1,4 @@
-(* limits.test.ts: the limits a worker answers (WORKER-SERVICE.md
+(* The limits a worker answers (WORKER-SERVICE.md
    § Limits): one reply to job:limits-requested on each knowledge base's
    stream, with what each of the engines it runs for that knowledge base can
    take as its provider states it. *)

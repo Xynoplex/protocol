@@ -1,4 +1,4 @@
-(* provider.test.ts: how a Smelter asks its embedding provider for vectors
+(* How a Smelter asks its embedding provider for vectors
    (SMELTER.md § The embedding provider), as far as that shows from outside:
    how many texts go in one request, that an Ollama is asked for one thing at
    a time, and what becomes of a resource when a request for it fails. With
