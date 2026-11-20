@@ -14,9 +14,9 @@ deviates from it, the code is wrong, or this document is wrong and is
 corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
-when a Weaver breaks it. `weaver/<case>` is the file `<case>.test.ts` of the
+when a Weaver breaks it. `weaver/<case>` is the file `<case>.ml` of the
 weaver conformance suite
-([`conformance/weaver`](../conformance/weaver/README.md)),
+([`conformance/ocaml/weaver`](../conformance/ocaml/weaver/README.md)),
 which starts a Weaver as a process behind a real gateway and a real Archivist,
 records through the Archivist, and reads the graph back from a real database:
 the same cases judge every implementation. A path names a runner of one of the
