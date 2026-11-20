@@ -245,20 +245,21 @@ let asks_once (w : W.t) =
           [ W.domain w.own; W.domain second ]))
     (domains_of confirmed);
   List.iter
-    (fun line ->
-      let kb =
-        if Check.at line [ "domain" ] = str (W.domain w.own) then w.own
-        else second
-      in
-      Check.like "the line its log wrote"
-        (`Assoc
-           [
-             ("level", str "info");
-             ("domain", str (W.domain kb));
-             ("did", str (W.did kb));
-           ])
-        line)
-    confirmed
+    (fun (kb : W.kb) ->
+      match
+        List.filter
+          (fun line -> member "domain" line = str (W.domain kb))
+          confirmed
+      with
+      | [ line ] ->
+          Check.like "the line its log wrote"
+            (`Assoc [ ("level", str "info"); ("did", str (W.did kb)) ])
+            line
+      | lines ->
+          failwith
+            (Printf.sprintf "its log says %d times that %s is confirmed"
+               (List.length lines) (W.domain kb)))
+    [ w.own; second ]
 
 let says_its_name (w : W.t) =
   let second = W.second w in
@@ -406,7 +407,7 @@ let health_in_order (w : W.t) =
              ] );
          ("jobs", `List [ Dispatcher_world.marks "highlighting" ]);
        ]
-      @ match idle with `Assoc members -> members | _ -> [])
+      @ Yojson.Safe.Util.to_assoc idle)
   in
   Check.equal "its health"
     (`Assoc
