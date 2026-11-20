@@ -1,0 +1,14 @@
+; The archivist suite's cases, on the OCaml harness.
+(library
+ (name archivist_suite)
+ (package xynolog-conformance)
+ (libraries
+  xynolog_conformance
+  xynolog-protocol
+  xynolog-protocol.schema
+  yojson
+  re
+  ptime
+  http
+  unix
+  testo))

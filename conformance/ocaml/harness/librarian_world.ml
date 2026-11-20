@@ -372,9 +372,13 @@ let annotated t resource_id annotation_id =
 let created t ?(name = "A resource") ?(format = "text/plain") ?(by = person_sub)
     content =
   let resource_id =
-    Archivist_world.created t.kb (person_did t ~sub:by ()) ~name
-      ~storage_uri:("file://librarian/" ^ Fresh.uuid ())
-      ~format content
+    Archivist_world.created t.kb (person_did t ~sub:by ())
+      [
+        ("name", name);
+        ("storageUri", "file://librarian/" ^ Fresh.uuid ());
+        ("format", format);
+      ]
+      content
   in
   Hashtbl.replace t.contents resource_id content;
   Hashtbl.replace t.kb.world.archivist.anchored_texts resource_id (fun () ->
@@ -627,7 +631,7 @@ let assemble (implementations : Implementations.t) command =
   and smelter_secret = secret () in
   let service = [ Protocol.service_role () ] in
   let kb =
-    Archivist_world.create ~gateway:implementations.gateway
+    Archivist_world.create ~git_sync:false ~gateway:implementations.gateway
       ~command:implementations.archivist
       ~accounts:
         [
@@ -636,6 +640,7 @@ let assemble (implementations : Implementations.t) command =
           (weaver_client, { Issuer.secret = weaver_secret; roles = service });
           (smelter_client, { Issuer.secret = smelter_secret; roles = service });
         ]
+      ()
   in
   let matcher = Ollama.start () and gatherer = Ollama.start () in
   let embedder = Ollama_embed.start ()
@@ -679,7 +684,10 @@ let assemble (implementations : Implementations.t) command =
   let gateway_url = `String (World.origin kb.world) in
   let identity = `Assoc [ ("issuer", `String kb.world.issuer.origin) ] in
   let archivist =
-    `Assoc [ ("host", `String "127.0.0.1"); ("port", `Int kb.port) ]
+    `Assoc
+      [
+        ("host", `String "127.0.0.1"); ("port", `Int (Archivist_world.port kb));
+      ]
   in
   let did = kb.world.kb.did in
   let vectors =
@@ -900,7 +908,7 @@ let end_case world body =
           "Weaver output:\n" ^ String.concat "\n" (tail 40 (weaver_output t));
           "Smelter output:\n" ^ String.concat "\n" (tail 40 (smelter_output t));
           "Archivist output:\n"
-          ^ String.concat "\n" (Process.tail 40 t.kb.archivist);
+          ^ String.concat "\n" (Process.tail 40 t.kb.archivist.process);
         ])
     ~settle:(fun () -> drain t)
     (fun () -> body t)
