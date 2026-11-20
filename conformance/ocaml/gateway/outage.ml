@@ -93,7 +93,7 @@ let other_credentials (w : World.t) =
 
 let tests implementations =
   let make = with_credentials implementations in
-  each_plane ~planes:[ Nats ] ~make ~world:Fun.id ~close:World.close
+  World.each_plane ~planes:[ Nats ] ~make ~world:Fun.id ~close:World.close
     "a broker outage"
     [
       case ~timeout:40.0
@@ -102,7 +102,7 @@ let tests implementations =
          it is back, without reconnecting"
         across_an_outage;
     ]
-  @ each_plane ~planes:[ Nats ] ~make ~world:Fun.id ~close:World.close
+  @ World.each_plane ~planes:[ Nats ] ~make ~world:Fun.id ~close:World.close
       "a broker that comes back with other credentials"
       [
         case ~timeout:60.0

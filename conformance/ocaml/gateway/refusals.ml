@@ -202,8 +202,8 @@ let unnamed_share_a_count (w : World.t) =
   | _ -> assert false
 
 let tests implementations =
-  each_plane ~make:(plain implementations) ~world:Fun.id ~close:World.close
-    "what bounds a refused request"
+  World.each_plane ~make:(plain implementations) ~world:Fun.id
+    ~close:World.close "what bounds a refused request"
     [
       case
         "refused requests naming one holder, each with a different token, are \

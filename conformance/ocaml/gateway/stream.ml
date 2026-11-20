@@ -804,7 +804,7 @@ let replayed_an_answer_at_a_time { world = w; _ } =
 
 let tests implementations =
   let make_plain = plain implementations in
-  each_plane ~make:(make implementations)
+  World.each_plane ~make:(make implementations)
     ~world:(fun { world; _ } -> world)
     ~close:(fun { world; _ } -> World.close world)
     "subscribing"
@@ -870,7 +870,7 @@ let tests implementations =
         presence;
     ]
   (* Plane-independent, and slow: waits out one heartbeat interval. *)
-  @ each_plane ~planes:[ In_process ] ~make:make_plain ~world:Fun.id
+  @ World.each_plane ~planes:[ In_process ] ~make:make_plain ~world:Fun.id
       ~close:World.close "the heartbeat"
       [
         case
@@ -878,7 +878,7 @@ let tests implementations =
           heartbeat;
       ]
   (* Plane-independent, and slow: waits out replyRetentionSeconds. *)
-  @ each_plane ~planes:[ In_process ] ~make:make_plain ~world:Fun.id
+  @ World.each_plane ~planes:[ In_process ] ~make:make_plain ~world:Fun.id
       ~close:World.close "reply retention"
       [
         case ~timeout:120.0

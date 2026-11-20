@@ -1,43 +1,11 @@
-(* What the gateway files share: a file's cases run against a world on each
-   signal plane, and what a case reads of a reply. *)
+(* What the gateway files share: the world a file's cases share, and what a
+   case reads of a reply. *)
 
 open Xynolog_conformance
 
 (* The world a file's cases share on [plane], unless a case changes it. *)
 let plain implementations plane =
   World.create ~command:implementations.Implementations.gateway plane
-
-(* [cases] against a world on each of [planes], under [title] and the plane,
-   as eachPlane names them. [make] makes what a file's cases share, [world]
-   is the gateway's world within it and [close] ends it. After every case,
-   the streams it opened must have carried nothing the spec does not allow,
-   and the gateway must have asked the stand-in Archivist only what its spec
-   declares. *)
-let each_plane ?(planes = Protocol.Service_rows.gateway_config_type_all) ~make
-    ~world ~close title cases =
-  List.concat_map
-    (fun plane ->
-      let word = Protocol.Service_rows.gateway_config_type_value plane in
-      let category = [ Printf.sprintf "%s (%s plane)" title word ] in
-      let made =
-        Suite.world
-          (String.concat "/" ("gateway" :: category))
-          ~make:(fun () -> make plane)
-          ~close
-      in
-      List.map
-        (fun c ->
-          Case.test ~category c (fun () ->
-              let shared = made () in
-              let w : World.t = world shared in
-              World.end_case
-                ~account:(fun () ->
-                  "gateway output:\n"
-                  ^ String.concat "\n" (Process.output w.gateway.process))
-                ~settle:(fun () -> World.drain w)
-                (fun () -> c.run shared)))
-        cases)
-    planes
 
 (* A reply to browse:resource-requested: resource "r", named [name]. *)
 let described ?(name = "r") () =

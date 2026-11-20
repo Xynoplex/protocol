@@ -50,29 +50,7 @@
           "description": "The operation's id."
         },
         "error": {
-          "type": "object",
-          "properties": {
-            "code": {
-              "type": "string",
-              "description": "The SDK's code for it, from specs/src/errors/codes.json."
-            },
-            "status": {
-              "type": "integer",
-              "description": "The HTTP status, when a server stated one."
-            },
-            "failureClass": {
-              "$ref": "https://xynolog.org/protocol/FailureClass.json",
-              "description": "A job failure's class, when it has one."
-            },
-            "detail": {
-              "type": "string",
-              "description": "The SDK's words, for a person; nothing compares it."
-            }
-          },
-          "required": [
-            "detail"
-          ],
-          "additionalProperties": false,
+          "$ref": "https://xynolog.org/protocol/ConformanceFailure.json",
           "description": "The failure."
         }
       },
@@ -204,29 +182,7 @@
       "type": "object",
       "properties": {
         "error": {
-          "type": "object",
-          "properties": {
-            "code": {
-              "type": "string",
-              "description": "The SDK's code for it, from specs/src/errors/codes.json."
-            },
-            "status": {
-              "type": "integer",
-              "description": "The HTTP status, when a server stated one."
-            },
-            "failureClass": {
-              "$ref": "https://xynolog.org/protocol/FailureClass.json",
-              "description": "A job failure's class, when it has one."
-            },
-            "detail": {
-              "type": "string",
-              "description": "The SDK's words, for a person; nothing compares it."
-            }
-          },
-          "required": [
-            "detail"
-          ],
-          "additionalProperties": false,
+          "$ref": "https://xynolog.org/protocol/ConformanceFailure.json",
           "description": "The failure."
         }
       },
@@ -328,29 +284,7 @@
                       "description": "The query failed."
                     },
                     "error": {
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string",
-                          "description": "The SDK's code for it, from specs/src/errors/codes.json."
-                        },
-                        "status": {
-                          "type": "integer",
-                          "description": "The HTTP status, when a server stated one."
-                        },
-                        "failureClass": {
-                          "$ref": "https://xynolog.org/protocol/FailureClass.json",
-                          "description": "A job failure's class, when it has one."
-                        },
-                        "detail": {
-                          "type": "string",
-                          "description": "The SDK's words, for a person; nothing compares it."
-                        }
-                      },
-                      "required": [
-                        "detail"
-                      ],
-                      "additionalProperties": false,
+                      "$ref": "https://xynolog.org/protocol/ConformanceFailure.json",
                       "description": "The failure."
                     }
                   },
@@ -416,29 +350,7 @@
       "type": "object",
       "properties": {
         "refused": {
-          "type": "object",
-          "properties": {
-            "code": {
-              "type": "string",
-              "description": "The SDK's code for it, from specs/src/errors/codes.json."
-            },
-            "status": {
-              "type": "integer",
-              "description": "The HTTP status, when a server stated one."
-            },
-            "failureClass": {
-              "$ref": "https://xynolog.org/protocol/FailureClass.json",
-              "description": "A job failure's class, when it has one."
-            },
-            "detail": {
-              "type": "string",
-              "description": "The SDK's words, for a person; nothing compares it."
-            }
-          },
-          "required": [
-            "detail"
-          ],
-          "additionalProperties": false,
+          "$ref": "https://xynolog.org/protocol/ConformanceFailure.json",
           "description": "The refusal: with a code when the bus refused it, with none when the worker did."
         }
       },

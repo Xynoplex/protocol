@@ -121,13 +121,14 @@ let driver_line = "conformance/ConformanceDriverLine.json"
 let corpus_models = [ corpus_case; driver_line ]
 
 (* The schemas a corpus model reads in the table dialect through a [$ref]:
-   its own, and the steps' and fetches' it names. *)
+   its own, and the steps', fetches' and failures' it names. *)
 let corpus_schemas =
   corpus_models
   @ [
       "conformance/ConformanceStep.json";
       "conformance/ConformanceBusFetch.json";
       "conformance/ConformanceHttpFetch.json";
+      "conformance/ConformanceFailure.json";
     ]
 
 (* The name of the corpus model [file] holds, as a value: conformance_case. *)

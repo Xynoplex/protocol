@@ -7,6 +7,10 @@ type t = {
   name : string;
   output : string Dynarray.t;
   stdout : string Dynarray.t;
+  stderr : string Dynarray.t;
+  said : Eio.Condition.t;  (** Broadcast on each line, and when it exits. *)
+  input : Eio_unix.sink_ty Eio.Resource.t option Eio.Promise.t;
+      (** Its stdin, where it was started with one to read. *)
   process : Eio_unix.Process.ty Eio.Resource.t Eio.Promise.t;
   exited : int option Eio.Promise.t;
       (** Its exit code, once it has exited; None when a signal ended it. *)
@@ -22,13 +26,14 @@ let run_environment () =
          Option.map (fun value -> (name, value)) (Sys.getenv_opt name))
        [ "LLVM_PROFILE_FILE"; "JAVA_OPTS" ]
 
-let lines_of source into =
+let lines_of source into said =
   let input = Eio.Buf_read.of_flow ~max_size:max_int source in
   let rec next () =
     match Eio.Buf_read.line input with
     | line ->
-        if line <> "" then
+        if line <> "" then (
           List.iter (fun list -> Dynarray.add_last list line) into;
+          Eio.Condition.broadcast said);
         next ()
     | exception End_of_file -> ()
   in
@@ -113,16 +118,22 @@ let reap () =
   let file = Lazy.force register in
   if Sys.file_exists file then Sys.remove file
 
-let spawn name command env =
-  let output = Dynarray.create () and stdout = Dynarray.create () in
+(* Start [command] with [env]. Its stdin is a pipe closed at once, unless
+   [input]: then the suite writes to it ([write]) and closes it
+   ([close_input]). *)
+let spawn ?(input = false) name command env =
+  let output = Dynarray.create ()
+  and stdout = Dynarray.create ()
+  and stderr = Dynarray.create () in
+  let said = Eio.Condition.create () in
   let started, start = Eio.Promise.create () in
+  let given, give = Eio.Promise.create () in
   let exited, exit = Eio.Promise.create () in
   let mgr = Run.process_mgr () in
   Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
       Eio.Switch.run @@ fun sw ->
       let fd flow = Option.get (Eio_unix.Resource.fd_opt flow) in
-      (* Its stdin is a pipe that is closed at once: a child never reads the
-         worker's own, which is testo's. *)
+      (* A child never reads the worker's own stdin, which is testo's. *)
       let in_r, in_w = Eio_unix.pipe sw in
       let out_r, out_w = Eio_unix.pipe sw in
       let err_r, err_w = Eio_unix.pipe sw in
@@ -138,26 +149,48 @@ let spawn name command env =
           command
       in
       record (Eio.Process.pid child);
-      List.iter Eio.Resource.close
-        [
-          (in_w :> [ `Close ] Eio.Resource.t);
-          (in_r :> [ `Close ] Eio.Resource.t);
-        ];
+      Eio.Resource.close in_r;
+      if input then
+        Eio.Promise.resolve give
+          (Some (in_w :> Eio_unix.sink_ty Eio.Resource.t))
+      else (
+        Eio.Resource.close in_w;
+        Eio.Promise.resolve give None);
       Eio.Resource.close out_w;
       Eio.Resource.close err_w;
       Eio.Promise.resolve start (child :> Eio_unix.Process.ty Eio.Resource.t);
       Eio.Fiber.all
         [
-          (fun () -> lines_of out_r [ output; stdout ]);
-          (fun () -> lines_of err_r [ output ]);
+          (fun () -> lines_of out_r [ output; stdout ] said);
+          (fun () -> lines_of err_r [ output; stderr ] said);
           (fun () ->
             Eio.Promise.resolve exit
               (match Eio.Process.await child with
               | `Exited code -> Some code
-              | `Signaled _ -> None));
+              | `Signaled _ -> None);
+            Eio.Condition.broadcast said);
         ]);
-  { name; output; stdout; process = started; exited }
+  {
+    name;
+    output;
+    stdout;
+    stderr;
+    said;
+    input = given;
+    process = started;
+    exited;
+  }
 
+let stdin t =
+  match Eio.Promise.await t.input with
+  | Some sink -> sink
+  | None -> failwith (t.name ^ " was started with no input to write to")
+
+(* Write [text] to its stdin. *)
+let write t text = Eio.Flow.copy_string text (stdin t)
+
+(* Close its stdin: it reads to the end of its input. *)
+let close_input t = Eio.Resource.close (stdin t)
 let running t = not (Eio.Promise.is_resolved t.exited)
 
 let signal t number =

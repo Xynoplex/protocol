@@ -19,7 +19,14 @@
 
 module Case = Tables.Conformance_case
 
-type case = { name : string; file : string; case : Case.t }
+(* A case: its name, the file it is in, what it says, and its JSON as
+   written, for a failing case to show a step by. *)
+type case = {
+  name : string;
+  file : string;
+  case : Case.t;
+  json : Yojson.Safe.t;
+}
 
 (* The case files of [directory], from the repository's [root], in order. *)
 let files ~root directory =
@@ -47,6 +54,7 @@ let decoded file json =
           name = Filename.remove_extension (Filename.basename file);
           file;
           case;
+          json;
         }
   | Error error -> Error [ error ]
 
@@ -222,8 +230,9 @@ let held ~operations ~channels ~requests ~layer { file; case; _ } =
            | _ -> [])
          case.steps)
 
-(* How the corpus at the repository's [root] is not what the spec says. *)
-let refusals ~root (spec : Spec.t) =
+(* The case's schema, from the repository's [root], and how to read the
+   schemas it names. *)
+let case_schema ~root =
   let specs = Filename.concat root "specs/src" in
   let schema_cache = Hashtbl.create 64 in
   let schema_at ({ file; pointer } : Validate.place) =
@@ -241,11 +250,28 @@ let refusals ~root (spec : Spec.t) =
         Hashtbl.replace schema_cache (file, pointer) found;
         found
   in
-  let schema =
-    match schema_at { file = Places.corpus_case; pointer = "" } with
-    | Some schema -> schema
-    | None -> invalid_arg (Places.corpus_case ^ " is no schema")
-  in
+  match schema_at { file = Places.corpus_case; pointer = "" } with
+  | Some schema -> (schema_at, schema)
+  | None -> invalid_arg (Places.corpus_case ^ " is no schema")
+
+(* [json], a case [file] states, validated against the case's schema and
+   read through its model. *)
+let validated (spec : Spec.t) (schema_at, schema) file json =
+  match
+    List.map
+      (fun (pointer, message) -> refusal file pointer message)
+      (Validate.errors spec.ids schema_at schema json "")
+  with
+  | _ :: _ as invalid -> Error invalid
+  | [] -> decoded file json
+
+(* A case a suite builds, as it builds one from a table: [name]d, and
+   validated and read as a case file is. *)
+let of_json ~root spec ~name json = validated spec (case_schema ~root) name json
+
+(* How the corpus at the repository's [root] is not what the spec says. *)
+let refusals ~root (spec : Spec.t) =
+  let schema = case_schema ~root in
   let operations = gateway_operations spec in
   let channels = channels spec.tables.bus_registry in
   let requests = requests spec.tables.bus_registry in
@@ -264,19 +290,10 @@ let refusals ~root (spec : Spec.t) =
               in
               named
               @
-              match parsed ~root file with
+              match
+                Result.bind (parsed ~root file) (validated spec schema file)
+              with
               | Error e -> e
-              | Ok json -> (
-                  match
-                    List.map
-                      (fun (pointer, message) -> refusal file pointer message)
-                      (Validate.errors spec.ids schema_at schema json "")
-                  with
-                  | _ :: _ as invalid -> invalid
-                  | [] -> (
-                      match decoded file json with
-                      | Error e -> e
-                      | Ok case ->
-                          held ~operations ~channels ~requests ~layer case)))
+              | Ok case -> held ~operations ~channels ~requests ~layer case)
             listed)
     Places.corpus

@@ -484,7 +484,7 @@ let survive_restart { world = w; _ } =
     (List.mem (Some answered) (correlation_ids recovered result))
 
 let tests implementations =
-  each_plane ~planes:[ Nats ] ~make:(make implementations)
+  World.each_plane ~planes:[ Nats ] ~make:(make implementations)
     ~world:(fun { world; _ } -> world)
     ~close:(fun { world; _ } -> World.close world)
     "two replicas on one broker"

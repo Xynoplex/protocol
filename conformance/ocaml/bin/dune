@@ -9,4 +9,6 @@
   gateway_suite
   dispatcher_suite
   librarian_suite
-  archivist_suite))
+  archivist_suite
+  sdk_suite
+  worker_suite))

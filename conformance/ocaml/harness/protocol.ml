@@ -210,7 +210,8 @@ let scheme_limit scheme key =
   | _ -> failwith (Printf.sprintf "the gateway's %s states no limits" scheme)
 
 (* The template of a document's path that [concrete] fills, with an
-   operation of [meth]: the template and its parameters' values. *)
+   operation of [meth]: the template, and each of its parameters' values by
+   the parameter's name. *)
 let route which meth concrete =
   let parts path = String.split_on_char '/' path in
   List.find_map
@@ -218,7 +219,9 @@ let route which meth concrete =
       let rec matched acc = function
         | [], [] -> Some (List.rev acc)
         | a :: rest, b :: others when String.length a > 2 && a.[0] = '{' ->
-            matched ((a, Uri.pct_decode b) :: acc) (rest, others)
+            matched
+              ((String.sub a 1 (String.length a - 2), Uri.pct_decode b) :: acc)
+              (rest, others)
         | a :: rest, b :: others when a = b -> matched acc (rest, others)
         | _ -> None
       in
@@ -470,6 +473,50 @@ let telemetry ?plane (service : service) =
           else None)
         sdk_table.metrics
   in
+  (spans, metrics)
+
+(* The rows an SDK's transports export (sdk-telemetry/telemetry.json), each
+   expected: every row, or, for a client that uses [transport] alone, that
+   transport's rows. *)
+let sdk_telemetry ?transport () =
+  let sdk_table = (tables ()).sdk_telemetry_telemetry in
+  let used row_transport =
+    match transport with None -> true | Some t -> t = row_transport
+  in
+  let spans =
+    List.filter_map
+      (fun (r : Sdk_rows.spans_item) ->
+        if used r.transport then
+          Some
+            {
+              name = r.name;
+              kind = sdk_kind r.kind;
+              span_expected = true;
+              span_attributes = sdk_attributes r.attributes;
+            }
+        else None)
+      sdk_table.spans
+  in
+  let metrics =
+    List.filter_map
+      (fun (r : Sdk_rows.metrics_item) ->
+        if used r.transport then
+          Some
+            {
+              metric = r.name;
+              instrument = sdk_instrument_word r.instrument;
+              metric_expected = true;
+              metric_attributes = sdk_attributes r.attributes;
+            }
+        else None)
+      sdk_table.metrics
+  in
+  (match (transport, spans, metrics) with
+  | Some t, [], [] ->
+      failwith
+        ("sdk-telemetry/telemetry.json lists no row for the transport "
+       ^ transport_word t)
+  | _ -> ());
   (spans, metrics)
 
 (* The keys of the resource a service exports under: exactly these. *)

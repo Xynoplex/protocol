@@ -1,10 +1,7 @@
-(* A service held to the telemetry the spec lists for it
+(* A service, or an SDK, held to the telemetry the spec lists for it
    (specs/src/service-telemetry/telemetry.json, and the rows of
-   specs/src/sdk-telemetry/telemetry.json it names), from what its OTLP
-   receiver got, in both directions.
-
-   Partly ported: an SDK's own check (outsideTheSdkTable) is not, since no
-   ported case holds an SDK. *)
+   specs/src/sdk-telemetry/telemetry.json it names; or that table alone),
+   from what its OTLP receiver got, in both directions. *)
 
 let shown_value : Otlp.value -> string = function
   | Text s -> s
@@ -138,7 +135,9 @@ let uniq findings =
        (fun seen f -> if List.mem f seen then seen else f :: seen)
        [] findings)
 
-let held_to (otlp : Otlp.t)
+(* [whole] says the exporter is the whole of what the rows are for, so that
+   what no row names is a finding. *)
+let held_to ~whole (otlp : Otlp.t)
     ((spans : Protocol.span_row list), (metrics : Protocol.metric_row list)) who
     =
   let required = List.filter (fun (a : Protocol.attribute) -> not a.only) in
@@ -194,10 +193,12 @@ let held_to (otlp : Otlp.t)
             spans
         with
         | None ->
-            [
-              Printf.sprintf "a span %s, which the spec does not list for %s"
-                span.name who;
-            ]
+            if whole then
+              [
+                Printf.sprintf "a span %s, which the spec does not list for %s"
+                  span.name who;
+              ]
+            else []
         | Some row ->
             (if span.kind <> row.kind then
                [
@@ -218,10 +219,12 @@ let held_to (otlp : Otlp.t)
             metrics
         with
         | None ->
-            [
-              Printf.sprintf "a metric %s, which the spec does not list for %s"
-                name who;
-            ]
+            if whole then
+              [
+                Printf.sprintf
+                  "a metric %s, which the spec does not list for %s" name who;
+              ]
+            else []
         | Some row ->
             List.filter_map
               (fun instrument ->
@@ -269,7 +272,9 @@ let outside_the_table ?plane (otlp : Otlp.t) service (kb : string option) =
            service_word did)
   | _ -> ());
   let unlisted =
-    held_to otlp (Protocol.telemetry ?plane service) ("the " ^ service_word)
+    held_to ~whole:true otlp
+      (Protocol.telemetry ?plane service)
+      ("the " ^ service_word)
   in
   let resources = Dynarray.create () in
   let under resource =
@@ -323,6 +328,16 @@ let outside_the_table ?plane (otlp : Otlp.t) service (kb : string option) =
       (Dynarray.to_list resources)
   in
   uniq (unlisted @ of_resources)
+
+(* The same for an SDK, from what its driver exported, against
+   sdk-telemetry/telemetry.json, with one difference. A service is its whole
+   process, so anything it exports that no row names is a finding. A
+   driver's process is the SDK and whatever else the driver runs, so what no
+   row names is not the SDK's to answer for; what arrives under a row's name
+   is. A driver that uses one [transport] alone is held to its rows. *)
+let outside_the_sdk_table ?transport otlp =
+  uniq
+    (held_to ~whole:false otlp (Protocol.sdk_telemetry ?transport ()) "an SDK")
 
 (* ── Log lines (service-telemetry/log-lines.json) ───────────────────── *)
 

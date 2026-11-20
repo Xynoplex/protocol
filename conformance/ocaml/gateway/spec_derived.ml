@@ -424,8 +424,8 @@ let request_limits (w : World.t) =
     ]
 
 let tests implementations =
-  each_plane ~make:(plain implementations) ~world:Fun.id ~close:World.close
-    "every operation the spec declares"
+  World.each_plane ~make:(plain implementations) ~world:Fun.id
+    ~close:World.close "every operation the spec declares"
     [
       case
         "a protected operation refuses a request with no credential — before \

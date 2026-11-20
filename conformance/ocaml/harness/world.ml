@@ -297,3 +297,35 @@ let end_case ~account ~settle body =
             (String.concat "\n"
                ("and the case let pass what no case may:" :: violations)));
       Printexc.raise_with_backtrace failure trace
+
+(* [cases] against a world on each of [planes], under [title] and the plane,
+   as eachPlane names them. [make] makes what a file's cases share, [world]
+   is the gateway's world within it and [close] ends it. After every case,
+   the streams it opened must have carried nothing the spec does not allow,
+   and the gateway must have asked the stand-in Archivist only what its spec
+   declares. *)
+let each_plane ?(planes = Protocol.Service_rows.gateway_config_type_all) ~make
+    ~world ~close title cases =
+  List.concat_map
+    (fun plane ->
+      let word = Protocol.Service_rows.gateway_config_type_value plane in
+      let category = [ Printf.sprintf "%s (%s plane)" title word ] in
+      let made =
+        Suite.world
+          (String.concat "/" category)
+          ~make:(fun () -> make plane)
+          ~close
+      in
+      List.map
+        (fun (c : _ Case.t) ->
+          Case.test ~category c (fun () ->
+              let shared = made () in
+              let w : t = world shared in
+              end_case
+                ~account:(fun () ->
+                  "gateway output:\n"
+                  ^ String.concat "\n" (Process.output w.gateway.process))
+                ~settle:(fun () -> drain w)
+                (fun () -> c.run shared)))
+        cases)
+    planes
