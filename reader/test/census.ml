@@ -250,6 +250,17 @@ let () =
     "/namespaces/0/methods/0/parameters/0/schema/$ref: names \
      https://xynolog.org/protocol/WorkerConfig.json, worker/WorkerConfig.json, \
      which is not a component or a client type";
+  surface specs ~why:"has a method return an $id no schema states"
+    "namespaces/1/methods/0/returns/$ref"
+    (fun _ -> `String (id "Nowhere.json"))
+    "/namespaces/1/methods/0/returns/$ref: names \
+     https://xynolog.org/protocol/Nowhere.json, an $id no JSON Schema states";
+  surface specs ~why:"has a method return a service's schema"
+    "namespaces/1/methods/0/returns/$ref"
+    (fun _ -> `String (id "WorkerConfig.json"))
+    "/namespaces/1/methods/0/returns/$ref: names \
+     https://xynolog.org/protocol/WorkerConfig.json, worker/WorkerConfig.json, \
+     which is not a component or a client type";
   changed specs ~why:"has a query's value name an $id no schema states"
     "client/refresh.json" "queries/0/value/$ref"
     (fun _ -> `String (id "Nowhere.json"))
@@ -516,6 +527,33 @@ let () =
       | _ -> failwith "job.status takes one parameter")
     "/namespaces/8/methods/4/parameters/1: names jobId, which job.status takes \
      already";
+  surface specs ~why:"has a method say nothing of what it returns"
+    "namespaces/0/methods/0"
+    (members (List.remove_assoc "returns"))
+    "/namespaces/0/methods/0: lacks the member \"returns\"";
+  surface specs ~why:"has a signal return a value"
+    "namespaces/1/methods/17/returns"
+    (fun _ -> `Assoc [ ("$ref", `String (id "ResourceId.json")) ])
+    "/namespaces/1/methods/17/returns: is a value, and browse.click is a \
+     signal, whose shape says all it gives: it returns null";
+  surface specs ~why:"has a count return a value"
+    "namespaces/7/methods/0/returns"
+    (fun _ ->
+      `Assoc
+        [ ("type", `String "integer"); ("description", `String "How many.") ])
+    "/namespaces/7/methods/0/returns: is a value, and beckon.attention is a \
+     count, whose shape says all it gives: it returns null";
+  surface specs ~why:"has a stream return nothing"
+    "namespaces/4/methods/0/returns"
+    (fun _ -> `Null)
+    "/namespaces/4/methods/0/returns: is null, and gather.annotation is a \
+     stream, which gives a value";
+  surface specs ~why:"has an events method return another channel's schema"
+    "namespaces/8/methods/0/returns/$ref"
+    (fun _ -> `String (id "JobFailCommand.json"))
+    "/namespaces/8/methods/0/returns: is not \
+     https://xynolog.org/protocol/JobQueuedEvent.json, the schema \
+     bus/registry.json states for the channel job.queued observes";
   let bounds = "bus/reply-bounds.json" in
   changed specs ~why:"names a reply of no operation" bounds "replies"
     (members (fun replies ->

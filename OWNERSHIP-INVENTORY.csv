@@ -736,6 +736,8 @@ specs/src/client/types/BeginAuthorizationOptions.json,Normative protocol source,
 specs/src/client/types/ClaimOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/CreateFromTokenOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/DeviceCode.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/EngineWithLimits.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/EnginesWithLimits.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/FrameRefusalReason.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/GatherResourceOptions.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/IssuedTokens.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -748,6 +750,8 @@ specs/src/client/types/PendingAnnotation.json,Normative protocol source,xynolog/
 specs/src/client/types/PutBinaryRequest.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/QuotedText.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/ReconciledSpan.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/ResourceRepresentation.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/client/types/ResourceRepresentationStream.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/ResourceSearchFilters.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/SearchState.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/client/types/TextSpan.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -762,6 +766,7 @@ specs/src/components/schemas/Agent.json,Normative protocol source,xynolog/protoc
 specs/src/components/schemas/AgentOrganization.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AgentPerson.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AgentSoftware.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/components/schemas/AnchorRect.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AnchoredText.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AnchoredTextAbsent.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/AnchoredTextAnswer.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

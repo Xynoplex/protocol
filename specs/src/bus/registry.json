@@ -2463,7 +2463,7 @@
       },
       "schemaDocs": {
         "lead": [],
-        "trailing": "includes runtime `anchorRect?: AnchorRect`"
+        "trailing": ""
       }
     },
     {

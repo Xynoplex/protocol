@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/EnginesWithLimits.json",
+  "title": "EnginesWithLimits",
+  "type": "array",
+  "description": "The knowledge base's engines, in the order `browse:engines-result` names them, each with the limits reported for it.",
+  "items": {
+    "$ref": "https://xynolog.org/protocol/EngineWithLimits.json"
+  }
+}

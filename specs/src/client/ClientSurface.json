@@ -366,6 +366,17 @@
                     ]
                   }
                 },
+                "returns": {
+                  "description": "What the call gives its caller once the SDK has unwrapped the reply: the value a promise resolves with, a stream's or a delegation's final value, an upload's created resource, a cache's value, each event of an `events` row (its channel's schema, as bus/registry.json states it) and each job a `claims` row holds. null when the call gives nothing beyond its shape: a promise that resolves with nothing, and every `signal` and `count` row, whose shape says all it gives.",
+                  "anyOf": [
+                    {
+                      "$ref": "#/properties/namespaces/items/properties/methods/items/properties/parameters/items/oneOf/0/properties/schema"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "cases": {
                   "type": "array",
                   "minItems": 1,
@@ -449,6 +460,7 @@
                 "shape",
                 "via",
                 "parameters",
+                "returns",
                 "cases"
               ],
               "additionalProperties": false

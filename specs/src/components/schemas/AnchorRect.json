@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/AnchorRect.json",
+  "type": "object",
+  "description": "Where a clicked annotation's element is on the viewer's screen: its rectangle in viewport pixels, as a DOM rectangle states it. A viewer's own geometry: it rides a viewer's local frames, and a frame another participant's screen receives carries none.",
+  "properties": {
+    "x": {
+      "type": "number",
+      "description": "The rectangle's horizontal origin."
+    },
+    "y": {
+      "type": "number",
+      "description": "The rectangle's vertical origin."
+    },
+    "width": {
+      "type": "number",
+      "description": "The rectangle's width."
+    },
+    "height": {
+      "type": "number",
+      "description": "The rectangle's height."
+    },
+    "top": {
+      "type": "number",
+      "description": "The rectangle's top edge."
+    },
+    "right": {
+      "type": "number",
+      "description": "The rectangle's right edge."
+    },
+    "bottom": {
+      "type": "number",
+      "description": "The rectangle's bottom edge."
+    },
+    "left": {
+      "type": "number",
+      "description": "The rectangle's left edge."
+    }
+  },
+  "required": [
+    "x",
+    "y",
+    "width",
+    "height",
+    "top",
+    "right",
+    "bottom",
+    "left"
+  ]
+}

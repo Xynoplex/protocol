@@ -6,6 +6,9 @@
   "properties": {
     "annotationId": {
       "$ref": "https://xynolog.org/protocol/AnnotationId.json"
+    },
+    "anchorRect": {
+      "$ref": "https://xynolog.org/protocol/AnchorRect.json"
     }
   },
   "required": [

@@ -684,7 +684,8 @@ let load root =
     @ archivists_alone
   in
   let client_surface =
-    Client_surface.refusals ~ids ~read_json ~schema_at tables.client_surface
+    Client_surface.refusals ~ids ~read_json ~schema_at
+      ~registry:tables.bus_registry tables.client_surface
   in
   let reply_bounds =
     Reply_bounds.refusals ~ids ~schema_at tables.bus_registry
