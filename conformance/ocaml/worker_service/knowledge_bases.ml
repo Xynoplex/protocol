@@ -18,15 +18,12 @@ let reconnect_ms () = Protocol.client_timing "reconnectMs"
 (* The id of the job the first engine of a knowledge base holds, as
    GET /health says it. *)
 let held_by kb =
-  match Protocol.at kb [ "engines"; "0"; "activeJob"; "jobId" ] with
-  | Some (`String id) -> Some id
-  | _ -> (
-      match Check.list kb [ "engines" ] with
-      | engine :: _ -> (
-          match Protocol.at engine [ "activeJob"; "jobId" ] with
-          | Some (`String id) -> Some id
-          | _ -> None)
-      | [] -> None)
+  match Check.list kb [ "engines" ] with
+  | engine :: _ -> (
+      match Protocol.at engine [ "activeJob"; "jobId" ] with
+      | Some (`String id) -> Some id
+      | _ -> None)
+  | [] -> None
 
 let held_is what (job : W.job) kb =
   Check.equal what (str job.id)

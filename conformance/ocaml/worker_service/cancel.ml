@@ -40,104 +40,43 @@ let schema =
 
 let source = "res-ws-cancel-source"
 
-let source_descriptor =
-  `Assoc
-    [
-      ("@context", str "https://schema.org");
-      ("@id", str source);
-      ("name", str "Notes on the engine");
-      ( "representations",
-        `List
-          [
-            `Assoc
-              [
-                ("mediaType", str "text/markdown");
-                ("storageUri", str (W.storage_uri source));
-                ("rel", str "original");
-              ];
-          ] );
-    ]
-
-(* A yield job focused on a resource, queued. *)
+(* A yield job focused on [source], queued. *)
 let yield_job (kb : W.kb) name =
-  let params =
-    `Assoc
-      [
-        ("resourceId", str source);
-        ("title", str "The Analytical Engine");
-        ("storageUri", str (Printf.sprintf "file://generated/%s.md" name));
-        ( "context",
-          `Assoc
-            [
-              ( "focus",
-                `Assoc
-                  [
-                    ("kind", str "resource");
-                    ("resource", source_descriptor);
-                    ( "content",
-                      `Assoc [ ("main", str text); ("related", `Assoc []) ] );
-                  ] );
-              ("graph", `Assoc [ ("nodes", `List []); ("edges", `List []) ]);
-              ("metadata", `Assoc []);
-            ] );
-      ]
-  in
-  (match Protocol.against "GenerationJobParams" params with
-  | [] -> ()
-  | refusals ->
-      failwith
-        ("the case's yield job is no GenerationJobParams: "
-        ^ String.concat "; " refusals));
-  W.queued kb "yield" params
+  yield_job kb name
+    (`Assoc
+       [
+         ("title", str "The Analytical Engine");
+         ( "context",
+           `Assoc
+             [
+               ( "focus",
+                 `Assoc
+                   [
+                     ("kind", str "resource");
+                     ("resource", source_descriptor source);
+                     ( "content",
+                       `Assoc [ ("main", str text); ("related", `Assoc []) ] );
+                   ] );
+               ("graph", `Assoc [ ("nodes", `List []); ("edges", `List []) ]);
+               ("metadata", `Assoc []);
+             ] );
+       ])
 
 (* What a mark job that stopped after one piece asked of the gateway, in
    order: its one batch, its checkpoints, and its cancel. [held] is a case
    that held the provider's answer until the worker had the cancellation:
    the worker's answer to the request that told the case so falls there. *)
 let stopped_after_one_piece ?(held = true) resource_id checkpoints =
-  strs
-    ([
-       "emit job:claim";
-       "emit job:start";
-       "emit browse:resource-requested";
-       "GET /resources/" ^ resource_id;
-     ]
-    @ (if held then [ "emit job:limits-result" ] else [])
-    @ [ "emit mark:commit" ]
-    @ List.init checkpoints (fun _ -> "emit job:checkpoint")
-    @ [ "emit job:cancel"; "emit job:claim" ])
-
-(* An unresolved reference's body: the entity type, as a tag. *)
-let entity kind =
-  `List
-    [
-      `Assoc
-        [
-          ("type", str "TextualBody");
-          ("value", str kind);
-          ("purpose", str "tagging");
-          ("format", str "text/plain");
-          ("language", str "en");
-        ];
-    ]
-
-let cursor ~next ~size ~found ~emitted =
-  `Assoc
-    [
-      ("next", `Int next);
-      ("size", `Int size);
-      ("found", `Int found);
-      ("emitted", `Int emitted);
-      ("errors", `Int 0);
-    ]
-
-let checkpoint (job : W.job) ?(completed = []) cursors =
-  `Assoc
-    [
-      ("jobId", str job.id);
-      ("completedUnits", strs completed);
-      ("unitCursors", `Assoc cursors);
-    ]
+  [
+    "emit job:claim";
+    "emit job:start";
+    "emit browse:resource-requested";
+    "GET /resources/" ^ resource_id;
+  ]
+  @ (if held then [ "emit job:limits-result" ] else [])
+  @ [ "emit mark:commit" ]
+  @ List.init checkpoints (fun _ -> "emit job:checkpoint")
+  @ [ "emit job:cancel"; "emit job:claim" ]
 
 let cancel_of ?completed (job : W.job) =
   `Assoc
@@ -150,25 +89,6 @@ let cancel_of ?completed (job : W.job) =
     match completed with
     | Some units -> [ ("completedUnits", strs units) ]
     | None -> [])
-
-let committed served =
-  `List
-    (List.map
-       (fun p -> without_created (member "annotations" p))
-       (W.payloads served "mark:commit"))
-
-let checkpoints served = `List (W.payloads served "job:checkpoint")
-
-let expect_sequence served expected =
-  Check.equal "what it asked the gateway for" expected
-    (strs (W.sequence served))
-
-let says_nothing_of served channels =
-  List.iter
-    (fun channel ->
-      Check.equal ("its " ^ channel) (`List [])
-        (`List (W.payloads served channel)))
-    channels
 
 let generations (w : W.t) = Dynarray.length w.ollama.generations
 
@@ -224,7 +144,7 @@ let highlighting_partway (w : W.t) =
   (* The cancellation did not end the request: the worker still waits on it,
      and has said nothing of the job since. *)
   first_not_abandoned w;
-  says_nothing_of served [ "job:cancel" ];
+  said_nothing served [ "job:cancel" ];
   Ollama.release w.ollama
     (Yojson.Safe.to_string
        (`List
@@ -247,12 +167,15 @@ let highlighting_partway (w : W.t) =
                852;
            ];
        ])
-    (committed served);
+    (batches served);
   Check.equal "its checkpoints"
     (`List
        [
          checkpoint job
-           [ ("highlighting", cursor ~next:704 ~size:311 ~found:2 ~emitted:2) ];
+           [
+             ( "highlighting",
+               cursor ~next:704 ~size:311 ~found:2 ~emitted:2 ~errors:0 );
+           ];
        ])
     (checkpoints served);
   expect_sequence served (stopped_after_one_piece resource_id 1);
@@ -267,7 +190,7 @@ let highlighting_partway (w : W.t) =
       report job 30 (code "analyzing");
       report job 60 (code ~members:[ ("count", `Int 2) ] "creating-annotations");
     ];
-  says_nothing_of served [ "job:complete"; "job:fail" ]
+  said_nothing served [ "job:complete"; "job:fail" ]
 
 let commenting_partway (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
@@ -319,12 +242,15 @@ let commenting_partway (w : W.t) =
                "marker 103";
            ];
        ])
-    (committed served);
+    (batches served);
   Check.equal "its checkpoints"
     (`List
        [
          checkpoint job
-           [ ("commenting", cursor ~next:704 ~size:292 ~found:1 ~emitted:1) ];
+           [
+             ( "commenting",
+               cursor ~next:704 ~size:292 ~found:1 ~emitted:1 ~errors:0 );
+           ];
        ])
     (checkpoints served);
   expect_sequence served (stopped_after_one_piece resource_id 1);
@@ -335,7 +261,7 @@ let commenting_partway (w : W.t) =
       report job 30 (code "analyzing");
       report job 60 (code ~members:[ ("count", `Int 1) ] "creating-annotations");
     ];
-  says_nothing_of served [ "job:complete" ]
+  said_nothing served [ "job:complete" ]
 
 let tagging_partway (w : W.t) =
   let job =
@@ -391,14 +317,15 @@ let tagging_partway (w : W.t) =
                "London was wrong.";
            ];
        ])
-    (committed served);
+    (batches served);
   Check.equal "its checkpoints"
     (`List
        [
          checkpoint job
            [
              ( "Claim",
-               cursor ~next:(code_points text) ~size:2621 ~found:1 ~emitted:1 );
+               cursor ~next:(code_points text) ~size:2621 ~found:1 ~emitted:1
+                 ~errors:0 );
            ];
        ])
     (checkpoints served);
@@ -421,7 +348,7 @@ let tagging_partway (w : W.t) =
       report job 60
         (code ~members:[ ("count", `Int 1) ] "creating-tag-annotations");
     ];
-  says_nothing_of served [ "job:complete" ]
+  said_nothing served [ "job:complete" ]
 
 let linking_partway (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
@@ -464,14 +391,16 @@ let linking_partway (w : W.t) =
                ~body:(entity "Person") "marker 103";
            ];
        ])
-    (committed served);
+    (batches served);
   (* The type is partway: its cursor is said, and it is not among the
      finished. *)
   Check.equal "its checkpoints"
     (`List
        [
          checkpoint job
-           [ ("Person", cursor ~next:704 ~size:328 ~found:1 ~emitted:1) ];
+           [
+             ("Person", cursor ~next:704 ~size:328 ~found:1 ~emitted:1 ~errors:0);
+           ];
        ])
     (checkpoints served);
   expect_sequence served (stopped_after_one_piece resource_id 1);
@@ -512,7 +441,7 @@ let linking_partway (w : W.t) =
       standing None;
       standing (Some 1);
     ];
-  says_nothing_of served [ "job:complete" ]
+  said_nothing served [ "job:complete" ]
 
 let linking_last (w : W.t) =
   let job =
@@ -545,11 +474,13 @@ let linking_last (w : W.t) =
                ~body:(entity "Person") "Ada Lovelace";
            ];
        ])
-    (committed served);
+    (batches served);
   (* The piece was the type's last: its cursor is said, and then the type
      among the finished with its cursor still, as for any type. *)
   let person =
-    ("Person", cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1)
+    ( "Person",
+      cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1 ~errors:0
+    )
   in
   Check.equal "its checkpoints"
     (`List
@@ -564,7 +495,7 @@ let linking_last (w : W.t) =
   Check.equal "its cancel" (cancel_of ~completed:[ "Person" ] job) cancel;
   Check.equal "its reports of a completion" (`List [])
     (`List (reports_say served job "complete-created"));
-  says_nothing_of served [ "job:complete" ]
+  said_nothing served [ "job:complete" ]
 
 let linking_between (w : W.t) =
   let job =
@@ -603,7 +534,9 @@ let linking_between (w : W.t) =
           (fun (c : W.commit) -> `Int (List.length c.annotations))
           (Dynarray.to_list w.own.commits)));
   let person =
-    ("Person", cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1)
+    ( "Person",
+      cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1 ~errors:0
+    )
   in
   Check.equal "its checkpoints"
     (`List
@@ -617,13 +550,15 @@ let linking_between (w : W.t) =
   Check.equal "its cancel" (cancel_of ~completed:[ "Person" ] job) cancel;
   Check.equal "its reports of a completion" (`List [])
     (`List (reports_say served job "complete-created"));
-  says_nothing_of served [ "job:complete"; "job:fail" ]
+  said_nothing served [ "job:complete"; "job:fail" ]
 
 let linking_resumed (w : W.t) =
   (* An earlier attempt finished Person. This one is cancelled as the last
      batch of Place is committed. *)
   let person =
-    ("Person", cursor ~next:(code_points text) ~size:2658 ~found:2 ~emitted:2)
+    ( "Person",
+      cursor ~next:(code_points text) ~size:2658 ~found:2 ~emitted:2 ~errors:0
+    )
   in
   let job =
     mark_job w.own "cancel-resumed"
@@ -667,7 +602,9 @@ let linking_resumed (w : W.t) =
           (fun (c : W.commit) -> `Int (List.length c.annotations))
           (Dynarray.to_list w.own.commits)));
   let place =
-    ("Place", cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1)
+    ( "Place",
+      cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1 ~errors:0
+    )
   in
   Check.equal "its checkpoints"
     (`List
@@ -678,7 +615,7 @@ let linking_resumed (w : W.t) =
     (checkpoints served);
   expect_sequence served (stopped_after_one_piece ~held:false resource_id 2);
   Check.equal "its cancel" (cancel_of ~completed:[ "Place" ] job) cancel;
-  says_nothing_of served [ "job:complete" ]
+  said_nothing served [ "job:complete" ]
 
 let highlighting_last (w : W.t) =
   let job =
@@ -706,14 +643,15 @@ let highlighting_last (w : W.t) =
                "the first program";
            ];
        ])
-    (committed served);
+    (batches served);
   Check.equal "its checkpoints"
     (`List
        [
          checkpoint job
            [
              ( "highlighting",
-               cursor ~next:(code_points text) ~size:2641 ~found:1 ~emitted:1 );
+               cursor ~next:(code_points text) ~size:2641 ~found:1 ~emitted:1
+                 ~errors:0 );
            ];
        ])
     (checkpoints served);
@@ -725,7 +663,7 @@ let highlighting_last (w : W.t) =
       report job 30 (code "analyzing");
       report job 60 (code ~members:[ ("count", `Int 1) ] "creating-annotations");
     ];
-  says_nothing_of served [ "job:complete" ]
+  said_nothing served [ "job:complete" ]
 
 let before_first_piece (w : W.t) =
   let job =
@@ -752,15 +690,14 @@ let before_first_piece (w : W.t) =
   Check.equal "what it committed" (`Int 0)
     (`Int (Dynarray.length w.own.commits));
   expect_sequence served
-    (strs
-       [
-         "emit job:claim";
-         "emit job:start";
-         "emit browse:resource-requested";
-         "GET /resources/" ^ resource_id;
-         "emit job:cancel";
-         "emit job:claim";
-       ]);
+    [
+      "emit job:claim";
+      "emit job:start";
+      "emit browse:resource-requested";
+      "GET /resources/" ^ resource_id;
+      "emit job:cancel";
+      "emit job:claim";
+    ];
   Check.equal "its cancel" (cancel_of job) cancel;
   expect_progress served job []
 
@@ -776,25 +713,23 @@ let yield_before_upload (w : W.t) =
   (* Nothing reached the gateway but the job's own lifecycle: no upload, and
      no commit. *)
   expect_generations_count w 1;
-  Check.equal "its uploads" (`Int 0)
-    (`Int (Dynarray.length w.own.world.archivist.uploads));
+  Check.equal "its uploads" (`Int 0) (`Int (List.length (uploads w)));
   Check.equal "what it committed" (`Int 0)
     (`Int (Dynarray.length w.own.commits));
   (* (The limits it answered are the request that told this case the
      cancellation had arrived.) *)
   expect_sequence served
-    (strs
-       [
-         "emit job:claim";
-         "emit job:start";
-         "emit job:limits-result";
-         "emit job:cancel";
-         "emit job:claim";
-       ]);
+    [
+      "emit job:claim";
+      "emit job:start";
+      "emit job:limits-result";
+      "emit job:cancel";
+      "emit job:claim";
+    ];
   Check.equal "its cancel" (cancel_of job) cancel;
   (* It said it was generating, and nothing after its model answered. *)
   expect_progress served job [ report job 5 (code "generating-resource") ];
-  says_nothing_of served [ "job:complete"; "job:fail" ]
+  said_nothing served [ "job:complete"; "job:fail" ]
 
 let yield_after_upload (w : W.t) =
   let job = yield_job w.own "cancel-yield-late" in
@@ -814,37 +749,18 @@ let yield_after_upload (w : W.t) =
   let served = W.start w in
   let completion = settled served job in
   let uploaded =
-    match Dynarray.to_list w.own.world.archivist.uploads with
+    match uploads w with
     | [ upload ] -> upload
     | uploads ->
         failwith
           (Printf.sprintf "it uploaded %d resources, not one"
              (List.length uploads))
   in
-  expect_sequence served
-    (strs
-       [
-         "emit job:claim";
-         "emit job:start";
-         "POST /resources";
-         "emit mark:commit";
-         "emit job:complete";
-         "emit job:claim";
-       ]);
+  expect_sequence served yielded;
   Check.equal "its completion"
-    (identified job
-       [
-         ( "result",
-           `Assoc
-             [
-               ("resourceId", str uploaded.resource_id);
-               ("resourceName", str "The Analytical Engine");
-               ("truncated", `Bool false);
-             ] );
-         ("durability", str "acknowledged");
-       ])
+    (generated job uploaded ~truncated:false)
     completion;
-  says_nothing_of served [ "job:cancel" ];
+  said_nothing served [ "job:cancel" ];
   expect_progress served job
     [
       report job 5 (code "generating-resource");

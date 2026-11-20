@@ -13,38 +13,12 @@ open Case
 let chunk_size = 2641
 let model = (List.hd W.ollama_engines).model
 
-(* The commits' payloads, each batch's annotations without created. *)
-let committed served =
-  `List
-    (List.map
-       (function
-         | `Assoc members ->
-             `Assoc
-               (List.map
-                  (fun (k, v) ->
-                    if k = "annotations" then (k, without_created v) else (k, v))
-                  members)
-         | other -> other)
-       (W.payloads served "mark:commit"))
-
 let checkpoint (job : W.job) ~found ~emitted ~errors =
-  `Assoc
+  checkpoint job
     [
-      ("jobId", str job.id);
-      ("completedUnits", `List []);
-      ( "unitCursors",
-        `Assoc
-          [
-            ( "highlighting",
-              `Assoc
-                [
-                  ("next", `Int (code_points text));
-                  ("size", `Int chunk_size);
-                  ("found", `Int found);
-                  ("emitted", `Int emitted);
-                  ("errors", `Int errors);
-                ] );
-          ] );
+      ( "highlighting",
+        cursor ~next:(code_points text) ~size:chunk_size ~found ~emitted ~errors
+      );
     ]
 
 let reports ?extra job ~count =
@@ -90,19 +64,17 @@ let end_to_end (w : W.t) =
   let completion = settled served job in
   (* What it asked the gateway for, in order. The job's description is read
      on the bus, its bytes over HTTP. *)
-  Check.equal "what it asked the gateway for"
-    (strs
-       [
-         "emit job:claim";
-         "emit job:start";
-         "emit browse:resource-requested";
-         "GET /resources/" ^ resource_id;
-         "emit mark:commit";
-         "emit job:checkpoint";
-         "emit job:complete";
-         "emit job:claim";
-       ])
-    (strs (W.sequence served));
+  expect_sequence served
+    [
+      "emit job:claim";
+      "emit job:start";
+      "emit browse:resource-requested";
+      "GET /resources/" ^ resource_id;
+      "emit mark:commit";
+      "emit job:checkpoint";
+      "emit job:complete";
+      "emit job:claim";
+    ];
   Check.equal "its start"
     (`List [ identity job ])
     (`List (W.payloads served "job:start"));
@@ -174,18 +146,16 @@ let finds_nothing (w : W.t) =
   Ollama.script w.ollama [ answer "[]" ];
   let served = W.start w in
   let completion = settled served job in
-  Check.equal "what it asked the gateway for"
-    (strs
-       [
-         "emit job:claim";
-         "emit job:start";
-         "emit browse:resource-requested";
-         "GET /resources/" ^ job.resource_id;
-         "emit job:checkpoint";
-         "emit job:complete";
-         "emit job:claim";
-       ])
-    (strs (W.sequence served));
+  expect_sequence served
+    [
+      "emit job:claim";
+      "emit job:start";
+      "emit browse:resource-requested";
+      "GET /resources/" ^ job.resource_id;
+      "emit job:checkpoint";
+      "emit job:complete";
+      "emit job:claim";
+    ];
   Check.equal "what it committed" (`Int 0)
     (`Int (Dynarray.length w.own.commits));
   Check.equal "its checkpoint"
@@ -239,10 +209,7 @@ let instructed (w : W.t) =
                "1843";
            ];
        ])
-    (`List
-       (List.map
-          (fun p -> without_created (member "annotations" p))
-          (W.payloads served "mark:commit")));
+    (batches served);
   Check.equal "its completion"
     (identified job
        [

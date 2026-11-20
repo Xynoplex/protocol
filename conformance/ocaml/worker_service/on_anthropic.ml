@@ -37,60 +37,16 @@ let refused ?(headers = []) status kind words =
    stand-in describes as it does unless told otherwise. *)
 let highlighting () = message claude.model "highlighting"
 
-(* What a mark job that made nothing asked of the gateway, in order. *)
-let made_nothing (job : W.job) =
-  [
-    "emit job:claim";
-    "emit job:start";
-    "emit browse:resource-requested";
-    "GET /resources/" ^ job.resource_id;
-    "emit job:fail";
-    "emit job:claim";
-  ]
-
 (* The resource a yield job is focused on, as worker/prompt-cases.json
    names it. *)
-let source = "res-ws-yield-source"
+let source =
+  text_of
+    (Check.at (params "yield-markdown")
+       [ "context"; "focus"; "resource"; "@id" ])
 
 (* A yield job focused on [source], queued, asking as the case [asked] of
    worker/prompt-cases.json does. *)
-let yield_job (kb : W.kb) name asked =
-  let params =
-    match params asked with
-    | `Assoc members ->
-        `Assoc
-          (("resourceId", str source)
-          :: List.map
-               (fun (k, v) ->
-                 if k = "storageUri" then
-                   (k, str (Printf.sprintf "file://generated/%s.md" name))
-                 else (k, v))
-               members)
-    | other ->
-        failwith ("a yield case's params are an object: " ^ Check.shown other)
-  in
-  (match Protocol.against "GenerationJobParams" params with
-  | [] -> ()
-  | refusals ->
-      failwith
-        ("the case's yield job is no GenerationJobParams: "
-        ^ String.concat "; " refusals));
-  W.queued kb "yield" params
-
-(* What a yield job that cited nothing asked of the gateway, in order: its
-   upload, and the link from its source. *)
-let yielded =
-  [
-    "emit job:claim";
-    "emit job:start";
-    "POST /resources";
-    "emit mark:commit";
-    "emit job:complete";
-    "emit job:claim";
-  ]
-
-let all_but_last items =
-  List.filteri (fun at _ -> at < List.length items - 1) items
+let yield_job kb name asked = yield_job kb name (params asked)
 
 (* The highlight of "the first program" in the short text, on
    [resource_id]. *)
@@ -104,54 +60,8 @@ let first_program generator resource_id =
        Analytical"
     "the first program"
 
-(* An unresolved reference's body: the entity type, as a tag. *)
-let entity kind =
-  `List
-    [
-      `Assoc
-        [
-          ("type", str "TextualBody");
-          ("value", str kind);
-          ("purpose", str "tagging");
-          ("format", str "text/plain");
-          ("language", str "en");
-        ];
-    ]
-
 let highlighting_job (w : W.t) name =
   mark_job w.own name (`Assoc [ ("motivation", str "highlighting") ])
-
-let expect_sequence served expected =
-  Check.equal "what it asked the gateway for" (strs expected)
-    (strs (W.sequence served))
-
-(* A failure's payload, its error taken away, and the error. *)
-let failure_of payload =
-  match payload with
-  | `Assoc members ->
-      let error =
-        match List.assoc_opt "error" members with
-        | Some (`String error) -> error
-        | _ ->
-            failwith ("a failure whose error is no text: " ^ Check.shown payload)
-      in
-      (`Assoc (List.remove_assoc "error" members), error)
-  | other -> failwith ("a failure is an object: " ^ Check.shown other)
-
-let failed ?(failure_class : string option) ~will_retry job =
-  identified job
-    ((match failure_class with
-       | Some c -> [ ("failureClass", str c) ]
-       | None -> [])
-    @ [ ("willRetry", `Bool will_retry) ])
-
-let says what error text =
-  Check.that
-    (Printf.sprintf "%s says %S: %s" what text error)
-    (Re.execp (Re.compile (Re.str text)) error)
-
-let said_nothing_of served channel =
-  Check.equal ("its " ^ channel) (`List []) (`List (W.payloads served channel))
 
 let requested (w : W.t) =
   strs
@@ -160,21 +70,6 @@ let requested (w : W.t) =
        (Dynarray.to_list w.anthropic.requests))
 
 let generation (w : W.t) at = Dynarray.get w.anthropic.generations at
-let uploads (w : W.t) = Dynarray.to_list w.own.world.archivist.uploads
-
-let yield_completion (job : W.job) (upload : Archivist_standin.upload)
-    ~truncated =
-  identified job
-    [
-      ( "result",
-        `Assoc
-          [
-            ("resourceId", str upload.resource_id);
-            ("resourceName", str "The Analytical Engine");
-            ("truncated", `Bool truncated);
-          ] );
-      ("durability", str "acknowledged");
-    ]
 
 let early_reports job =
   [ report job 10 (code "loading"); report job 30 (code "analyzing") ]
@@ -279,18 +174,7 @@ let asks_once_then_each (w : W.t) =
                  ] );
            ];
        ])
-    (`List
-       (List.map
-          (function
-            | `Assoc members ->
-                `Assoc
-                  (List.map
-                     (fun (k, v) ->
-                       if k = "annotations" then (k, without_created v)
-                       else (k, v))
-                     members)
-            | other -> other)
-          (W.payloads served "mark:commit")));
+    (committed served);
   Check.equal "who committed"
     (strs [ W.did w.own ])
     (`List
@@ -298,23 +182,11 @@ let asks_once_then_each (w : W.t) =
           (fun (c : W.commit) -> c.committed_by)
           (Dynarray.to_list w.own.commits)));
   Check.equal "its first checkpoint"
-    (`Assoc
+    (checkpoint first
        [
-         ("jobId", str first.id);
-         ("completedUnits", `List []);
-         ( "unitCursors",
-           `Assoc
-             [
-               ( "highlighting",
-                 `Assoc
-                   [
-                     ("next", `Int (code_points text));
-                     ("size", `Int anthropic_piece);
-                     ("found", `Int 3);
-                     ("emitted", `Int 2);
-                     ("errors", `Int 1);
-                   ] );
-             ] );
+         ( "highlighting",
+           cursor ~next:(code_points text) ~size:anthropic_piece ~found:3
+             ~emitted:2 ~errors:1 );
        ])
     (List.hd (W.payloads served "job:checkpoint"));
   Check.equal "its completion"
@@ -340,26 +212,14 @@ let budget (max_input_tokens, max_output_tokens, size) (w : W.t) =
   Check.equal "its checkpoints"
     (`List
        [
-         `Assoc
+         checkpoint job
            [
-             ("jobId", str job.id);
-             ("completedUnits", `List []);
-             ( "unitCursors",
-               `Assoc
-                 [
-                   ( "highlighting",
-                     `Assoc
-                       [
-                         ("next", `Int (code_points text));
-                         ("size", `Int size);
-                         ("found", `Int 0);
-                         ("emitted", `Int 0);
-                         ("errors", `Int 0);
-                       ] );
-                 ] );
+             ( "highlighting",
+               cursor ~next:(code_points text) ~size ~found:0 ~emitted:0
+                 ~errors:0 );
            ];
        ])
-    (`List (W.payloads served "job:checkpoint"))
+    (checkpoints served)
 
 let no_temperature (w : W.t) =
   let mark = highlighting_job w "anthropic-no-temperature" in
@@ -375,7 +235,7 @@ let no_temperature (w : W.t) =
   ignore (settled served made : Yojson.Safe.t);
   expect_messages w.anthropic
     [ highlighting (); message claude.model "yield-markdown" ];
-  said_nothing_of served "job:fail"
+  said_nothing served [ "job:fail" ]
 
 let no_schema (w : W.t) =
   let facts = { W.anthropic_model with Anthropic.structured_outputs = false } in
@@ -560,45 +420,45 @@ let linking_four_at_once (w : W.t) =
          (str (Printf.sprintf "%d:%d:%s" start stop exact)))
       ~start ~stop ~prefix ~suffix ~body:(entity kind) exact
   in
-  let by_text items =
-    `List
-      (List.sort
-         (fun a b ->
-           compare
-             (json_text (Check.canonical a))
-             (json_text (Check.canonical b)))
-         items)
+  let by_text = function
+    | `List items ->
+        `List
+          (List.sort
+             (fun a b ->
+               compare
+                 (json_text (Check.canonical a))
+                 (json_text (Check.canonical b)))
+             items)
+    | other -> other
   in
   Check.equal "what it committed"
     (by_text
-       [
-         `List
-           [
-             reference "Person" ~start:119 ~stop:134
-               ~prefix:
-                 "method for computing Bernoulli numbers on the Analytical \
-                  Engine.\n\n"
-               ~suffix:
-                 " designed the engine in London, but it was never built. \
-                  Lovelace"
-               "Charles Babbage";
-           ];
-         `List
-           [
-             reference "Place" ~start:158 ~stop:164
-               ~prefix:
-                 "on the Analytical Engine.\n\n\
-                  Charles Babbage designed the engine in "
-               ~suffix:
-                 ", but it was never built. Lovelace argued that the engine \
-                  could manipulate"
-               "London";
-           ];
-       ])
-    (by_text
-       (List.map
-          (fun p -> without_created (member "annotations" p))
-          (W.payloads served "mark:commit")));
+       (`List
+          [
+            `List
+              [
+                reference "Person" ~start:119 ~stop:134
+                  ~prefix:
+                    "method for computing Bernoulli numbers on the Analytical \
+                     Engine.\n\n"
+                  ~suffix:
+                    " designed the engine in London, but it was never built. \
+                     Lovelace"
+                  "Charles Babbage";
+              ];
+            `List
+              [
+                reference "Place" ~start:158 ~stop:164
+                  ~prefix:
+                    "on the Analytical Engine.\n\n\
+                     Charles Babbage designed the engine in "
+                  ~suffix:
+                    ", but it was never built. Lovelace argued that the engine \
+                     could manipulate"
+                  "London";
+              ];
+          ]))
+    (by_text (batches served));
   Check.equal "its completion"
     (identified job
        [
@@ -676,7 +536,7 @@ let refused_then_answered (w : W.t) =
          ("durability", str "acknowledged");
        ])
     completion;
-  said_nothing_of served "job:fail"
+  said_nothing served [ "job:fail" ]
 
 let told_to_wait (w : W.t) =
   let job = highlighting_job w "anthropic-told-to-wait" in
@@ -818,10 +678,10 @@ let yield_own_length (w : W.t) =
     | Some generator -> Yojson.Safe.from_string generator
     | None -> `Null);
   Check.equal "its completion"
-    (yield_completion whole first ~truncated:false)
+    (generated whole first ~truncated:false)
     completion;
   Check.equal "its completion of the one cut off"
-    (yield_completion cut_off second ~truncated:true)
+    (generated cut_off second ~truncated:true)
     truncated;
   expect_sequence served (all_but_last yielded @ yielded)
 
@@ -834,7 +694,7 @@ let yield_empty (w : W.t) =
   Check.equal "its failure" (failed ~will_retry:true job) failure;
   says "its error" error (detail "empty" []);
   Check.equal "its uploads" (`Int 0) (`Int (List.length (uploads w)));
-  said_nothing_of served "job:complete"
+  said_nothing served [ "job:complete" ]
 
 let withheld (w : W.t) =
   let mark = highlighting_job w "anthropic-withheld" in
@@ -870,7 +730,7 @@ let withheld (w : W.t) =
   Check.equal "what it committed" (`Int 0)
     (`Int (Dynarray.length w.own.commits));
   Check.equal "its uploads" (`Int 0) (`Int (List.length (uploads w)));
-  said_nothing_of served "job:complete"
+  said_nothing served [ "job:complete" ]
 
 let streamed (w : W.t) =
   let written =
@@ -899,10 +759,10 @@ let streamed (w : W.t) =
     (strs [ written; written ])
     (strs [ one.file; other.file ]);
   Check.equal "its completion of the one answer"
-    (yield_completion whole one ~truncated:true)
+    (generated whole one ~truncated:true)
     first;
   Check.equal "its completion of the stream"
-    (yield_completion streamed other ~truncated:true)
+    (generated streamed other ~truncated:true)
     second;
   expect_sequence served (all_but_last yielded @ yielded)
 
@@ -1047,7 +907,7 @@ let cancelled (w : W.t) =
   (* The worker has the cancellation, and still waits on its provider. *)
   Check.that "the cancellation did not end its request"
     (not (Anthropic.abandoned (generation w 0)));
-  said_nothing_of served "job:cancel";
+  said_nothing served [ "job:cancel" ];
   Anthropic.release w.anthropic (fun _ ->
       said (spans [ exact "the first program" ]));
   let cancel = settled ~channel:"job:cancel" served job in
@@ -1061,10 +921,7 @@ let cancelled (w : W.t) =
        [
          `List [ first_program (W.generator ~engine:claude w.own) resource_id ];
        ])
-    (`List
-       (List.map
-          (fun p -> without_created (member "annotations" p))
-          (W.payloads served "mark:commit")));
+    (batches served);
   Check.equal "its cancel"
     (`Assoc
        [
@@ -1074,7 +931,7 @@ let cancelled (w : W.t) =
          ("completedUnits", strs [ "highlighting" ]);
        ])
     cancel;
-  said_nothing_of served "job:complete"
+  said_nothing served [ "job:complete" ]
 
 let stopped (w : W.t) =
   let job = highlighting_job w "anthropic-stopped" in

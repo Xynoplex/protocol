@@ -531,6 +531,199 @@ let mark_job ?metadata ?(about = text) kb name params =
 let case_job ?metadata ?about kb name =
   mark_job ?metadata ?about kb name (params name)
 
+(* The description of a text resource [id] a yield job is focused on. *)
+let source_descriptor id =
+  `Assoc
+    [
+      ("@context", str "https://schema.org");
+      ("@id", str id);
+      ("name", str "Notes on the engine");
+      ( "representations",
+        `List
+          [
+            `Assoc
+              [
+                ("mediaType", str "text/markdown");
+                ("storageUri", str (W.storage_uri id));
+                ("rel", str "original");
+              ];
+          ] );
+    ]
+
+(* A yield job of [params], queued: its resource the one its context is
+   focused on, and what it makes stored under [name]. Held to the spec's
+   GenerationJobParams first. *)
+let yield_job kb name params =
+  let members =
+    match params with
+    | `Assoc members -> members
+    | other ->
+        failwith ("a yield job's parameters are an object: " ^ Check.shown other)
+  in
+  let focus = Check.at params [ "context"; "focus"; "resource"; "@id" ] in
+  let storage_uri = str (Printf.sprintf "file://generated/%s.md" name) in
+  let params =
+    `Assoc
+      (("resourceId", focus)
+      ::
+      (if List.mem_assoc "storageUri" members then
+         List.map
+           (fun (k, v) -> if k = "storageUri" then (k, storage_uri) else (k, v))
+           members
+       else members @ [ ("storageUri", storage_uri) ]))
+  in
+  (match Protocol.against "GenerationJobParams" params with
+  | [] -> ()
+  | refusals ->
+      failwith
+        ("the case's yield job is no GenerationJobParams: "
+        ^ String.concat "; " refusals));
+  W.queued kb "yield" params
+
+(* ── What a job asked, made and said ────────────────────────────────── *)
+
+(* Hold what a worker asked the gateway for, in order, to [expected]. *)
+let expect_sequence served expected =
+  Check.equal "what it asked the gateway for" (strs expected)
+    (strs (W.sequence served))
+
+(* What a mark job that made nothing asked of the gateway, in order. *)
+let made_nothing (job : W.job) =
+  [
+    "emit job:claim";
+    "emit job:start";
+    "emit browse:resource-requested";
+    "GET /resources/" ^ job.resource_id;
+    "emit job:fail";
+    "emit job:claim";
+  ]
+
+(* What a yield job that cited nothing asked of the gateway, in order: its
+   upload, and the link from its source. *)
+let yielded =
+  [
+    "emit job:claim";
+    "emit job:start";
+    "POST /resources";
+    "emit mark:commit";
+    "emit job:complete";
+    "emit job:claim";
+  ]
+
+let all_but_last items =
+  List.filteri (fun at _ -> at < List.length items - 1) items
+
+(* Hold that the worker said nothing on any of [channels]. *)
+let said_nothing served channels =
+  List.iter
+    (fun channel ->
+      Check.equal ("its " ^ channel) (`List [])
+        (`List (W.payloads served channel)))
+    channels
+
+(* What the worker committed: each batch's payload, its annotations without
+   created. *)
+let committed served =
+  `List
+    (List.map
+       (function
+         | `Assoc members ->
+             `Assoc
+               (List.map
+                  (fun (k, v) ->
+                    if k = "annotations" then (k, without_created v) else (k, v))
+                  members)
+         | other -> other)
+       (W.payloads served "mark:commit"))
+
+(* What the worker committed: each batch's annotations, without created. *)
+let batches served =
+  `List
+    (List.map
+       (fun p -> without_created (member "annotations" p))
+       (W.payloads served "mark:commit"))
+
+(* An unresolved reference's body: the entity type, as a tag. *)
+let entity kind =
+  `List
+    [
+      `Assoc
+        [
+          ("type", str "TextualBody");
+          ("value", str kind);
+          ("purpose", str "tagging");
+          ("format", str "text/plain");
+          ("language", str "en");
+        ];
+    ]
+
+(* Where a unit stands, as a checkpoint says it. *)
+let cursor ~next ~size ~found ~emitted ~errors =
+  `Assoc
+    [
+      ("next", `Int next);
+      ("size", `Int size);
+      ("found", `Int found);
+      ("emitted", `Int emitted);
+      ("errors", `Int errors);
+    ]
+
+(* A checkpoint of [job]: the units it names finished, and where each unit
+   of [cursors] stands. *)
+let checkpoint ?(completed = []) (job : W.job) cursors =
+  `Assoc
+    [
+      ("jobId", str job.id);
+      ("completedUnits", strs completed);
+      ("unitCursors", `Assoc cursors);
+    ]
+
+let checkpoints served = `List (W.payloads served "job:checkpoint")
+
+(* A failure's payload, its error taken away, and the error. *)
+let failure_of payload =
+  match payload with
+  | `Assoc members ->
+      let error =
+        match List.assoc_opt "error" members with
+        | Some (`String error) -> error
+        | _ ->
+            failwith ("a failure whose error is no text: " ^ Check.shown payload)
+      in
+      (`Assoc (List.remove_assoc "error" members), error)
+  | other -> failwith ("a failure is an object: " ^ Check.shown other)
+
+(* A failure of [job], without its error. *)
+let failed ?failure_class ~will_retry job =
+  identified job
+    ((match failure_class with
+       | Some c -> [ ("failureClass", str c) ]
+       | None -> [])
+    @ [ ("willRetry", `Bool will_retry) ])
+
+(* Hold that [said] carries [words]. *)
+let says what said words =
+  Check.that
+    (Printf.sprintf "%s says %S: %s" what words said)
+    (Re.execp (Re.compile (Re.str words)) said)
+
+let uploads (w : W.t) = Dynarray.to_list w.own.world.archivist.uploads
+
+(* The completion of a yield job that made [upload], named by the job's
+   title. *)
+let generated (job : W.job) (upload : Archivist_standin.upload) ~truncated =
+  identified job
+    [
+      ( "result",
+        `Assoc
+          [
+            ("resourceId", str upload.resource_id);
+            ("resourceName", Check.at job.running [ "params"; "title" ]);
+            ("truncated", `Bool truncated);
+          ] );
+      ("durability", str "acknowledged");
+    ]
+
 (* ── What a worker says ─────────────────────────────────────────────── *)
 
 let messages () = (Protocol.tables ()).worker_messages
