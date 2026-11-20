@@ -35,24 +35,7 @@ let holds_no_stream { world; nc } =
   let result = (Protocol.operation_for request).result in
   ignore
   @@ World.responder world [ request ] (fun _ ->
-      Some
-        ( result,
-          `Assoc
-            [
-              ( "response",
-                `Assoc
-                  [
-                    ( "resource",
-                      `Assoc
-                        [
-                          ("@context", `String "https://schema.org/");
-                          ("@id", `String "x");
-                          ("name", `String "x");
-                          ("representations", `List []);
-                        ] );
-                    ("lastSequence", `Int 1);
-                  ] );
-            ] ));
+      Some (result, Support.described ()));
   let alice = World.person world "alice" in
   let client_id = Fresh.uuid () in
   let stream =

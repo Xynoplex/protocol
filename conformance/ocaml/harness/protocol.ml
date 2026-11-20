@@ -160,23 +160,39 @@ let limit which meth path key =
       | _ -> failwith (Printf.sprintf "%s %s states no count %s" meth path key))
   | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
 
-(* The baseline of one of an operation's x-xynolog-limits that is a limit
-   per principal, when the baseline is a count. *)
-let principal_baseline which meth path key =
+(* One of an operation's x-xynolog-limits that is a limit per principal:
+   its baseline, and its limit per role. *)
+let principal_limit which meth path key =
   match (operation which meth path).limits with
   | Some limits -> (
       match List.assoc_opt key limits with
       | Some (Openapi.Limits per) -> (
-          match List.assoc_opt "baseline" per with
-          | Some (Openapi.Count n) -> n
+          match (List.assoc_opt "baseline" per, List.assoc_opt "roles" per) with
+          | Some baseline, Some (Openapi.Limits roles) -> (baseline, roles)
           | _ ->
               failwith
-                (Printf.sprintf "%s %s's %s has no baseline count" meth path key)
-          )
+                (Printf.sprintf "%s %s's %s states no baseline and roles" meth
+                   path key))
       | _ ->
           failwith
             (Printf.sprintf "%s %s states no principal limit %s" meth path key))
   | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
+
+(* A limit that must be a count. *)
+let count = function
+  | Openapi.Count n -> n
+  | _ -> failwith "a limit that is not a count"
+
+(* The most pendingReplies one subscription may name: BusSubscribeRequest's
+   maxItems. *)
+let pending_replies_max () =
+  match component Gateway "BusSubscribeRequest" with
+  | Xynolog_protocol_schema.Schema.Schema { properties = Some properties; _ }
+    -> (
+      match List.assoc_opt "pendingReplies" properties with
+      | Some (Schema { max_items = Some n; _ }) -> n
+      | _ -> failwith "BusSubscribeRequest's pendingReplies states no maxItems")
+  | _ -> failwith "BusSubscribeRequest states no properties"
 
 (* One of a document's own x-xynolog-limits that is a count. *)
 let document_limit which key =

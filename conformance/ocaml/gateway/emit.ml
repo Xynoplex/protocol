@@ -20,18 +20,6 @@ let write = "frame:add-entity-type"
 (* Unvalidated, so its payload can be any size. *)
 let unvalidated = "mark:added"
 
-let pending_max () =
-  match Protocol.component Gateway "BusSubscribeRequest" with
-  | Xynolog_protocol_schema.Schema.Schema { properties = Some properties; _ }
-    -> (
-      match List.assoc_opt "pendingReplies" properties with
-      | Some (Schema { max_items = Some n; _ }) -> n
-      | _ -> failwith "BusSubscribeRequest's pendingReplies states no maxItems")
-  | _ -> failwith "BusSubscribeRequest states no properties"
-
-let stamps () = (Protocol.tables ()).bus_registry.stamps
-let effect_ () = (Protocol.tables ()).bus_registry.effect_
-
 let body ?scope ?correlation_id ?client_id ?(payload = `Assoc []) channel =
   `Assoc
     ([ ("channel", `String channel); ("payload", payload) ]
@@ -43,24 +31,6 @@ let body ?scope ?correlation_id ?client_id ?(payload = `Assoc []) channel =
 
 let fields members = `Assoc (List.map (fun (k, v) -> (k, `String v)) members)
 let resource = fields [ ("resourceId", "res-1") ]
-
-let described =
-  `Assoc
-    [
-      ( "response",
-        `Assoc
-          [
-            ( "resource",
-              `Assoc
-                [
-                  ("@context", `String "https://schema.org/");
-                  ("@id", `String "x");
-                  ("name", `String "x");
-                  ("representations", `List []);
-                ] );
-            ("lastSequence", `Int 1);
-          ] );
-    ]
 
 let watch (w : World.t) channels =
   World.subscribe w (World.person w "watcher")
@@ -115,7 +85,7 @@ let largest (w : World.t) =
   Check.that "the filler arrived whole" (marked "filler" filler frame)
 
 let stamped (w : World.t) =
-  let stamps = stamps () in
+  let stamps = (Protocol.tables ()).bus_registry.stamps in
   let watcher = watch w [ broadcast ] in
   let person = World.person w "stamped" in
   let worker, worker_did =
@@ -195,7 +165,8 @@ let concurrent (w : World.t) =
       in
       Check.equal person
         (`String (World.person_did w person))
-        (Check.at frame.payload [ (stamps ()).emitter ]))
+        (Check.at frame.payload
+           [ (Protocol.tables ()).bus_registry.stamps.emitter ]))
     people marks
 
 let invalid (w : World.t) =
@@ -287,19 +258,9 @@ let out_of_bound (w : World.t) =
         fields [ ("resourceId", "res-1"); ("motivation", "") ] );
     ]
 
-let identifiers kind =
-  match
-    List.find_opt
-      (fun (k : Xynolog_protocol.Tables.Identifiers_kinds.kinds_item) ->
-        k.schema = kind)
-      (Protocol.tables ()).identifiers_kinds.kinds
-  with
-  | Some found -> found
-  | None -> failwith ("identifiers/kinds.json names no kind " ^ kind)
-
 let taken_and_refused (w : World.t) kind emit_with =
   let token = World.person w "emitter" in
-  let found = identifiers kind in
+  let found = Protocol.identifiers kind in
   List.iter
     (fun (c : Xynolog_protocol.Tables.Identifiers_kinds.accepts_item) ->
       refused_400
@@ -371,7 +332,7 @@ let unanswered_requests (w : World.t) =
          ~correlation_id ~client_id)
   in
   let cids =
-    List.init (pending_max ()) (fun i ->
+    List.init (Protocol.pending_replies_max ()) (fun i ->
         let correlation_id = Fresh.uuid () in
         status
           (Printf.sprintf "request %d" i)
@@ -406,7 +367,7 @@ let unanswered_requests (w : World.t) =
   let responder, _ = World.agent w "answerer" in
   status "the answer" 202
     (World.emit w responder
-       (body (Protocol.operation_for request).result ~payload:described
+       (body (Protocol.operation_for request).result ~payload:(described ())
           ~correlation_id:(List.hd cids)));
   let rec freed attempt =
     if attempt = 50 then None
@@ -423,12 +384,15 @@ let unanswered_requests (w : World.t) =
 
 let profiles_of watcher did =
   List.filter
-    (fun f -> member f (stamps ()).emitter = Some (`String did))
+    (fun f ->
+      member f (Protocol.tables ()).bus_registry.stamps.emitter
+      = Some (`String did))
     (Bus_stream.frames ~channel:"principal:profile" watcher)
 
 let writes_publish_names (w : World.t) =
   let watcher = watch w [ "principal:profile" ] in
-  Check.that "the registry says it writes" (List.mem write (effect_ ()).writes);
+  Check.that "the registry says it writes"
+    (List.mem write (Protocol.tables ()).bus_registry.effect_.writes);
   let did = World.person_did w "writes" in
   List.iter
     (fun name ->
@@ -469,14 +433,16 @@ let agent_write_named (w : World.t) =
        (body write ~payload:(fields [ ("tag", "Named agent") ])));
   let profile =
     Bus_stream.frame watcher "principal:profile" ~matches:(fun f ->
-        member f (stamps ()).emitter = Some (`String did))
+        member f (Protocol.tables ()).bus_registry.stamps.emitter
+        = Some (`String did))
   in
   Check.equal "its name" (`String "The Named Agent")
     (Check.at profile.payload [ "name" ])
 
 let no_profile (w : World.t) =
   let watcher = watch w [ "principal:profile" ] in
-  Check.that "the registry says it reads" (List.mem request (effect_ ()).reads);
+  Check.that "the registry says it reads"
+    (List.mem request (Protocol.tables ()).bus_registry.effect_.reads);
   let reader =
     World.person w ~claims:[ ("name", `String "Rita Reader") ] "only-reads"
   in
@@ -512,12 +478,17 @@ let says_its_name (w : World.t) =
     (World.emit w agent
        (body "principal:profile"
           ~payload:
-            (fields [ ((stamps ()).emitter, someone_else); ("name", name) ])));
+            (fields
+               [
+                 ((Protocol.tables ()).bus_registry.stamps.emitter, someone_else);
+                 ("name", name);
+               ])));
   let profile =
     Bus_stream.frame watcher "principal:profile" ~matches:(marked "name" name)
   in
   Check.equal "its stamp" (`String agent_did)
-    (Check.at profile.payload [ (stamps ()).emitter ]);
+    (Check.at profile.payload
+       [ (Protocol.tables ()).bus_registry.stamps.emitter ]);
   Check.that "nothing is stamped with the DID it wrote"
     (profiles_of watcher someone_else = [])
 
@@ -563,9 +534,9 @@ let reaches_nobody (w : World.t) =
   Check.that "its message is text"
     (match member frame "message" with Some (`String _) -> true | _ -> false);
   Check.that "the failure carries no emitter's stamp"
-    (member frame (stamps ()).emitter = None);
+    (member frame (Protocol.tables ()).bus_registry.stamps.emitter = None);
   Check.that "the failure carries no roles"
-    (member frame (stamps ()).roles = None);
+    (member frame (Protocol.tables ()).bus_registry.stamps.roles = None);
   Bus_stream.quiet other_client failure 0.5;
   (* A request with no correlationId has nobody to answer. *)
   status "an uncorrelated request" 202
@@ -613,7 +584,7 @@ let reply_uncorrelated (w : World.t) =
   let watcher = watch w [ result ] in
   let participant, _ = World.agent w "uncorrelated" in
   status "the reply" 202
-    (World.emit w participant (body result ~payload:described));
+    (World.emit w participant (body result ~payload:(described ())));
   Bus_stream.quiet watcher result 0.5
 
 let job_request (w : World.t) =

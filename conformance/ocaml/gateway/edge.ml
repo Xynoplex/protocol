@@ -5,13 +5,12 @@
 open Xynolog_conformance
 open Support
 
-let table () = (Protocol.tables ()).gateway_response_headers
 let header name (reply : Call.reply) = Http.Header.get reply.headers name
 
 (* How [headers] are not what every response carries: each header of
    [every] with its value, the request id, and none of [absent]. *)
 let edge_problems label headers =
-  let table = table () in
+  let table = (Protocol.tables ()).gateway_response_headers in
   List.filter_map
     (fun (row : Xynolog_protocol.Tables.Gateway_response_headers.every_item) ->
       match Http.Header.get headers row.name with
@@ -81,13 +80,16 @@ let security_headers (w : World.t) =
     (`List (List.map (fun p -> `String p) problems));
   let ids =
     List.sort_uniq compare
-      (List.map (fun (_, r) -> header (table ()).request_id r) replies)
+      (List.map
+         (fun (_, r) ->
+           header (Protocol.tables ()).gateway_response_headers.request_id r)
+         replies)
   in
   Check.that "each response names its own request"
     (List.length ids = List.length replies)
 
 let any_origin (w : World.t) =
-  let table = table () in
+  let table = (Protocol.tables ()).gateway_response_headers in
   let preflight =
     Call.call
       ~headers:
@@ -99,10 +101,8 @@ let any_origin (w : World.t) =
       (World.origin w) "OPTIONS"
       (Protocol.path Gateway "POST" "/bus/emit")
   in
-  Check.that
-    (Printf.sprintf "the preflight is answered with a success, not %d"
-       preflight.status)
-    (preflight.status < 300);
+  Check.equal "the preflight's status" (`Int table.preflight.status)
+    (`Int preflight.status);
   let allow_origin =
     List.find
       (fun (row : Xynolog_protocol.Tables.Gateway_response_headers.every_item)

@@ -13,24 +13,6 @@ open Support
 let request = "browse:resource-requested"
 let broadcast = "beckon:focus"
 
-let described ?(name = "r") () =
-  `Assoc
-    [
-      ( "response",
-        `Assoc
-          [
-            ( "resource",
-              `Assoc
-                [
-                  ("@context", `String "https://schema.org/");
-                  ("@id", `String "r");
-                  ("name", `String name);
-                  ("representations", `List []);
-                ] );
-            ("lastSequence", `Int 1);
-          ] );
-    ]
-
 (* A request the participant leaves for the case to answer when it
    chooses. *)
 let later = "later"
@@ -104,8 +86,10 @@ let probe origin token wanted =
 
 let streams_across { world = w; b; _ } =
   let baseline =
-    Protocol.principal_baseline Gateway "POST" "/bus/subscribe"
-      "streamsPerPrincipal"
+    Protocol.count
+      (fst
+         (Protocol.principal_limit Gateway "POST" "/bus/subscribe"
+            "streamsPerPrincipal"))
   in
   let carol = World.person w "carol-streams" in
   for i = 0 to baseline - 1 do
@@ -124,8 +108,10 @@ let streams_across { world = w; b; _ } =
 
 let leases_end { world = w; _ } =
   let baseline =
-    Protocol.principal_baseline Gateway "POST" "/bus/subscribe"
-      "streamsPerPrincipal"
+    Protocol.count
+      (fst
+         (Protocol.principal_limit Gateway "POST" "/bus/subscribe"
+            "streamsPerPrincipal"))
   in
   let heartbeat =
     float_of_int
@@ -320,16 +306,8 @@ let outstanding_claim_answered_live (shared : shared) =
          f.correlation_id = Some across)
       : Bus_stream.frame)
 
-let pending_max () =
-  match Protocol.component Gateway "BusSubscribeRequest" with
-  | Schema { properties = Some properties; _ } -> (
-      match List.assoc_opt "pendingReplies" properties with
-      | Some (Schema { max_items = Some max; _ }) -> max
-      | _ -> failwith "BusSubscribeRequest's pendingReplies states no maxItems")
-  | _ -> failwith "BusSubscribeRequest states no properties"
-
 let ask_again_anywhere { world = w; b; _ } =
-  let max = pending_max () in
+  let max = Protocol.pending_replies_max () in
   let result = result () in
   let alice = World.person w "alice" in
   let client_id = Fresh.uuid () in
@@ -447,7 +425,7 @@ let request_again_through_other (shared : shared) =
     = 1)
 
 let unanswered_count_everywhere { world = w; b; _ } =
-  let max = pending_max () in
+  let max = Protocol.pending_replies_max () in
   let alice = World.person w "alice" in
   let client_id = Fresh.uuid () in
   (* Heard on one replica and answered by nobody, so every request stays

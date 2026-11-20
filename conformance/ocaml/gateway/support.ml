@@ -46,6 +46,29 @@ let each_plane ?(planes = Protocol.Service_rows.gateway_config_type_all) ~make
         cases)
     planes
 
+(* A reply to browse:resource-requested: resource "r", named [name]. *)
+let described ?(name = "r") () =
+  `Assoc
+    [
+      ( "response",
+        `Assoc
+          [
+            ( "resource",
+              `Assoc
+                [
+                  ("@context", `String "https://schema.org/");
+                  ("@id", `String "r");
+                  ("name", `String name);
+                  ("representations", `List []);
+                ] );
+            ("lastSequence", `Int 1);
+          ] );
+    ]
+
+(* How long the gateway waits before it fetches the issuer's keys again. *)
+let key_refetch_cooldown () =
+  float_of_int (Protocol.scheme_limit "bearerAuth" "keyRefetchCooldownSeconds")
+
 (* How [reply] is not what the gateway's spec declares for [meth] [path]. *)
 let conforms meth path (reply : Call.reply) =
   match Call.non_conformance Gateway meth path reply with

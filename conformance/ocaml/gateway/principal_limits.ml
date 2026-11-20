@@ -7,44 +7,23 @@ open Xynolog_conformance
 open Support
 module Openapi = Xynolog_protocol_schema.Openapi
 
-(* A principal limit of POST [path]: its baseline, and its limit per
-   role. *)
-let principal_limit path key =
-  match (Protocol.operation Gateway "POST" path).limits with
-  | Some limits -> (
-      match List.assoc_opt key limits with
-      | Some (Openapi.Limits limit) -> (
-          match
-            (List.assoc_opt "baseline" limit, List.assoc_opt "roles" limit)
-          with
-          | Some baseline, Some (Openapi.Limits roles) -> (baseline, roles)
-          | _ ->
-              failwith
-                (Printf.sprintf "POST %s states no principal limit %s" path key)
-          )
-      | _ ->
-          failwith
-            (Printf.sprintf "POST %s states no principal limit %s" path key))
-  | None -> failwith (Printf.sprintf "POST %s states no limits" path)
-
-let count = function
-  | Openapi.Count n -> n
-  | _ -> failwith "a limit that is not a count"
-
 (* The emit bucket's burst, and its limit per role. *)
 let emit_limit () =
-  match principal_limit "/bus/emit" "emitsPerPrincipal" with
+  match
+    Protocol.principal_limit Gateway "POST" "/bus/emit" "emitsPerPrincipal"
+  with
   | Openapi.Limits baseline, roles -> (
       match List.assoc_opt "burst" baseline with
-      | Some burst -> (count burst, roles)
+      | Some burst -> (Protocol.count burst, roles)
       | None -> failwith "emitsPerPrincipal's baseline states no burst")
   | _ -> failwith "emitsPerPrincipal's baseline is not a bucket"
 
 let stream_limit () =
   let baseline, roles =
-    principal_limit "/bus/subscribe" "streamsPerPrincipal"
+    Protocol.principal_limit Gateway "POST" "/bus/subscribe"
+      "streamsPerPrincipal"
   in
-  (count baseline, roles)
+  (Protocol.count baseline, roles)
 
 (* A subscription body, a fresh client each time. *)
 let stream () =

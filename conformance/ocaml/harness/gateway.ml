@@ -27,10 +27,6 @@ type t = {
   served_after : float;  (** Seconds from its spawning to its first health. *)
 }
 
-let temporary_dir prefix =
-  let dir = Filename.temp_dir prefix "" in
-  dir
-
 let rec remove path =
   if Sys.file_exists path then
     if Sys.is_directory path then (
@@ -137,7 +133,7 @@ let spawn (l : launch) =
   check_environment Gateway ~unlisted:l.unlisted
     ~named:(named_variables l.document)
     l.env;
-  let dir = temporary_dir "gateway-conformance-" in
+  let dir = Filename.temp_dir "gateway-conformance-" "" in
   let path = Filename.concat dir "gateway.json" in
   write_json path l.document;
   let args =

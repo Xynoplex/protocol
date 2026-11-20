@@ -514,13 +514,10 @@ let unreachable_issuer (w : World.t) =
   Issuer.close w.issuer;
   refused_as_invalid w "GET" users_me (who_am_i ~token w)
 
-let cooldown () =
-  float_of_int (Protocol.scheme_limit "bearerAuth" "keyRefetchCooldownSeconds")
-
 let key_rotation (w : World.t) =
   status "before" 200 (who_am_i ~token:(World.person w "before") w);
   Issuer.add_key w.issuer "k-rotated";
-  Run.sleep (cooldown () +. 1.0);
+  Run.sleep (key_refetch_cooldown () +. 1.0);
   status "after" 200 (who_am_i ~token:(World.person w "after") w)
 
 let tests implementations =

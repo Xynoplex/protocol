@@ -13,9 +13,6 @@ open Support
 let deadline () =
   float_of_int (Protocol.scheme_limit "bearerAuth" "keyFetchDeadlineSeconds")
 
-let cooldown () =
-  float_of_int (Protocol.scheme_limit "bearerAuth" "keyRefetchCooldownSeconds")
-
 let who_am_i (w : World.t) token =
   Call.call ~token (World.origin w) "GET"
     (Protocol.path Gateway "GET" "/api/users/me")
@@ -55,7 +52,7 @@ let failing (w : World.t) =
   Check.that "the key set was fetched once" (w.issuer.key_fetches = 1);
   w.issuer.keys_answer <- Published;
   refused (who_am_i w token);
-  Run.sleep (cooldown () +. 1.0);
+  Run.sleep (key_refetch_cooldown () +. 1.0);
   status "a token once a fetch succeeds" 200 (who_am_i w token);
   Check.that
     (Printf.sprintf "the key set was fetched twice, not %d times"
@@ -77,7 +74,7 @@ let tests implementations =
       "an issuer whose key set cannot be fetched"
       [
         case
-          ~timeout:((cooldown () *. 2.0) +. 10.0)
+          ~timeout:((key_refetch_cooldown () *. 2.0) +. 10.0)
           "is asked once per cooldown, however many of its tokens arrive, and \
            its tokens are accepted once a fetch succeeds"
           failing;

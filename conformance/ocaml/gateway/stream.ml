@@ -11,25 +11,6 @@ let broadcast = "beckon:focus"
 let request = "browse:resource-requested"
 let persisted = "mark:added"
 let other_persisted = "mark:removed"
-
-let described_result =
-  `Assoc
-    [
-      ( "response",
-        `Assoc
-          [
-            ( "resource",
-              `Assoc
-                [
-                  ("@context", `String "https://schema.org/");
-                  ("@id", `String "r");
-                  ("name", `String "r");
-                  ("representations", `List []);
-                ] );
-            ("lastSequence", `Int 1);
-          ] );
-    ]
-
 let result () = (Protocol.operation_for request).result
 
 type shared = {
@@ -42,8 +23,7 @@ type shared = {
 let make implementations plane =
   let world = plain implementations plane in
   let responder =
-    World.responder world [ request ] (fun _ ->
-        Some (result (), described_result))
+    World.responder world [ request ] (fun _ -> Some (result (), described ()))
   in
   { world; responder }
 
@@ -419,7 +399,7 @@ let reply_reaches_requester_only { world = w; responder } =
         f.correlation_id = Some correlation_id)
   in
   Check.equal "the reply"
-    (Check.at described_result [ "response" ])
+    (Check.at (described ()) [ "response" ])
     (Check.at answer.payload [ "response" ]);
   Bus_stream.quiet same_client_other_person result 0.3;
   Bus_stream.quiet same_person_other_client result 0.0;
@@ -430,7 +410,7 @@ let reply_reaches_requester_only { world = w; responder } =
        (`Assoc
           [
             ("channel", `String result);
-            ("payload", described_result);
+            ("payload", described ());
             ("correlationId", `String unclaimed);
           ])
       : Call.reply);
@@ -458,7 +438,7 @@ let recovered_by_requester_only { world = w; _ } =
    with
   | Some frame ->
       Check.equal "the recovered reply"
-        (Check.at described_result [ "response" ])
+        (Check.at (described ()) [ "response" ])
         (Check.at frame.payload [ "response" ])
   | None -> failwith "the requester recovered no reply");
   Check.that "a stranger recovers nothing"
@@ -475,7 +455,7 @@ let recovery_first_reply { world = w; responder } =
   let second =
     Support.set_at
       [ "response"; "resource"; "name" ]
-      (`String "the second reply") described_result
+      (`String "the second reply") (described ())
   in
   emitted "the second reply"
     (World.emit w responder.token
@@ -501,7 +481,7 @@ let recovery_first_reply { world = w; responder } =
             match f.correlation_id with Some c -> `String c | None -> `Null)
           replies));
   Check.equal "the first reply"
-    (Check.at described_result [ "response" ])
+    (Check.at (described ()) [ "response" ])
     (Check.at (List.hd replies).payload [ "response" ])
 
 let replayed_in_order { world = w; _ } =
@@ -745,7 +725,7 @@ let retention (w : World.t) =
   in
   let result = result () in
   ignore
-    (World.responder w [ request ] (fun _ -> Some (result, described_result))
+    (World.responder w [ request ] (fun _ -> Some (result, described ()))
       : World.responder);
   let alice = World.person w "alice" in
   let client_id = Fresh.uuid () and correlation_id = Fresh.uuid () in
