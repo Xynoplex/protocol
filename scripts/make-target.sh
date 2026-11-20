@@ -19,14 +19,17 @@ esac
 # reads every file of specs/src, each table what its schema says, the
 # contract documents that name what the specs state, the bus registry's
 # spelling, and the ownership inventory against what Git tracks, so the copy
-# carries .git. "bundle": it builds, and bundles each OpenAPI document of
-# specs/src, and the services' schemas, into specs/; and, once the bundling
-# has read every table through its schema, hands the conformance harness
-# what the reader writes for it (reader/js) in harness/generated/protocol.
+# carries .git; and the OCaml conformance harness, a dune project of its own
+# in conformance/ocaml, builds, its layout is ocamlformat's, and its cases
+# that need no store pass, the census among them. "bundle": it builds, and
+# bundles each OpenAPI document of specs/src, and the services' schemas, into
+# specs/; and, once the bundling has read every table through its schema,
+# hands the conformance harness what the reader writes for it (reader/js) in
+# harness/generated/protocol.
 # Both reach the checkout as a tar stream on standard output, its progress on
 # standard error, so they are the checkout's user's. "check-and-bundle": both.
 reader() {
-  bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT" >&2
+  bash "$ROOT/build-tools/ocaml/toolchain-image.sh" "$ROOT" "$ROOT/conformance/ocaml" >&2
   "$RUNTIME" run --rm \
     --volume "$ROOT:/source:ro" \
     --workdir /tmp \
@@ -34,7 +37,7 @@ reader() {
     xynolog-ocaml-toolchain bash -euc '
       exec 3>&1 1>&2
       mkdir /tmp/protocol
-      tar -C /source --exclude=./node_modules --exclude=./conformance/node_modules --exclude=./_build -cf - . | tar -C /tmp/protocol -xf -
+      tar -C /source --exclude=./node_modules --exclude=./conformance/node_modules --exclude=./_build --exclude=./conformance/ocaml/_build -cf - . | tar -C /tmp/protocol -xf -
       git config --global --add safe.directory /tmp/protocol
       cd /tmp/protocol
       printf "==> Building the reader\n"
@@ -45,6 +48,11 @@ reader() {
         dune test
         printf "==> Reading the specifications\n"
         dune exec -- xynolog-protocol check .
+        printf "==> Building the conformance harness\n"
+        dune build --root conformance/ocaml @all
+        dune build --root conformance/ocaml @fmt
+        printf "==> Testing the conformance harness\n"
+        dune test --root conformance/ocaml
       fi
       if [[ "$0" != check ]]; then
         printf "==> Bundling the specifications\n"

@@ -1,0 +1,4 @@
+; The reader, read from this repository's own root, as a consumer that
+; vendors Protocol reads it: Protocol's root dune states the directories it
+; holds, so the harness's own directory is not among them.
+(vendored_dirs protocol)

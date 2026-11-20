@@ -6,12 +6,12 @@
  (libraries xynolog_conformance eio eio_main cohttp http uri testo opentelemetry.proto pbrt decompress.de decompress.gz ohex))
 
 ; make validate's run: every case that needs no store and no manifest, from
-; the root of the workspace, where specs/src is.
+; Protocol's root, where specs/src is.
 (rule
  (alias runtest)
  (deps
-  (source_tree ../../../specs/src))
+  (source_tree ../protocol/specs/src))
  (action
   (chdir
-   %{workspace_root}
+   %{workspace_root}/protocol
    (run %{exe:main.exe} -t "not stores"))))
