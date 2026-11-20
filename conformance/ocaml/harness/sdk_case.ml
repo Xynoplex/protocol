@@ -1231,11 +1231,12 @@ let reaches run observer pattern =
   Hashtbl.replace run.emission_cursor observer (at + 1)
 
 (* The next thing of its kind the worker reported is this one. *)
-let reported run ~what ~cursor ~bump said pattern =
+let reported run ~what ~cursor ~bump said to_json pattern =
   let at = cursor () in
   let next =
     driver_until run ("the next " ^ what) (fun () ->
-        if Dynarray.length said > at then Some (Dynarray.get said at) else None)
+        if Dynarray.length said > at then Some (to_json (Dynarray.get said at))
+        else None)
   in
   bump ();
   match matches run pattern (Some next) with
@@ -1487,7 +1488,7 @@ let step run (step : Conformance.conformance_step) =
       reported run ~what:"job the worker claims"
         ~cursor:(fun () -> run.reports.claimed)
         ~bump:(fun () -> run.reports.claimed <- run.reports.claimed + 1)
-        run.driver.claimed claimed
+        run.driver.claimed Fun.id claimed
   | Refused { refused } -> (
       let at = run.reports.refused in
       let failure =
@@ -1506,17 +1507,19 @@ let step run (step : Conformance.conformance_step) =
             difference failure.detail
       | None -> ())
   | Signalled { signalled } ->
-      let said = Dynarray.map (fun s -> `String s) run.driver.signalled in
       reported run ~what:"cancellation the worker signals"
         ~cursor:(fun () -> run.reports.signalled)
         ~bump:(fun () -> run.reports.signalled <- run.reports.signalled + 1)
-        said signalled
+        run.driver.signalled
+        (fun job -> `String job)
+        signalled
   | Stalled { stalled } ->
-      let said = Dynarray.map (fun s -> `String s) run.driver.stalled in
       reported run ~what:"stall the worker reports"
         ~cursor:(fun () -> run.reports.stalled)
         ~bump:(fun () -> run.reports.stalled <- run.reports.stalled + 1)
-        said stalled
+        run.driver.stalled
+        (fun job -> `String job)
+        stalled
   | Scopes { scopes = expected } -> scopes run expected
 
 (* What a worker that exported did against WORKER-CONTRACT T1, read from the
