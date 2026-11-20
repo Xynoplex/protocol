@@ -48,6 +48,21 @@ let () =
           Alcotest.test_case "OpenAPI 3.0's example" `Quick
             (refuses schema {|{"type":"string","example":"x"}|}
                "x.json: /example: an unknown member");
+          Alcotest.test_case "an enum value of another type" `Quick
+            (refuses schema {|{"type":"string","enum":["a",7]}|}
+               "x.json: /enum: holds 7, which is none of string");
+          Alcotest.test_case "a const of none of its types" `Quick
+            (refuses schema {|{"type":["string","null"],"const":true}|}
+               "x.json: /const: holds true, which is none of string, null");
+          Alcotest.test_case "an integer enum value of a number" `Quick
+            (accepts schema {|{"type":"number","enum":[1]}|});
+          Alcotest.test_case "items under another type" `Quick
+            (refuses schema {|{"type":"object","items":{}}|}
+               "x.json: /items: items under type object: only array has items");
+          Alcotest.test_case "properties under another type" `Quick
+            (refuses schema {|{"type":"string","properties":{}}|}
+               "x.json: /properties: properties under type string: only object \
+                has properties");
           Alcotest.test_case "a nested place, escaped" `Quick
             (refuses schema {|{"properties":{"a/b~c":{"type":7}}}|}
                "x.json: /properties/a~1b~0c/type: expected a string, found an \

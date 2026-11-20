@@ -446,6 +446,37 @@ let discriminator =
       let mapping = Decode.optional o "mapping" (Decode.map Decode.string) in
       { property_name; mapping })
 
+(* A schema's [enum] and [const] are of the [type] it states, and only an
+   [array] has [items] and only an [object] [properties] (Redocly's
+   no-enum-type-mismatch and no-schema-type-mismatch). *)
+let of_types types literal =
+  match literal with
+  | String_literal _ -> List.mem String types
+  | Int_literal _ -> List.mem Integer types || List.mem Number types
+  | Bool_literal _ -> List.mem Boolean types
+
+let admitted type_ cursor literals =
+  Option.iter
+    (fun types ->
+      List.iter
+        (fun literal ->
+          if not (of_types types literal) then
+            Decode.refuse cursor
+              (Printf.sprintf "holds %s, which is none of %s"
+                 (Yojson.Safe.to_string (literal_json literal))
+                 (String.concat ", " (List.map type_word types))))
+        literals)
+    type_
+
+let only_under type_ owner keyword decoder cursor =
+  (match type_ with
+  | Some [ single ] when single <> owner ->
+      Decode.refuse cursor
+        (Printf.sprintf "%s under type %s: only %s has %s" keyword
+           (type_word single) (type_word owner) keyword)
+  | _ -> ());
+  decoder cursor
+
 let rec decode cursor =
   match Decode.kind cursor with
   | Decode.Bool -> Boolean_schema (Decode.bool cursor)
@@ -464,13 +495,26 @@ and schema cursor =
       let description = Decode.optional o "description" Decode.string in
       let type_ = Decode.optional o "type" types in
       let format = Decode.optional o "format" format in
-      let enum = Decode.optional o "enum" (Decode.non_empty_list literal) in
-      let const = Decode.optional o "const" literal in
+      let enum =
+        Decode.optional o "enum" (fun cursor ->
+            let values = Decode.non_empty_list literal cursor in
+            admitted type_ cursor values;
+            values)
+      in
+      let const =
+        Decode.optional o "const" (fun cursor ->
+            let value = literal cursor in
+            admitted type_ cursor [ value ];
+            value)
+      in
       let default = Decode.optional o "default" literal in
       let examples =
         Decode.optional o "examples" (Decode.non_empty_list Decode.json)
       in
-      let properties = Decode.optional o "properties" (Decode.map decode) in
+      let properties =
+        Decode.optional o "properties"
+          (only_under type_ Object "properties" (Decode.map decode))
+      in
       let required = Decode.optional o "required" (Decode.list Decode.string) in
       let additional_properties =
         Decode.optional o "additionalProperties" decode
@@ -481,7 +525,9 @@ and schema cursor =
       let property_names = Decode.optional o "propertyNames" decode in
       let min_properties = Decode.optional o "minProperties" Decode.int in
       let max_properties = Decode.optional o "maxProperties" Decode.int in
-      let items = Decode.optional o "items" decode in
+      let items =
+        Decode.optional o "items" (only_under type_ Array "items" decode)
+      in
       let min_items = Decode.optional o "minItems" Decode.int in
       let max_items = Decode.optional o "maxItems" Decode.int in
       let unique_items = Decode.optional o "uniqueItems" Decode.bool in

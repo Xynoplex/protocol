@@ -58,6 +58,6 @@ identifiers such as `xynolog` remain where changing them would break deployed
 clients or persisted data. Such values are protocol compatibility details,
 not a claim about current product branding.
 
-Coverage reporting is not enabled in protocol CI: the executable conformance suites exercise consumer processes and external stores supplied by each implementation, so a protocol-only coverage percentage would not represent implementation coverage. The CI workflow validates authored specs, generated bundles, and harness types.
+Coverage reporting is not enabled in protocol CI: the executable conformance suites exercise consumer processes and external stores supplied by each implementation, so a protocol-only coverage percentage would not represent implementation coverage. The CI workflow validates authored specs and generated bundles, and builds and tests the conformance harness.
 
 See [`NOTICE`](NOTICE) for source provenance and the ownership boundary.

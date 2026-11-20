@@ -1,7 +1,6 @@
 path,classification,owner,notes
 .gitattributes,Repository governance and documentation,xynolog/protocol,Repository text and diff policy.
 .github/CODEOWNERS,Repository governance and documentation,xynolog/protocol,Repository ownership review policy.
-.github/dependabot.yml,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 .github/workflows/ci.yml,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 .gitignore,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 .gitmodules,Repository build tooling,xynolog/protocol,"Pins build-tools, the build scripts the xynolog repositories share."
@@ -511,8 +510,6 @@ dune.lock/uucp.18.0.0.pkg,Repository governance and documentation,xynolog/protoc
 dune.lock/uuseg.18.0.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/uutf.1.0.4.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/yojson.3.0.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-package-lock.json,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
-package.json,Repository governance and documentation,xynolog/protocol,"Standalone repository policy, provenance, or build configuration."
 reader/bin/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/bin/main.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/derive.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -555,11 +552,9 @@ reader/test/repository.ml,Protocol validation tooling,xynolog/protocol,"The read
 reader/test/schema.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/strict.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
-scripts/make-target.sh,Repository build tooling,xynolog/protocol,"Runs protocol Node and npm tasks, and the reader, inside the detected container runtime."
+scripts/make-target.sh,Repository build tooling,xynolog/protocol,"Runs the reader inside the detected container runtime."
 specs/.gitignore,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
-specs/.redocly.lint-ignore.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/README.md,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
-specs/redocly.yaml,Protocol authoring tooling,xynolog/protocol,"Build, lint, and bundling configuration for normative sources."
 specs/src/CaseTable.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/HttpStatus.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/JsonSchema.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

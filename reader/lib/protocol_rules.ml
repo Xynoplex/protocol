@@ -3,6 +3,20 @@
    answers. The gateway's document (openapi.json) and the Archivist's
    (archivist/openapi.json) leave nothing to be learned from the code:
 
+   - a server's URL does not end in a slash, and it names each of its
+     variables, and only those;
+   - a path is "/" or a "/" before each of its segments, and a segment is a
+     whole [{parameter}] or holds none of "{", "}", "?" and "#";
+   - no request could match two paths of a document: two with as many
+     segments and as many parameters match one request when each segment
+     where neither has a parameter is the same in both;
+   - an operation declares a path parameter for each parameter its path
+     names, and no other, and no parameter twice (a header's name in any
+     case);
+   - an operationId is an operation's alone in its document;
+   - every response is keyed by an HTTP status, from 100 to 599;
+   - every operation declares a 2xx, and one that takes a credential, a
+     parameter or a body a 4xx;
    - every security scheme is described, and every one an operation names is
      defined;
    - a protected operation declares a 401 that carries WWW-Authenticate
@@ -48,6 +62,60 @@ let integer = function
   | `Int n -> Some n
   | `Float f -> Some (int_of_float f)
   | _ -> None
+
+let contains_any characters text =
+  String.exists (fun c -> String.contains characters c) text
+
+(* A segment that is a whole [{parameter}]: its name. *)
+let parameter_name segment =
+  let length = String.length segment in
+  if
+    length > 2
+    && segment.[0] = '{'
+    && segment.[length - 1] = '}'
+    && not (contains_any "{}" (String.sub segment 1 (length - 2)))
+  then Some (String.sub segment 1 (length - 2))
+  else None
+
+let well_formed path =
+  path = "/"
+  || String.starts_with ~prefix:"/" path
+     && List.for_all
+          (fun segment ->
+            segment <> ""
+            && (Option.is_some (parameter_name segment)
+               || not (contains_any "{}?#" segment)))
+          (List.tl (String.split_on_char '/' path))
+
+let path_parameters path =
+  List.filter_map parameter_name (String.split_on_char '/' path)
+
+(* Redocly's no-ambiguous-paths, which no-identical-paths is a case of. *)
+let ambiguous a b =
+  let a = String.split_on_char '/' a and b = String.split_on_char '/' b in
+  let names segments = List.length (List.filter_map parameter_name segments) in
+  List.length a = List.length b
+  && names a = names b
+  && List.for_all2
+       (fun x y ->
+         Option.is_some (parameter_name x)
+         || Option.is_some (parameter_name y)
+         || x = y)
+       a b
+
+(* The [{variable}]s a server's URL names. *)
+let url_variables url =
+  let rec from i found =
+    match String.index_from_opt url i '{' with
+    | None -> List.rev found
+    | Some opening -> (
+        match String.index_from_opt url opening '}' with
+        | None -> List.rev found
+        | Some closing ->
+            from (closing + 1)
+              (String.sub url (opening + 1) (closing - opening - 1) :: found))
+  in
+  from 0 []
 
 (* A coefficient's shape: an integer, or the names of an object of them. *)
 let shape_of = function
@@ -298,6 +366,61 @@ let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
                     name);
               check_limits root_file pointer ("securitySchemes." ^ name) scheme)
             schemes;
+          (match member "servers" root with
+          | Some (`List servers) ->
+              List.iteri
+                (fun i server ->
+                  let pointer = "/servers" / string_of_int i in
+                  Option.iter
+                    (fun url ->
+                      if String.ends_with ~suffix:"/" url then
+                        refuse root_file pointer
+                          "server %s: ends in a slash, so a path joined to it \
+                           begins with two"
+                          url;
+                      let named = url_variables url in
+                      let variables =
+                        List.map fst (members (member "variables" server))
+                      in
+                      List.iter
+                        (fun name ->
+                          if not (List.mem name variables) then
+                            refuse root_file pointer
+                              "server %s: names {%s}, which its variables do \
+                               not define"
+                              url name)
+                        named;
+                      List.iter
+                        (fun name ->
+                          if not (List.mem name named) then
+                            refuse root_file
+                              (pointer / "variables" / name)
+                              "server %s: defines variable %S, which its URL \
+                               does not name"
+                              url name)
+                        variables)
+                    (text (member "url" server)))
+                servers
+          | _ -> ());
+          let paths = members (member "paths" root) in
+          List.iteri
+            (fun i (path, _) ->
+              let pointer = "/paths" / path in
+              if not (well_formed path) then
+                refuse root_file pointer
+                  "path %S: is not \"/\" or a \"/\" before each of its \
+                   segments, each a whole {parameter} or holding none of \
+                   \"{\", \"}\", \"?\" and \"#\""
+                  path;
+              List.iteri
+                (fun j (earlier, _) ->
+                  if j < i && ambiguous earlier path then
+                    refuse root_file pointer
+                      "paths %s and %s: one request could match both" earlier
+                      path)
+                paths)
+            paths;
+          let operation_ids = Hashtbl.create 32 in
           List.iter
             (fun (path, item) ->
               match deref root_file item with
@@ -335,6 +458,104 @@ let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
                           let responses = members (member "responses" op) in
                           let has status = List.mem_assoc status responses in
                           let request_body = member "requestBody" op in
+                          Option.iter
+                            (fun id ->
+                              match Hashtbl.find_opt operation_ids id with
+                              | Some first ->
+                                  refuse root_file ("/paths" / path)
+                                    "%s: has operationId %S, which %s has too"
+                                    where id first
+                              | None -> Hashtbl.add operation_ids id where)
+                            (text (member "operationId" op));
+                          let parameters =
+                            match member "parameters" op with
+                            | Some (`List parameters) -> parameters
+                            | _ -> []
+                          in
+                          let located =
+                            List.filter_map
+                              (fun parameter ->
+                                match
+                                  ( text (member "name" parameter),
+                                    text (member "in" parameter) )
+                                with
+                                | Some name, Some in_ -> Some (name, in_)
+                                | _ -> None)
+                              parameters
+                          in
+                          let template = path_parameters path in
+                          let declared =
+                            List.filter_map
+                              (fun (name, in_) ->
+                                if in_ = "path" then Some name else None)
+                              located
+                          in
+                          List.iter
+                            (fun name ->
+                              if not (List.mem name declared) then
+                                refuse file (at / "parameters")
+                                  "%s: declares no path parameter %S, which \
+                                   its path names"
+                                  where name)
+                            template;
+                          List.iter
+                            (fun name ->
+                              if not (List.mem name template) then
+                                refuse file (at / "parameters")
+                                  "%s: declares path parameter %S, which its \
+                                   path does not name"
+                                  where name)
+                            declared;
+                          let spelled (name, in_) =
+                            ( (if in_ = "header" then String.lowercase_ascii name
+                               else name),
+                              in_ )
+                          in
+                          List.iteri
+                            (fun i parameter ->
+                              if
+                                List.exists
+                                  (fun earlier ->
+                                    spelled earlier = spelled parameter)
+                                  (List.filteri (fun j _ -> j < i) located)
+                              then
+                                refuse file (at / "parameters")
+                                  "%s: declares %s parameter %S twice" where
+                                  (snd parameter) (fst parameter))
+                            located;
+                          let status_class hundreds =
+                            List.exists
+                              (fun (status, _) ->
+                                Option.fold ~none:false
+                                  ~some:(fun code ->
+                                    Int.div code 100 = hundreds)
+                                  (int_of_string_opt status))
+                              responses
+                          in
+                          List.iter
+                            (fun (status, _) ->
+                              match int_of_string_opt status with
+                              | Some code
+                                when String.length status = 3
+                                     && code >= 100 && code <= 599 ->
+                                  ()
+                              | _ ->
+                                  refuse file (at / "responses")
+                                    "%s: answers %S, which is no HTTP status"
+                                    where status)
+                            responses;
+                          if not (status_class 2) then
+                            refuse file (at / "responses") "%s: declares no 2xx"
+                              where;
+                          if
+                            ((not is_public) || parameters <> []
+                            || Option.is_some request_body)
+                            && not (status_class 4)
+                          then
+                            refuse file (at / "responses")
+                              "%s: takes a credential, a parameter or a body \
+                               and declares no 4xx"
+                              where;
                           if not (has "500") then
                             refuse file (at / "responses") "%s: declares no 500"
                               where;
@@ -448,7 +669,7 @@ let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
                             responses)
                         (member method_ item))
                     methods)
-            (members (member "paths" root)))
+            paths)
         (read_json root_file))
     [ gateway; archivist ];
   (* An emit's key outlives every attempt at it: a client's attempts at one

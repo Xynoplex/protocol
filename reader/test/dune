@@ -59,7 +59,7 @@
  (libraries xynolog_protocol alcotest))
 
 ; Each document of specs/src bundles to one that names nothing outside
-; itself, and the bundler refuses what it cannot bundle as Redocly does.
+; itself, and the bundler refuses a tree it would bundle otherwise.
 (test
  (name bundle)
  (modules bundle)
