@@ -8,4 +8,5 @@ let () =
       Librarian_suite.suite;
       Archivist_suite.suite;
       Smelter_suite.suite;
+      Weaver_suite.suite;
     ]

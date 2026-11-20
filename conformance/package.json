@@ -12,8 +12,7 @@
     "test": "vitest run",
     "test:sdk": "npm run typecheck && vitest run --project sdk",
     "test:worker": "npm run typecheck && vitest run --project worker",
-    "test:worker-service": "npm run typecheck && vitest run --project worker-service",
-    "test:weaver": "npm run typecheck && vitest run --project weaver"
+    "test:worker-service": "npm run typecheck && vitest run --project worker-service"
   },
   "devDependencies": {
     "@nats-io/jetstream": "^3.4.0",
@@ -27,7 +26,6 @@
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "jose": "^6.2.17",
-    "neo4j-driver": "^6.3.2",
     "openapi-typescript": "^7.10.1",
     "typescript": "^5.9.3",
     "vitest": "^5.1.0"
