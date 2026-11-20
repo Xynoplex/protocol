@@ -3,6 +3,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let end_to_end w =
   let creator = D.person w "alice" in

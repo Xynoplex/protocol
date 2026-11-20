@@ -7,6 +7,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let dispatch () =
   Protocol.span_name "bus.dispatch:{channel}" [ ("channel", "beckon:focus") ]

@@ -5,6 +5,7 @@
 open Xynolog_conformance
 open Xynolog_protocol_schema
 open Support
+open Case
 
 (* The methods a probe tries on a declared path. *)
 let methods = [ "GET"; "PUT"; "POST"; "DELETE"; "PATCH" ]

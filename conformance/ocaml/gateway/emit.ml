@@ -5,6 +5,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 (* A request channel whose request payload validates with resourceId
    alone. *)

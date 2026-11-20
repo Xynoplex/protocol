@@ -9,6 +9,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 (* OTLP's span kinds. *)
 let server = 2

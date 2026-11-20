@@ -4,6 +4,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 type shared = {
   command : string list;
@@ -89,85 +90,130 @@ let exited_non_zero why (code, output) =
   | Some _ -> ()
 
 let output_of (code, lines) = (code, String.concat "\n" lines)
-let temporary name = Filename.concat (Filename.get_temp_dir_name ()) name
+
+(* What a refusal's output must hold: the refusal boot-refusals.json names,
+   filled, with its {members} when it has them; or, for a refusal the table
+   does not state, a pattern. *)
+type said =
+  | Table of
+      string * (string * string) list * (string * (string * string) list) list
+  | Pattern of string
 
 (* A case that refuses: why, what it is started with, and what its output
-   must match. *)
+   must hold. *)
 type refusal = {
   why : string;
   start :
     shared ->
     Yojson.Safe.t * (string * string) list * (string -> string list) option;
-  names : string;
+  said : said;
 }
 
-let refusal ?args ?(change = Fun.id) ?changes why names =
-  { why; names; start = (fun s -> (settings ~change s, env ?changes s, args)) }
+let refusal ?args ?(change = Fun.id) ?changes why said =
+  { why; said; start = (fun s -> (settings ~change s, env ?changes s, args)) }
+
+let missing pointer member =
+  Table
+    ( "invalid",
+      [],
+      [ ("missing", [ ("pointer", pointer); ("member", member) ]) ] )
+
+let schema = "GatewayConfig"
+
+(* Fail unless [output] holds what [said] says. *)
+let holds said (code, output) =
+  match said with
+  | Pattern pattern ->
+      Check.that
+        (Printf.sprintf "its output matches /%s/:\n%s" pattern output)
+        (Check.matches_re pattern output)
+  | Table (name, fill, members) ->
+      Check.equal
+        (Printf.sprintf "its exit code\n%s" output)
+        (`Int (Boot_refusals.exit_code ()))
+        (match code with Some c -> `Int c | None -> `Null);
+      Boot_refusals.holds ~members ~service:Gateway ~schema name fill output
+
+let temporary name = Filename.concat (Filename.get_temp_dir_name ()) name
+
+let absent =
+  lazy
+    (temporary
+       (Printf.sprintf "gateway-conformance-no-document-%s.json" (Fresh.uuid ())))
 
 let refusals =
   [
-    refusal "no JWT_SECRET" ~changes:[ ("JWT_SECRET", None) ] "JWT_SECRET";
+    refusal "no JWT_SECRET"
+      ~changes:[ ("JWT_SECRET", None) ]
+      (Pattern "JWT_SECRET");
     refusal "a JWT_SECRET key shorter than 32 characters"
       ~changes:[ ("JWT_SECRET", Some (String.make 40 'a' ^ ",short")) ]
-      "JWT_SECRET";
+      (Pattern "JWT_SECRET");
     refusal "no service-account client id"
       ~changes:[ ("XYNOLOG_OIDC_CLIENT_ID", None) ]
-      "XYNOLOG_OIDC_CLIENT_ID";
+      (Table
+         ("no-service-account", [ ("missing", "XYNOLOG_OIDC_CLIENT_ID") ], []));
     refusal "no service-account secret"
       ~changes:[ ("XYNOLOG_OIDC_CLIENT_SECRET", None) ]
-      "XYNOLOG_OIDC_CLIENT_SECRET";
+      (Table
+         ( "no-service-account",
+           [ ("missing", "XYNOLOG_OIDC_CLIENT_SECRET") ],
+           [] ));
     refusal "no knowledge-base domain"
       ~change:(Edit.remove_at [ "kb"; "domain" ])
-      {|/kb\b.*\bdomain\b|};
+      (missing "/kb" "domain");
     refusal "no Archivist address"
       ~change:(Edit.remove_at [ "archivist"; "host" ])
-      {|/archivist\b.*\bhost\b|};
+      (missing "/archivist" "host");
     refusal "no issuer"
       ~change:(Edit.remove_at [ "identity"; "issuer" ])
-      {|/identity\b.*\bissuer\b|};
+      (missing "/identity" "issuer");
     refusal "no subject claim"
       ~change:(Edit.remove_at [ "identity"; "subjectClaim" ])
-      {|/identity\b.*\bsubjectClaim\b|};
+      (missing "/identity" "subjectClaim");
     refusal "a field the document does not declare"
       ~change:(Edit.set_at [ "corsOrigin" ] (`String "*"))
-      "corsOrigin";
+      (Table
+         ( "invalid",
+           [],
+           [ ("undeclared", [ ("pointer", "/"); ("members", "corsOrigin") ]) ]
+         ));
     refusal "a log format the document does not declare"
       ~change:(Edit.set_at [ "logFormat" ] (`String "text"))
-      {|/logFormat\b|};
-    refusal "no capacity" ~change:(Edit.remove_at [ "capacity" ]) "capacity";
+      (Table ("invalid", [], [ ("other", [ ("pointer", "/logFormat") ]) ]));
+    refusal "no capacity"
+      ~change:(Edit.remove_at [ "capacity" ])
+      (missing "/" "capacity");
     refusal "no --config: there is no default path to fall back on"
       ~args:(fun _ -> [])
-      "--config <path>";
+      (Table ("unnamed", [], []));
     {
       why = "a --config naming no file";
-      names = "gateway-conformance-no-document-";
+      said = Table ("unreadable", [ ("path", Lazy.force absent) ], []);
       start =
         (fun s ->
-          let path =
-            temporary
-              (Printf.sprintf "gateway-conformance-no-document-%s.json"
-                 (Fresh.uuid ()))
-          in
-          (settings s, env s, Some (fun _ -> [ "--config"; path ])));
+          (settings s, env s, Some (fun _ -> [ "--config"; Lazy.force absent ])));
     };
-    {
-      why = "a document that is not JSON, naming the file";
-      names = {|gateway-conformance-not-json-\S+ is not JSON|};
-      start =
-        (fun s ->
-          let path =
-            temporary
-              (Printf.sprintf "gateway-conformance-not-json-%s.json"
-                 (Fresh.uuid ()))
-          in
-          Out_channel.with_open_bin path (fun out ->
-              output_string out "gatewayUrl = \"http://gateway\"\n");
-          (settings s, env s, Some (fun _ -> [ "--config"; path ])));
-    };
-    refusal "a NATS plane with no servers" ~change:(signal None) "servers";
+    (let path =
+       lazy
+         (temporary
+            (Printf.sprintf "gateway-conformance-not-json-%s.json"
+               (Fresh.uuid ())))
+     in
+     {
+       why = "a document that is not JSON, naming the file";
+       said = Table ("not-json", [ ("path", Lazy.force path) ], []);
+       start =
+         (fun s ->
+           Out_channel.with_open_bin (Lazy.force path) (fun out ->
+               output_string out "gatewayUrl = \"http://gateway\"\n");
+           (settings s, env s, Some (fun _ -> [ "--config"; Lazy.force path ])));
+     });
+    refusal "a NATS plane with no servers" ~change:(signal None)
+      (missing "/signal" "servers");
     {
       why = "a broker nobody answers at";
-      names = ".";
+      said = Pattern ".";
       start =
         (fun s ->
           let nobody =
@@ -181,9 +227,7 @@ let refuses r shared =
   let document, env, args = r.start shared in
   let code, output = output_of (refused ?args shared document env) in
   exited_non_zero r.why (code, output);
-  Check.that
-    (Printf.sprintf "its output matches /%s/:\n%s" r.names output)
-    (Check.matches_re r.names output);
+  holds r.said (code, output);
   let secrets =
     List.filter
       (fun value -> String.length value >= 8)
@@ -198,6 +242,19 @@ let refuses r shared =
       Check.that "a secret in the output"
         (not (Re.execp (Re.compile (Re.str secret)) output)))
     secrets
+
+(* A refusal is written as the table's line, and the gateway exits with the
+   table's exit code. *)
+let refusal_line shared =
+  let code, output =
+    output_of
+      (refused ~args:(fun _ -> []) shared (settings shared) (env shared))
+  in
+  Check.equal
+    (Printf.sprintf "its exit code\n%s" output)
+    (`Int (Boot_refusals.exit_code ()))
+    (match code with Some c -> `Int c | None -> `Null);
+  Boot_refusals.holds ~line:true ~service:Gateway ~schema "unnamed" [] output
 
 let health origin =
   (Call.call origin "GET" (Protocol.path Gateway "GET" "/api/health")).status
@@ -278,12 +335,10 @@ let broker_credentials shared =
           shared
       in
       List.iter
-        (fun (why, document, env, names) ->
+        (fun (why, document, env, said) ->
           let code, output = output_of (refused shared document env) in
           exited_non_zero why (code, output);
-          Check.that
-            (Printf.sprintf "%s: its output matches /%s/" why names)
-            (Check.matches_re names output);
+          holds said (code, output);
           Check.that
             (why ^ ": the password is not in its output")
             (not (Re.execp (Re.compile (Re.str "the-password")) output)))
@@ -291,18 +346,19 @@ let broker_credentials shared =
           ( "no credentials",
             settings ~change:(signal (Some broker.url)) shared,
             env shared,
-            "." );
+            Pattern "." );
           ( "the wrong password",
             named,
             env
               ~changes:
                 [ (user, Some "gateway"); (password, Some "not-the-password") ]
               shared,
-            "." );
+            Pattern "." );
           ( "a named variable that is unset",
             named,
             env ~changes:[ (password, Some "the-password") ] shared,
-            user );
+            Table ("unset", [ ("field", "/signal/userEnv"); ("name", user) ], [])
+          );
         ];
       with_gateway shared named
         (env
@@ -396,18 +452,25 @@ let key_ring shared =
 
 let tests implementations =
   let shared = Suite.world "gateway/boot" ~make:(make implementations) ~close in
-  let case ?(timeout = 60.0) name body =
-    Testo.create ~category:[ "starting a gateway" ]
-      ~max_duration:(timeout +. 60.0) name (fun () -> body (shared ()))
-  in
-  List.map
-    (fun r ->
-      case
-        (Printf.sprintf
-           "refuses to serve with %s, and prints no secret it was given" r.why)
-        (refuses r))
-    refusals
+  List.map (fun c ->
+      Case.test ~category:[ "starting a gateway" ] c (fun () ->
+          c.run (shared ())))
+  @@ List.map
+       (fun r ->
+         case
+           (Printf.sprintf
+              "refuses to serve with %s, and prints no secret it was given"
+              r.why)
+           (refuses r))
+       refusals
   @ [
+      case
+        ~known:
+          "the gateway at images bb38209 writes its refusal bare, without the \
+           line's [fatal] prefix"
+        "writes a refusal as boot-refusals.json's line, [fatal] {refusal}, and \
+         exits with its exit code"
+        refusal_line;
       case
         "listens on every address the host has: the IPv4 and the IPv6 loopback \
          both answer"

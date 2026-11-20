@@ -19,6 +19,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let read () = float_of_int (Protocol.document_limit Archivist "readSeconds")
 

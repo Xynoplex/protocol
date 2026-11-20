@@ -9,4 +9,5 @@
   yojson
   re
   ptime
+  http
   testo))

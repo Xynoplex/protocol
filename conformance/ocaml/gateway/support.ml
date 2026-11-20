@@ -3,19 +3,6 @@
 
 open Xynolog_conformance
 
-type 'w case = {
-  name : string;
-  timeout : float;
-  solo : string option;
-  run : 'w -> unit;
-}
-
-(* A case: [timeout] is its own bound, in seconds, as vitest's; its world's
-   start is given a bound of its own on top. [solo], the reason, runs it in
-   order with the run's other solo cases, in one process, before any other:
-   for a case judged on what the cases before it did. *)
-let case ?(timeout = 60.0) ?solo name run = { name; timeout; solo; run }
-
 (* The world a file's cases share on [plane], unless a case changes it. *)
 let plain implementations plane =
   World.create ~command:implementations.Implementations.gateway plane
@@ -40,8 +27,7 @@ let each_plane ?(planes = Protocol.Service_rows.gateway_config_type_all) ~make
       in
       List.map
         (fun c ->
-          Testo.create ~category ~max_duration:(c.timeout +. 60.0) ?solo:c.solo
-            c.name (fun () ->
+          Case.test ~category c (fun () ->
               let shared = made () in
               let w : World.t = world shared in
               World.end_case

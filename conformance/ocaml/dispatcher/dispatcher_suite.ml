@@ -7,5 +7,7 @@ let suite : Xynolog_conformance.Suite.t =
     workers = 4;
     tests =
       (fun implementations ->
-        List.concat_map (fun tests -> tests implementations) [ Lifecycle.tests ]);
+        List.concat_map
+          (fun tests -> tests implementations)
+          [ Lifecycle.tests; Boot.tests; Clocks.tests ]);
   }

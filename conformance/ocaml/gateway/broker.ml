@@ -6,6 +6,7 @@
    stream, which shares the broker. NATS only. *)
 
 open Xynolog_conformance
+open Case
 
 let request = "browse:resource-requested"
 let jobs () = (Protocol.tables ()).jobs_storage.stream.name

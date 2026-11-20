@@ -80,6 +80,35 @@ let refusal_text ?(fill = []) name =
 let code_word =
   Xynolog_protocol.Tables.Dispatcher_messages.command_error_code_value
 
+(* The error the dispatcher records itself (dispatcher/messages.json's
+   errors) named [name]. *)
+let error_row name : Xynolog_protocol.Tables.Dispatcher_messages.errors_item =
+  match
+    List.find_opt
+      (fun (e : Xynolog_protocol.Tables.Dispatcher_messages.errors_item) ->
+        e.name = name)
+      (Protocol.tables ()).dispatcher_messages.errors
+  with
+  | Some e -> e
+  | None -> failwith ("dispatcher/messages.json states no error " ^ name)
+
+(* [x] as the shortest decimal that reads back as it, without a fraction
+   when it is whole. *)
+let shortest x =
+  if Float.is_integer x then Printf.sprintf "%.0f" x
+  else
+    let rec at precision =
+      let text = Printf.sprintf "%.*g" precision x in
+      if precision >= 17 || float_of_string text = x then text
+      else at (precision + 1)
+    in
+    at 1
+
+(* Wait out a frame's handling. The dispatcher does not serialize frames
+   (JOBS.md § Channels), so a case that needs one one-way frame applied
+   before it sends the next, and has no reply to wait on, waits. *)
+let settle ?(seconds = 0.5) () = Run.sleep seconds
+
 (* A job id the dispatcher never minted, of the form JobId states. *)
 let unknown_job_id () =
   let id = "job-" ^ Fresh.hex 16 in

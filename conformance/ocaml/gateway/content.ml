@@ -7,6 +7,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 (* Every byte value, several times: nothing may be decoded, re-encoded or
    trimmed. *)

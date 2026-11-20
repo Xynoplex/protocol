@@ -6,6 +6,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let broadcast = "beckon:focus"
 let request = "browse:resource-requested"

@@ -4,27 +4,6 @@
 open Xynolog_conformance
 module D = Dispatcher_world
 
-type case = {
-  name : string;
-  timeout : float;
-  solo : string option;
-  known : string option;
-  run : D.t -> unit;
-}
-
-(* A case: [timeout] is its own bound, in seconds, as vitest's; its world's
-   start is given a bound of its own on top. [solo], the reason, runs it in
-   order with the run's other solo cases, in one process, before any other.
-   [known] is why the dispatcher this suite is held to fails it: the case
-   is expected to fail, and fails the run once it passes. *)
-let case ?(timeout = 60.0) ?solo ?known name run =
-  { name; timeout; solo; known; run }
-
-let testo ~category ~timeout ?solo ?known name body =
-  Testo.create ~category ~max_duration:(timeout +. 60.0) ?solo
-    ?expected_outcome:(Option.map (fun why -> Testo.Should_fail why) known)
-    name body
-
 (* The end of a case on [w]: its pending jobs cancelled, and the streams it
    opened held to carrying nothing the spec does not allow. *)
 let ended w body =
@@ -50,8 +29,7 @@ let with_dispatcher (implementations : Implementations.t) ?timing ?vocabulary
   in
   List.map
     (fun c ->
-      testo ~category:[ title ] ~timeout:c.timeout ?solo:c.solo ?known:c.known
-        c.name (fun () ->
+      Case.test ~category:[ title ] c (fun () ->
           let w = made () in
           ended w (fun () -> c.run w)))
     cases

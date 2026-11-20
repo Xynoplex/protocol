@@ -5,6 +5,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 module Tables = Xynolog_protocol.Tables
 
 let users_me = "/api/users/me"
