@@ -20,7 +20,7 @@ let carried what expected status =
           fields))
 
 let unknown w =
-  let answer = D.status (D.person w "reader") (D.unknown_job_id ()) in
+  let answer = D.status (D.person w "reader") (Fresh.job_id ()) in
   Check.equal "the reply's channel" (str "job:status-failed")
     (str answer.channel);
   member_is "the reply's message"

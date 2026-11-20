@@ -4,4 +4,9 @@
  (name main)
  (package xynolog-conformance)
  (public_name xynolog-conformance)
- (libraries xynolog_conformance gateway_suite dispatcher_suite librarian_suite))
+ (libraries
+  xynolog_conformance
+  gateway_suite
+  dispatcher_suite
+  librarian_suite
+  archivist_suite))

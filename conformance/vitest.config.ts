@@ -19,15 +19,6 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'archivist',
-          include: ['archivist/**/*.test.ts'],
-          provide: { gatewayCommand: implementations.gateway, archivistCommand: implementations.archivist },
-          globalSetup: ['harness/global-setup.ts', 'harness/archivist-setup.ts'],
-        },
-      },
-      {
-        extends: true,
-        test: {
           name: 'sdk',
           // The client proxy is the SDK suite's, and is held against a real gateway.
           include: ['sdk/**/*.test.ts', 'harness/client-proxy.test.ts'],

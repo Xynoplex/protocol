@@ -109,17 +109,6 @@ let shortest x =
    before it sends the next, and has no reply to wait on, waits. *)
 let settle ?(seconds = 0.5) () = Run.sleep seconds
 
-(* A job id the dispatcher never minted, of the form JobId states. *)
-let unknown_job_id () =
-  let id = "job-" ^ Fresh.hex 16 in
-  (match Protocol.against "JobId" (`String id) with
-  | [] -> ()
-  | refusals ->
-      failwith
-        (Printf.sprintf "the suite's job id %s is no JobId: %s" id
-           (String.concat "; " refusals)));
-  id
-
 (* A claim's filter for mark jobs of one motivation, and for yield jobs. *)
 let marks motivation =
   `Assoc
@@ -458,7 +447,7 @@ type running = {
 let answering t =
   let probe = sidecar t "readiness" in
   Run.eventually "the dispatcher to answer on the bus" 20.0 (fun () ->
-      let answer = status probe (unknown_job_id ()) in
+      let answer = status probe (Fresh.job_id ()) in
       if code_of answer = Some (`String (code_word Peer_unavailable)) then None
       else Some ())
 

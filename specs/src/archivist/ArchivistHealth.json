@@ -13,9 +13,17 @@
     "actors": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "stower",
+          "browser",
+          "cloneTokenManager"
+        ]
       },
-      "description": "The record actors this process hosts."
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "description": "The record actors this process hosts: each of the enum's, once, in the order the enum lists them."
     }
   },
   "required": [

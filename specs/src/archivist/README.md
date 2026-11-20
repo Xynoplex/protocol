@@ -31,7 +31,7 @@ because the gateway forwards it untouched.
   waits in order: the hold on a read of anchored text (`settleWaitSeconds`)
   shorter than `readSeconds`, and `connectSeconds` and `readSeconds` together
   shorter than a client's `httpRequestTimeoutMs`.
-- The Archivist conformance suite (`conformance/archivist`): every reply
+- The Archivist conformance suite (`conformance/ocaml/archivist`): every reply
   it reads from the Archivist's HTTP surface must match its declaration here.
 - The gateway conformance suite's stand-in Archivist
   (`conformance/harness/archivist.ts`): every request the gateway

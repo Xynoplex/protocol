@@ -22,3 +22,15 @@ let uuid () =
       String.sub h 16 4;
       String.sub h 20 12;
     ]
+
+(* A job id of the form JobId states, as the dispatcher mints one at
+   admission (JOBS.md § The job record). *)
+let job_id () =
+  let id = "job-" ^ hex 16 in
+  (match Protocol.against "JobId" (`String id) with
+  | [] -> ()
+  | refusals ->
+      failwith
+        (Printf.sprintf "the suite's job id %s is no JobId: %s" id
+           (String.concat "; " refusals)));
+  id

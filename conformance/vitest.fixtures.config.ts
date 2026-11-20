@@ -9,7 +9,6 @@ export default defineConfig({
       'harness/graph-database.test.ts',
       'harness/implementations.test.ts',
       'harness/issuer.test.ts',
-      'harness/git.test.ts',
       'harness/net.test.ts',
       'harness/otlp.test.ts',
       'harness/services.test.ts',

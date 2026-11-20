@@ -15,9 +15,10 @@
           "type": "string",
           "enum": [
             "root",
-            "stateHome"
+            "stateHome",
+            "anchoredTextDir"
           ],
-          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+          "description": "The tree the file is in: `root`, the working tree, `stateHome`, the state directory, or `anchoredTextDir`, the anchored-text store."
         },
         "path": {
           "type": "string",
@@ -36,12 +37,7 @@
       "description": "The knowledge base's own stream, of the events that name no resource. It is not sharded.",
       "properties": {
         "tree": {
-          "type": "string",
-          "enum": [
-            "root",
-            "stateHome"
-          ],
-          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+          "$ref": "#/properties/eventStream/properties/tree"
         },
         "path": {
           "type": "string",
@@ -97,12 +93,7 @@
       "description": "A resource's view, in the state directory.",
       "properties": {
         "tree": {
-          "type": "string",
-          "enum": [
-            "root",
-            "stateHome"
-          ],
-          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+          "$ref": "#/properties/eventStream/properties/tree"
         },
         "path": {
           "type": "string",
@@ -126,12 +117,7 @@
       "description": "The projections of what the `__system__` stream adds up to, in the state directory.",
       "properties": {
         "tree": {
-          "type": "string",
-          "enum": [
-            "root",
-            "stateHome"
-          ],
-          "description": "The tree the file is in: `root`, the working tree, or `stateHome`, the state directory."
+          "$ref": "#/properties/eventStream/properties/tree"
         },
         "path": {
           "type": "string",
@@ -169,6 +155,73 @@
         "files"
       ],
       "additionalProperties": false
+    },
+    "storageUriIndex": {
+      "type": "object",
+      "description": "An entry of the storage-uri index, which names the resource whose content is at a storage URI.",
+      "properties": {
+        "tree": {
+          "$ref": "#/properties/eventStream/properties/tree"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*\\{shard\\}/\\{uriHash\\}[^{}/]*$",
+          "description": "Its path in its tree, `/`-separated."
+        },
+        "schema": {
+          "$ref": "https://xynolog.org/protocol/JsonSchema.json",
+          "description": "The schema an entry is."
+        }
+      },
+      "required": [
+        "tree",
+        "path",
+        "schema"
+      ],
+      "additionalProperties": false
+    },
+    "anchoredTextEntry": {
+      "type": "object",
+      "description": "An entry of the anchored-text store, keyed by the checksum of the content it was extracted from.",
+      "properties": {
+        "tree": {
+          "$ref": "#/properties/eventStream/properties/tree"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*\\{shard\\}/\\{contentChecksum\\}[^{}/]*$",
+          "description": "Its path in its tree, `/`-separated."
+        },
+        "schema": {
+          "$ref": "https://xynolog.org/protocol/JsonSchema.json",
+          "description": "The schema an entry is."
+        }
+      },
+      "required": [
+        "tree",
+        "path",
+        "schema"
+      ],
+      "additionalProperties": false
+    },
+    "anchoredTextStamp": {
+      "type": "object",
+      "description": "The file holding the stamp the anchored-text store's entries are taken under: the stamp, followed by a newline.",
+      "properties": {
+        "tree": {
+          "$ref": "#/properties/eventStream/properties/tree"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^{}]*$",
+          "description": "Its path in its tree, `/`-separated."
+        }
+      },
+      "required": [
+        "tree",
+        "path"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -178,7 +231,10 @@
     "eventFile",
     "storedEvent",
     "view",
-    "systemProjections"
+    "systemProjections",
+    "storageUriIndex",
+    "anchoredTextEntry",
+    "anchoredTextStamp"
   ],
   "additionalProperties": false
 }

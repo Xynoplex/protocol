@@ -357,6 +357,84 @@ let reads_neo4j_alike () =
         (Printf.sprintf "%d records, not one of six values"
            (List.length records))
 
+(* A git checkout of its own, made fresh, for [run]. *)
+let in_checkout run =
+  let root = Filename.temp_dir "conformance-git-" "" in
+  Fun.protect
+    ~finally:(fun () -> Gateway.remove root)
+    (fun () ->
+      Result.iter_error
+        (fun err -> failwith ("git init failed: " ^ err))
+        (Archivist_world.git_in root [ "init"; "--quiet" ]);
+      run root)
+
+let index_lock root = Filename.concat (Filename.concat root ".git") "index.lock"
+
+(* The subject of each branch's last commit: none before the first commit. *)
+let branch_tips root =
+  match
+    Archivist_world.git_in root
+      [ "for-each-ref"; "--format=%(contents:subject)"; "refs/heads/" ]
+  with
+  | Ok out -> List.filter (fun l -> l <> "") (String.split_on_char '\n' out)
+  | Error err -> failwith ("git for-each-ref failed: " ^ err)
+
+let runs_once_unlocked () =
+  in_checkout @@ fun root ->
+  let lock = index_lock root in
+  Out_channel.with_open_bin lock ignore;
+  Eio.Switch.run @@ fun sw ->
+  let run =
+    Eio.Fiber.fork_promise ~sw (fun () ->
+        Archivist_world.git_by_hand root
+          [ "commit"; "--quiet"; "--allow-empty"; "-m"; "once unlocked" ])
+  in
+  Run.sleep 0.3;
+  check "it has not run while the index is locked" (Eio.Promise.peek run = None);
+  check "nothing is committed while the index is locked" (branch_tips root = []);
+  Sys.remove lock;
+  ignore (Eio.Promise.await_exn run : string);
+  check "it ran once the lock was gone" (branch_tips root = [ "once unlocked" ])
+
+let fails_at_once () =
+  in_checkout @@ fun root ->
+  match
+    Archivist_world.git_by_hand root [ "checkout"; "--quiet"; "no-such-branch" ]
+  with
+  | _ -> failwith "git checkout of no branch succeeded"
+  | exception Failure said ->
+      check
+        ("it fails with what git said, not " ^ said)
+        (Check.matches_re "pathspec 'no-such-branch' did not match" said)
+
+let waits_for_a_writer () =
+  in_checkout @@ fun root ->
+  let lock = index_lock root in
+  let in_flight = "an index still being written" in
+  Out_channel.with_open_gen [ Open_wronly; Open_creat; Open_excl ] 0o644 lock
+    (fun out -> output_string out in_flight);
+  Eio.Switch.run @@ fun sw ->
+  let pending =
+    Eio.Fiber.fork_promise ~sw (fun () -> Archivist_world.hold_git_index root)
+  in
+  Run.sleep 0.075;
+  check "it holds nothing while another writer does"
+    (Eio.Promise.peek pending = None);
+  check "the writer's lock is neither truncated nor removed"
+    (In_channel.with_open_bin lock In_channel.input_all = in_flight);
+  Sys.remove lock;
+  let release = Eio.Promise.await_exn pending in
+  check "it holds the lock" (Sys.file_exists lock);
+  release ();
+  check "its release removes the lock" (not (Sys.file_exists lock))
+
+let fails_without_an_index () =
+  in_checkout @@ fun root ->
+  match Archivist_world.hold_git_index (Filename.concat root "missing") with
+  | (_ : unit -> unit) ->
+      failwith "it held an index in a directory that is not there"
+  | exception Unix.Unix_error (Unix.ENOENT, _, _) -> ()
+
 (* A case that reads the stores the librarian suite reads. The run make
    validate makes leaves it out: [-t "not stores"]. *)
 let stores = Testo.Tag.declare "stores"
@@ -384,6 +462,20 @@ let tests _env =
       Testo.create ~category:[ "runner" ] ~max_duration:2.0
         ~expected_outcome:(Should_fail "it sleeps past its bound")
         "is stopped when it outlives its bound" outlives_its_bound;
+      Testo.create ~category:[ "git run by hand" ]
+        "runs once the lock on the index is gone, and not before"
+        runs_once_unlocked;
+      Testo.create ~category:[ "git run by hand" ]
+        "fails at once, with what git said, for anything but a locked index"
+        fails_at_once;
+      Testo.create
+        ~category:[ "holding the git index" ]
+        "waits for an existing writer without truncating or removing its lock"
+        waits_for_a_writer;
+      Testo.create
+        ~category:[ "holding the git index" ]
+        "fails immediately when the lock cannot be created for another reason"
+        fails_without_an_index;
       Testo.create ~category:[ "otlp" ]
         "reads an export as protobuf, gzipped or not, and as JSON" reads_otlp;
       Testo.create ~category:[ "neo4j" ] ~tags:[ stores ]

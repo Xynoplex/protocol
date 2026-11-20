@@ -11,7 +11,7 @@ let named job_id = `Assoc [ ("jobId", str job_id) ]
 
 let unknown w =
   let answer =
-    D.cancel_request (D.person w "canceller") (named (D.unknown_job_id ()))
+    D.cancel_request (D.person w "canceller") (named (Fresh.job_id ()))
   in
   Check.equal "the reply's channel" (str "job:cancel-ok") (str answer.channel);
   Check.that "it answers false" (not (D.cancelled answer))

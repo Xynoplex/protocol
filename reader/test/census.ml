@@ -700,6 +700,25 @@ let () =
     (fun _ -> `String "job:limits-requested")
     "/refusals/0/operation: job:limits-requested is no operation the registry \
      says the dispatcher answers";
+  changed specs ~why:"has the Archivist refuse an operation it does not answer"
+    "archivist/messages.json" "refusals/0/operations/0"
+    (fun _ -> `String "job:create")
+    "/refusals/0/operations/0: job:create is no operation the registry says \
+     the Archivist answers";
+  changed specs ~why:"has the Archivist answer an error of a route it lacks"
+    "archivist/messages.json" "http/0/method"
+    (fun _ -> `String "PUT")
+    "/http/0/route: PUT /events is no operation of the Archivist's API";
+  refused specs
+    ~why:"words the dispatcher's entity-type refusal unlike the Archivist's"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "dispatcher/messages.json")
+        (update [ "refusals"; "1"; "message" ] (fun _ ->
+             `String "Unknown entity type: {types}")))
+    "archivist/messages.json: /refusals: the Archivist refuses an entity type \
+     not registered in \"Entity type not registered: {types}\", and the \
+     dispatcher in \"Unknown entity type: {types}\"";
   changed specs ~why:"selects a job by a status it does not state"
     "components/schemas/JobPending.json" "properties/status/enum"
     (fun _ -> `List [ `String "running" ])
