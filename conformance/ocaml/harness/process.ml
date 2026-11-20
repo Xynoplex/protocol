@@ -8,6 +8,8 @@ type t = {
   output : string Dynarray.t;
   stdout : string Dynarray.t;
   stderr : string Dynarray.t;
+  drained : unit Eio.Promise.t;
+      (** Resolved once both its pipes are read to their end. *)
   said : Eio.Condition.t;  (** Broadcast on each line, and when it exits. *)
   input : Eio_unix.sink_ty Eio.Resource.t option Eio.Promise.t;
       (** Its stdin, where it was started with one to read. *)
@@ -126,6 +128,7 @@ let spawn ?(input = false) name command env =
   and stdout = Dynarray.create ()
   and stderr = Dynarray.create () in
   let said = Eio.Condition.create () in
+  let drained, drain = Eio.Promise.create () in
   let started, start = Eio.Promise.create () in
   let given, give = Eio.Promise.create () in
   let exited, exit = Eio.Promise.create () in
@@ -161,8 +164,11 @@ let spawn ?(input = false) name command env =
       Eio.Promise.resolve start (child :> Eio_unix.Process.ty Eio.Resource.t);
       Eio.Fiber.all
         [
-          (fun () -> lines_of out_r [ output; stdout ] said);
-          (fun () -> lines_of err_r [ output; stderr ] said);
+          (fun () ->
+            Eio.Fiber.both
+              (fun () -> lines_of out_r [ output; stdout ] said)
+              (fun () -> lines_of err_r [ output; stderr ] said);
+            Eio.Promise.resolve drain ());
           (fun () ->
             Eio.Promise.resolve exit
               (match Eio.Process.await child with
@@ -175,6 +181,7 @@ let spawn ?(input = false) name command env =
     output;
     stdout;
     stderr;
+    drained;
     said;
     input = given;
     process = started;

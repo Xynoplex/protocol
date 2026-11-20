@@ -113,6 +113,16 @@ let component which name =
   | Some reference -> schema_of reference
   | None -> failwith ("the document has no component schema " ^ name)
 
+(* A component schema of a document, by its name, as specs/src writes it. *)
+let component_json which name =
+  match List.assoc_opt name (document which).components.schemas with
+  | Some reference -> (
+      let { Validate.file; pointer } = place_of reference in
+      match Option.bind (json_of file) (Decode.at_pointer pointer) with
+      | Some json -> json
+      | None -> failwith ("specs/src names no schema at " ^ reference.target))
+  | None -> failwith ("the document has no component schema " ^ name)
+
 (* How [value] is not the gateway's component schema [name]. *)
 let against name value = refusals (component Gateway name) value
 

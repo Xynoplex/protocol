@@ -1,0 +1,1449 @@
+{
+  "$comment": "The prompts a Worker service sends a model, as every implementation must write them (WORKER-SERVICE.md § The five kinds of mark job, § Generation), each to the last character, and the requests it sends each in. Every Worker service runs every case and fails on a difference, in whatever language it is written. Add a case here before changing an implementation. WHAT A CASE STATES. `name` names the prompt. `job` is the kind of job that asks it, and `params` what that job was created with: a `mark` job's MarkJobParams, a `yield` job's GenerationJobParams. `schema` is the tag schema the Dispatcher hands a tagging job beside them (JobParams). `asks` is the row of worker/answer-formats.json the answer is asked for in; a generation asks for none. `about` is the one entity type a linking prompt asks of (K4), or the one category a tagging prompt does (K7). `piece` is the text the prompt carries: the job's text, or the piece of it the chunk plan cut (worker/chunk-plan-cases.json), or, for a generation, what of its context it carries. `prompt` is the prompt: lines are parted by a line feed, and it ends with no line feed. `requests` is each request the prompt is sent in, by the provider of the engine and what it reports of its model: on an Ollama engine, `contextLength`, the window `/api/show` reports, and `options`, exactly the `options` of the generation (D1, D3); on an Anthropic engine, `maxInputTokens` and `maxOutputTokens`, what the Models API reports, `maxTokens`, the request's `max_tokens` (D21), and `stream`, whether it is asked for as a stream (Y9). The rest of each request is D1's and D20's.",
+  "cases": [
+    {
+      "why": "a highlighting job that states nothing but its motivation, over the short text",
+      "name": "highlighting",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5284,
+            "num_ctx": 5785,
+            "temperature": 0
+          }
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 10666,
+          "stream": false
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 30000,
+          "maxOutputTokens": 20000,
+          "maxTokens": 10666,
+          "stream": false
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 8192,
+          "maxOutputTokens": 6000,
+          "maxTokens": 6000,
+          "stream": false
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 4096,
+          "maxTokens": 4096,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "a highlighting job with a density and the language of its text",
+      "name": "highlighting-dense",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting",
+        "density": 5,
+        "sourceLanguage": "de"
+      },
+      "asks": "highlighting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for approximately 5 highlights per 2000 words\n\nSource text language: German.\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5279,
+            "num_ctx": 5789,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a highlighting job with instructions, which its prompt follows with its density",
+      "name": "highlighting-instructed",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting",
+        "instructions": "Highlight every date.",
+        "density": 2,
+        "sourceLanguage": "en"
+      },
+      "asks": "highlighting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text to highlight following these instructions:\n\nHighlight every date.\n\nAim for approximately 2 highlights per 2000 words of text.\n\nSource text language: English.\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of highlights. Each highlight must have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample:\n[\n  {\"exact\": \"revenue grew 45% year-over-year\", \"prefix\": \"In Q3 2024, \", \"suffix\": \", exceeding all forecasts.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5352,
+            "num_ctx": 5731,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a commenting job with instructions, a tone, a density and both languages",
+      "name": "commenting",
+      "job": "mark",
+      "params": {
+        "motivation": "commenting",
+        "instructions": "Explain who each person was.",
+        "tone": "scholarly",
+        "density": 4,
+        "language": "fr",
+        "sourceLanguage": "en"
+      },
+      "asks": "commenting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Add comments to passages in this text following these instructions:\n\nExplain who each person was. Use a scholarly tone.\n\nAim for approximately 4 comments per 2000 words of text.\n\nSource text language: English.\n\nIMPORTANT: Write your comments in French.\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of comments. Each comment must have:\n- \"exact\": the exact text passage being commented on (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"comment\": your comment following the instructions above\n\nRespond with a valid JSON array.\n\nExample:\n[\n  {\"exact\": \"the quarterly review meeting\", \"prefix\": \"We need to schedule \", \"suffix\": \" for next month.\", \"comment\": \"Who will lead this? Should we invite the external auditors?\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5320,
+            "num_ctx": 5756,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a commenting job that states nothing but its motivation: it asks for comments that explain",
+      "name": "commenting-plain",
+      "job": "mark",
+      "params": {
+        "motivation": "commenting"
+      },
+      "asks": "commenting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text that would benefit from explanatory comments.\nFor each passage, provide contextual information, clarification, or background.\n\nGuidelines:\n- Select passages that reference technical terms, historical figures, complex concepts, or unclear references\n- Provide comments that ADD VALUE beyond restating the text\n- Focus on explanation, background, or connections to other ideas\n- Avoid obvious or trivial comments\n- Keep comments concise (1-3 sentences typically)\n- Aim for 3-8 comments per 2000 words (not too sparse or dense)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of comments. Each comment should have:\n- \"exact\": the exact text passage being commented on (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"comment\": your explanatory comment (1-3 sentences, provide context/background/clarification)\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"Ouranos\", \"prefix\": \"In the beginning, \", \"suffix\": \" ruled the universe\", \"comment\": \"Ouranos (also spelled Uranus) is the primordial Greek deity personifying the sky. In Hesiod's Theogony, he is the son and husband of Gaia (Earth) and father of the Titans.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5246,
+            "num_ctx": 5816,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a commenting job with a tone, a density and both languages, and no instructions",
+      "name": "commenting-toned",
+      "job": "mark",
+      "params": {
+        "motivation": "commenting",
+        "tone": "conversational",
+        "density": 6,
+        "language": "de",
+        "sourceLanguage": "fr"
+      },
+      "asks": "commenting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text that would benefit from explanatory comments.\nFor each passage, provide contextual information, clarification, or background.\n\nTone: Use a conversational style in your comments.\n\nGuidelines:\n- Select passages that reference technical terms, historical figures, complex concepts, or unclear references\n- Provide comments that ADD VALUE beyond restating the text\n- Focus on explanation, background, or connections to other ideas\n- Avoid obvious or trivial comments\n- Keep comments concise (1-3 sentences typically)\n- Aim for approximately 6 comments per 2000 words\n\nSource text language: French.\n\nIMPORTANT: Write your comments in German.\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of comments. Each comment should have:\n- \"exact\": the exact text passage being commented on (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"comment\": your explanatory comment (1-3 sentences, provide context/background/clarification)\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"Ouranos\", \"prefix\": \"In the beginning, \", \"suffix\": \" ruled the universe\", \"comment\": \"Ouranos (also spelled Uranus) is the primordial Greek deity personifying the sky. In Hesiod's Theogony, he is the son and husband of Gaia (Earth) and father of the Titans.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5228,
+            "num_ctx": 5831,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a commenting job over a text with characters outside the Basic Multilingual Plane, whose budget counts code points",
+      "name": "code-points-commenting",
+      "job": "mark",
+      "params": {
+        "motivation": "commenting"
+      },
+      "asks": "commenting",
+      "piece": "📜 Ada Lovelace published the first program in 1843 — a method for computing the Bernoulli numbers 𝐵 on the Analytical Engine.\n\nCharles Babbage 🛠 designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.",
+      "prompt": "Identify passages in this text that would benefit from explanatory comments.\nFor each passage, provide contextual information, clarification, or background.\n\nGuidelines:\n- Select passages that reference technical terms, historical figures, complex concepts, or unclear references\n- Provide comments that ADD VALUE beyond restating the text\n- Focus on explanation, background, or connections to other ideas\n- Avoid obvious or trivial comments\n- Keep comments concise (1-3 sentences typically)\n- Aim for 3-8 comments per 2000 words (not too sparse or dense)\n\nText to analyze:\n---\n📜 Ada Lovelace published the first program in 1843 — a method for computing the Bernoulli numbers 𝐵 on the Analytical Engine.\n\nCharles Babbage 🛠 designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n---\n\nReturn a JSON array of comments. Each comment should have:\n- \"exact\": the exact text passage being commented on (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"comment\": your explanatory comment (1-3 sentences, provide context/background/clarification)\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"Ouranos\", \"prefix\": \"In the beginning, \", \"suffix\": \" ruled the universe\", \"comment\": \"Ouranos (also spelled Uranus) is the primordial Greek deity personifying the sky. In Hesiod's Theogony, he is the son and husband of Gaia (Earth) and father of the Titans.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5246,
+            "num_ctx": 5793,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "an assessing job with a tone and no instructions",
+      "name": "assessing",
+      "job": "mark",
+      "params": {
+        "motivation": "assessing",
+        "tone": "critical"
+      },
+      "asks": "assessing",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text that merit critical assessment or evaluation.\nFor each passage, provide analysis of its validity, strength, or implications.\n\nTone: Use a critical style in your assessments.\n\nGuidelines:\n- Select passages containing claims, arguments, conclusions, or assertions\n- Assess evidence quality, logical soundness, or practical implications\n- Provide assessments that ADD INSIGHT beyond restating the text\n- Focus on passages where evaluation would help readers form judgments\n- Keep assessments concise yet substantive (1-3 sentences typically)\n- Aim for 2-6 assessments per 2000 words (focus on key passages)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of assessments. Each assessment should have:\n- \"exact\": the exact text passage being assessed (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"assessment\": your analytical assessment (1-3 sentences, evaluate validity/strength/implications)\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"AI will replace most jobs by 2030\", \"prefix\": \"Many experts predict that \", \"suffix\": \", fundamentally reshaping\", \"assessment\": \"This claim lacks nuance and supporting evidence. Employment patterns historically show job transformation rather than wholesale replacement. The timeline appears speculative without specific sector analysis.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5219,
+            "num_ctx": 5838,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "an assessing job that states nothing but its motivation: it asks for assessments that evaluate",
+      "name": "assessing-plain",
+      "job": "mark",
+      "params": {
+        "motivation": "assessing"
+      },
+      "asks": "assessing",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify passages in this text that merit critical assessment or evaluation.\nFor each passage, provide analysis of its validity, strength, or implications.\n\nGuidelines:\n- Select passages containing claims, arguments, conclusions, or assertions\n- Assess evidence quality, logical soundness, or practical implications\n- Provide assessments that ADD INSIGHT beyond restating the text\n- Focus on passages where evaluation would help readers form judgments\n- Keep assessments concise yet substantive (1-3 sentences typically)\n- Aim for 2-6 assessments per 2000 words (focus on key passages)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of assessments. Each assessment should have:\n- \"exact\": the exact text passage being assessed (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"assessment\": your analytical assessment (1-3 sentences, evaluate validity/strength/implications)\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"AI will replace most jobs by 2030\", \"prefix\": \"Many experts predict that \", \"suffix\": \", fundamentally reshaping\", \"assessment\": \"This claim lacks nuance and supporting evidence. Employment patterns historically show job transformation rather than wholesale replacement. The timeline appears speculative without specific sector analysis.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5227,
+            "num_ctx": 5830,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "an assessing job with instructions, a tone, a density and both languages",
+      "name": "assessing-instructed",
+      "job": "mark",
+      "params": {
+        "motivation": "assessing",
+        "instructions": "Judge the evidence.",
+        "tone": "balanced",
+        "density": 3,
+        "language": "ja",
+        "sourceLanguage": "en"
+      },
+      "asks": "assessing",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Assess passages in this text following these instructions:\n\nJudge the evidence. Use a balanced tone.\n\nAim for approximately 3 assessments per 2000 words of text.\n\nSource text language: English.\n\nIMPORTANT: Write your assessments in Japanese.\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of assessments. Each assessment must have:\n- \"exact\": the exact text passage being assessed (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n- \"assessment\": your assessment following the instructions above\n\nRespond with a valid JSON array.\n\nExample:\n[\n  {\"exact\": \"the quarterly revenue target\", \"prefix\": \"We established \", \"suffix\": \" for Q4 2024.\", \"assessment\": \"This target seems ambitious given market conditions. Consider revising based on recent trends.\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5315,
+            "num_ctx": 5760,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "the extraction a linking job asks of a piece for one entity type, names only",
+      "name": "linking-person",
+      "job": "mark",
+      "params": {
+        "motivation": "linking",
+        "entityTypes": [
+          "Person"
+        ]
+      },
+      "asks": "linking",
+      "about": "Person",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify entity references in the following text. Look for mentions of: Person.\n\nFind direct mentions only (names, proper nouns). Do not include pronouns or descriptive references.\n\nText to analyze:\n\"\"\"\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\"\"\"\n\nRespond with a JSON array of entities found. Each entity should have:\n- exact: the exact text span from the input (quoted verbatim — character-for-character)\n- entityType: one of the provided entity types\n- prefix: up to 64 characters of text immediately before the entity (used to disambiguate when the same text appears more than once)\n- suffix: up to 64 characters of text immediately after the entity (same purpose)\n\nIf no entities are found, respond with an empty array [].\n\nExample output:\n[{\"exact\":\"Alice\",\"entityType\":\"Person\",\"prefix\":\"\",\"suffix\":\" went to\"},{\"exact\":\"Paris\",\"entityType\":\"Location\",\"prefix\":\"went to \",\"suffix\":\" yesterday\"}]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5318,
+            "num_ctx": 5758,
+            "temperature": 0
+          }
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 10666,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "the extraction a linking job asks of a piece for another entity type",
+      "name": "linking-place",
+      "job": "mark",
+      "params": {
+        "motivation": "linking",
+        "entityTypes": [
+          "Place"
+        ]
+      },
+      "asks": "linking",
+      "about": "Place",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify entity references in the following text. Look for mentions of: Place.\n\nFind direct mentions only (names, proper nouns). Do not include pronouns or descriptive references.\n\nText to analyze:\n\"\"\"\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\"\"\"\n\nRespond with a JSON array of entities found. Each entity should have:\n- exact: the exact text span from the input (quoted verbatim — character-for-character)\n- entityType: one of the provided entity types\n- prefix: up to 64 characters of text immediately before the entity (used to disambiguate when the same text appears more than once)\n- suffix: up to 64 characters of text immediately after the entity (same purpose)\n\nIf no entities are found, respond with an empty array [].\n\nExample output:\n[{\"exact\":\"Alice\",\"entityType\":\"Person\",\"prefix\":\"\",\"suffix\":\" went to\"},{\"exact\":\"Paris\",\"entityType\":\"Location\",\"prefix\":\"went to \",\"suffix\":\" yesterday\"}]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5318,
+            "num_ctx": 5758,
+            "temperature": 0
+          }
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 10666,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "the extraction of a linking job that takes descriptive references, with the language of its text",
+      "name": "linking-descriptive",
+      "job": "mark",
+      "params": {
+        "motivation": "linking",
+        "entityTypes": [
+          "Person"
+        ],
+        "includeDescriptiveReferences": true,
+        "sourceLanguage": "en"
+      },
+      "asks": "linking",
+      "about": "Person",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Identify entity references in the following text. Look for mentions of: Person.\n\nInclude both:\n- Direct mentions (names, proper nouns)\n- Descriptive references (substantive phrases that refer to entities)\n\nFor descriptive references, include:\n- Definite descriptions: \"the Nobel laureate\", \"the tech giant\", \"the former president\"\n- Role-based references: \"the CEO\", \"the physicist\", \"the author\", \"the owner\", \"the contractor\"\n- Epithets with context: \"the Cupertino-based company\", \"the iPhone maker\"\n- References to entities even when identity is unknown or unspecified\n\nDo NOT include:\n- Simple pronouns alone: he, she, it, they, him, her, them\n- Generic determiners alone: this, that, these, those\n- Possessives without substance: his, her, their, its\n\nExamples:\n- For \"Marie Curie\", include \"the Nobel laureate\" and \"the physicist\" but NOT \"she\"\n- For an unknown person, include \"the owner\" or \"the contractor\" (role-based references count even when identity is unspecified)\n\nSource text language: English.\n\nText to analyze:\n\"\"\"\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\"\"\"\n\nRespond with a JSON array of entities found. Each entity should have:\n- exact: the exact text span from the input (quoted verbatim — character-for-character)\n- entityType: one of the provided entity types\n- prefix: up to 64 characters of text immediately before the entity (used to disambiguate when the same text appears more than once)\n- suffix: up to 64 characters of text immediately after the entity (same purpose)\n\nIf no entities are found, respond with an empty array [].\n\nExample output:\n[{\"exact\":\"Alice\",\"entityType\":\"Person\",\"prefix\":\"\",\"suffix\":\" went to\"},{\"exact\":\"Paris\",\"entityType\":\"Location\",\"prefix\":\"went to \",\"suffix\":\" yesterday\"}]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5179,
+            "num_ctx": 5869,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "the count a linking job asks of the same piece beside its extraction, in the same words whatever the extraction was asked",
+      "name": "linking-person-count",
+      "job": "mark",
+      "params": {
+        "motivation": "linking",
+        "entityTypes": [
+          "Person"
+        ]
+      },
+      "asks": "count",
+      "about": "Person",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Count every mention of: Person in the following text. Repeated mentions of the same entity count separately. Respond with a JSON array of one object: [{\"count\": <the number>}].\n\nText:\n\"\"\"\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\"\"\"",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 32,
+            "num_ctx": 272,
+            "temperature": 0
+          }
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 32,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "the count of another entity type",
+      "name": "linking-place-count",
+      "job": "mark",
+      "params": {
+        "motivation": "linking",
+        "entityTypes": [
+          "Place"
+        ]
+      },
+      "asks": "count",
+      "about": "Place",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "Count every mention of: Place in the following text. Repeated mentions of the same entity count separately. Respond with a JSON array of one object: [{\"count\": <the number>}].\n\nText:\n\"\"\"\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\"\"\"",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 32,
+            "num_ctx": 272,
+            "temperature": 0
+          }
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 32,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "a tagging job of one category: its prompt states the schema and the category",
+      "name": "tagging-claim",
+      "job": "mark",
+      "params": {
+        "motivation": "tagging",
+        "schemaId": "argument",
+        "categories": [
+          "Claim"
+        ]
+      },
+      "schema": {
+        "id": "argument",
+        "name": "Argument",
+        "description": "What a text claims and what it offers in support",
+        "domain": "rhetoric",
+        "tags": [
+          {
+            "name": "Claim",
+            "description": "What the text asserts",
+            "examples": [
+              "What is being asserted?"
+            ]
+          },
+          {
+            "name": "Evidence",
+            "description": "What supports the assertion",
+            "examples": [
+              "What supports it?",
+              "Is a source given?"
+            ]
+          }
+        ]
+      },
+      "asks": "tagging",
+      "about": "Claim",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "You are analyzing a text using the Argument framework.\n\nSchema: What a text claims and what it offers in support\nDomain: rhetoric\n\nYour task: Identify passages that serve the structural role of \"Claim\".\n\nCategory: Claim\nDescription: What the text asserts\nKey questions:\n- What is being asserted?\n\nGuidelines:\n- Focus on STRUCTURAL FUNCTION, not semantic content\n- A passage serves the \"Claim\" role if it performs this function in the document's structure\n- Look for passages that explicitly fulfill this role\n- Passages can be sentences, paragraphs, or sections\n- Aim for precision - only tag passages that clearly serve this structural role\n- Typical documents have 1-5 instances of each category (some may have 0)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of tags. Each tag should have:\n- \"exact\": the exact text passage (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"What duty did the defendant owe?\", \"prefix\": \"The central question is: \", \"suffix\": \" This question must be\"},\n  {\"exact\": \"In tort law, a duty of care is established when...\", \"prefix\": \"Legal framework:\\n\", \"suffix\": \"\\n\\nApplying this standard\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5242,
+            "num_ctx": 5819,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a tagging job of a category with several examples",
+      "name": "tagging-evidence",
+      "job": "mark",
+      "params": {
+        "motivation": "tagging",
+        "schemaId": "argument",
+        "categories": [
+          "Evidence"
+        ]
+      },
+      "schema": {
+        "id": "argument",
+        "name": "Argument",
+        "description": "What a text claims and what it offers in support",
+        "domain": "rhetoric",
+        "tags": [
+          {
+            "name": "Claim",
+            "description": "What the text asserts",
+            "examples": [
+              "What is being asserted?"
+            ]
+          },
+          {
+            "name": "Evidence",
+            "description": "What supports the assertion",
+            "examples": [
+              "What supports it?",
+              "Is a source given?"
+            ]
+          }
+        ]
+      },
+      "asks": "tagging",
+      "about": "Evidence",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "You are analyzing a text using the Argument framework.\n\nSchema: What a text claims and what it offers in support\nDomain: rhetoric\n\nYour task: Identify passages that serve the structural role of \"Evidence\".\n\nCategory: Evidence\nDescription: What supports the assertion\nKey questions:\n- What supports it?\n- Is a source given?\n\nGuidelines:\n- Focus on STRUCTURAL FUNCTION, not semantic content\n- A passage serves the \"Evidence\" role if it performs this function in the document's structure\n- Look for passages that explicitly fulfill this role\n- Passages can be sentences, paragraphs, or sections\n- Aim for precision - only tag passages that clearly serve this structural role\n- Typical documents have 1-5 instances of each category (some may have 0)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of tags. Each tag should have:\n- \"exact\": the exact text passage (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"What duty did the defendant owe?\", \"prefix\": \"The central question is: \", \"suffix\": \" This question must be\"},\n  {\"exact\": \"In tort law, a duty of care is established when...\", \"prefix\": \"Legal framework:\\n\", \"suffix\": \"\\n\\nApplying this standard\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5237,
+            "num_ctx": 5822,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a tagging job with the language of its text",
+      "name": "tagging-language",
+      "job": "mark",
+      "params": {
+        "motivation": "tagging",
+        "schemaId": "argument",
+        "categories": [
+          "Claim"
+        ],
+        "sourceLanguage": "en"
+      },
+      "schema": {
+        "id": "argument",
+        "name": "Argument",
+        "description": "What a text claims and what it offers in support",
+        "domain": "rhetoric",
+        "tags": [
+          {
+            "name": "Claim",
+            "description": "What the text asserts",
+            "examples": [
+              "What is being asserted?"
+            ]
+          },
+          {
+            "name": "Evidence",
+            "description": "What supports the assertion",
+            "examples": [
+              "What supports it?",
+              "Is a source given?"
+            ]
+          }
+        ]
+      },
+      "asks": "tagging",
+      "about": "Claim",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.",
+      "prompt": "You are analyzing a text using the Argument framework.\n\nSchema: What a text claims and what it offers in support\nDomain: rhetoric\n\nYour task: Identify passages that serve the structural role of \"Claim\".\n\nCategory: Claim\nDescription: What the text asserts\nKey questions:\n- What is being asserted?\n\nGuidelines:\n- Focus on STRUCTURAL FUNCTION, not semantic content\n- A passage serves the \"Claim\" role if it performs this function in the document's structure\n- Look for passages that explicitly fulfill this role\n- Passages can be sentences, paragraphs, or sections\n- Aim for precision - only tag passages that clearly serve this structural role\n- Typical documents have 1-5 instances of each category (some may have 0)\n\nSource text language: English.\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n---\n\nReturn a JSON array of tags. Each tag should have:\n- \"exact\": the exact text passage (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"What duty did the defendant owe?\", \"prefix\": \"The central question is: \", \"suffix\": \" This question must be\"},\n  {\"exact\": \"In tort law, a duty of care is established when...\", \"prefix\": \"Legal framework:\\n\", \"suffix\": \"\\n\\nApplying this standard\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5237,
+            "num_ctx": 5823,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 1 of 4 of the long text, cut at paragraph ends with an overlap, for a model whose window cuts it",
+      "name": "chunks-1",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Paragraph 1, sentence 1: the survey party recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nParagraph 1, sentence 1: the survey party recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 2 of 4 of the long text, cut at paragraph ends with an overlap, for a model whose window cuts it",
+      "name": "chunks-2",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.\n\nParagraph 4, sentence 1: the survey party recorded marker 401 beside the Rhône. Paragraph 4, sentence 2: the survey party recorded marker 402 beside the Rhône. Paragraph 4, sentence 3: the survey party recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.\n\nParagraph 4, sentence 1: the survey party recorded marker 401 beside the Rhône. Paragraph 4, sentence 2: the survey party recorded marker 402 beside the Rhône. Paragraph 4, sentence 3: the survey party recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 3 of 4 of the long text, cut at paragraph ends with an overlap, for a model whose window cuts it",
+      "name": "chunks-3",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 4 of 4 of the long text, cut at paragraph ends with an overlap, for a model whose window cuts it",
+      "name": "chunks-4",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party recorded marker 806 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party recorded marker 806 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 1 of 4 of a long text with characters outside the Basic Multilingual Plane, cut by code points",
+      "name": "code-points-1",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Field notes of the Rhône survey 🧭, kept by the clerk 𝒞 of the second party. The clerk kept a tally of the chains measured: 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸.\n\nParagraph 1, sentence 1: the survey party 🧭 recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party 🧭 recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party 🧭 recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party 🧭 recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party 🧭 recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party 🧭 recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party 🧭 recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party 🧭 recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party 🧭 recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party 🧭 recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party 🧭 recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party 🧭 recorded marker 206 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nField notes of the Rhône survey 🧭, kept by the clerk 𝒞 of the second party. The clerk kept a tally of the chains measured: 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸 𝍷𝍷𝍷𝍷𝍸.\n\nParagraph 1, sentence 1: the survey party 🧭 recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party 🧭 recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party 🧭 recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party 🧭 recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party 🧭 recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party 🧭 recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party 🧭 recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party 🧭 recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party 🧭 recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party 🧭 recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party 🧭 recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party 🧭 recorded marker 206 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 2 of 4 of a long text with characters outside the Basic Multilingual Plane, cut by code points",
+      "name": "code-points-2",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "the Rhône. Paragraph 2, sentence 4: the survey party 🧭 recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party 🧭 recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party 🧭 recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party 🧭 recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party 🧭 recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party 🧭 recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party 🧭 recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party 🧭 recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party 🧭 recorded marker 306 beside the Rhône.\n\nParagraph 4, sentence 1: the survey party 🧭 recorded marker 401 beside the Rhône. Paragraph 4, sentence 2: the survey party 🧭 recorded marker 402 beside the Rhône. Paragraph 4, sentence 3: the survey party 🧭 recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party 🧭 recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party 🧭 recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party 🧭 recorded marker 406 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nthe Rhône. Paragraph 2, sentence 4: the survey party 🧭 recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party 🧭 recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party 🧭 recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party 🧭 recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party 🧭 recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party 🧭 recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party 🧭 recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party 🧭 recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party 🧭 recorded marker 306 beside the Rhône.\n\nParagraph 4, sentence 1: the survey party 🧭 recorded marker 401 beside the Rhône. Paragraph 4, sentence 2: the survey party 🧭 recorded marker 402 beside the Rhône. Paragraph 4, sentence 3: the survey party 🧭 recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party 🧭 recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party 🧭 recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party 🧭 recorded marker 406 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 3 of 4 of a long text with characters outside the Basic Multilingual Plane, cut by code points",
+      "name": "code-points-3",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "the Rhône. Paragraph 4, sentence 4: the survey party 🧭 recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party 🧭 recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party 🧭 recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party 🧭 recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party 🧭 recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party 🧭 recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party 🧭 recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party 🧭 recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party 🧭 recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party 🧭 recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party 🧭 recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party 🧭 recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party 🧭 recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party 🧭 recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party 🧭 recorded marker 606 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nthe Rhône. Paragraph 4, sentence 4: the survey party 🧭 recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party 🧭 recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party 🧭 recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party 🧭 recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party 🧭 recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party 🧭 recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party 🧭 recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party 🧭 recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party 🧭 recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party 🧭 recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party 🧭 recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party 🧭 recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party 🧭 recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party 🧭 recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party 🧭 recorded marker 606 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 4 of 4 of a long text with characters outside the Basic Multilingual Plane, cut by code points",
+      "name": "code-points-4",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "the Rhône. Paragraph 6, sentence 4: the survey party 🧭 recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party 🧭 recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party 🧭 recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party 🧭 recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party 🧭 recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party 🧭 recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party 🧭 recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party 🧭 recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party 🧭 recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party 🧭 recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party 🧭 recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party 🧭 recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party 🧭 recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party 🧭 recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party 🧭 recorded marker 806 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nthe Rhône. Paragraph 6, sentence 4: the survey party 🧭 recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party 🧭 recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party 🧭 recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party 🧭 recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party 🧭 recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party 🧭 recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party 🧭 recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party 🧭 recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party 🧭 recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party 🧭 recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party 🧭 recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party 🧭 recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party 🧭 recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party 🧭 recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party 🧭 recorded marker 806 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "the first piece of the long text, whose answer the model was cut off in",
+      "name": "halved-first",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Paragraph 1, sentence 1: the survey party recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nParagraph 1, sentence 1: the survey party recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1467,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 1 of the cut-off piece asked again in pieces of half its size",
+      "name": "halved-half-1",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Paragraph 1, sentence 1: the survey party recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nParagraph 1, sentence 1: the survey party recorded marker 101 beside the Rhône. Paragraph 1, sentence 2: the survey party recorded marker 102 beside the Rhône. Paragraph 1, sentence 3: the survey party recorded marker 103 beside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1329,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 2 of the cut-off piece asked again in pieces of half its size",
+      "name": "halved-half-2",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 1, sentence 4: the survey party recorded marker 104 beside the Rhône. Paragraph 1, sentence 5: the survey party recorded marker 105 beside the Rhône. Paragraph 1, sentence 6: the survey party recorded marker 106 beside the Rhône.\n\nParagraph 2, sentence 1: the survey party recorded marker 201 beside the Rhône. Paragraph 2, sentence 2: the survey party recorded marker 202 beside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 3 of the cut-off piece asked again in pieces of half its size",
+      "name": "halved-half-3",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 2, sentence 3: the survey party recorded marker 203 beside the Rhône. Paragraph 2, sentence 4: the survey party recorded marker 204 beside the Rhône. Paragraph 2, sentence 5: the survey party recorded marker 205 beside the Rhône. Paragraph 2, sentence 6: the survey party recorded marker 206 beside the Rhône.\n\nParagraph 3, sentence 1: the survey party recorded marker 301 beside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 4 of the cut-off piece asked again in pieces of half its size",
+      "name": "halved-half-4",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 3, sentence 2: the survey party recorded marker 302 beside the Rhône. Paragraph 3, sentence 3: the survey party recorded marker 303 beside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1310,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 1 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-1",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.\n\nParagraph 4, sentence 1: the survey party recorded marker 401 beside the Rhône. Paragraph 4, sentence 2: the survey party recorded marker 402 beside the Rhône. Paragraph 4, sentence 3: the survey party recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 3, sentence 4: the survey party recorded marker 304 beside the Rhône. Paragraph 3, sentence 5: the survey party recorded marker 305 beside the Rhône. Paragraph 3, sentence 6: the survey party recorded marker 306 beside the Rhône.\n\nParagraph 4, sentence 1: the survey party recorded marker 401 beside the Rhône. Paragraph 4, sentence 2: the survey party recorded marker 402 beside the Rhône. Paragraph 4, sentence 3: the survey party recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 2 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-2",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 4, sentence 3: the survey party recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 4, sentence 3: the survey party recorded marker 403 beside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 3 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-3",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1310,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 4 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-4",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 5 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-5",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 6 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-6",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1310,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 7 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-7",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1382,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 8 of the rest of the long text, cut at the size the halves came back whole at",
+      "name": "halved-rest-8",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party recorded marker 806 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party recorded marker 806 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1467,
+          "options": {
+            "num_predict": 800,
+            "num_ctx": 1286,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 1 of what is left of the long text after a checkpoint, cut smaller than the attempt that died cut it",
+      "name": "resume-1",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 4, sentence 4: the survey party recorded marker 404 beside the Rhône. Paragraph 4, sentence 5: the survey party recorded marker 405 beside the Rhône. Paragraph 4, sentence 6: the survey party recorded marker 406 beside the Rhône.\n\nParagraph 5, sentence 1: the survey party recorded marker 501 beside the Rhône. Paragraph 5, sentence 2: the survey party recorded marker 502 beside the Rhône. Paragraph 5, sentence 3: the survey party recorded marker 503 beside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 2 of what is left of the long text after a checkpoint, cut smaller than the attempt that died cut it",
+      "name": "resume-2",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 5, sentence 4: the survey party recorded marker 504 beside the Rhône. Paragraph 5, sentence 5: the survey party recorded marker 505 beside the Rhône. Paragraph 5, sentence 6: the survey party recorded marker 506 beside the Rhône.\n\nParagraph 6, sentence 1: the survey party recorded marker 601 beside the Rhône. Paragraph 6, sentence 2: the survey party recorded marker 602 beside the Rhône. Paragraph 6, sentence 3: the survey party recorded marker 603 beside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 3 of what is left of the long text after a checkpoint, cut smaller than the attempt that died cut it",
+      "name": "resume-3",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 6, sentence 4: the survey party recorded marker 604 beside the Rhône. Paragraph 6, sentence 5: the survey party recorded marker 605 beside the Rhône. Paragraph 6, sentence 6: the survey party recorded marker 606 beside the Rhône.\n\nParagraph 7, sentence 1: the survey party recorded marker 701 beside the Rhône. Paragraph 7, sentence 2: the survey party recorded marker 702 beside the Rhône. Paragraph 7, sentence 3: the survey party recorded marker 703 beside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "piece 4 of what is left of the long text after a checkpoint, cut smaller than the attempt that died cut it",
+      "name": "resume-4",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "eside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party recorded marker 806 beside the Rhône.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\neside the Rhône. Paragraph 7, sentence 4: the survey party recorded marker 704 beside the Rhône. Paragraph 7, sentence 5: the survey party recorded marker 705 beside the Rhône. Paragraph 7, sentence 6: the survey party recorded marker 706 beside the Rhône.\n\nParagraph 8, sentence 1: the survey party recorded marker 801 beside the Rhône. Paragraph 8, sentence 2: the survey party recorded marker 802 beside the Rhône. Paragraph 8, sentence 3: the survey party recorded marker 803 beside the Rhône. Paragraph 8, sentence 4: the survey party recorded marker 804 beside the Rhône. Paragraph 8, sentence 5: the survey party recorded marker 805 beside the Rhône. Paragraph 8, sentence 6: the survey party recorded marker 806 beside the Rhône.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 1200,
+          "options": {
+            "num_predict": 622,
+            "num_ctx": 1200,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "the first half of the short text, asked when the answer about all of it could not be read",
+      "name": "unreadable-half",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5284,
+            "num_ctx": 5704,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "the first half of that half, asked when the answer about it could not be read either",
+      "name": "unreadable-quarter",
+      "job": "mark",
+      "params": {
+        "motivation": "highlighting"
+      },
+      "asks": "highlighting",
+      "piece": "Ada Lovelace published the first program in 1843 — a method",
+      "prompt": "Identify passages in this text that merit highlighting for their importance or salience.\nFocus on content that readers should notice and remember.\n\nGuidelines:\n- Highlight key claims, findings, or conclusions\n- Highlight important definitions, terminology, or concepts\n- Highlight notable quotes or particularly striking statements\n- Highlight critical decisions, action items, or turning points\n- Select passages that are SIGNIFICANT, not just interesting\n- Avoid trivial or obvious content\n- Aim for 3-8 highlights per 2000 words (be selective)\n\nText to analyze:\n---\nAda Lovelace published the first program in 1843 — a method\n---\n\nReturn a JSON array of highlights. Each highlight should have:\n- \"exact\": the exact text passage to highlight (quoted verbatim from source)\n- \"prefix\": up to 64 characters of text immediately before the passage\n- \"suffix\": up to 64 characters of text immediately after the passage\n\nRespond with a valid JSON array.\n\nExample format:\n[\n  {\"exact\": \"we will discontinue support for legacy systems by March 2025\", \"prefix\": \"After careful consideration, \", \"suffix\": \". This decision affects\"}\n]",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 5284,
+            "num_ctx": 5687,
+            "temperature": 0
+          }
+        }
+      ]
+    },
+    {
+      "why": "a yield job for a Markdown resource of prose, focused on a resource, citing its sources, with a temperature and a length",
+      "name": "yield-markdown",
+      "job": "yield",
+      "params": {
+        "title": "The Analytical Engine",
+        "storageUri": "file://generated/analytical-engine.md",
+        "prompt": "Write three sentences.",
+        "entityTypes": [
+          "Person"
+        ],
+        "language": "en",
+        "sourceLanguage": "en",
+        "temperature": 0.2,
+        "maxTokens": 300,
+        "structure": "prose",
+        "cite": true,
+        "context": {
+          "focus": {
+            "kind": "resource",
+            "resource": {
+              "@context": "https://schema.org",
+              "@id": "res-ws-yield-source",
+              "name": "Notes on the engine",
+              "representations": [
+                {
+                  "mediaType": "text/markdown",
+                  "storageUri": "file://worker-service/res-ws-yield-source",
+                  "rel": "original"
+                }
+              ]
+            },
+            "content": {
+              "main": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n",
+              "related": {}
+            }
+          },
+          "graph": {
+            "nodes": [],
+            "edges": []
+          },
+          "metadata": {}
+        }
+      },
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n",
+      "prompt": "Generate a concise, informative resource about \"The Analytical Engine\".\nInstruction: Write three sentences.\nFocus on these entity types: Person.\n\nResource context:\n- Resource: Notes on the engine [res-ws-yield-source]\n\nResource content:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\n---\n\nThe source resource and embedded context are in English.\n\nRequirements:\n- Aim for approximately 300 tokens of content\n- Be factual and informative\n- Write flowing, well-structured paragraphs with no section headings\n- Ground every claim in the provided context. Cite each claim by wrapping its words, where they stand in your sentence, as [[<id>: the claim's words]], where <id> is an id shown in square brackets in the context above (for a passage labeled [abc], write [[abc: the words that passage supports]]). A claim drawn from several passages lists their ids, separated by commas: [[abc,def: the claim's words]]. Wrap only the words a source supports, cite each source once per claim, and cite only ids that appear in the context. Prefer wrapping words: a bare [[<id>]] is replaced by that source's name, so write one only where the source's name belongs in your sentence.\n- Use markdown formatting\n- Write the response as markdown",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 300,
+            "num_ctx": 837,
+            "temperature": 0.2
+          }
+        },
+        {
+          "provider": "ollama",
+          "contextLength": 694,
+          "options": {
+            "num_predict": 300,
+            "num_ctx": 694,
+            "temperature": 0.2
+          }
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 300,
+          "stream": false
+        },
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 400,
+          "maxOutputTokens": 300,
+          "maxTokens": 300,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "a yield job whose length an Anthropic engine asks for as one message",
+      "name": "yield-21333",
+      "job": "yield",
+      "params": {
+        "title": "The Analytical Engine",
+        "storageUri": "file://generated/anthropic-yield-whole.md",
+        "prompt": "Write three sentences.",
+        "entityTypes": [
+          "Person"
+        ],
+        "language": "en",
+        "sourceLanguage": "en",
+        "structure": "prose",
+        "cite": true,
+        "maxTokens": 21333,
+        "context": {
+          "focus": {
+            "kind": "resource",
+            "resource": {
+              "@context": "https://schema.org",
+              "@id": "res-ws-yield-source",
+              "name": "Notes on the engine",
+              "representations": [
+                {
+                  "mediaType": "text/markdown",
+                  "storageUri": "file://worker-service/res-ws-yield-source",
+                  "rel": "original"
+                }
+              ]
+            },
+            "content": {
+              "main": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n",
+              "related": {}
+            }
+          },
+          "graph": {
+            "nodes": [],
+            "edges": []
+          },
+          "metadata": {}
+        }
+      },
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n",
+      "prompt": "Generate a concise, informative resource about \"The Analytical Engine\".\nInstruction: Write three sentences.\nFocus on these entity types: Person.\n\nResource context:\n- Resource: Notes on the engine [res-ws-yield-source]\n\nResource content:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\n---\n\nThe source resource and embedded context are in English.\n\nRequirements:\n- Aim for approximately 21333 tokens of content\n- Be factual and informative\n- Write flowing, well-structured paragraphs with no section headings\n- Ground every claim in the provided context. Cite each claim by wrapping its words, where they stand in your sentence, as [[<id>: the claim's words]], where <id> is an id shown in square brackets in the context above (for a passage labeled [abc], write [[abc: the words that passage supports]]). A claim drawn from several passages lists their ids, separated by commas: [[abc,def: the claim's words]]. Wrap only the words a source supports, cite each source once per claim, and cite only ids that appear in the context. Prefer wrapping words: a bare [[<id>]] is replaced by that source's name, so write one only where the source's name belongs in your sentence.\n- Use markdown formatting\n- Write the response as markdown",
+      "requests": [
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 21333,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "why": "a yield job long enough that an Anthropic engine asks for it as a stream",
+      "name": "yield-21334",
+      "job": "yield",
+      "params": {
+        "title": "The Analytical Engine",
+        "storageUri": "file://generated/anthropic-yield-streamed.md",
+        "prompt": "Write three sentences.",
+        "entityTypes": [
+          "Person"
+        ],
+        "language": "en",
+        "sourceLanguage": "en",
+        "structure": "prose",
+        "cite": true,
+        "maxTokens": 21334,
+        "context": {
+          "focus": {
+            "kind": "resource",
+            "resource": {
+              "@context": "https://schema.org",
+              "@id": "res-ws-yield-source",
+              "name": "Notes on the engine",
+              "representations": [
+                {
+                  "mediaType": "text/markdown",
+                  "storageUri": "file://worker-service/res-ws-yield-source",
+                  "rel": "original"
+                }
+              ]
+            },
+            "content": {
+              "main": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n",
+              "related": {}
+            }
+          },
+          "graph": {
+            "nodes": [],
+            "edges": []
+          },
+          "metadata": {}
+        }
+      },
+      "piece": "Ada Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n",
+      "prompt": "Generate a concise, informative resource about \"The Analytical Engine\".\nInstruction: Write three sentences.\nFocus on these entity types: Person.\n\nResource context:\n- Resource: Notes on the engine [res-ws-yield-source]\n\nResource content:\n---\nAda Lovelace published the first program in 1843 — a method for computing Bernoulli numbers on the Analytical Engine.\n\nCharles Babbage designed the engine in London, but it was never built. Lovelace argued that the engine could manipulate symbols as well as numbers; nobody tested that claim for a century.\n\nThe program was naïve by later standards, and London ignored it. London was wrong.\n\n---\n\nThe source resource and embedded context are in English.\n\nRequirements:\n- Aim for approximately 21334 tokens of content\n- Be factual and informative\n- Write flowing, well-structured paragraphs with no section headings\n- Ground every claim in the provided context. Cite each claim by wrapping its words, where they stand in your sentence, as [[<id>: the claim's words]], where <id> is an id shown in square brackets in the context above (for a passage labeled [abc], write [[abc: the words that passage supports]]). A claim drawn from several passages lists their ids, separated by commas: [[abc,def: the claim's words]]. Wrap only the words a source supports, cite each source once per claim, and cite only ids that appear in the context. Prefer wrapping words: a bare [[<id>]] is replaced by that source's name, so write one only where the source's name belongs in your sentence.\n- Use markdown formatting\n- Write the response as markdown",
+      "requests": [
+        {
+          "provider": "anthropic",
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 64000,
+          "maxTokens": 21334,
+          "stream": true
+        }
+      ]
+    },
+    {
+      "why": "a yield job of plain text in German, focused on an annotation with a hint from its author",
+      "name": "yield-annotation",
+      "job": "yield",
+      "params": {
+        "title": "Charles Babbage",
+        "storageUri": "file://generated/babbage.txt",
+        "language": "de",
+        "outputMediaType": "text/plain",
+        "context": {
+          "focus": {
+            "kind": "annotation",
+            "annotation": {
+              "@context": "http://www.w3.org/ns/anno.jsonld",
+              "type": "Annotation",
+              "id": "ann-ws-focus",
+              "motivation": "linking",
+              "target": {
+                "source": "res-ws-yield-source",
+                "selector": [
+                  {
+                    "type": "TextPositionSelector",
+                    "start": 119,
+                    "end": 134
+                  },
+                  {
+                    "type": "TextQuoteSelector",
+                    "exact": "Charles Babbage"
+                  }
+                ]
+              },
+              "body": [
+                {
+                  "type": "TextualBody",
+                  "value": "Person",
+                  "purpose": "tagging"
+                }
+              ],
+              "created": "2026-01-01T00:00:00.000Z"
+            },
+            "sourceResource": {
+              "@context": "https://schema.org",
+              "@id": "res-ws-yield-source",
+              "name": "Notes on the engine",
+              "representations": [
+                {
+                  "mediaType": "text/markdown",
+                  "storageUri": "file://worker-service/res-ws-yield-source",
+                  "rel": "original"
+                }
+              ]
+            },
+            "selected": {
+              "before": "on the Analytical Engine.\n\n",
+              "text": "Charles Babbage",
+              "after": " designed the engine in London"
+            },
+            "userHint": "the mathematician, not the banker"
+          },
+          "graph": {
+            "nodes": [],
+            "edges": []
+          },
+          "metadata": {}
+        }
+      },
+      "piece": "...on the Analytical Engine.\n\n\n**[Charles Babbage]**\n designed the engine in London...",
+      "prompt": "Generate a concise, informative resource about \"Charles Babbage\".\n\n\n\nAnnotation context:\n- Annotation motivation: linking\n- Source resource: Notes on the engine [res-ws-yield-source]\n- User hint (steers what to generate): the mathematician, not the banker\n\nSource document context:\n---\n...on the Analytical Engine.\n\n\n**[Charles Babbage]**\n designed the engine in London...\n---\n\n\nIMPORTANT: Write the entire resource in German.\n\nRequirements:\n- Aim for approximately 500 tokens of content\n- Be factual and informative\n- Write the response as plain text — no formatting markup (no #, *, backticks, headings, or links)\n- Begin with the title on its own first line",
+      "requests": [
+        {
+          "provider": "ollama",
+          "contextLength": 8192,
+          "options": {
+            "num_predict": 500,
+            "num_ctx": 762,
+            "temperature": 0.7
+          }
+        }
+      ]
+    }
+  ]
+}

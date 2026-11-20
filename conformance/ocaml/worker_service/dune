@@ -1,0 +1,17 @@
+; The worker-service suite's cases, on the OCaml harness.
+(library
+ (name worker_service_suite)
+ (package xynolog-conformance)
+ (libraries
+  xynolog_conformance
+  xynolog-protocol
+  xynolog-protocol.schema
+  yojson
+  re
+  ptime
+  http
+  x509
+  mirage-crypto-ec
+  base64
+  digestif
+  testo))

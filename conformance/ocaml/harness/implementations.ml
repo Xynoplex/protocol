@@ -38,6 +38,7 @@ type t = {
   archivist : string list;
   sdks : (string * sdk) list;
   weavers : (string * weaver) list;
+  workers : (string * string list) list;
   smelters : (string * string list) list;
   librarians : (string * string list) list;
   model_catalogue : string option;
@@ -77,7 +78,7 @@ let decode base =
                       Decode.optional d "exempt" (Decode.map Decode.string);
                   })))
       in
-      let _workers = Decode.required o "workerServices" (Decode.map command) in
+      let workers = Decode.required o "workerServices" (Decode.map command) in
       let weavers =
         Decode.required o "weaverServices"
           (Decode.map
@@ -101,6 +102,7 @@ let decode base =
         archivist;
         sdks;
         weavers;
+        workers;
         smelters;
         librarians;
         model_catalogue;

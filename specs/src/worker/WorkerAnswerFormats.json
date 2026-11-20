@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerAnswerFormats.json",
+  "description": "worker/answer-formats.json: the element of the array each kind of detection asks a model for.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "formats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z]+$",
+            "description": "A motivation a `mark` job takes, or `count`."
+          },
+          "about": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What an element is, in prose."
+          },
+          "element": {
+            "$ref": "https://xynolog.org/protocol/JsonSchema.json",
+            "$comment": "The JSON Schema of one element of the answer."
+          }
+        },
+        "required": [
+          "name",
+          "about",
+          "element"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "formats"
+  ],
+  "additionalProperties": false
+}

@@ -19,6 +19,7 @@
   jose
   mirage-crypto
   mirage-crypto-pk
+  x509
   mirage-crypto-rng
   mirage-crypto-rng.unix
   digestif

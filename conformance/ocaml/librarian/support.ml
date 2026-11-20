@@ -18,7 +18,7 @@ let image = "\x89PNG\r\n\x1a\n"
 let fails =
   Ollama.Fails (500, {|{"error":"the stand-in fails this generation"}|})
 
-let answer response = Ollama.Answer { response; usage = None }
+let answer response = Ollama.Answer { response; stop = Done; usage = None }
 
 (* A file's world: one Librarian world, made for the file's first case. *)
 let world_of file implementations =

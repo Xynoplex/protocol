@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/WorkerPromptCases.json",
+  "description": "worker/prompt-cases.json: each prompt a Worker service sends a model, what job asks it and what it carries, and each request it is sent in.",
+  "allOf": [
+    {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "title": "MarkPrompt",
+            "description": "A prompt a mark job asks.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "description": "The prompt's name, unique in the table."
+              },
+              "job": {
+                "type": "string",
+                "enum": [
+                  "mark"
+                ]
+              },
+              "params": {
+                "$ref": "https://xynolog.org/protocol/MarkJobParams.json",
+                "description": "What the job was created with."
+              },
+              "schema": {
+                "$ref": "https://xynolog.org/protocol/TagSchema.json",
+                "description": "The tag schema the Dispatcher hands a tagging job beside its params. On a tagging job, and on no other."
+              },
+              "asks": {
+                "type": "string",
+                "pattern": "^[a-z]+$",
+                "description": "The row of worker/answer-formats.json the answer is asked for in."
+              },
+              "about": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The one entity type a linking prompt asks of, or the one category a tagging prompt does."
+              },
+              "piece": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The text the prompt carries."
+              },
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The prompt, lines parted by a line feed, with no line feed at its end."
+              },
+              "requests": {
+                "type": "array",
+                "minItems": 1,
+                "description": "Each request the prompt is sent in, by the engine it is sent to.",
+                "items": {
+                  "oneOf": [
+                    {
+                      "title": "OllamaRequest",
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "ollama"
+                          ]
+                        },
+                        "contextLength": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "description": "The context length `/api/show` reports for the model."
+                        },
+                        "options": {
+                          "description": "The `options` of the generation, exactly.",
+                          "type": "object",
+                          "properties": {
+                            "num_predict": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "num_ctx": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "temperature": {
+                              "type": "number",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "num_predict",
+                            "num_ctx",
+                            "temperature"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "contextLength",
+                        "options"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "title": "AnthropicRequest",
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "anthropic"
+                          ]
+                        },
+                        "maxInputTokens": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "description": "The `max_input_tokens` the Models API reports for the model."
+                        },
+                        "maxOutputTokens": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "description": "The `max_tokens` the Models API reports for the model."
+                        },
+                        "maxTokens": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "description": "The request's `max_tokens`."
+                        },
+                        "stream": {
+                          "type": "boolean",
+                          "description": "Whether the request asks for a stream."
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "maxInputTokens",
+                        "maxOutputTokens",
+                        "maxTokens",
+                        "stream"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "why",
+              "name",
+              "job",
+              "params",
+              "asks",
+              "piece",
+              "prompt",
+              "requests"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "title": "YieldPrompt",
+            "description": "The prompt a yield job asks.",
+            "type": "object",
+            "properties": {
+              "why": {
+                "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
+              },
+              "name": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/name"
+              },
+              "job": {
+                "type": "string",
+                "enum": [
+                  "yield"
+                ]
+              },
+              "params": {
+                "$ref": "https://xynolog.org/protocol/GenerationJobParams.json",
+                "description": "What the job was created with."
+              },
+              "piece": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/piece"
+              },
+              "prompt": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/prompt"
+              },
+              "requests": {
+                "$ref": "#/properties/cases/items/oneOf/0/properties/requests"
+              }
+            },
+            "required": [
+              "why",
+              "name",
+              "job",
+              "params",
+              "piece",
+              "prompt",
+              "requests"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "cases"
+  ],
+  "additionalProperties": false
+}

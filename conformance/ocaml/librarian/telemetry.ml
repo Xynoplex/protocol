@@ -91,7 +91,11 @@ let exports_exactly_the_table otlp (w : W.t) =
   Ollama.script w.gatherer
     [
       Answer
-        { response = "A marsh that floods twice a day."; usage = Some (212, 9) };
+        {
+          response = "A marsh that floods twice a day.";
+          stop = Done;
+          usage = Some (212, 9);
+        };
       answer
         (Yojson.Safe.to_string
            (`List

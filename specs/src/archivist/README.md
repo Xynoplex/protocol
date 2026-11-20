@@ -34,6 +34,6 @@ because the gateway forwards it untouched.
 - The Archivist conformance suite (`conformance/ocaml/archivist`): every reply
   it reads from the Archivist's HTTP surface must match its declaration here.
 - The gateway conformance suite's stand-in Archivist
-  (`conformance/harness/archivist.ts`): every request the gateway
-  sends it must be an operation declared here, and every reply the stand-in
-  gives must match its declaration.
+  (`conformance/ocaml/harness/archivist_standin.ml`): every request the
+  gateway sends it must be an operation declared here, and every reply the
+  stand-in gives must match its declaration.

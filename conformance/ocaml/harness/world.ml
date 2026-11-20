@@ -33,7 +33,9 @@ let create ~command ?(accounts = []) ?kb ?(document = Fun.id) ?(env = [])
   let secret = Fresh.hex 24 in
   let issuer =
     Issuer.start kb.resource
-      ((gateway_client, { Issuer.secret; roles = [ Protocol.service_role () ] })
+      (( gateway_client,
+         { Issuer.proof = Secret secret; roles = [ Protocol.service_role () ] }
+       )
       :: accounts)
   in
   let archivist = Archivist_standin.start issuer in
@@ -207,7 +209,8 @@ type responder = {
 
 (* A participant the suite plays: subscribed to [channels], answering each
    frame with what [answer] returns, emitted with the frame's correlationId.
-   It stands for the rest of the file. *)
+   Each frame is answered in a fiber of its own, so an answer that waits
+   holds up no other. It stands for the rest of the file. *)
 let responder ?origin t channels answer =
   let token, _ = agent t "participant" in
   let client_id = Fresh.uuid () in
@@ -217,11 +220,16 @@ let responder ?origin t channels answer =
   in
   Bus_stream.on stream (fun message ->
       match message.frame with
-      | Some frame when List.mem frame.channel channels -> (
-          match answer frame with
-          | None -> ()
-          | Some (channel, payload) ->
-              Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
+      | Some frame when List.mem frame.channel channels ->
+          Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
+              match answer frame with
+              | exception failure ->
+                  Bus_stream.violation stream
+                    (Printf.sprintf "the responder could not answer %s: %s"
+                       frame.channel
+                       (Printexc.to_string failure))
+              | None -> ()
+              | Some (channel, payload) -> (
                   match
                     emit ?origin t token
                       (`Assoc

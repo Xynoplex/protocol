@@ -804,6 +804,60 @@ let () =
     (fun _ -> `String "job:create")
     "/refusals/0/operation: job:create is no operation the registry says the \
      Smelter answers";
+  changed specs ~why:"states an answer format for no motivation"
+    "worker/answer-formats.json" "formats/5/name"
+    (fun _ -> `String "counting")
+    "/formats: the formats are \
+     [assessing,commenting,counting,highlighting,linking,tagging], and \
+     MarkJobParams' motivations and the count are \
+     [assessing,commenting,count,highlighting,linking,tagging]";
+  changed specs ~why:"has a highlighting prompt ask for comments"
+    "worker/prompt-cases.json" "cases/0/asks"
+    (fun _ -> `String "commenting")
+    "/cases/0/asks: a highlighting job's prompt asks for commenting";
+  changed specs ~why:"has a prompt ask for a format the table lacks"
+    "worker/prompt-cases.json" "cases/0/asks"
+    (fun _ -> `String "quoting")
+    "/cases/0/asks: quoting is no row of worker/answer-formats.json";
+  changed specs ~why:"has a prompt that does not carry its piece"
+    "worker/prompt-cases.json" "cases/0/piece"
+    (fun _ -> `String "A piece no prompt carries.")
+    "/cases/0/piece: the prompt does not carry its piece";
+  changed specs ~why:"names two prompts alike" "worker/prompt-cases.json"
+    "cases/1/name"
+    (fun _ -> `String "highlighting")
+    "/cases/0/name: highlighting names another case too";
+  changed specs ~why:"hands a highlighting job a tag schema"
+    "worker/prompt-cases.json" "cases/0"
+    (members (fun case -> case @ [ ("schema", `Assoc []) ]))
+    "/cases/0/schema: a highlighting job is handed no tag schema";
+  changed specs ~why:"hands a tagging job no tag schema"
+    "worker/prompt-cases.json" "cases/15"
+    (members (List.filter (fun (name, _) -> name <> "schema")))
+    "/cases/15: a tagging job is handed the tag schema its schemaId names, and \
+     this one is not";
+  changed specs ~why:"has a linking prompt about a type its job lacks"
+    "worker/prompt-cases.json" "cases/10/about"
+    (fun _ -> `String "Planet")
+    "/cases/10/about: Planet is none of the job's entityTypes";
+  changed specs ~why:"has a highlighting prompt about an entity type"
+    "worker/prompt-cases.json" "cases/0"
+    (members (fun case -> case @ [ ("about", `String "Person") ]))
+    "/cases/0/about: a highlighting prompt is about no entity type or category";
+  refused specs ~why:"has a JobType the worker's words name no job by"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "components/schemas/JobType.json")
+        (update [ "enum" ] (function
+          | `List types -> `List (types @ [ `String "gather" ])
+          | _ -> failwith "no enum")))
+    "worker/messages.json: /job: it names jobs of [mark,yield], and JobType is \
+     [gather,mark,yield]";
+  changed specs ~why:"shares a boot refusal no service states"
+    "worker/messages.json" "boot/0/bootRefusal"
+    (fun _ -> `String "unheard-of")
+    "/boot/0/bootRefusal: unheard-of is no refusal of \
+     service-environment/boot-refusals.json";
   changed specs ~why:"states how a provider EmbeddingConfig lacks is asked"
     "embedding/requests.json" "providers"
     (members (fun providers ->

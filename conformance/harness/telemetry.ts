@@ -7,8 +7,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { kbDid } from './protocol-core';
 import { eventually } from './net';
 import type { AttributeValue, OtlpReceiver } from './otlp';
-import type { SdkTelemetryTelemetry, ServiceTelemetryTelemetry } from './generated/protocol/protocol';
-import type { Plane } from './gateway';
+import type { GatewayConfig, SdkTelemetryTelemetry, ServiceTelemetryTelemetry } from './generated/protocol/protocol';
 import { resourceKeys, sdkTelemetry, spanPattern, telemetry, type Telemetry, type TelemetryRow, type TelemetryService } from './spec';
 
 /** OTLP's span kinds, by the names the spec uses. */
@@ -46,7 +45,7 @@ export function received(otlp: OtlpReceiver): string {
 }
 
 /** The rows a service's cases must make it export: always, or by their traffic, on `plane` where rows name planes. */
-export function expectedOn<R extends TelemetryRow>(rows: R[], plane?: Plane): R[] {
+export function expectedOn<R extends TelemetryRow>(rows: R[], plane?: GatewayConfig.Type): R[] {
   return rows.filter((r) => (!('when' in r) || r.when === 'export' || r.when === 'traffic') && (!('planes' in r) || r.planes === undefined || (plane !== undefined && r.planes.includes(plane))));
 }
 
@@ -65,7 +64,7 @@ const KB = 'xynolog.kb';
  * service. Judged on everything the receiver got, so run it after the cases
  * that make the traffic.
  */
-export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryService, kb: string | null, plane?: Plane): Promise<string[]> {
+export async function outsideTheTable(otlp: OtlpReceiver, service: TelemetryService, kb: string | null, plane?: GatewayConfig.Type): Promise<string[]> {
   const keys = resourceKeys(service);
   if (keys.includes(KB) && kb === null) throw new Error(`the table says the ${service} names its knowledge base in its resource (${KB}), and the case handed it none`);
   if (!keys.includes(KB) && kb !== null) throw new Error(`the case handed the ${service} the knowledge base ${kb}, and the table says its resource names none`);
@@ -102,7 +101,7 @@ export function outsideTheSdkTable(otlp: OtlpReceiver, transport?: SdkTelemetryT
   return heldTo(otlp, sdkTelemetry(transport), 'an SDK', undefined, false);
 }
 
-async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: string, plane: Plane | undefined, whole: boolean): Promise<string[]> {
+async function heldTo(otlp: OtlpReceiver, { spans, metrics }: Telemetry, who: string, plane: GatewayConfig.Type | undefined, whole: boolean): Promise<string[]> {
   for (const row of expectedOn(spans, plane)) {
     const pattern = spanPattern(row);
     await eventually(`a ${row.name} span`, 15_000, () => otlp.spans.find((s) => pattern.test(s.name)));

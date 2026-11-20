@@ -21,7 +21,8 @@ let make implementations () =
     Issuer.start kb.resource
       [
         ( World.gateway_client,
-          { Issuer.secret; roles = [ Protocol.service_role () ] } );
+          { Issuer.proof = Secret secret; roles = [ Protocol.service_role () ] }
+        );
       ]
   in
   {
