@@ -46,3 +46,24 @@ let eventually what timeout probe =
 
 let () =
   Printexc.register_printer (function Timed_out what -> Some what | _ -> None)
+
+(* Wait until [probe] answers, asked again each time [changed] is
+   broadcast, or fail after [timeout] seconds naming [what]. *)
+let until changed ?(timeout = 10.0) what probe =
+  let deadline = now () +. timeout in
+  let rec wait () =
+    match probe () with
+    | Some value -> value
+    | None ->
+        let remaining = deadline -. now () in
+        if remaining <= 0.0 then
+          raise
+            (Timed_out
+               (Printf.sprintf "timed out after %g s waiting for %s" timeout
+                  what));
+        ignore
+          (Eio.Time.with_timeout (clock ()) remaining (fun () ->
+               Ok (Eio.Condition.await_no_mutex changed)));
+        wait ()
+  in
+  wait ()
