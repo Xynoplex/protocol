@@ -5,7 +5,7 @@
  * serves has refused it, one having been confirmed first (§ Knowledge bases).
  */
 import { expect, it } from 'vitest';
-import { everyJob } from '../harness/dispatcher-world';
+import { everyJob } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import { eachWorkerService } from '../harness/worker-service-world';
 import { health, identity, KB_LOG, logged, markJob, settled } from './support';

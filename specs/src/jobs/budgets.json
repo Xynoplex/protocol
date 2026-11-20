@@ -1,0 +1,13 @@
+{
+  "$comment": "AUTHORITY for the retry budget of each job type (JOBS.md § The record): the `maxRetries` the dispatcher writes into a new job's record, by its type. One row for each JobType. Whether a failed attempt is retried within the budget is jobs/retry-cases.json's.",
+  "budgets": [
+    {
+      "jobType": "mark",
+      "maxRetries": 1
+    },
+    {
+      "jobType": "yield",
+      "maxRetries": 0
+    }
+  ]
+}

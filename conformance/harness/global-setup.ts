@@ -17,7 +17,6 @@ declare module 'vitest' {
   export interface ProvidedContext {
     /** How a gateway is started: the configuration provides it. */
     gatewayCommand: Implementations['gateway'];
-    dispatcherCommand: Implementations['dispatcher'];
     specPath: string;
     archivistSpecPath: string;
     servicesBundlePath: string;

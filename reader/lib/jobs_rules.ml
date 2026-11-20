@@ -16,6 +16,9 @@
      kind and share no required member, so none is mistaken for another; the
      results the verbs report are, together, exactly its members;
    - the layout's record is a component;
+   - the retry budgets (jobs/budgets.json) have one row for each JobType;
+   - each refusal the dispatcher's messages (dispatcher/messages.json) state
+     is of an operation the registry says the dispatcher answers;
    - Job's discriminator is its members, each one's status the value that
      selects it;
    - DispatcherConfig and WorkerConfig default nothing, and leave optional
@@ -291,6 +294,42 @@ let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
   | Some (`String record) when Option.is_none (read_json (component record)) ->
       refuse "jobs/storage.json" "/bucket/record"
         "the storage layout's record %s is not a schema" record
+  | _ -> ());
+  let budgeted =
+    List.filter_map
+      (fun row -> text (at "/jobType" row))
+      (match Option.bind (read_json "jobs/budgets.json") (at "/budgets") with
+      | Some (`List rows) -> rows
+      | _ -> [])
+  in
+  if List.sort compare budgeted <> List.sort compare job_types then
+    refuse "jobs/budgets.json" "/budgets"
+      "the budgets are of %s, and JobType is %s" (shown budgeted)
+      (shown job_types);
+  let answered_by_dispatcher =
+    match Option.bind (read_json "bus/registry.json") (at "/operations") with
+    | Some (`List operations) ->
+        List.filter_map
+          (fun op ->
+            match text (at "/answeredBy" op) with
+            | Some "dispatcher" -> text (at "/request" op)
+            | _ -> None)
+          operations
+    | _ -> []
+  in
+  (match
+     Option.bind (read_json "dispatcher/messages.json") (at "/refusals")
+   with
+  | Some (`List rows) ->
+      List.iteri
+        (fun i row ->
+          match text (at "/operation" row) with
+          | Some op when not (List.mem op answered_by_dispatcher) ->
+              refuse "dispatcher/messages.json"
+                ("/refusals" / string_of_int i / "operation")
+                "%s is no operation the registry says the dispatcher answers" op
+          | _ -> ())
+        rows
   | _ -> ());
   let job_file = component "Job" in
   let job = schema job_file in

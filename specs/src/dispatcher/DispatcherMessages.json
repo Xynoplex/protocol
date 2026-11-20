@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/DispatcherMessages.json",
+  "description": "dispatcher/messages.json: the words of the dispatcher's own refusals, and of the errors it writes into a job.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "refusals": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each refusal the dispatcher makes itself, on the operation's failure channel.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "operation": {
+            "type": "string",
+            "pattern": "^job:[a-z][a-z-]*[a-z]$",
+            "description": "The operation it refuses: a request of bus/registry.json's operations that the dispatcher answers."
+          },
+          "code": {
+            "$ref": "https://xynolog.org/protocol/CommandError.json#/properties/code"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The failure's `message`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "operation",
+          "situation",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each error the dispatcher writes into a job on its own, as a `job:fail` would.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "error": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The `error` it writes into the job. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          },
+          "failureClass": {
+            "$ref": "https://xynolog.org/protocol/FailureClass.json"
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "error",
+          "failureClass"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "refusals",
+    "errors"
+  ],
+  "additionalProperties": false
+}

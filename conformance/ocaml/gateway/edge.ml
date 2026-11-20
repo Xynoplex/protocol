@@ -4,6 +4,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 (* How [headers] are not what every response carries: each header of
    [every] with its value, the request id, and none of [absent]. *)

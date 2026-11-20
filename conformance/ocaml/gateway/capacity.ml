@@ -5,6 +5,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 (* Unvalidated, so its payload can be any size. *)
 let channel = "mark:added"

@@ -5,6 +5,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 module Openapi = Xynolog_protocol_schema.Openapi
 
 (* The emit bucket's burst, and its limit per role. *)

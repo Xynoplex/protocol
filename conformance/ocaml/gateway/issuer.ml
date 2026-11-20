@@ -9,6 +9,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let deadline () =
   float_of_int (Protocol.scheme_limit "bearerAuth" "keyFetchDeadlineSeconds")

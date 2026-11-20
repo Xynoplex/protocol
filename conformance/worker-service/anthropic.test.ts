@@ -10,7 +10,7 @@
 import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import type { ScriptedMessage } from '../harness/anthropic';
-import { everyJob } from '../harness/dispatcher-world';
+import { everyJob } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import { startOtlp, type OtlpReceiver, type ReceivedMetric } from '../harness/otlp';
 import { errorsOf, metricName, spanName, spec } from '../harness/spec';

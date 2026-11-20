@@ -19,15 +19,6 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'dispatcher',
-          include: ['dispatcher/**/*.test.ts'],
-          provide: { gatewayCommand: implementations.gateway, dispatcherCommand: implementations.dispatcher },
-          globalSetup: ['harness/global-setup.ts'],
-        },
-      },
-      {
-        extends: true,
-        test: {
           name: 'archivist',
           include: ['archivist/**/*.test.ts'],
           provide: { gatewayCommand: implementations.gateway, archivistCommand: implementations.archivist },

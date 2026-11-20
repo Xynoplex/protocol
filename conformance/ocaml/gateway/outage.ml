@@ -9,6 +9,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let broadcast = "beckon:focus"
 

@@ -12,6 +12,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 (* A broadcast every participant may emit: a command, not an operation's
    request. *)

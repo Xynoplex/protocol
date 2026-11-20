@@ -10,7 +10,7 @@ import type { components } from './protocol-core';
 import { SignJWT } from 'jose';
 import { afterAll, afterEach, beforeAll, describe, expect, type TestContext } from 'vitest';
 import { startArchivist, type FakeArchivist } from './archivist';
-import { startBroker, type Broker, type BrokerOptions } from './nats';
+import { startBroker, type Broker } from './nats';
 import { defaultSettings, PLANES, startGateway, type GatewayEnvironment, type GatewayProcess, type GatewaySettings, type Plane } from './gateway';
 import { call, type Reply } from './http';
 import { freePort } from './net';
@@ -29,8 +29,6 @@ export interface WorldOptions {
   settings?: (s: GatewaySettings) => GatewaySettings;
   /** Add to (or, with `undefined`, remove from) the gateway's environment. */
   env?: GatewayEnvironment;
-  /** How the NATS plane's broker is started. */
-  broker?: BrokerOptions;
   /** Service accounts the issuer grants beside the gateway's: another service the world runs. */
   accounts?: Record<string, ServiceAccount>;
   /** The knowledge base the world is, when it is not the suite's own: one of kb-identity/cases.json. */
@@ -66,7 +64,7 @@ export class World {
       [GATEWAY_CLIENT]: { secret, roles: [SERVICE_ROLE] },
     });
     const archivist = await startArchivist(issuer, kb.resource);
-    const broker = plane === 'nats' ? await startBroker(options.broker) : undefined;
+    const broker = plane === 'nats' ? await startBroker() : undefined;
     const env: GatewayEnvironment = {
       JWT_SECRET: randomBytes(32).toString('hex'),
       XYNOLOG_OIDC_CLIENT_ID: GATEWAY_CLIENT,

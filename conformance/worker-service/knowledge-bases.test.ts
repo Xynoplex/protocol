@@ -8,7 +8,7 @@
  * alone; and its health answers once one is confirmed.
  */
 import { expect, it } from 'vitest';
-import { marks } from '../harness/dispatcher-world';
+import { marks } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import type { GrantFailure } from '../harness/issuer';
 import { clientTiming } from '../harness/spec';

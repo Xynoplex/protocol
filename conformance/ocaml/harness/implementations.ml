@@ -13,6 +13,7 @@ type weaver = { command : string list; health_port : int }
 
 type t = {
   gateway : string list;
+  dispatcher : string list;
   archivist : string list;
   weavers : (string * weaver) list;
   smelters : (string * string list) list;
@@ -31,7 +32,7 @@ let decode base =
   let command = Decode.list (fun cursor -> resolved (Decode.string cursor)) in
   Decode.obj (fun o ->
       let gateway = Decode.required o "gateway" command in
-      let _dispatcher = Decode.required o "dispatcher" command in
+      let dispatcher = Decode.required o "dispatcher" command in
       let archivist = Decode.required o "archivist" command in
       let _sdks = Decode.required o "sdks" Decode.json in
       let _workers = Decode.required o "workerServices" (Decode.map command) in
@@ -52,7 +53,15 @@ let decode base =
         Decode.optional o "modelCatalogue" (fun cursor ->
             resolved (Decode.string cursor))
       in
-      { gateway; archivist; weavers; smelters; librarians; model_catalogue })
+      {
+        gateway;
+        dispatcher;
+        archivist;
+        weavers;
+        smelters;
+        librarians;
+        model_catalogue;
+      })
 
 let read file =
   let absolute =

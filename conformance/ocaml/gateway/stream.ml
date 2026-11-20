@@ -6,6 +6,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let broadcast = "beckon:focus"
 let request = "browse:resource-requested"
@@ -453,7 +454,7 @@ let recovery_first_reply { world = w; responder } =
   emitted "the request" (ask_request w alice ~client_id correlation_id);
   Run.sleep 0.3;
   let second =
-    Support.set_at
+    Edit.set_at
       [ "response"; "resource"; "name" ]
       (`String "the second reply") (described ())
   in
@@ -621,7 +622,7 @@ let off_spec_answer { world = w; _ } =
     (List.length off_spec = 1);
   Check.that
     ("the off-spec answer is named: " ^ List.hd off_spec)
-    (matches_re
+    (Check.matches_re
        {|GET /events/res-gap-5: 200 body does not match the declared schema|}
        (List.hd off_spec))
 

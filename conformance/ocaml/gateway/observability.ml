@@ -9,11 +9,12 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
-(* OTLP's span kinds. *)
-let server = 2
-let client = 3
-let producer = 4
+(* The span kinds the cases name, as OTLP numbers them. *)
+let server = Protocol.otlp_kind Server
+let client = Protocol.otlp_kind Client
+let producer = Protocol.otlp_kind Producer
 
 let in_order =
   "the plane's last case is judged on everything its cases made the gateway \

@@ -12,7 +12,7 @@ worker promises is [WORKER-CONTRACT.md](WORKER-CONTRACT.md), and how one is buil
 [`xynolog-worker` skill](https://github.com/xynolog/docs/blob/main/builder/skills/xynolog-worker/SKILL.md). Channel payloads
 are named in [the registry](../specs/src/bus/registry.json); the bus conventions this document
 relies on (`_userId`, `correlationId`, audiences) are in [EVENT-BUS.md](EVENT-BUS.md). The
-[dispatcher conformance suite](../conformance/dispatcher/README.md) checks a running
+[dispatcher conformance suite](../conformance/ocaml/dispatcher/README.md) checks a running
 dispatcher against this document.
 
 ## The dispatcher
@@ -49,11 +49,12 @@ gateway's URL, the issuer its service account signs in at, the broker holding th
 answers `/health` on, the queue's clocks, and its log level and format. Its image passes
 `--config /etc/xynolog/dispatcher.json`, and the launcher writes the document there, from the
 knowledge base's stack documents. Started without `--config`, or with a path that names no file, no JSON, or a
-document the schema refuses, the dispatcher writes the reason to stderr and exits with status 1 before
-it serves.
+document the schema refuses, the dispatcher writes the refusal [`service-environment/boot-refusals.json`](../specs/src/service-environment/boot-refusals.json) states to stderr and exits
+with status 1 before it serves.
 
 The document carries no secret. A broker credential is named, as the environment variable that holds
-it (`queue.userEnv`, `queue.passwordEnv`), and a named variable that is unset is refused at boot. The
+it (`queue.userEnv`, `queue.passwordEnv`), and a named variable that is unset is refused at boot, the
+refusal naming the member by its JSON pointer (`/queue/passwordEnv`). The
 dispatcher's other inputs are the environment variables
 [specs/src/service-environment/variables.json](../specs/src/service-environment/variables.json) lists
 for it: its service account, `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET`, the bus log, and
@@ -76,7 +77,7 @@ A job is one record, keyed by its id.
 | `metadata.userId` | always | the requester: the `_userId` the gateway stamped on the `job:create` |
 | `metadata.created` | always | ISO-8601 time of admission |
 | `metadata.retryCount` | always | attempts re-queued so far; `0` at admission |
-| `metadata.maxRetries` | always | the retry budget: `0` for a `yield` job, `1` for a `mark` job |
+| `metadata.maxRetries` | always | the retry budget, by type: [`jobs/budgets.json`](../specs/src/jobs/budgets.json) |
 | `metadata.completedUnits` | after a checkpoint | units finished by any attempt ([Checkpoints](#checkpoints)) |
 | `metadata.unitCursors` | after a checkpoint that states a cursor | the furthest each unit begun got, and what it had counted there ([Checkpoints](#checkpoints)) |
 | `params` | always | the job's params as the dispatcher holds them ([Admission](#jobcreate)) |
@@ -199,16 +200,18 @@ A param a `yield` job does not take passes the gateway, because the schema of th
 The dispatcher refuses it (check 4).
 
 **Admission.** The checks run in this order; the first that fails is the reply,
-`job:create-failed` with the message below. Only a refusal because a read failed carries a `code`
+`job:create-failed` with the refusal below, whose message
+[`dispatcher/messages.json`](../specs/src/dispatcher/messages.json) states word for word, as it
+states every refusal the dispatcher makes itself. Only a refusal because a read failed carries a `code`
 ([The two reads](#jobcreate)).
 
-| # | Applies to | Check | Refusal message |
+| # | Applies to | Check | Refusal |
 |---|---|---|---|
-| 1 | all | `_userId` is present | `_userId is required (injected by bus gateway)` |
-| 2 | `mark`, linking | every member of `params.entityTypes` is a registered entity type (**read 1**) | `Entity type not registered: <a>, <b>` — the unregistered members, comma-separated |
-| 3 | `mark`, tagging | `params.schemaId` names a registered tag schema (**read 2**) | `Tag schema not registered: <schemaId>` |
-| 4 | `yield` | every param is one `GenerationJobParams` names | `a yield job takes no parameter <a>, <b>` — the params it does not take, comma-separated |
-| 5 | `yield` | when `params.entityTypes` is present and not empty: every member is a registered entity type (**read 1**) | `Entity type not registered: <a>, <b>` |
+| 1 | all | `_userId` is present | `create-without-user` |
+| 2 | `mark`, linking | every member of `params.entityTypes` is a registered entity type (**read 1**) | `entity-type-not-registered`, naming the unregistered members |
+| 3 | `mark`, tagging | `params.schemaId` names a registered tag schema (**read 2**) | `tag-schema-not-registered` |
+| 4 | `yield` | every param is one `GenerationJobParams` names | `yield-parameter`, naming the params it does not take |
+| 5 | `yield` | when `params.entityTypes` is present and not empty: every member is a registered entity type (**read 1**) | `entity-type-not-registered` |
 | 6 | all | the store accepts the new record | the store's error message |
 
 **The focus rule** derives a `yield` job's resource from its gathered context,
@@ -222,10 +225,10 @@ on. A focus of any other kind, or an `@id` that is not a
 `browse:entity-types-requested` (read 1) and `browse:tag-schemas-requested` (read 2), each with an
 empty payload. They are made per `job:create`, only where the table says, after check 1, never
 cached. No job needs both. Each waits up to 30 seconds. When a read fails, `job:create` is refused with the read's own message, and with
-its `code` when the read's failure carried one. For an Archivist that is not connected the message is
-`No subscriber for browse:entity-types-requested: the service that answers it is not connected` (or
-the same for `browse:tag-schemas-requested`), the code is `peer-unavailable`, and the refusal arrives at
-once. A job that triggers
+its `code` when the read's failure carried one. For an Archivist that is not connected, the read's
+failure is the gateway's `peer-unavailable`
+([`gateway/messages.json`](../specs/src/gateway/messages.json)'s `failures`), and the refusal arrives
+at once. A job that triggers
 neither read is admitted without the Archivist.
 
 **The record.** On admission the dispatcher builds the record — a new id, `retryCount: 0`,
@@ -245,9 +248,8 @@ Hands the caller the next pending job its claim matches. Reads `accepts`, `_role
 `_userId` ([`JobClaimCommand`](../specs/src/components/schemas/JobClaimCommand.json)).
 
 1. **The caller must be a worker.** `_roles` must contain `xynolog-worker`, the role the gateway
-   stamps from the caller's token. Otherwise the reply is `job:claim-failed`,
-   `code: "unauthorized"`, message
-   `job:claim refused: the caller is not a worker for this knowledge base`. This is checked before
+   stamps from the caller's token. Otherwise the reply is `job:claim-failed`, the refusal
+   `not-a-worker`, with `code: "unauthorized"`. This is checked before
    the queue is consulted, so a refused caller learns nothing about pending work.
 2. **The claim names the jobs it takes, and is atomic.** `accepts` is a list of
    [`JobFilter`](../specs/src/components/schemas/JobFilter.json), at least one. A filter is a
@@ -262,10 +264,10 @@ Hands the caller the next pending job its claim matches. Reads `accepts`, `_role
    number of simultaneous claims, exactly one wins each pending job. No order among matching pending
    jobs is promised: this dispatcher tries first the jobs whose delivery it holds, in the order
    it received them, then every other stored record.
-3. **Nothing to claim is a decline, not an error:** `job:claim-failed`, `code: "none-pending"`,
-   message `No pending job matches the claim`.
-4. **After the transition,** one check runs before the reply: `_userId` is present, else
-   `job:claim missing _userId (gateway injection)`, with no code, and the job is left `running`
+3. **Nothing to claim is a decline, not an error:** `job:claim-failed`, the refusal
+   `none-pending`, with `code: "none-pending"`.
+4. **After the transition,** one check runs before the reply: `_userId` is present, else the
+   refusal `claim-without-user`, with no code, and the job is left `running`
    ([Known defects](#known-defects)).
 5. **Reply:** `job:claimed` with `{ response: <the running record> }`, then [`job:assign`](#jobassign).
 
@@ -365,7 +367,7 @@ A worker's confirmation that it stopped the job. Reads `jobId` only
 Reads one job. Reads `jobId`
 ([`JobStatusRequest`](../specs/src/components/schemas/JobStatusRequest.json)).
 
-- No record: `job:status-failed`, message `Job not found`, no code.
+- No record: `job:status-failed`, the refusal `job-not-found`, no code.
 - A store error: `job:status-failed` with the store's message, no code.
 - Otherwise `job:status-result` with `{ response }`
   ([`JobStatusResponse`](../specs/src/components/schemas/JobStatusResponse.json)):
@@ -490,15 +492,16 @@ admitted while every worker is busy is claimed when one finishes, whether or not
 What the tick covers is an announcement lost on its way to a worker that was already parked and so has
 nothing else to wake it. On a healthy stack it changes nothing.
 
-**The dead-worker sweep** treats a running job with no write for 30 minutes as abandoned by a worker
-that died. It concludes the job exactly as a `job:fail` would, with the error
-`worker presumed dead — no progress within 30 minutes`, the failure class `transient` (nothing about
+**The dead-worker sweep** treats a running job with no write for `staleRunningMs` as abandoned by a
+worker that died. It concludes the job exactly as a `job:fail` would, with the error
+`worker presumed dead — no progress within {minutes} minutes`, `{minutes}` being `staleRunningMs` in
+minutes (`dispatcher/messages.json`'s `presumed-dead`), the failure class `transient` (nothing about
 the request was judged) and no units: the job is retried if its budget allows and failed otherwise, and the checkpoint already on the record is kept
 either way. A worker keeps its job alive by reporting progress (outside the throttle) or
 checkpointing.
 
 **Retention** keeps a finished job readable by `job:status-requested` for a day. After deletion the
-job's id answers `Job not found`. A terminal record whose `completedAt` does not parse as a time is
+job's id answers `job-not-found`. A terminal record whose `completedAt` does not parse as a time is
 deleted at the first sweep.
 
 ## Checkpoints
@@ -655,7 +658,7 @@ protocol.
 - **`/health` is static.** It never reports a lost broker connection, while the launcher reads
   `queue` as live. The launcher waits 30 seconds for it; the
   dispatcher allows itself 60 seconds to connect the queue.
-- **Retention deletes without a trace.** After 24 hours a finished job answers `Job not found`,
+- **Retention deletes without a trace.** After 24 hours a finished job answers `job-not-found`,
   indistinguishable from an id that never existed.
 - **Nothing enforces one dispatcher.** A second dispatcher on the same knowledge base admits every
   `job:create` a second time and answers every `job:claim`, claiming two jobs for one request. Only

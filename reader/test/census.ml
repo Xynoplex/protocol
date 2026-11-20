@@ -690,6 +690,16 @@ let () =
     "jobs/storage.json" "bucket/record"
     (fun _ -> `String "Nowhere")
     "/bucket/record: the storage layout's record Nowhere is not a schema";
+  changed specs ~why:"leaves a job type without a retry budget"
+    "jobs/budgets.json" "budgets"
+    (function
+      | `List (first :: _) -> `List [ first ] | _ -> failwith "no budgets")
+    "/budgets: the budgets are of [mark], and JobType is [mark,yield]";
+  changed specs ~why:"has the dispatcher refuse an operation it does not answer"
+    "dispatcher/messages.json" "refusals/0/operation"
+    (fun _ -> `String "job:limits-requested")
+    "/refusals/0/operation: job:limits-requested is no operation the registry \
+     says the dispatcher answers";
   changed specs ~why:"selects a job by a status it does not state"
     "components/schemas/JobPending.json" "properties/status/enum"
     (fun _ -> `List [ `String "running" ])

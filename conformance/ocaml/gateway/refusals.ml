@@ -15,6 +15,7 @@
 
 open Xynolog_conformance
 open Support
+open Case
 
 let me = "/api/users/me"
 let burst () = Protocol.scheme_limit "bearerAuth" "refusalBurst"

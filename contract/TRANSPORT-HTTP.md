@@ -172,6 +172,14 @@ is its mechanism over HTTP.
 
 ## The gateway
 
+**The gateway reads one document, named by its `--config` flag,** a
+[`GatewayConfig`](../specs/src/gateway/GatewayConfig.json), and defaults nothing. Started without
+`--config`, with a path that names no file or no JSON, with a document the schema refuses, or
+without a variable the document names or its service account, it writes the refusal
+[`service-environment/boot-refusals.json`](../specs/src/service-environment/boot-refusals.json) states to stderr and exits with
+status 1 before it serves.
+*Held by `gateway/boot`.*
+
 ### POST /bus/emit
 
 - **Schema validation.** Every inbound payload is validated against the
