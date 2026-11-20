@@ -1,5 +1,5 @@
 Xynolog Protocol
-Copyright 2026 Xynolog
+Copyright 2026 Adam Pingel
 
 This product is licensed under the Apache License, Version 2.0.
 
@@ -18,7 +18,7 @@ The reader validates the specifications, and the code-generation system
 produces protocol artifacts for nine SDK languages. This repository specifies
 protocol interfaces and behavior; service runtime implementations and image
 details are maintained in their respective repositories. This post-boundary
-work is original work owned by Xynolog.
+work was authored by Adam Pingel.
 
 Baseline snapshot
 
