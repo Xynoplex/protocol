@@ -64,3 +64,7 @@ let list json path =
   match at json path with
   | `List items -> items
   | other -> failwith (shown other ^ " is not a list")
+
+(* Whether [pattern], a Perl regular expression, matches somewhere in
+   [text]: what a case's /pattern/ holds. *)
+let matches_re pattern text = Re.execp (Re.Perl.compile_pat pattern) text

@@ -178,25 +178,8 @@ let start_librarian l =
    neither served nor exited by [timeout] seconds, is a failure. *)
 let refused_librarian l ~named ~timeout =
   let process = spawn_librarian l ~named in
-  let deadline = Run.now () +. timeout in
-  let rec watch () =
-    if not (Process.running process) then ()
-    else if Call.reach (librarian_origin l) "GET" "/health" <> None then (
-      Process.crash process;
-      failwith
-        ("the Librarian served although it should have refused to start:\n"
-        ^ String.concat "\n" (Process.output process)))
-    else if Run.now () > deadline then (
-      Process.crash process;
-      failwith
-        (Printf.sprintf
-           "the Librarian had neither refused to start nor served after %g s:\n\
-            %s"
-           timeout
-           (String.concat "\n" (Process.output process))))
-    else (
-      Run.sleep 0.05;
-      watch ())
+  let code =
+    Process.refused process ~timeout (fun () ->
+        Call.reach (librarian_origin l) "GET" "/health" <> None)
   in
-  watch ();
-  (Eio.Promise.await process.exited, Process.output process)
+  (code, Process.output process)

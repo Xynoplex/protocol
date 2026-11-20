@@ -221,7 +221,7 @@ let malformed_upload { world = w; _ } =
       conforms "POST" "/resources" reply;
       Check.that
         (Printf.sprintf "%s: the error names /%s/: %s" why names reply.text)
-        (matches_re names (error_of reply)))
+        (Check.matches_re names (error_of reply)))
     [
       ( "no name",
         form ~file:bytes
@@ -260,7 +260,7 @@ let refused_upload { world = w; _ } =
       status "an upload the record refuses" 500 refused;
       conforms "POST" "/resources" refused;
       Check.that "the error carries the record's reason"
-        (matches_re "must cite the job" (error_of refused)));
+        (Check.matches_re "must cite the job" (error_of refused)));
   with_mode
     ~set:(fun () -> w.archivist.mode.refuses_gateway <- true)
     ~reset:(fun () -> w.archivist.mode.refuses_gateway <- false)
@@ -500,7 +500,7 @@ let description_whole { world = w; _ } =
   status "the description" 200 reply;
   conforms "GET" "/resources/{id}/jsonld" reply;
   Check.that "its content type is JSON-LD"
-    (matches_re {|^application\/ld\+json|}
+    (Check.matches_re {|^application\/ld\+json|}
        (required_header "content-type" reply));
   Check.equal "the description" description (Option.get reply.json)
 

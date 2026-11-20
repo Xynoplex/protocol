@@ -58,7 +58,7 @@ let settings ?(change = Fun.id) shared =
        ~plane:In_process ())
 
 let signal ?(named = []) servers =
-  set_at [ "signal" ]
+  Edit.set_at [ "signal" ]
     (`Assoc
        ([
           ( "type",
@@ -117,24 +117,24 @@ let refusals =
       ~changes:[ ("XYNOLOG_OIDC_CLIENT_SECRET", None) ]
       "XYNOLOG_OIDC_CLIENT_SECRET";
     refusal "no knowledge-base domain"
-      ~change:(remove_at [ "kb"; "domain" ])
+      ~change:(Edit.remove_at [ "kb"; "domain" ])
       {|/kb\b.*\bdomain\b|};
     refusal "no Archivist address"
-      ~change:(remove_at [ "archivist"; "host" ])
+      ~change:(Edit.remove_at [ "archivist"; "host" ])
       {|/archivist\b.*\bhost\b|};
     refusal "no issuer"
-      ~change:(remove_at [ "identity"; "issuer" ])
+      ~change:(Edit.remove_at [ "identity"; "issuer" ])
       {|/identity\b.*\bissuer\b|};
     refusal "no subject claim"
-      ~change:(remove_at [ "identity"; "subjectClaim" ])
+      ~change:(Edit.remove_at [ "identity"; "subjectClaim" ])
       {|/identity\b.*\bsubjectClaim\b|};
     refusal "a field the document does not declare"
-      ~change:(set_at [ "corsOrigin" ] (`String "*"))
+      ~change:(Edit.set_at [ "corsOrigin" ] (`String "*"))
       "corsOrigin";
     refusal "a log format the document does not declare"
-      ~change:(set_at [ "logFormat" ] (`String "text"))
+      ~change:(Edit.set_at [ "logFormat" ] (`String "text"))
       {|/logFormat\b|};
-    refusal "no capacity" ~change:(remove_at [ "capacity" ]) "capacity";
+    refusal "no capacity" ~change:(Edit.remove_at [ "capacity" ]) "capacity";
     refusal "no --config: there is no default path to fall back on"
       ~args:(fun _ -> [])
       "--config <path>";
@@ -183,7 +183,7 @@ let refuses r shared =
   exited_non_zero r.why (code, output);
   Check.that
     (Printf.sprintf "its output matches /%s/:\n%s" r.names output)
-    (matches_re r.names output);
+    (Check.matches_re r.names output);
   let secrets =
     List.filter
       (fun value -> String.length value >= 8)
@@ -283,7 +283,7 @@ let broker_credentials shared =
           exited_non_zero why (code, output);
           Check.that
             (Printf.sprintf "%s: its output matches /%s/" why names)
-            (matches_re names output);
+            (Check.matches_re names output);
           Check.that
             (why ^ ": the password is not in its output")
             (not (Re.execp (Re.compile (Re.str "the-password")) output)))

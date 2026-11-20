@@ -222,6 +222,52 @@ let read t next =
 let on t listener = t.listeners <- t.listeners @ [ listener ]
 let close t = Eio.Promise.try_resolve t.closing () |> ignore
 
+(* Holds every frame a stream carries to what the registry says its channel
+   carries. *)
+let hold_to_registry stream =
+  on stream (fun message ->
+      match message.frame with
+      | None -> ()
+      | Some frame -> (
+          let short json = Call.shown (Yojson.Safe.to_string json) in
+          match Protocol.carried frame.channel with
+          | None ->
+              violation stream
+                (Printf.sprintf
+                   "a frame on %s, which the registry does not declare"
+                   frame.channel)
+          | Some Stored_event -> (
+              match Protocol.against "StoredEventResponse" frame.payload with
+              | [] ->
+                  if
+                    Protocol.at frame.payload [ "type" ]
+                    <> Some (`String frame.channel)
+                  then
+                    violation stream
+                      (Printf.sprintf "%s carried an event of another type"
+                         frame.channel)
+              | refusals ->
+                  violation stream
+                    (Printf.sprintf
+                       "%s carried a payload that is not a stored event (%s): \
+                        %s"
+                       frame.channel
+                       (String.concat "; " refusals)
+                       (short frame.payload)))
+          | Some (Schema schema) -> (
+              match
+                Protocol.against schema (Protocol.unstamped frame.payload)
+              with
+              | [] -> ()
+              | refusals ->
+                  violation stream
+                    (Printf.sprintf
+                       "%s carried a payload that is not a %s (%s): %s"
+                       frame.channel schema
+                       (String.concat "; " refusals)
+                       (short frame.payload)))
+          | Some (Envelope _ | Nothing) -> ()))
+
 let frames ?channel t =
   List.filter_map
     (fun m ->

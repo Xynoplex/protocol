@@ -108,7 +108,7 @@ let wrong_issuer_tokens (w : World.t) =
       conforms "GET" users_me reply;
       Check.that
         (why ^ ": its challenge names invalid_token")
-        (matches_re {|^Bearer error="invalid_token"|} (challenge reply)))
+        (Check.matches_re {|^Bearer error="invalid_token"|} (challenge reply)))
     [
       ( "another audience",
         Issuer.token w.issuer
@@ -609,7 +609,7 @@ let tests implementations =
       ~make:(fun plane ->
         World.create ~command:implementations.Implementations.gateway
           ~document:
-            (set_at
+            (Edit.set_at
                [ "identity"; "subjectClaim" ]
                (`String "preferred_username"))
           plane)

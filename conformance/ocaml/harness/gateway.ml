@@ -189,36 +189,17 @@ let crash t =
    [timeout] seconds, is a failure. *)
 let refused_boot ?(timeout = 30.0) (l : launch) =
   let process, dir = spawn l in
-  let origin =
+  let serving () =
     match Yojson.Safe.Util.member "port" l.document with
-    | `Int port -> Some (Printf.sprintf "http://127.0.0.1:%d" port)
-    | _ -> None
+    | `Int port ->
+        Call.reach
+          (Printf.sprintf "http://127.0.0.1:%d" port)
+          "GET" (health_path ())
+        <> None
+    | _ -> false
   in
-  let deadline = Run.now () +. timeout in
-  let rec watch () =
-    if not (Process.running process) then ()
-    else if
-      match origin with
-      | Some origin -> Call.reach origin "GET" (health_path ()) <> None
-      | None -> false
-    then (
-      Process.crash process;
-      remove dir;
-      failwith
-        ("the gateway served although it should have refused to start:\n"
-        ^ String.concat "\n" (Process.output process)))
-    else if Run.now () > deadline then (
-      Process.crash process;
-      remove dir;
-      failwith
-        (Printf.sprintf
-           "the gateway had neither refused to start nor served after %g s:\n%s"
-           timeout
-           (String.concat "\n" (Process.output process))))
-    else (
-      Run.sleep 0.05;
-      watch ())
-  in
-  watch ();
-  remove dir;
-  (Eio.Promise.await process.exited, Process.output process)
+  Fun.protect
+    ~finally:(fun () -> remove dir)
+    (fun () ->
+      let code = Process.refused process ~timeout serving in
+      (code, Process.output process))

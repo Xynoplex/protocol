@@ -306,7 +306,7 @@ let json_format implementations () =
         (Printf.sprintf "the traced line's %s is 16 hex digits: %s" span_key
            traced)
         (Option.fold ~none:false
-           ~some:(matches_re "^[0-9a-f]{16}$")
+           ~some:(Check.matches_re "^[0-9a-f]{16}$")
            (text_member line span_key));
       List.iter
         (fun text ->

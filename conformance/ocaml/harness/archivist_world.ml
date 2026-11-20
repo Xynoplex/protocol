@@ -220,52 +220,6 @@ let uniq names =
        (fun seen n -> if List.mem n seen then seen else n :: seen)
        [] names)
 
-(* Holds every frame a stream carries to what the registry says its channel
-   carries. *)
-let hold_to_registry (stream : Bus_stream.t) =
-  Bus_stream.on stream (fun message ->
-      match message.frame with
-      | None -> ()
-      | Some frame -> (
-          let short json = Call.shown (Yojson.Safe.to_string json) in
-          match Protocol.carried frame.channel with
-          | None ->
-              Bus_stream.violation stream
-                (Printf.sprintf
-                   "a frame on %s, which the registry does not declare"
-                   frame.channel)
-          | Some Stored_event -> (
-              match Protocol.against "StoredEventResponse" frame.payload with
-              | [] ->
-                  if
-                    Protocol.at frame.payload [ "type" ]
-                    <> Some (`String frame.channel)
-                  then
-                    Bus_stream.violation stream
-                      (Printf.sprintf "%s carried an event of another type"
-                         frame.channel)
-              | refusals ->
-                  Bus_stream.violation stream
-                    (Printf.sprintf
-                       "%s carried a payload that is not a stored event (%s): \
-                        %s"
-                       frame.channel
-                       (String.concat "; " refusals)
-                       (short frame.payload)))
-          | Some (Schema schema) -> (
-              match
-                Protocol.against schema (Protocol.unstamped frame.payload)
-              with
-              | [] -> ()
-              | refusals ->
-                  Bus_stream.violation stream
-                    (Printf.sprintf
-                       "%s carried a payload that is not a %s (%s): %s"
-                       frame.channel schema
-                       (String.concat "; " refusals)
-                       (short frame.payload)))
-          | Some (Envelope _ | Nothing) -> ()))
-
 let client t token did channels =
   let replies =
     List.concat_map
@@ -280,7 +234,7 @@ let client t token did channels =
          ~global:(uniq (replies @ Protocol.facts () @ channels))
          ())
   in
-  hold_to_registry stream;
+  Bus_stream.hold_to_registry stream;
   { kb = t; token; did; client_id; stream }
 
 let person t sub =

@@ -213,3 +213,30 @@ let until_ready t ~timeout what ready =
       poll ())
   in
   poll ()
+
+(* Wait for [t], which must refuse to start, to exit without serving:
+   [serving] says whether it answers where it would. One that serves, or has
+   neither served nor exited after [timeout] seconds, is killed and is a
+   failure. Its exit code (None when a signal ended it). *)
+let refused t ~timeout serving =
+  let deadline = Run.now () +. timeout in
+  let rec watch () =
+    if not (running t) then Eio.Promise.await t.exited
+    else if serving () then (
+      crash t;
+      failwith
+        (Printf.sprintf
+           "the %s served although it should have refused to start:\n%s" t.name
+           (String.concat "\n" (output t))))
+    else if Run.now () > deadline then (
+      crash t;
+      failwith
+        (Printf.sprintf
+           "the %s had neither refused to start nor served after %g s:\n%s"
+           t.name timeout
+           (String.concat "\n" (output t))))
+    else (
+      Run.sleep 0.05;
+      watch ())
+  in
+  watch ()
