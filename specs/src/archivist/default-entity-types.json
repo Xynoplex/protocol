@@ -1,0 +1,14 @@
+{
+  "$comment": "AUTHORITY for the vocabulary an Archivist seeds at boot (ARCHIVIST.md § Boot and shutdown, step 8): each of `entityTypes` that the `__system__` stream has not recorded is added, in this order, as a `frame:entity-type-added` sent by the knowledge base itself (`did:web:<domain>`), before the Archivist subscribes to its channels; its facts are the first it publishes.",
+  "entityTypes": [
+    "Person",
+    "Organization",
+    "Location",
+    "Event",
+    "Concept",
+    "Product",
+    "Technology",
+    "Date",
+    "Author"
+  ]
+}

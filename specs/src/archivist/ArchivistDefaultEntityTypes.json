@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistDefaultEntityTypes.json",
+  "description": "archivist/default-entity-types.json: the entity types an Archivist seeds, in the order it seeds them.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "entityTypes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "The default entity types, in seed order.",
+      "items": {
+        "$ref": "https://xynolog.org/protocol/EntityTypeAddedPayload.json#/properties/entityType"
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "entityTypes"
+  ],
+  "additionalProperties": false
+}

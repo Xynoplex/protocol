@@ -106,7 +106,10 @@ let placed t (tree : Layout.tree) path resource_id =
       [ ("{shard}", shard_of resource_id); ("{resourceId}", resource_id) ]
   in
   List.fold_left ( // )
-    (match tree with Root -> t.dirs.root | State_home -> t.dirs.state_home)
+    (match tree with
+    | Root -> t.dirs.root
+    | State_home -> t.dirs.state_home
+    | Anchored_text_dir -> t.dirs.anchored_text_dir)
     (String.split_on_char '/' filled)
 
 let stream_dir t resource_id =

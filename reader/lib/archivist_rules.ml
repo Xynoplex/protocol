@@ -9,6 +9,10 @@
      exactly Motivation.
    - The anchored-text entry's provenance is ExtractedText's, and its decline
      classes are ExtractionDeclined's.
+   - Each refusal of archivist/messages.json is of operations the registry
+     says the Archivist answers, and each route's error is of an operation
+     of the Archivist's API. Its refusal of an entity type not registered
+     is the dispatcher's, word for word (dispatcher/messages.json).
    - contract/ARCHIVIST.md names each record schema but the anchored-text
      entries, ArchivistConfig, each table of archivist/, every persisted
      event of the bus and every route of Archivist's HTTP surface. That one
@@ -183,6 +187,79 @@ let refusals ~ids ~(read_json : string -> Yojson.Safe.t option) =
           refuse entry_file "/oneOf"
             "AnchoredTextEntry is not an extracted entry or a declined one")
   | _ -> ());
+  let messages = "archivist/messages.json" in
+  let rows section =
+    match Option.bind (read_json messages) (at section) with
+    | Some (`List rows) -> rows
+    | _ -> []
+  in
+  let answered_by_archivist =
+    match Option.bind (read_json "bus/registry.json") (at "/operations") with
+    | Some (`List operations) ->
+        List.filter_map
+          (fun op ->
+            match text (at "/answeredBy" op) with
+            | Some "archivist" -> text (at "/request" op)
+            | _ -> None)
+          operations
+    | _ -> []
+  in
+  List.iteri
+    (fun i row ->
+      List.iteri
+        (fun j op ->
+          if not (List.mem op answered_by_archivist) then
+            refuse messages
+              ("/refusals" / string_of_int i / "operations" / string_of_int j)
+              "%s is no operation the registry says the Archivist answers" op)
+        (texts (at "/operations" row)))
+    (rows "/refusals");
+  let api = "archivist/openapi.json" in
+  let operation_of route meth =
+    Option.bind (read_json api) (fun openapi ->
+        Option.bind
+          (text (at ("/paths" / route / "$ref") openapi))
+          (fun ref ->
+            Option.bind
+              (read_json (resolve ids api ref))
+              (at ("" / String.lowercase_ascii meth))))
+  in
+  List.iteri
+    (fun i row ->
+      match (text (at "/method" row), text (at "/route" row)) with
+      | Some meth, Some route when Option.is_none (operation_of route meth) ->
+          refuse messages
+            ("/http" / string_of_int i / "route")
+            "%s %s is no operation of the Archivist's API" meth route
+      | _ -> ())
+    (rows "/http");
+  let named_message file section name =
+    Option.bind (read_json file) (fun table ->
+        match at section table with
+        | Some (`List rows) ->
+            List.find_map
+              (fun row ->
+                if text (at "/name" row) = Some name then
+                  text (at "/message" row)
+                else None)
+              rows
+        | _ -> None)
+  in
+  (match
+     ( named_message messages "/refusals" "entity-type-not-registered",
+       named_message "dispatcher/messages.json" "/refusals"
+         "entity-type-not-registered" )
+   with
+  | Some archivist, Some dispatcher when archivist <> dispatcher ->
+      refuse messages "/refusals"
+        "the Archivist refuses an entity type not registered in %S, and the \
+         dispatcher in %S"
+        archivist dispatcher
+  | Some _, Some _ -> ()
+  | _ ->
+      refuse messages "/refusals"
+        "the Archivist's and the dispatcher's refusals of an entity type not \
+         registered are not both stated (entity-type-not-registered)");
   List.rev !found
 
 (* contract/ARCHIVIST.md, under the repository's [root], names what the

@@ -80,7 +80,7 @@ Three trees:
 | The state directory | `stateHome` | The views and projections, at its top: an Archivist serves one knowledge base, so the volume is that knowledge base's alone. Rebuilt from the log; never committed |
 | The anchored-text store | `anchoredTextDir` | Text extracted from content, with where each word is. Written by the Archivist, from what the Smelter stores over HTTP |
 
-[`layout.json`](../specs/src/archivist/layout.json) states where the event log, the views and the `__system__` projections are, as this section says, for a reader of the Archivist's files.
+[`layout.json`](../specs/src/archivist/layout.json) states where the event log, the views, the `__system__` projections, the storage-uri index, the anchored-text entries and the store's `STAMP` are, as this section says, for a reader of the Archivist's files.
 
 ### Identifiers and shards
 
@@ -306,7 +306,7 @@ and why. A failure that cannot be sent is logged.
 | `job:complete` | none | none | `job:completed` |
 | `job:fail` | none | none | `job:failed` |
 
-A failure reply is `{message}`, the reason in words. Commands on one channel are handled one at a
+A failure reply is `{message}`, the reason in words. [`messages.json`](../specs/src/archivist/messages.json) states the words of each refusal this document quotes, of each error its HTTP surface answers with, and of each message it logs that a reader relies on; `<channel>` in a refusal is the command's channel. Commands on one channel are handled one at a
 time, in the order they arrive; commands on different channels are not ordered against each other.
 Appends never interleave: one event is written, its views changed and its fact queued before the
 next is begun, whichever channels they came on. A command that carries no `_userId` is refused, or
@@ -321,8 +321,8 @@ the requester is then whoever the job was assigned for.
 - `creator` is the requester, as an agent.
 - `generator` is the executor, when the executor is software (a DID of the form
   `did:web:<domain>:agents:<subject>`). A command may supply the generator, to say more
-  about it — the engine it ran — and it must be the executor: `attribution: generator <id> is not the executor <did>`, and
-  `attribution: a generator was supplied, but the executor <did> is not software`.
+  about it — the engine it ran — and it must be the executor: `<channel> refused: generator <id> is not the executor <did>`, and
+  `<channel> refused: a generator was supplied, but the executor <did> is not software`.
 - `wasAttributedTo` is the executor alone when it is also the requester, otherwise the creator then
   the executor.
 
@@ -334,8 +334,8 @@ or, for `yield:create`, of the resource it names in `generatedFrom.resourceId`. 
 - the job made the resource: the log's first event is a `yield:created` that cites the job in its
   `jobId`, and that event's sender is this command's. The requester is that event's `creator`.
 
-Otherwise: `refused: cites job <id>, but the log of <resourceId> holds no assignment of it, and
-the job did not make it`, or `refused: job <id>'s recorded holder is <did>, not the writer <did>`,
+Otherwise: `<channel> refused: cites job <id>, but the log of <resourceId> holds no assignment of it, and
+the job did not make it`, or `<channel> refused: job <id>'s recorded holder is <did>, not the writer <did>`,
 where the holder is the assignment's `holder` or the sender of the `yield:created`.
 
 ### Resources
@@ -495,7 +495,7 @@ token was presented, `Bearer` when none was.
 
 | Route | Answers |
 |---|---|
-| `GET` `/health` | `200` `{"status":"ok","actors":["stower","browser","cloneTokenManager"]}`. It answers once the Archivist has booted |
+| `GET` `/health` | `200` an [`ArchivistHealth`](../specs/src/archivist/ArchivistHealth.json), `{"status":"ok","actors":["stower","browser","cloneTokenManager"]}`, its actors in the order the schema lists them. It answers once the Archivist has booted |
 | `GET` `/events` | `200` `{"streams":[{"resourceId":…,"lastSequence":n},…]}`: every stream of the log, `__system__` among them, each with the sequence number of its last event (0 for a stream with none), in no order. A failed read: `500` `{"error":"stream listing failed"}` |
 | `GET` `/events/{resourceId}`, with `?fromSequence=N` | `200` `{"events":[…],"lastSequence":n}`: the stream's stored events from sequence `N` on, in log order, at most the operation's `x-xynolog-limits.maxEvents` of them, and the sequence number of the stream's last event (0 for a stream with none). A reader that wants more asks again from the sequence after the last event it was given, until it has the last. The id `__system__` reads the knowledge base's own stream. A stream that is not there has no events. Only the files that hold events from `N` on are read. `N` must be an integer of at least 1, in decimal digits, and the id an id: `400` `{"error":"resourceId path segment and integer fromSequence >= 1 are required"}`. A failed read: `500` `{"error":"event read failed"}` |
 | `GET` `/resources/{id}/content` | `200` with the content streamed, and `Content-Type` the media type recorded. A file missing from the tree: `500` `{"error":"content read failed"}`. No view: `404` `{"error":"Resource not found: <id>","code":"resource"}`. A view with no storage URI: `404` `{"error":"Resource representation not found: no storageUri for <id>","code":"representation"}` |
@@ -596,7 +596,9 @@ The Archivist boots in this order, and a failure at any step ends the process wi
 
 1. Read and validate the configuration document.
 2. Read the project file ([Configuration](#configuration)).
-3. Refuse to start without a `site.domain`.
+3. Refuse to start without a `site.domain`. Each refusal of the Archivist's own here, and at steps 5
+   and 6, is written in the boot-refusals table's line, in the words `messages.json` states under
+   `boot`.
 4. Sign in: its own account's token at the issuer, which is its bearer on the bus; the gateway
    names it by that account, as an agent, and answers its DID at `GET /api/users/me`. The token is
    renewed before it expires.
@@ -614,9 +616,9 @@ The Archivist boots in this order, and a failure at any step ends the process wi
    index. A stream that fails is logged and skipped, and the rest are rebuilt. A directory of the
    log that is not a stream is noted and passed over. Then **reap:** delete every view whose
    resource has no stream.
-8. **Seed the vocabulary:** for each default entity type the `__system__` stream has not recorded —
-   `Person`, `Organization`, `Location`, `Event`, `Concept`, `Product`, `Technology`, `Date`,
-   `Author` — add it, as the knowledge base itself (`did:web:<domain>`).
+8. **Seed the vocabulary:** for each default entity type the `__system__` stream has not recorded,
+   in the order [`default-entity-types.json`](../specs/src/archivist/default-entity-types.json)
+   lists them, add it, as the knowledge base itself (`did:web:<domain>`).
 9. Subscribe to its channels on the bus, publish its facts, the seeded vocabulary's first, and
    serve its HTTP surface.
 

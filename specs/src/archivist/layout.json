@@ -1,5 +1,5 @@
 {
-  "$comment": "AUTHORITY for where the Archivist keeps the record on disk (ARCHIVIST.md § The record on disk), as far as a reader of its files needs it: each file's tree, `root` (the working tree) or `stateHome` (the state directory), and its path in that tree. A path's `{resourceId}` is the resource's id, and its `{shard}` the id's two-level shard, `<ab>/<cd>`, as archivist/shard-cases.json states the arithmetic. A stream is a directory of event files, named by `eventFile`, numbered from `first` in `digits` decimal digits, each holding at most `maxEvents` events, the next event opening the next file; each line of one is a stored event, compact JSON ended by a single newline, as `storedEvent` names it. A resource's view is JSON indented by two spaces, as `view.schema` names it, and so is each projection of what the `__system__` stream adds up to, as its `schema` names it; a projection file that is absent reads as empty.",
+  "$comment": "AUTHORITY for where the Archivist keeps the record on disk (ARCHIVIST.md § The record on disk), as far as a reader of its files needs it: each file's tree, `root` (the working tree), `stateHome` (the state directory) or `anchoredTextDir` (the anchored-text store), and its path in that tree. A path's `{resourceId}` is the resource's id, `{uriHash}` the SHA-256 of a storage URI's UTF-8 bytes in lowercase hex, `{contentChecksum}` a content checksum, and its `{shard}` the two-level shard, `<ab>/<cd>`, of the key the file is filed by (the resource id, the URI, or the checksum), as archivist/shard-cases.json states the arithmetic. A stream is a directory of event files, named by `eventFile`, numbered from `first` in `digits` decimal digits, each holding at most `maxEvents` events, the next event opening the next file; each line of one is a stored event, compact JSON ended by a single newline, as `storedEvent` names it. A resource's view is JSON indented by two spaces, as `view.schema` names it, and so is each projection of what the `__system__` stream adds up to, as its `schema` names it, and each entry of the storage-uri index, as `storageUriIndex.schema` names it; a projection file that is absent reads as empty. An anchored-text entry is compact JSON, as `anchoredTextEntry.schema` names it. The stamp its entries are taken under is the file `anchoredTextStamp`: the stamp alone, as AnchoredTextStamp's `stamp` is, followed by a newline.",
   "eventStream": {
     "tree": "root",
     "path": ".xynolog/events/{shard}/{resourceId}"
@@ -47,5 +47,23 @@
         }
       }
     ]
+  },
+  "storageUriIndex": {
+    "tree": "stateHome",
+    "path": "projections/storage-uri/{shard}/{uriHash}.json",
+    "schema": {
+      "$ref": "https://xynolog.org/protocol/StorageUriEntry.json"
+    }
+  },
+  "anchoredTextEntry": {
+    "tree": "anchoredTextDir",
+    "path": "{shard}/{contentChecksum}.json",
+    "schema": {
+      "$ref": "https://xynolog.org/protocol/AnchoredTextEntry.json"
+    }
+  },
+  "anchoredTextStamp": {
+    "tree": "anchoredTextDir",
+    "path": "STAMP"
   }
 }

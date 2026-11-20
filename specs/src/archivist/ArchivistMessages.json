@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ArchivistMessages.json",
+  "description": "archivist/messages.json: the words of the Archivist's own refusals, and of the messages it logs that a reader relies on.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "boot": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each refusal to start of the Archivist's own, written in service-environment/boot-refusals.json's `line`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "refusal": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The refusal, in place of the line's `{refusal}`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "refusal"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unsent": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The failure a reply that cannot be sent is answered with instead, on the operation's failure channel.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The failure's `message`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "situation",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "refusals": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each refusal of an operation, on the operation's failure channel.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "The operations it refuses: requests of bus/registry.json's operations that the Archivist answers. `{channel}` in the message is the one refused.",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z]+:[a-z][a-z-]*[a-z]$"
+            }
+          },
+          "code": {
+            "$ref": "https://xynolog.org/protocol/CommandError.json#/properties/code"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The failure's `message`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "operations",
+          "situation",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unauthorized": {
+      "type": "object",
+      "description": "The refusal of every route of the HTTP surface but `/health`: a token that is missing, or not of the knowledge base's issuer and audience, or without the service role.",
+      "properties": {
+        "status": {
+          "$ref": "https://xynolog.org/protocol/HttpStatus.json"
+        },
+        "error": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The body's `error`."
+        },
+        "presented": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The `WWW-Authenticate` header when a token was presented."
+        },
+        "absent": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The `WWW-Authenticate` header when none was."
+        }
+      },
+      "required": [
+        "status",
+        "error",
+        "presented",
+        "absent"
+      ],
+      "additionalProperties": false
+    },
+    "http": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each other error a route of the HTTP surface answers with.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "PUT",
+              "POST"
+            ],
+            "description": "The route's method."
+          },
+          "route": {
+            "type": "string",
+            "pattern": "^/",
+            "description": "The route, as the Archivist's API names its path."
+          },
+          "status": {
+            "$ref": "https://xynolog.org/protocol/HttpStatus.json"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*[a-z]$",
+            "description": "The body's `code`, where it carries one."
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "error": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The body's `error`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "method",
+          "route",
+          "status",
+          "situation",
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "logged": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each message the Archivist logs that a reader of its output relies on.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "level": {
+            "$ref": "https://xynolog.org/protocol/LogLevel.json"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The line's message, word for word."
+          },
+          "fields": {
+            "type": "object",
+            "description": "The fields the line is logged with whose form is stated, by name: each a text whose `{name}` is filled as the row's `situation` says. The line may carry others.",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The field's value. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+            }
+          }
+        },
+        "required": [
+          "name",
+          "level",
+          "situation",
+          "message",
+          "fields"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "boot",
+    "unsent",
+    "refusals",
+    "unauthorized",
+    "http",
+    "logged"
+  ],
+  "additionalProperties": false
+}
