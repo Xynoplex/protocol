@@ -200,6 +200,16 @@ let error_body name fill =
     (("error", str error)
     :: (match code with Some c -> [ ("code", str c) ] | None -> []))
 
+(* The message [name] archivist/messages.json says the Archivist logs. *)
+let logged name =
+  match
+    List.find_opt
+      (fun (r : M.logged_item) -> r.name = name)
+      (messages ()).logged
+  with
+  | Some r -> r
+  | None -> failwith ("archivist/messages.json states no logged message " ^ name)
+
 (* Fail unless [output] holds the Archivist's own boot refusal [name] in
    service-environment/boot-refusals.json's line, each hole [fill] gives
    filled and any other some text on its line. *)
@@ -238,16 +248,6 @@ let entity_types n =
           case needs %d"
          (List.length seeded) n);
   List.filteri (fun at _ -> at < n) seeded
-(* The message archivist/messages.json says the Archivist logs as [name]. *)
-let logged name =
-  match
-    List.find_opt
-      (fun (r : M.logged_item) -> r.name = name)
-      (messages ()).logged
-  with
-  | Some r -> r.message
-  | None -> failwith ("archivist/messages.json states no logged message " ^ name)
-
 (* Whether [actual] holds what [expected] states, as toMatchObject holds it:
    an object's members in part and in depth, an array's items one for one,
    anything else equal. *)

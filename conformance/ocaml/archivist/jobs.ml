@@ -224,7 +224,7 @@ let other_verb (verb, own, other_verb, others) w =
     (completions w id);
   (* It says so, in the words the dispatcher says it in. Its log reaches
      this suite by a pipe, which can trail what it has already stored. *)
-  let message = logged "completion-of-another-verb" in
+  let message = (logged "completion-of-another-verb").message in
   let said () =
     List.filter
       (fun line ->

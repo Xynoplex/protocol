@@ -107,11 +107,15 @@ conformance/ocaml/archivist/boot.ml,Portable conformance,xynolog/protocol,Protoc
 conformance/ocaml/archivist/browse.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/clone.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/dune,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/environment.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/events.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/fixture.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/idempotency.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/jobs.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/observability.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/record.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/resources.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/staging.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/support.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/bin/dune,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/bin/main.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
