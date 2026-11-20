@@ -210,16 +210,17 @@ let skipped w =
   Check.equal "the view's name, rebuilt" (str "skipped") (view_name w id);
   Check.that "the orphan's view is reaped" (not (Sys.file_exists orphan))
 
+(* The members a json log line starts with: its level's, and its
+   message's. *)
+let level_and_message () =
+  match (Protocol.tables ()).service_telemetry_log_lines.logger.json.first with
+  | [ level; message ] -> (level, message)
+  | _ -> failwith "the json line names other than a level and a message first"
+
 (* The lines of the Archivist's stdout that log the message [row], each one
    JSON object, as service-telemetry/log-lines.json says. *)
 let logged_lines (w : A.t) (row : M.logged_item) =
-  let message_key =
-    match
-      (Protocol.tables ()).service_telemetry_log_lines.logger.json.first
-    with
-    | [ _; message ] -> message
-    | _ -> failwith "the json line names other than a level and a message first"
-  in
+  let _, message_key = level_and_message () in
   List.filter
     (fun line -> Protocol.at line [ message_key ] = Some (str row.message))
     (List.map
@@ -273,18 +274,12 @@ let as_found (w : A.t) =
     (numbered_events
        (Check.list (present "the replay" replay.json) [ "events" ]));
   let row = logged "not-an-event" in
-  let level_key =
-    match
-      (Protocol.tables ()).service_telemetry_log_lines.logger.json.first
-    with
-    | level :: _ -> level
-    | [] -> failwith "the json line names no first members"
-  in
-  let lines = logged_lines w row in
+  let level_key, _ = level_and_message () in
+  let logging = logged_lines w row in
   Check.equal
     (Printf.sprintf "the lines logging %S" row.message)
     (`Int 2)
-    (`Int (List.length lines));
+    (`Int (List.length logging));
   List.iter2
     (fun line number ->
       Check.equal "the line's level"
@@ -298,19 +293,15 @@ let as_found (w : A.t) =
                (filled form [ ("path", file); ("line", string_of_int number) ]))
             (Check.at line [ field ]))
         row.fields)
-    lines [ 4; 5 ];
+    logging [ 4; 5 ];
   (* The next event follows the last one read, whatever number a skipped
      line carries. *)
   ignore (A.ask (A.person w "editor") "mark:archive" (on id) : Yojson.Safe.t);
-  let last =
-    List.nth (A.stream_lines w id) (List.length (A.stream_lines w id) - 1)
-  in
-  Check.matching "the event appended next"
-    [
-      ("type", str "mark:archived");
-      ("metadata", `Assoc [ ("sequenceNumber", `Int 3) ]);
-    ]
-    (Yojson.Safe.from_string last)
+  let lines = A.stream_lines w id in
+  Check.equal "the event appended next"
+    (numbered_as [ ("mark:archived", 3) ])
+    (numbered_events
+       [ Yojson.Safe.from_string (List.nth lines (List.length lines - 1)) ])
 
 let tokened w =
   let id, _ = annotated w "tokened" in
