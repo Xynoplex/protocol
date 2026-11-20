@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceFailure.json",
+  "description": "A failure as an SDK reports it to the suite (conformance/sdk/README.md, \"The driver protocol\"): its code, the status when a server stated one, and a job failure's class when it has one; and the SDK's own words for it.",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The SDK's code for it, from specs/src/errors/codes.json."
+    },
+    "status": {
+      "type": "integer",
+      "description": "The HTTP status, when a server stated one."
+    },
+    "failureClass": {
+      "$ref": "https://xynolog.org/protocol/FailureClass.json",
+      "description": "A job failure's class, when it has one."
+    },
+    "detail": {
+      "type": "string",
+      "description": "The SDK's words, for a person; nothing compares it."
+    }
+  },
+  "required": [
+    "detail"
+  ],
+  "additionalProperties": false
+}

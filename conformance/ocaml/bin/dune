@@ -11,4 +11,6 @@
   librarian_suite
   archivist_suite
   smelter_suite
-  weaver_suite))
+  weaver_suite
+  sdk_suite
+  worker_suite))

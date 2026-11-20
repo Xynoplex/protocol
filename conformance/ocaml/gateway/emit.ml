@@ -684,7 +684,7 @@ let counting (w : World.t) =
 
 let tests implementations =
   let make = plain implementations in
-  each_plane ~make ~world:Fun.id ~close:World.close "emitting"
+  World.each_plane ~make ~world:Fun.id ~close:World.close "emitting"
     ([
        case
          "an emit is accepted with 202; the count of subscribers is present \
@@ -772,8 +772,8 @@ let tests implementations =
       ])
   (* Only a plane that can count reports a count (TRANSPORT-HTTP.md § POST
      /bus/emit). *)
-  @ each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
-      "counting subscribers"
+  @ World.each_plane ~planes:[ In_process ] ~make ~world:Fun.id
+      ~close:World.close "counting subscribers"
       [
         case
           "an emit reports exactly how many connections its channel and scope \

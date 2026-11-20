@@ -62,7 +62,7 @@ let failing (w : World.t) =
 
 let tests implementations =
   let make = plain implementations in
-  each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
+  World.each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
     "an issuer that accepts a key fetch and never answers it"
     [
       case
@@ -71,8 +71,8 @@ let tests implementations =
          made meanwhile waits for that fetch, not one of its own"
         silent;
     ]
-  @ each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
-      "an issuer whose key set cannot be fetched"
+  @ World.each_plane ~planes:[ In_process ] ~make ~world:Fun.id
+      ~close:World.close "an issuer whose key set cannot be fetched"
       [
         case
           ~timeout:((key_refetch_cooldown () *. 2.0) +. 10.0)

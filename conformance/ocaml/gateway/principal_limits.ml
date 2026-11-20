@@ -179,8 +179,8 @@ let unlimited_emits (w : World.t) =
     (role_holders w "limits")
 
 let tests implementations =
-  each_plane ~make:(plain implementations) ~world:Fun.id ~close:World.close
-    "what one principal may take"
+  World.each_plane ~make:(plain implementations) ~world:Fun.id
+    ~close:World.close "what one principal may take"
     [
       case
         "past its emit bucket a principal holding no role is refused 429 \

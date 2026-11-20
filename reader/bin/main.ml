@@ -1,8 +1,9 @@
 (* xynolog-protocol check ROOT: the Protocol checkout at ROOT. Its specs/src is
    read into the model, every file accounted for and every table what its
    schema says; what the checkout states outside specs/src is held to it;
-   each JSON file of specs/src is spelled as JSON.stringify spells it; and
-   every file Git tracks has an owner.
+   the conformance corpus is what its schema says and names what the spec
+   has (Corpus); each JSON file of specs/src is spelled as JSON.stringify
+   spells it; and every file Git tracks has an owner.
 
    xynolog-protocol bundle ROOT: specs/src read into the model, each OpenAPI
    document of it bundled into specs/, and the services' schemas into
@@ -53,7 +54,7 @@ let () =
   | [| _; "check"; root |] -> (
       let outside spec =
         Archivist_rules.contract ~root spec.Spec.tables.bus_registry
-        @ Repository.spelling ~root
+        @ Corpus.refusals ~root spec @ Repository.spelling ~root
         @
         match tracked root with
         | Ok files -> Repository.ownership ~root files

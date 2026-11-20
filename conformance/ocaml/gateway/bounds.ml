@@ -296,7 +296,7 @@ let head_left_unfinished (w : World.t) =
 
 let tests implementations =
   let make = plain implementations in
-  each_plane ~make ~world:Fun.id ~close:World.close "connection bounds"
+  World.each_plane ~make ~world:Fun.id ~close:World.close "connection bounds"
     [
       case ~timeout:120.0
         "a subscriber that stops reading is disconnected once \
@@ -308,8 +308,8 @@ let tests implementations =
         outrun;
     ]
   (* Plane-independent, and slow: each case waits out requestHeadSeconds. *)
-  @ each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
-      "how long a connection waits"
+  @ World.each_plane ~planes:[ In_process ] ~make ~world:Fun.id
+      ~close:World.close "how long a connection waits"
       [
         case
           ~timeout:((head () *. 2.0) +. 10.0)

@@ -1,0 +1,6 @@
+; The worker suite: every SDK with a worker's surface, through its worker
+; driver, put through the worker corpus.
+(library
+ (name worker_suite)
+ (package xynolog-conformance)
+ (libraries xynolog_conformance xynolog-protocol yojson testo))

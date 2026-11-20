@@ -603,10 +603,11 @@ let tests implementations =
           media_opens_one;
       ]
   in
-  each_plane ~make ~world:Fun.id ~close:World.close "credentials" credentials
+  World.each_plane ~make ~world:Fun.id ~close:World.close "credentials"
+    credentials
   (* Plane-independent: which claim names a person is the knowledge base's
      choice. *)
-  @ each_plane ~planes:[ In_process ]
+  @ World.each_plane ~planes:[ In_process ]
       ~make:(fun plane ->
         World.create ~command:implementations.Implementations.gateway
           ~document:
@@ -624,8 +625,8 @@ let tests implementations =
       ]
   (* Plane-independent: the issuer's keys are fetched when first needed, so
      an issuer gone before then leaves nothing to verify with. *)
-  @ each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
-      "an issuer that cannot be reached"
+  @ World.each_plane ~planes:[ In_process ] ~make ~world:Fun.id
+      ~close:World.close "an issuer that cannot be reached"
       [
         case "refuses its tokens as unverifiable — a 401, never a 5xx"
           unreachable_issuer;
@@ -634,8 +635,8 @@ let tests implementations =
      on a kid it has not seen at most once per cooldown (bearerAuth's
      x-xynolog-limits.keyRefetchCooldownSeconds), so the case waits one out.
      Its own world, because every token signed after it uses the new key. *)
-  @ each_plane ~planes:[ In_process ] ~make ~world:Fun.id ~close:World.close
-      "issuer key rotation"
+  @ World.each_plane ~planes:[ In_process ] ~make ~world:Fun.id
+      ~close:World.close "issuer key rotation"
       [
         case
           "a key the issuer adds is accepted without restarting the gateway, \

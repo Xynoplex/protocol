@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceCase.json",
+  "description": "One case of the conformance corpus: a scenario every SDK's driver is put through, a JSON file of conformance/sdk/wire, conformance/sdk/live or conformance/worker/cases named by the case. What the client is asked to do, what the backend does around it, and the transcript a conforming client produces. conformance/sdk/README.md explains each step; the reader reads every file of the corpus through this schema.",
+  "type": "object",
+  "properties": {
+    "about": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the case holds a client to, in a sentence."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the protocol or the spec states it."
+    },
+    "planes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://xynolog.org/protocol/GatewayConfig.json#/properties/signal/properties/type"
+      },
+      "description": "The signal planes the case runs on. Absent, it runs on both."
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "fleet",
+        "parity"
+      ],
+      "description": "A live case's tier: `fleet`, what every SDK with a live layer does, or `parity`, what one that implements all of CACHE-SEMANTICS does."
+    },
+    "telemetry": {
+      "type": "boolean",
+      "const": true,
+      "description": "Run the client exporting to an OTLP receiver, and once it has exited hold what it exported to specs/src/sdk-telemetry/telemetry.json. A worker case also holds the worker to a trace of its own for each job it ran (conformance/worker/README.md)."
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "https://xynolog.org/protocol/ConformanceStep.json"
+      },
+      "description": "The steps, run in order."
+    }
+  },
+  "required": [
+    "about",
+    "source",
+    "steps"
+  ],
+  "additionalProperties": false
+}

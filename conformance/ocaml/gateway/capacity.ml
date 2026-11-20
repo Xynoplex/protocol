@@ -100,7 +100,7 @@ let connection_cap (w : World.t) =
   List.iter Bus_stream.close held
 
 let tests implementations =
-  each_plane ~world:Fun.id ~close:World.close
+  World.each_plane ~world:Fun.id ~close:World.close
     ~make:
       (with_capacity ~queued:queued_bytes ~connections:50_000 implementations)
     "a gateway whose queued bytes reach its capacity"
@@ -110,7 +110,7 @@ let tests implementations =
          queues drain"
         queued_bytes_reached;
     ]
-  @ each_plane ~world:Fun.id ~close:World.close
+  @ World.each_plane ~world:Fun.id ~close:World.close
       ~make:
         (with_capacity
            ~queued:(1024 * 1024 * 1024)

@@ -465,7 +465,7 @@ let exactly_the_table { world = w; otlp } =
              (Some w.kb.did))))
 
 let tests implementations =
-  each_plane ~make:(make implementations)
+  World.each_plane ~make:(make implementations)
     ~world:(fun { world; _ } -> world)
     ~close "what the gateway exports"
     [

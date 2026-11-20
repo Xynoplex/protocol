@@ -77,3 +77,15 @@
  (flags
   (:standard -open Xynolog_protocol_schema))
  (libraries xynolog_protocol_schema yojson alcotest))
+
+; The reader holds the conformance corpus to its schema and to the spec.
+(test
+ (name corpus)
+ (modules corpus)
+ (flags
+  (:standard -open Xynolog_protocol_schema -open Xynolog_protocol))
+ (libraries xynolog_protocol yojson)
+ (deps
+  (source_tree %{project_root}/specs/src))
+ (action
+  (run %{test} %{project_root})))

@@ -4,11 +4,9 @@ Black-box suites exercise implementations through the protocol surfaces they exp
 
 | Suite | Checks | Command |
 | --- | --- | --- |
-| `sdk` | SDK drivers as clients of a running gateway | `test:sdk` |
-| `worker` | SDK worker drivers as clients of a dispatcher and gateway | `test:worker` |
 | `worker-service` | Worker services, provider interactions, and health | `test:worker-service` |
 
-Six suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)); `smelter`, vector indexing, anchored text, provider interactions, and telemetry ([`ocaml/smelter`](ocaml/smelter/README.md)); and `weaver`, graph indexing, bus behavior, health, and telemetry ([`ocaml/weaver`](ocaml/weaver/README.md)).
+Eight suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)); `smelter`, vector indexing, anchored text, provider interactions, and telemetry ([`ocaml/smelter`](ocaml/smelter/README.md)); `weaver`, graph indexing, bus behavior, health, and telemetry ([`ocaml/weaver`](ocaml/weaver/README.md)); `sdk`, SDK drivers as clients of a running gateway ([`sdk`](sdk/README.md)); and `worker`, SDK worker drivers as clients of a dispatcher and gateway ([`worker`](worker/README.md)).
 
 ## Implementation manifest
 
@@ -18,7 +16,7 @@ Example from this repository's root:
 
 ```sh
 npm ci --prefix conformance
-npm run --prefix conformance test:sdk -- -- --implementations /path/to/sdk.implementations.json
+npm run --prefix conformance test:worker-service -- -- --implementations /path/to/worker-service.implementations.json
 ```
 
 The manifest can name several implementations in one run. A suite refuses to start if the manifest is missing or malformed. It does not infer a current/default configuration.
