@@ -9,5 +9,5 @@ let suite : Xynolog_conformance.Suite.t =
       (fun implementations ->
         List.concat_map
           (fun tests -> tests implementations)
-          [ Boot.tests; Clone.tests; Idempotency.tests; Resources.tests ]);
+          [ Anchored_text.tests; Annotations.tests; Boot.tests; Clone.tests; Idempotency.tests; Jobs.tests; Resources.tests ]);
   }

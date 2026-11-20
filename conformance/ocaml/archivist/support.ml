@@ -155,13 +155,20 @@ let refusal ?(channel = "") name fill =
   | Some r -> filled r.message (("channel", channel) :: fill)
   | None -> failwith ("archivist/messages.json states no refusal " ^ name)
 
-(* The error [name] a route answers with, filled, and its code. *)
-let http_error name fill =
+let http_row name =
   match
     List.find_opt (fun (r : M.http_item) -> r.name = name) (messages ()).http
   with
-  | Some r -> (r.status, filled r.error fill, r.code)
+  | Some r -> r
   | None -> failwith ("archivist/messages.json states no route error " ^ name)
+
+(* The error [name] a route answers with, filled, and its code. *)
+let http_error name fill =
+  let r = http_row name in
+  (r.status, filled r.error fill, r.code)
+
+(* The status a route answers the error [name] with. *)
+let http_status name = (http_row name).status
 
 (* The body an error [name] is answered with: its error, and its code. *)
 let error_body name fill =
@@ -208,3 +215,104 @@ let entity_types n =
           case needs %d"
          (List.length seeded) n);
   List.filteri (fun at _ -> at < n) seeded
+(* The message archivist/messages.json says the Archivist logs as [name]. *)
+let logged name =
+  match
+    List.find_opt
+      (fun (r : M.logged_item) -> r.name = name)
+      (messages ()).logged
+  with
+  | Some r -> r.message
+  | None -> failwith ("archivist/messages.json states no logged message " ^ name)
+
+(* Whether [actual] holds what [expected] states, as toMatchObject holds it:
+   an object's members in part and in depth, an array's items one for one,
+   anything else equal. *)
+let rec holds (expected : Yojson.Safe.t) (actual : Yojson.Safe.t) =
+  match (expected, actual) with
+  | `Assoc members, `Assoc _ ->
+      List.for_all
+        (fun (key, value) ->
+          match Protocol.at actual [ key ] with
+          | Some held -> holds value held
+          | None -> false)
+        members
+  | `List items, `List held ->
+      List.length items = List.length held && List.for_all2 holds items held
+  | _ -> Check.canonical expected = Check.canonical actual
+
+let matching what expected actual =
+  if not (holds expected actual) then
+    failwith
+      (Printf.sprintf "%s: %s does not hold %s" what (Check.shown actual)
+         (Check.shown expected))
+
+let lacks what json path =
+  Check.that
+    (Printf.sprintf "%s: %s holds %s" what (Check.shown json)
+       (String.concat "." path))
+    (Protocol.at json path = None)
+
+(* A job id as the dispatcher mints one at admission (JOBS.md § The job
+   record), held to JobId: the suite stands in for the admission. *)
+let minted_job_id () =
+  let id = "job-" ^ Fresh.hex 16 in
+  (match Protocol.against "JobId" (`String id) with
+  | [] -> ()
+  | refusals ->
+      failwith
+        (Printf.sprintf "the suite's job id %s is no JobId: %s" id
+           (String.concat "; " refusals)));
+  id
+
+(* The one value Annotation.json allows its [member]. *)
+let annotation_constant member =
+  match
+    Option.bind (Protocol.json_of "components/schemas/Annotation.json")
+      (fun schema -> Protocol.at schema [ "properties"; member; "enum" ])
+  with
+  | Some (`List [ value ]) -> value
+  | _ -> failwith ("Annotation.json allows its " ^ member ^ " no one value")
+
+(* Where [exact] starts in [text], in UTF-16 code units. *)
+let offset_in text exact =
+  match Re.exec_opt (Re.compile (Re.str exact)) text with
+  | Some found ->
+      List.length (A.utf16_units (String.sub text 0 (Re.Group.start found 0)))
+  | None -> failwith (Printf.sprintf "%S holds no %S" text exact)
+
+(* An annotation as a worker or an importer sends one whole, on [exact] in
+   [text], with [extra]'s members over its own. *)
+let whole ?(extra = []) text resource_id exact =
+  let start = offset_in text exact in
+  let own =
+    [
+      ("@context", annotation_constant "@context");
+      ("type", annotation_constant "type");
+      ("id", str (String.concat "" (String.split_on_char '-' (Fresh.uuid ()))));
+      ("motivation", str "highlighting");
+      ( "target",
+        `Assoc
+          [
+            ("source", str resource_id);
+            ( "selector",
+              `List
+                [
+                  `Assoc
+                    [
+                      ("type", str "TextPositionSelector");
+                      ("start", `Int start);
+                      ("end", `Int (start + List.length (A.utf16_units exact)));
+                    ];
+                  `Assoc
+                    [ ("type", str "TextQuoteSelector"); ("exact", str exact) ];
+                ] );
+          ] );
+      ("created", str "2026-01-01T00:00:00.000Z");
+      ("modified", str "2026-01-01T00:00:00.000Z");
+    ]
+  in
+  `Assoc
+    (List.filter (fun (key, _) -> not (List.mem_assoc key extra)) own @ extra)
+
+let id_of annotation = A.string_member "id" annotation
