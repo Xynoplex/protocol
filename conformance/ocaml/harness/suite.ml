@@ -68,6 +68,18 @@ type t = {
 
 let project = "xynolog-conformance"
 
+(* The suite and the manifest the program's [arguments] (those after its
+   own name) name, and testo's arguments after them; or why they name none.
+   The manifest is named once, and there is no default. *)
+let suite_and_manifest = function
+  | name :: "--implementations" :: manifest :: rest
+    when not (String.starts_with ~prefix:"--" manifest) ->
+      if List.mem "--implementations" rest then
+        Error "this names --implementations more than once"
+      else Ok (name, manifest, rest)
+  | _ :: "--implementations" :: _ -> Error "--implementations names no file"
+  | _ -> Error "this names no suite and no --implementations <manifest>"
+
 (* xynolog-conformance <suite> --implementations <manifest> [testo's own
    arguments]. testo starts each worker as the program it was started as,
    with the arguments it was handed and --worker, so the suite and the
@@ -84,22 +96,26 @@ let run suites =
              names);
         exit 2
   in
+  let usage why =
+    prerr_endline
+      (Printf.sprintf
+         "usage: xynolog-conformance <suite> --implementations <manifest> \
+          [testo's arguments], the suite one of %s (%s)"
+         names why);
+    exit 2
+  in
   let argv =
     match Array.to_list Sys.argv with
-    | program :: name :: "--implementations" :: manifest :: rest
-      when not (List.mem "--worker" rest) ->
-        ignore (named name : t);
-        Array.of_list
-          ((program :: rest)
-          @ [ "-e"; "suite=" ^ name; "-e"; "implementations=" ^ manifest ])
     | _ :: rest when List.mem "--worker" rest -> Sys.argv
-    | _ ->
-        prerr_endline
-          (Printf.sprintf
-             "usage: xynolog-conformance <suite> --implementations <manifest> \
-              [testo's arguments], the suite one of %s"
-             names);
-        exit 2
+    | program :: arguments -> (
+        match suite_and_manifest arguments with
+        | Ok (name, manifest, rest) ->
+            ignore (named name : t);
+            Array.of_list
+              ((program :: rest)
+              @ [ "-e"; "suite=" ^ name; "-e"; "implementations=" ^ manifest ])
+        | Error why -> usage why)
+    | [] -> usage "it was started with no program name"
   in
   let rec handed = function
     | "-e" :: setting :: _ when String.starts_with ~prefix:"suite=" setting ->

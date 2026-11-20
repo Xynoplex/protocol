@@ -235,7 +235,13 @@ conformance/ocaml/gateway/stream.ml,Portable conformance,xynolog/protocol,Protoc
 conformance/ocaml/gateway/support.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/gateway/tokens.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness-test/dune,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness-test/expect.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness-test/implementations_cases.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness-test/issuer_cases.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness-test/main.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness-test/net_cases.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness-test/otlp_cases.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness-test/protocol_cases.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/anthropic.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/archivist.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/archivist_standin.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.

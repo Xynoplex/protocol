@@ -162,7 +162,10 @@ let verified t token =
       | _ -> None)
     t.keys
 
-let jwt_bearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+(* The assertion type a key account's grant names
+   (session/client-assertion-cases.json). *)
+let assertion_type () =
+  (Protocol.tables ()).session_client_assertion_cases.assertion_type
 
 (* A JWT's part as the JSON object it holds. *)
 let part encoded =
@@ -258,7 +261,7 @@ let start audience accounts =
           else
             match field "client_assertion" with
             | Some assertion ->
-                if field "client_assertion_type" = Some jwt_bearer then
+                if field "client_assertion_type" = Some (assertion_type ()) then
                   asserted ~token_endpoint:(t.origin ^ "/token") ~seen accounts
                     assertion
                 else None
