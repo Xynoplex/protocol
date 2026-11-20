@@ -2,10 +2,11 @@
    texts, answered with a vector for each. A vector is worked out from its
    text alone, so the same text has the same vector however often it is
    asked for. It answers every request with its vectors, unless a case
-   chose otherwise: a failing status, or a request held until the case
-   releases it. Every request is recorded as it was sent. A request of any
-   other path, and a body that is not a model and a list of
-   texts, lands in [violations]. *)
+   chose otherwise, by what was asked or as the next request in turn: a
+   failing status, or a request held until the case releases it. Every
+   request is recorded as it was sent, with the status it was answered
+   with. A request of any other path, and a body that is not a model and a
+   list of texts, lands in [violations]. *)
 
 let width = 16
 
@@ -25,7 +26,13 @@ let nearness a b =
     (fun sum x y -> sum +. (x *. y))
     0.0 (embedding_of a) (embedding_of b)
 
-type recorded = { model : string; texts : string list }
+type recorded = {
+  body : Yojson.Safe.t;
+  model : string;
+  texts : string list;
+  mutable status : int option;
+      (** None while it is held, and when it was never answered. *)
+}
 
 (* What the stand-in does with one request, in place of answering it with
    its vectors. *)
@@ -42,12 +49,15 @@ type t = {
   violations : string Dynarray.t;
   mutable choose : (recorded -> instead option) option;
       (** What a case does with each request, by what was asked. A request it
-          returns nothing for is answered with its vectors. *)
+          returns nothing for takes the next of [scripted], or its vectors. *)
+  scripted : instead Queue.t;
+      (** What the next requests get in place of their vectors, in order. *)
   held :
     (Serve.request * recorded * Serve.reply option Eio.Promise.u) Dynarray.t;
 }
 
 let embedded recorded =
+  recorded.status <- Some 200;
   Serve.json_reply 200
     (`Assoc
        [
@@ -62,7 +72,7 @@ let embedded recorded =
 
 let asked body =
   match Call.parsed body with
-  | Some (`Assoc members) -> (
+  | Some (`Assoc members as json) -> (
       match
         (List.assoc_opt "model" members, List.assoc_opt "input" members)
       with
@@ -70,7 +80,8 @@ let asked body =
           let texts =
             List.filter_map (function `String s -> Some s | _ -> None) input
           in
-          if List.length texts = List.length input then Some (model, texts)
+          if List.length texts = List.length input then
+            Some { body = json; model; texts; status = None }
           else None
       | _ -> None)
   | _ -> None
@@ -78,7 +89,8 @@ let asked body =
 let start () =
   let requests = Dynarray.create ()
   and violations = Dynarray.create ()
-  and held = Dynarray.create () in
+  and held = Dynarray.create ()
+  and scripted = Queue.create () in
   let rec handler (request : Serve.request) =
     let json status body = Serve.Reply (Serve.json_reply status body) in
     if request.meth <> "POST" || request.path <> "/api/embed" then (
@@ -95,16 +107,20 @@ let start () =
            ^ Call.shown request.body);
           json 400
             (`Assoc [ ("error", `String "not a model and a list of texts") ])
-      | Some (model, texts) -> (
-          let recorded = { model; texts } in
+      | Some recorded -> (
           Dynarray.add_last requests recorded;
           match
-            match (Lazy.force t).choose with
-            | Some choose -> choose recorded
-            | None -> None
+            match
+              match (Lazy.force t).choose with
+              | Some choose -> choose recorded
+              | None -> None
+            with
+            | Some instead -> Some instead
+            | None -> Queue.take_opt scripted
           with
           | None -> Serve.Reply (embedded recorded)
           | Some (Fails (status, body)) ->
+              recorded.status <- Some status;
               Serve.Reply
                 {
                   status;
@@ -124,10 +140,26 @@ let start () =
         requests;
         violations;
         choose = None;
+        scripted;
         held;
       }
   in
   Lazy.force t
+
+(* What the next requests get in place of their vectors, in order, after
+   those already scripted. *)
+let script t replies =
+  List.iter (fun reply -> Queue.add reply t.scripted) replies
+
+(* What an Ollama answers for a model it has not fetched. *)
+let not_fetched =
+  Fails (404, {|{"error":"model not found, try pulling it first"}|})
+
+(* Whether two vectors are the same, to the single precision an index
+   stores one in. *)
+let same_embedding a b =
+  List.length a = List.length b
+  && List.for_all2 (fun x y -> Float.abs (x -. y) < 1e-5) a b
 
 (* How many requests are held now: accepted, unanswered, and not given up
    on. *)
@@ -137,11 +169,12 @@ let held t =
       if request.abandoned then n else n + 1)
     0 t.held
 
-(* Answer every held request with its vectors. *)
+(* Answer every held request whose client still waits with its vectors. *)
 let release t =
   Dynarray.iter
-    (fun (_, recorded, answer) ->
-      ignore (Eio.Promise.try_resolve answer (Some (embedded recorded))))
+    (fun ((request : Serve.request), recorded, answer) ->
+      if not request.abandoned then
+        ignore (Eio.Promise.try_resolve answer (Some (embedded recorded))))
     t.held;
   Dynarray.clear t.held
 
@@ -161,6 +194,7 @@ let reset t =
   Dynarray.clear t.held;
   Dynarray.clear t.requests;
   Dynarray.clear t.violations;
+  Queue.clear t.scripted;
   t.choose <- None
 
 let close t = t.server.stop ()

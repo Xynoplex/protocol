@@ -28,7 +28,7 @@ let made_with_a_token w =
   Check.that
     ("the token's form: " ^ token)
     (Check.matches_re "^clone_[0-9a-f]{32}$" token);
-  like "the token's resource"
+  Check.like "the token's resource"
     (`Assoc [ ("@id", str source); ("name", str "Original") ])
     (Check.at issued [ "resource" ]);
   let expires_at = Check.at issued [ "expiresAt" ] in
@@ -41,7 +41,7 @@ let made_with_a_token w =
     (lifetime <= 15.0 *. 60.0);
   (* Looking a token up does not spend it. *)
   for _ = 1 to 2 do
-    like "the token looked up"
+    Check.like "the token looked up"
       (`Assoc
          [
            ("sourceResource", `Assoc [ ("@id", str source) ]);
@@ -66,7 +66,7 @@ let made_with_a_token w =
               ("format", str "text/markdown");
             ]))
   in
-  like "the copy's event"
+  Check.like "the copy's event"
     (`Assoc
        [
          ("type", str "yield:cloned");
@@ -85,7 +85,7 @@ let made_with_a_token w =
          ("metadata", `Assoc [ ("sequenceNumber", `Int 1) ]);
        ])
     (List.hd (A.stored w clone));
-  like "the copy's view"
+  Check.like "the copy's view"
     (`Assoc
        [
          ("name", str "Copy");
@@ -132,7 +132,7 @@ let made_by_an_upload w =
       ]
       "new\n"
   in
-  like "the copy's event"
+  Check.like "the copy's event"
     (`Assoc
        [
          ("type", str "yield:cloned");
@@ -144,7 +144,7 @@ let made_by_an_upload w =
       match Protocol.at (view w source) [ "resource"; "archived" ] with
       | Some (`Bool true) -> Some ()
       | _ -> None);
-  like "the source's last event"
+  Check.like "the source's last event"
     (`Assoc [ ("type", str "mark:archived"); ("userId", str owner.did) ])
     (last "the source's stream" (A.stored w source))
 

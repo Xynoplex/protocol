@@ -52,7 +52,7 @@ let assembled w =
     (annotation_id ^ " is no 32 lowercase hex digits")
     (Check.matches_re "^[0-9a-f]{32}$" annotation_id);
   let added = nth "the stream" (A.stored w id) 1 in
-  like "the added event"
+  Check.like "the added event"
     (`Assoc
        [
          ("type", str "mark:added");
@@ -63,7 +63,7 @@ let assembled w =
     added;
   let annotation = Check.at added [ "payload"; "annotation" ] in
   let person = `Assoc [ ("@type", str "Person"); ("@id", str grace.did) ] in
-  like "the annotation"
+  Check.like "the annotation"
     (`Assoc
        [
          ("@context", annotation_constant "@context");
@@ -79,7 +79,7 @@ let assembled w =
   Check.equal "its created and modified"
     (Check.at annotation [ "created" ])
     (Check.at annotation [ "modified" ]);
-  like "the view"
+  Check.like "the view"
     (`Assoc
        [
          ("lastSequence", `Int 2);
@@ -92,7 +92,7 @@ let assembled w =
      its payload. *)
   let _, fact = scoped_fact grace "the scoped fact" "mark:added" id in
   let named = `Assoc [ ("id", str annotation_id) ] in
-  like "the fact"
+  Check.like "the fact"
     (`Assoc
        [
          ("type", str "mark:added");
@@ -148,7 +148,7 @@ let read_back w =
     A.ask grace "browse:annotation-requested"
       (`Assoc [ ("resourceId", str id); ("annotationId", str second) ])
   in
-  like "the annotation read back"
+  Check.like "the annotation read back"
     (`Assoc
        [
          ("annotation", `Assoc [ ("id", str second) ]);
@@ -216,7 +216,7 @@ let committed w =
   let recorded =
     Check.at (nth "the stream" (A.stored w id) 1) [ "payload"; "annotation" ]
   in
-  like "the recorded annotation"
+  Check.like "the recorded annotation"
     (match List.hd batch with
     | `Assoc members ->
         `Assoc
@@ -262,7 +262,7 @@ let removed w =
   Check.equal "the history's events"
     (`List [ str "mark:added" ])
     (types_of (Check.list history [ "events" ]));
-  like "the history"
+  Check.like "the history"
     (`Assoc
        [
          ("total", `Int 1);
@@ -273,7 +273,7 @@ let removed w =
   Check.equal "the deletion"
     (`Assoc [ ("annotationId", str annotation_id) ])
     (A.ask grace "mark:delete" (`Assoc named));
-  like "the removal"
+  Check.like "the removal"
     (`Assoc
        [
          ("type", str "mark:removed");
@@ -282,7 +282,7 @@ let removed w =
          ("metadata", `Assoc [ ("sequenceNumber", `Int 3) ]);
        ])
     (nth "the stream" (A.stored w id) 2);
-  like "the view"
+  Check.like "the view"
     (`Assoc
        [
          ("lastSequence", `Int 3);
@@ -339,7 +339,7 @@ let body_changed w =
     (`List [ tag; link ])
     (Check.at (first_annotation w id) [ "body" ]);
   let updated = nth "the stream" (A.stored w id) 2 in
-  like "the update"
+  Check.like "the update"
     (`Assoc
        [
          ("type", str "mark:body-updated");
@@ -353,7 +353,7 @@ let body_changed w =
     (Check.at (first_annotation w id) [ "modified" ]);
   (* The fact carries the annotation with its body as it now stands. *)
   let _, fact = scoped_fact grace "the scoped fact" "mark:body-updated" id in
-  like "the fact"
+  Check.like "the fact"
     (`Assoc
        [
          ( "annotation",
@@ -375,7 +375,7 @@ let body_changed w =
   ignore
     (update_body grace id annotation_id [ op "add" [ ("item", link) ] ]
       : Yojson.Safe.t);
-  like "the annotation read back"
+  Check.like "the annotation read back"
     (`Assoc
        [
          ( "resolvedResource",
@@ -389,7 +389,7 @@ let body_changed w =
    link. *)
 let linked w (grace : A.client) id annotation_id generated =
   let link = link_to generated in
-  like "the link"
+  Check.like "the link"
     (`Assoc
        [
          ("type", str "mark:body-updated");
@@ -423,7 +423,7 @@ let generated_on_upload w =
   (* The record is read as the answer arrives, with nothing waited for: the
      link is recorded before the answer is sent. *)
   linked w grace id annotation_id generated;
-  like "the generated resource's record"
+  Check.like "the generated resource's record"
     (`Assoc
        [
          ( "generatedFrom",
@@ -432,7 +432,7 @@ let generated_on_upload w =
          ("generationPrompt", str "Tell me about the fox");
        ])
     (Check.at (nth "the stream" (A.stored w generated) 0) [ "payload" ]);
-  like "the generated resource"
+  Check.like "the generated resource"
     (`Assoc [ ("wasDerivedFrom", str id) ])
     (Check.at (view w generated) [ "resource" ]);
   (* The link is published as any event is, to its resource's scope. *)

@@ -8,9 +8,8 @@ Black-box suites exercise implementations through the protocol surfaces they exp
 | `worker` | SDK worker drivers as clients of a dispatcher and gateway | `test:worker` |
 | `worker-service` | Worker services, provider interactions, and health | `test:worker-service` |
 | `weaver` | Graph indexing, bus behavior, health, and telemetry | `test:weaver` |
-| `smelter` | Vector indexing, anchored text, provider interactions, and telemetry | `test:smelter` |
 
-Four suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); and `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)).
+Five suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)); and `smelter`, vector indexing, anchored text, provider interactions, and telemetry ([`ocaml/smelter`](ocaml/smelter/README.md)).
 
 ## Implementation manifest
 
