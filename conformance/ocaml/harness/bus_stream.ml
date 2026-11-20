@@ -223,12 +223,14 @@ let frame ?timeout ?(matches = fun _ -> true) t channel =
 
 type subscribed = Stream of t | Refused of Call.reply
 
+(* Open a stream. A connection the gateway closes before it answers raises
+   here, in the caller: End_of_file or Eio.Io. *)
 let subscribe origin token body =
   let opened, open_ = Eio.Promise.create () in
   let closing, closing_u = Eio.Promise.create () in
   Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
       Eio.Switch.run @@ fun sw ->
-      let response, next =
+      match
         Call.exchange ~sw
           ~headers:
             ([
@@ -242,40 +244,101 @@ let subscribe origin token body =
           ~body:(Yojson.Safe.to_string body)
           "POST"
           (origin ^ Protocol.path Gateway "POST" "/bus/subscribe")
-      in
-      let status = Http.Status.to_int (Http.Response.status response) in
-      let headers = Http.Response.headers response in
-      if status <> 200 then
-        let text = Call.body_of next in
-        Eio.Promise.resolve open_
-          (Refused { Call.status; headers; text; json = Call.parsed text })
-      else
-        let stream =
-          {
-            messages = Dynarray.create ();
-            violations = Dynarray.create ();
-            listeners = [];
-            changed = Eio.Condition.create ();
-            ended = false;
-            closing = closing_u;
-          }
-        in
-        (match Http.Header.get headers "content-type" with
-        | Some kind
-          when String.trim (List.hd (String.split_on_char ';' kind))
-               = "text/event-stream" ->
-            ()
-        | kind ->
-            violation stream
-              (Printf.sprintf "a stream that came as %S, not text/event-stream"
-                 (Option.value ~default:"" kind)));
-        Eio.Promise.resolve open_ (Stream stream);
-        Eio.Fiber.first
-          (fun () -> Eio.Promise.await closing)
-          (fun () -> read stream next);
-        stream.ended <- true;
-        Eio.Condition.broadcast stream.changed);
-  Eio.Promise.await opened
+      with
+      | exception ((End_of_file | Eio.Io _) as failure) ->
+          Eio.Promise.resolve open_ (Error failure)
+      | response, next ->
+          let status = Http.Status.to_int (Http.Response.status response) in
+          let headers = Http.Response.headers response in
+          if status <> 200 then
+            let text = Call.body_of next in
+            Eio.Promise.resolve open_
+              (Ok
+                 (Refused
+                    { Call.status; headers; text; json = Call.parsed text }))
+          else
+            let stream =
+              {
+                messages = Dynarray.create ();
+                violations = Dynarray.create ();
+                listeners = [];
+                changed = Eio.Condition.create ();
+                ended = false;
+                closing = closing_u;
+              }
+            in
+            (match Http.Header.get headers "content-type" with
+            | Some kind
+              when String.trim (List.hd (String.split_on_char ';' kind))
+                   = "text/event-stream" ->
+                ()
+            | kind ->
+                violation stream
+                  (Printf.sprintf
+                     "a stream that came as %S, not text/event-stream"
+                     (Option.value ~default:"" kind)));
+            Eio.Promise.resolve open_ (Ok (Stream stream));
+            Eio.Fiber.first
+              (fun () -> Eio.Promise.await closing)
+              (fun () -> read stream next);
+            stream.ended <- true;
+            Eio.Condition.broadcast stream.changed);
+  match Eio.Promise.await opened with
+  | Ok subscribed -> subscribed
+  | Error failure -> raise failure
+
+(* A subscriber that opens the stream and stops reading once its head has
+   come. [resume] starts reading again; [drain] does, and returns once the
+   stream has ended — a socket that is not being read cannot see its peer
+   close it; [close] ends it from this side. *)
+type stalled = {
+  resume : unit -> unit;
+  drain : unit -> unit;
+  close : unit -> unit;
+}
+
+let stalled_subscriber origin token body =
+  let reading, read = Eio.Promise.create () in
+  let closing, close = Eio.Promise.create () in
+  let ended, ends = Eio.Promise.create () in
+  Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
+      (try
+         Eio.Fiber.first
+           (fun () -> Eio.Promise.await closing)
+           (fun () ->
+             Eio.Switch.run @@ fun sw ->
+             let _response, next =
+               Call.exchange ~sw
+                 ~headers:
+                   [
+                     ("authorization", "Bearer " ^ token);
+                     ("content-type", "application/json");
+                   ]
+                 ~body:(Yojson.Safe.to_string body)
+                 "POST"
+                 (origin ^ Protocol.path Gateway "POST" "/bus/subscribe")
+             in
+             Eio.Promise.await reading;
+             let rec chunks () =
+               match next () with
+               | Cohttp.Transfer.Chunk _ -> chunks ()
+               | Final_chunk _ | Done -> ()
+             in
+             chunks ())
+       with End_of_file | Eio.Io _ -> ());
+      Eio.Promise.resolve ends ());
+  let once promise resolver =
+    if not (Eio.Promise.is_resolved promise) then
+      Eio.Promise.resolve resolver ()
+  in
+  {
+    resume = (fun () -> once reading read);
+    drain =
+      (fun () ->
+        once reading read;
+        Eio.Promise.await ended);
+    close = (fun () -> once closing close);
+  }
 
 let subscribe_body ~client_id ?(global = []) ?(scoped = [])
     ?(pending_replies = []) () =

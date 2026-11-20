@@ -85,14 +85,6 @@ let refusals schema value =
     (fun (pointer, why) -> (if pointer = "" then "/" else pointer) ^ " " ^ why)
     (Validate.errors (spec ()).ids schema_at schema value "")
 
-(* A component schema of the gateway's document, by its name. *)
-let component name =
-  match List.assoc_opt name (spec ()).gateway.components.schemas with
-  | Some reference -> schema_of reference
-  | None -> failwith ("the gateway's document has no component schema " ^ name)
-
-let against name value = refusals (component name) value
-
 (* A service's own schema (Places.service_schemas): its configuration
    document, its health, by its name. *)
 let service_schema name =
@@ -114,6 +106,15 @@ type document = Gateway | Archivist
 let document = function
   | Gateway -> (spec ()).gateway
   | Archivist -> (spec ()).archivist
+
+(* A component schema of a document, by its name. *)
+let component which name =
+  match List.assoc_opt name (document which).components.schemas with
+  | Some reference -> schema_of reference
+  | None -> failwith ("the document has no component schema " ^ name)
+
+(* How [value] is not the gateway's component schema [name]. *)
+let against name value = refusals (component Gateway name) value
 
 let find_operation which meth path : Openapi.operation option =
   Option.bind (List.assoc_opt path (document which).paths) (fun reference ->
@@ -158,6 +159,15 @@ let limit which meth path key =
       | Some (Openapi.Count n) -> n
       | _ -> failwith (Printf.sprintf "%s %s states no count %s" meth path key))
   | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
+
+(* One of a gateway security scheme's x-xynolog-limits that is a count. *)
+let scheme_limit scheme key =
+  match List.assoc_opt scheme (spec ()).gateway.components.security_schemes with
+  | Some (Openapi.Http { limits = Some limits; _ }) -> (
+      match List.assoc_opt key limits with
+      | Some (Openapi.Count n) -> n
+      | _ -> failwith (Printf.sprintf "%s states no count %s" scheme key))
+  | _ -> failwith (Printf.sprintf "the gateway's %s states no limits" scheme)
 
 (* The template of a document's path that [concrete] fills, with an
    operation of [meth]: the template and its parameters' values. *)
