@@ -19,22 +19,6 @@ advisories.toml,Repository build tooling,xynolog/protocol,"Published advisories 
 build-tools,Repository build tooling,xynolog/build-tools,"The shared build scripts: the container runtime, make help and its test."
 conformance/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/example.implementations.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/implementations.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/implementations.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/issuer.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/issuer.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/net.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/net.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/otlp-protobuf.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/otlp.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/otlp.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/paths.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/protocol-core.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/roles.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/services.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/spec.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/telemetry.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/telemetry.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/.ocamlformat,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dune project, and its links to the root's workspace, format and reader."
 conformance/ocaml/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -131,15 +115,12 @@ conformance/ocaml/dune.lock/eqaf.0.10.pkg,Portable conformance,xynolog/protocol,
 conformance/ocaml/dune.lock/fix.20250919.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/fmt.0.11.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/fpath.0.7.3.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
-conformance/ocaml/dune.lock/gen.1.1.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/gmap.0.3.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/hmap.0.8.1.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/http.6.3.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/iomux.0.4.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/ipaddr.5.6.2.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/jose.0.11.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
-conformance/ocaml/dune.lock/js_of_ocaml-compiler.6.5.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
-conformance/ocaml/dune.lock/js_of_ocaml.6.5.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/kdf.1.1.2.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/lock.dune,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/logs.0.10.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
@@ -186,7 +167,6 @@ conformance/ocaml/dune.lock/ptime.1.2.0.pkg,Portable conformance,xynolog/protoco
 conformance/ocaml/dune.lock/re.1.14.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/result.1.5.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/rresult.0.7.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
-conformance/ocaml/dune.lock/sedlex.3.8.1.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/seq.base.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/sexplib0.v0.17.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
 conformance/ocaml/dune.lock/stdio.v0.17.0.pkg,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dependencies, the reader's among them, as dune's package lock pins them."
@@ -354,9 +334,6 @@ conformance/ocaml/worker_service/support.ml,Portable conformance,xynolog/protoco
 conformance/ocaml/worker_service/tagging.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/worker_service/worker_service_suite.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/worker_service/yield.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/package-lock.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/package.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/scripts/check-conformance-readmes.mjs,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/closed-read.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live/closed-while-fetching.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -438,8 +415,6 @@ conformance/sdk/wire/upload-credential-renewed.json,Portable conformance,xynolog
 conformance/sdk/wire/upload-keyed.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/upload-progress.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/wire/upload-unanswered.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/tsconfig.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/vitest.fixtures.config.ts,Portable conformance,xynolog/protocol,Fixture-only harness test project.
 conformance/worker/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker/cases/announcement-while-held.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/worker/cases/cancel.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -510,9 +485,6 @@ dune.lock/either.1.0.0.pkg,Repository governance and documentation,xynolog/proto
 dune.lock/fix.20250919.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/fmt.0.11.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/fpath.0.7.3.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/gen.1.1.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/js_of_ocaml-compiler.6.5.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/js_of_ocaml.6.5.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/lock.dune,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/menhir.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/menhirCST.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
@@ -520,7 +492,6 @@ dune.lock/menhirGLR.20260209.pkg,Repository governance and documentation,xynolog
 dune.lock/menhirLib.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/menhirSdk.20260209.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-base-compiler.5.5.2.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/ocaml-compiler-libs.v0.17.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-compiler.5.5.2.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-syntax-shims.1.0.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocaml-version.4.1.5.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
@@ -531,11 +502,7 @@ dune.lock/ocamlfind.1.9.8+dune.pkg,Repository governance and documentation,xynol
 dune.lock/ocamlformat-lib.0.29.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocamlformat.0.29.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/ocp-indent.1.10.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/ppx_derivers.1.2.1.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/ppxlib.0.39.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/re.1.14.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/sedlex.3.8.1.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
-dune.lock/seq.base.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/sexplib0.v0.17.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/stdio.v0.17.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
 dune.lock/stdlib-shims.0.3.0.pkg,Repository governance and documentation,xynolog/protocol,"The reader's dependencies, as dune's package lock pins them."
@@ -550,10 +517,6 @@ reader/bin/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protoc
 reader/bin/main.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/derive.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/derive/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
-reader/js/bus.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
-reader/js/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
-reader/js/validate.d.cts,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
-reader/js/validate.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/archivist_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/bundle.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/client_surface.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."

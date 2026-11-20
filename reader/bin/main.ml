@@ -5,9 +5,8 @@
    has (Corpus); each JSON file of specs/src is spelled as JSON.stringify
    spells it; and every file Git tracks has an owner.
 
-   xynolog-protocol bundle ROOT: specs/src read into the model, each OpenAPI
-   document of it bundled into specs/, and the services' schemas into
-   specs/services.json (Bundle).
+   xynolog-protocol bundle ROOT: specs/src read into the model, and each
+   OpenAPI document of it bundled into specs/ (Bundle).
 
    Each refusal is printed, and any fails the run. *)
 
@@ -49,7 +48,7 @@ let () =
       | Ok () ->
           List.iter
             (fun bundled -> Printf.printf "Bundled %s\n" bundled)
-            (List.map snd Bundle.documents @ [ Bundle.services_bundle ])
+            (List.map snd Bundle.documents)
       | Error errors -> refused errors)
   | [| _; "check"; root |] -> (
       let outside spec =

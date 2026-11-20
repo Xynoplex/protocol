@@ -10,7 +10,7 @@
      --dev-pkg
      %{pkg-self:dev}
      --with-js_of_ocaml-compiler
-     %{pkg:js_of_ocaml-compiler:installed}
+     false
      --with-fmt
      %{pkg:fmt:installed}
      --with-cmdliner
@@ -22,14 +22,7 @@
 
 (depends
  (all_platforms
-  (ocaml
-   ocamlfind
-   ocamlbuild
-   topkg
-   cmdliner
-   js_of_ocaml-compiler
-   fmt
-   base-threads)))
+  (ocaml ocamlfind ocamlbuild topkg cmdliner fmt base-threads)))
 
 (source
  (fetch
