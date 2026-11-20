@@ -17,9 +17,9 @@ deviates from it, the code is wrong, or this document is wrong and is
 corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
-when a Smelter breaks it. `smelter/<case>` is the file `<case>.test.ts` of the
+when a Smelter breaks it. `smelter/<case>` is the file `<case>.ml` of the
 smelter conformance suite
-([`conformance/smelter`](../conformance/smelter/README.md)),
+([`conformance/ocaml/smelter`](../conformance/ocaml/smelter/README.md)),
 which starts a Smelter as a process behind a real gateway and a real
 Archivist, records through the Archivist, plays its embedding provider, and
 reads the index back from a real database: the same cases judge every
@@ -407,7 +407,7 @@ states what each kind of document becomes.
   knowledge bases share one Qdrant, and none reads, purges or empties
   another's: a reconcile reads its own collections alone, and so purges
   nothing of another's, and an index made again is its own.
-  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant, and `smelter/kb-index`.*
+  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant, and `smelter/kb_index`.*
 - **It presents its token on every request to the index,** in Qdrant's
   `api-key` header: the value of the variable its document's
   `vectors.tokenEnv` names. The token may do anything with any collection of
@@ -417,7 +417,7 @@ states what each kind of document becomes.
   knowledge base's collections, and makes them again whenever it makes its
   index anew. So it is not Qdrant that keeps a Smelter to its own knowledge
   base's collections: the rule above does.
-  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant that asks for a token, and `smelter/kb-index`, for the token the suite hands the Smelter it starts.*
+  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant that asks for a token, and `smelter/kb_index`, for the token the suite hands the Smelter it starts.*
 - **A collection that is searched is as wide as the embedding model's
   vectors,** which the Smelter learns by asking the provider to embed once,
   each time it makes the collections: where there are none when it connects,
@@ -508,7 +508,7 @@ started by a reconcile.
   ([The index](#the-index)), and the collections it would reach are those of
   the knowledge base its settings name. Told to stop while it asks, it exits
   with status 0.
-  *Held by `images/shared/python/service/tests/test_knowledge_base.py`, `smelter/tests/test_service.py`, for the stream it asks on, the order and its being told to stop while it asks, and `smelter/kb-index`.*
+  *Held by `images/shared/python/service/tests/test_knowledge_base.py`, `smelter/tests/test_service.py`, for the stream it asks on, the order and its being told to stop while it asks, and `smelter/kb_index`.*
 - **It gives up when the embedding provider or the vector database does not
   answer within a minute,** and exits with a status other than 0.
   *Held by `images/shared/python/service/tests/test_connect.py`.*

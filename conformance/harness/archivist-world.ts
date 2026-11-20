@@ -27,7 +27,6 @@ import { eventually, freePort } from './net';
 import { SERVICE_ROLE, WORKER_ROLE } from './roles';
 import { errorsOf, operationFor, spec, type Method } from './spec';
 import { busRegistry } from './generated/protocol/protocol';
-import { serviceRefusals } from './services';
 import type { BusStream } from './stream';
 import { endCase, PARTICIPANT_CLIENT, World } from './world';
 
@@ -37,7 +36,6 @@ export const ARCHIVIST_CLIENT = 'xynolog-archivist';
 export type Engines = ArchivistSettings['engines'];
 export type Annotation = components['schemas']['Annotation'];
 export type ResourceView = components['schemas']['ResourceView'];
-type ExtractedText = components['schemas']['ExtractedText'];
 
 /** One line of a stream's log, as stored. */
 export interface StoredEvent {
@@ -365,13 +363,6 @@ export class ArchivistWorld {
     return (reply.json as { resourceId: string }).resourceId;
   }
 
-  /** A resource's anchored text, read as the gateway reads it; the Archivist must answer it. Answers the body. */
-  async anchoredText(resourceId: string): Promise<Record<string, unknown>> {
-    const reply = await this.http('GET', `/resources/${encodeURIComponent(resourceId)}/anchored-text`, { route: '/resources/{id}/anchored-text' });
-    if (reply.status !== 200) throw new Error(`the anchored text was not answered: ${reply.status} ${reply.text}`);
-    return reply.json as Record<string, unknown>;
-  }
-
   /** A resource's annotations, as the Archivist answers them over HTTP; undefined for a resource it does not hold. */
   async annotations(resourceId: string): Promise<Record<string, unknown> | undefined> {
     const reply = await this.http('GET', `/resources/${encodeURIComponent(resourceId)}/annotations`, { route: '/resources/{id}/annotations' });
@@ -416,12 +407,6 @@ export class ArchivistWorld {
   /** A resource's view file, held to the ResourceView schema; undefined when there is none. */
   view(resourceId: string): ResourceView | undefined {
     return this.document<ResourceView>(this.viewPath(resourceId), 'ResourceView');
-  }
-
-  /** A `__system__` projection, held to its schema; undefined when there is none. */
-  projection<T = Record<string, unknown>>(file: 'entitytypes.json' | 'tagschemas.json' | 'profiles.json'): T | undefined {
-    const schema = { 'entitytypes.json': 'EntityTypesProjection', 'tagschemas.json': 'TagSchemasProjection', 'profiles.json': 'ProfilesProjection' }[file];
-    return this.document<T>(join(this.dirs.stateHome, 'projections', '__system__', file), schema);
   }
 
   storageUriPath(uri: string): string {
@@ -481,36 +466,6 @@ export class ArchivistWorld {
   }
 
   // ── The Smelter ───────────────────────────────────────────────────────────
-
-  /**
-   * The Smelter, as far as the Archivist meets it: state a stamp, store an
-   * entry under it for content of this checksum, and signal that the
-   * resource has settled. The stamp and the entry go through the Archivist's
-   * surface, as the Smelter's own account.
-   */
-  async smelt(resourceId: string, checksum: string, entry: Record<string, unknown> | undefined, outcome: 'indexed' | 'skipped' = 'indexed', stamp = 'conformance-smelter'): Promise<void> {
-    if (entry !== undefined) {
-      await this.stateStamp(stamp);
-      const document = { v: 3, stamp, ...entry };
-      const refusals = serviceRefusals('AnchoredTextEntry', document);
-      if (refusals.length > 0) throw new Error(`the suite's anchored-text entry is not an AnchoredTextEntry (${refusals.join('; ')})`);
-      const stored = await this.storeAnchoredText(resourceId, { contentChecksum: checksum, entry: document });
-      if (stored.status !== 204) throw new Error(`the anchored-text entry was not stored: ${stored.status} ${stored.text}`);
-    }
-    const smelter = await this.sidecar('smelter');
-    await smelter.emit('smelt:settled', { resourceId, contentChecksum: checksum, outcome });
-  }
-
-  /** State the stamp the anchored-text store's entries are taken under, as the Smelter does when it starts. */
-  async stateStamp(stamp: string): Promise<void> {
-    const stated = await this.http('PUT', '/anchored-text/stamp', { json: { stamp }, route: '/anchored-text/stamp' });
-    if (stated.status !== 204) throw new Error(`the stamp was not stated: ${stated.status} ${stated.text}`);
-  }
-
-  /** Store an anchored-text entry for a resource's bytes, as the Smelter does: the reply, held to the Archivist's API. */
-  storeAnchoredText(resourceId: string, write: unknown, options: { token?: string } = {}): Promise<Reply> {
-    return this.http('PUT', `/resources/${encodeURIComponent(resourceId)}/anchored-text`, { json: write, route: '/resources/{id}/anchored-text', ...options });
-  }
 
   /** The entry the store holds for a resource's content, read with this checksum, as the Smelter reads it back: the reply. */
   storedAnchoredText(resourceId: string, checksum: string | undefined, options: { token?: string } = {}): Promise<Reply> {
@@ -601,19 +556,4 @@ export function highlight(resourceId: string, exact: string, start: number): Rec
       ],
     },
   };
-}
-
-/**
- * An anchored-text entry's body for `text`, one word per line of the page.
- * A word's offsets count code points, which is what iterating a string yields.
- */
-export function anchoredEntry(text: string): Omit<ExtractedText, 'kind' | 'items'> & { lines: unknown[] } {
-  const lines: unknown[] = [];
-  let offset = 0;
-  for (const [index, word] of text.split(' ').entries()) {
-    const codePoints = [...word].length;
-    lines.push({ p: 1, y: 700 - index * 14, h: 12, words: [[72, codePoints * 6, offset, offset + codePoints]] });
-    offset += codePoints + 1;
-  }
-  return { text, lines, method: 'ocr' };
 }
