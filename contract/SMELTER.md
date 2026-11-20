@@ -313,11 +313,13 @@ and says so.
   not remembered: the catalog says as much of the resource.
   *Held by `images/shared/python/vectors/tests/store_contract.py`, `smelter/tests/test_smelter.py` and `smelter/tests/test_properties.py`.*
 - **Every skip is logged as a warning, with the resource, the reason, the
-  media type and the checksum.** A resource is never left out of the index
+  media type and the checksum,** in the words of `not-indexed` in
+  [`messages.json`](../specs/src/smelter/messages.json). A resource is never left out of the index
   without a line that says so.
   *Held by `smelter/tests/test_smelter.py` and `smelter/index`.*
 - **Bytes it could not read are not a decision.** Nothing is signalled, the
-  resource's points are not changed, and the failure is logged. Whoever
+  resource's points are not changed, and the failure is logged, as
+  `content-unread` in [`messages.json`](../specs/src/smelter/messages.json). Whoever
   waits is left to the end of its own wait.
   *Held by `smelter/tests/test_smelter.py`, `smelter/tests/test_properties.py` and `smelter/index`.*
 - **A signal that cannot be sent does not undo what was indexed.**
@@ -436,6 +438,10 @@ states what each kind of document becomes.
 A Smelter asks one provider for its vectors: an Ollama
 (`POST <address>/api/embed`, with the model and a list of texts), or Voyage
 (`POST https://api.voyageai.com/v1/embeddings`, with a bearer key).
+[`requests.json`](../specs/src/embedding/requests.json) states the numbers
+below: how many texts a request carries and how many requests are made at
+once, of each kind of provider; each request's time; when a busy provider is
+asked again; and how many times a start asks again.
 
 - **Every text a Smelter has embedded is a text that is searched, and it
   says so where the provider asks.** Voyage is told `input_type: document`;
@@ -460,7 +466,9 @@ A Smelter asks one provider for its vectors: an Ollama
   waiting.
   *Held by `images/shared/python/vectors/tests/test_slices.py` and `smelter/provider`.*
 - **A request that fails fails its whole batch, and says which provider,
-  which model, what status and which slice.** The resource it was for gets no
+  which model, what status and which slice,** as `event-failed` in
+  [`messages.json`](../specs/src/smelter/messages.json) where it was an
+  event's. The resource it was for gets no
   points from that attempt.
   *Held by `images/shared/python/vectors/tests/test_slices.py` and `smelter/provider`.*
 - **A provider that answers 404 when the Smelter starts is taken to be still
@@ -638,7 +646,8 @@ in prose.
   *Held by `smelter/tests/test_smelter.py`.*
 - **It answers `smelt:rebuild-anchors-ok` when every resource was done, and
   `smelt:rebuild-anchors-failed`, saying how many of how many were not,
-  otherwise.** The ones that could be done are done.
+  otherwise,** in the words of `rebuild-incomplete` in
+  [`messages.json`](../specs/src/smelter/messages.json). The ones that could be done are done.
   *Held by `smelter/tests/test_smelter.py` and `smelter/pdf`.*
 
 ## Health
@@ -698,7 +707,7 @@ every resource had a cursor at its start.
   *Held by `smelter/tests/test_smelter.py`, `smelter/boot` and `smelter/reconcile`.*
 - **`reconcile` is how far the latest reconcile has got:** a `phase`
   (`pending`, `running`, `done` or `failed`), with the pass's `summary` when
-  it is done, or its `error` when it failed.
+  it is done (a [`SmelterReconcileSummary`](../specs/src/smelter/SmelterReconcileSummary.json)), or its `error` when it failed.
   *Held by `smelter/tests/test_smelter.py`, `smelter/boot` and `smelter/reconcile`.*
 - **`index` is what the Smelter holds its index to, and what this start did
   for that:** `stamp`, the model and the cut it makes an index by

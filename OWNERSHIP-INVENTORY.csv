@@ -630,6 +630,7 @@ reader/lib/registry_rules.ml,Protocol validation tooling,xynolog/protocol,"The r
 reader/lib/reply_bounds.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/repository.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/retry_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/lib/smelter_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/spec.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/decode.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/schema/decode.mli,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -1133,8 +1134,10 @@ specs/src/dispatcher/DispatcherHealth.json,Normative protocol source,xynolog/pro
 specs/src/dispatcher/DispatcherMessages.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/dispatcher/messages.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/embedding/EmbeddingConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/embedding/EmbeddingRequests.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/embedding/OllamaEmbeddingConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/embedding/VoyageEmbeddingConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/embedding/requests.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/errors/ErrorsCodes.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/errors/codes.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/follower/FollowerFollowCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1265,7 +1268,9 @@ specs/src/smelter/SmelterChunking.json,Normative protocol source,xynolog/protoco
 specs/src/smelter/SmelterConfig.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/SmelterExtractionCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/SmelterHealth.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/smelter/SmelterMessages.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/SmelterReconcileCases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/smelter/SmelterReconcileSummary.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/extraction-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/fixtures/encrypted.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/fixtures/form.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1281,6 +1286,7 @@ specs/src/smelter/fixtures/scanned.pdf,Normative protocol source,xynolog/protoco
 specs/src/smelter/fixtures/shared-image.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/fixtures/single-line.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/fixtures/table.pdf,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/smelter/messages.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/smelter/reconcile-cases.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/Browser.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/stack/HostPort.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

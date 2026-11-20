@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/EmbeddingRequests.json",
+  "description": "embedding/requests.json: how a service asks its embedding provider for the vectors of many texts.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "providers": {
+      "type": "object",
+      "description": "How each kind of provider is asked, by its `type` (EmbeddingConfig): every kind, and no other.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "textsPerRequest": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "How many texts one request carries, at most: a batch is cut into slices of this many, each one request, in the order of the texts."
+          },
+          "atOnce": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "How many requests are made of the provider at once, however many resources are being indexed."
+          }
+        },
+        "required": [
+          "textsPerRequest",
+          "atOnce"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "requestSeconds": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How long each request has, counted from when it is sent and not from when its batch began. Asking a busy provider again is within it."
+    },
+    "busy": {
+      "type": "object",
+      "description": "A request for the vectors of documents that the provider answers busy is asked again, after each wait in turn, while the request's own time allows the wait. A provider busy at every asking fails the request with that status. A query is asked once.",
+      "properties": {
+        "statuses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The statuses by which a provider says it is busy.",
+          "items": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
+          }
+        },
+        "againAfterSeconds": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The wait before each asking again, in order.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "required": [
+        "statuses",
+        "againAfterSeconds"
+      ],
+      "additionalProperties": false
+    },
+    "startAgain": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How many times, at most, a starting service asks again a provider that answered 404, taken to be still fetching the model, or could not be reached, taken to be still starting: within the time the service has to start."
+    }
+  },
+  "required": [
+    "$comment",
+    "providers",
+    "requestSeconds",
+    "busy",
+    "startAgain"
+  ],
+  "additionalProperties": false
+}
