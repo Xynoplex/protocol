@@ -113,6 +113,39 @@ let held_is_abandoned () =
     (Run.eventually "the held request to be abandoned" 5.0 (fun () ->
          if request.abandoned then Some () else None))
 
+(* A stream whose client leaves while it waits to write more: the request
+   is abandoned, and what writes the stream is stopped. *)
+let stream_is_abandoned () =
+  let seen = ref None and stopped = ref false in
+  let never, _ = Eio.Promise.create () in
+  let server =
+    Serve.start (fun request ->
+        seen := Some request;
+        Serve.Stream
+          {
+            status = 200;
+            headers = [ ("content-type", "text/event-stream") ];
+            events =
+              (fun write ->
+                Fun.protect
+                  ~finally:(fun () -> stopped := true)
+                  (fun () ->
+                    write "event: one\ndata: 1\n\n";
+                    Eio.Promise.await never));
+          })
+  in
+  Fun.protect ~finally:server.stop @@ fun () ->
+  (match
+     Eio.Time.with_timeout (Run.clock ()) 0.5 (fun () ->
+         Ok (raw_get server.port "/stream"))
+   with
+  | Error `Timeout -> ()
+  | Ok text -> failwith ("a stream that never ends ended: " ^ text));
+  let request = Run.eventually "the stream's request" 5.0 (fun () -> !seen) in
+  ignore
+    (Run.eventually "the stream to be abandoned" 5.0 (fun () ->
+         if request.abandoned && !stopped then Some () else None))
+
 let held_is_answered () =
   let answer, answered = Eio.Promise.create () in
   let server = Serve.start (fun _ -> Serve.Held answer) in
@@ -453,6 +486,8 @@ let tests _env =
         "ends a dropped request's connection with no byte" dropped_is_empty;
       Testo.create ~category:[ "serve" ] "sees a held request's client leave"
         held_is_abandoned;
+      Testo.create ~category:[ "serve" ] "sees a stream's client leave"
+        stream_is_abandoned;
       Testo.create ~category:[ "serve" ]
         "answers a held request when it is released" held_is_answered;
       Testo.create ~category:[ "serve" ] "writes half a body and then nothing"
