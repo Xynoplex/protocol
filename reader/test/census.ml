@@ -763,6 +763,38 @@ let () =
     (fun _ -> `String "job:create")
     "/refusals/0/operations/0: job:create is no operation the registry says \
      the Archivist answers";
+  changed specs ~why:"has a relationship of the graph go to no kind of node"
+    "graph/schema.json" "relationships/taggedAs/to"
+    (fun _ -> `String "tag")
+    "/relationships/taggedAs/to: tag is no kind of node under /nodes";
+  changed specs ~why:"makes the graph's stub of no kind of node"
+    "graph/schema.json" "stub/node"
+    (fun _ -> `String "link")
+    "/stub/node: link is no kind of node under /nodes";
+  changed specs ~why:"gives a node of the graph a row the codec does not store"
+    "graph/schema.json" "nodes/annotation/row"
+    (fun _ -> `String "annotationRead")
+    "/nodes/annotation/row: annotationRead is no part of \
+     graph/codec-cases.json that stores a row";
+  changed specs ~why:"keys a node of the graph by a property its row may lack"
+    "graph/schema.json" "nodes/resource/key"
+    (fun _ -> `String "storageUri")
+    "/nodes/resource/key: storageUri is no property resourceStored's row \
+     requires";
+  changed specs ~why:"finds a node of the graph by a property its row lacks"
+    "graph/schema.json" "nodes/annotation/lookups/0"
+    (fun _ -> `String "resource")
+    "/nodes/annotation/lookups/0: resource is no property of \
+     annotationStored's row";
+  changed specs ~why:"finds a node without a row by more than its key"
+    "graph/schema.json" "nodes/entityType/lookups"
+    (fun _ -> `List [ `String "label" ])
+    "/nodes/entityType/lookups: a node without a row holds its key alone, and \
+     is found by nothing else";
+  changed specs ~why:"marks the graph's stub by a property of its row"
+    "graph/schema.json" "stub/marker"
+    (fun _ -> `String "archived")
+    "/stub/marker: archived is a property of resourceStored's row";
   changed specs ~why:"has the Archivist answer an error of a route it lacks"
     "archivist/messages.json" "http/0/method"
     (fun _ -> `String "PUT")
@@ -1171,8 +1203,9 @@ let () =
      area, Archivist's own schema among the components, a client surface case \
      whose arguments are not its method's parameters, a reply's list neither \
      bounded nor named, an offset whose unit is unsaid, a job protocol that \
-     disagrees with itself, an Archivist stated short, an id nothing checks, a \
-     client type that disagrees with what restates it, a control schema named \
-     by other than its $id, a retry row its rule's sets disagree with, or a \
+     disagrees with itself, an Archivist stated short, a graph schema that \
+     names what neither it nor the codec holds, an id nothing checks, a client \
+     type that disagrees with what restates it, a control schema named by \
+     other than its $id, a retry row its rule's sets disagree with, or a \
      protocol fact left to the code; and it reads each value as the type its \
      schema states"

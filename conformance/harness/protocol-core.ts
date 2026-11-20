@@ -1,16 +1,11 @@
 /**
  * Small protocol-derived helpers used by the conformance reader itself.
  * These are not an implementation dependency: the types come from the
- * bundled OpenAPI document, the validators compile its schemas, and the
- * bus subject comes from the job-storage specification.
+ * bundled OpenAPI document, and the bus subject comes from the job-storage
+ * specification.
  */
-import { randomUUID } from 'node:crypto';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import type { ErrorObject } from 'ajv';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import type { CryptoKey, JWK, JWTPayload } from 'jose';
-import { Spec } from './spec';
 import type { components } from './generated/openapi-types';
 import { jobsStorage, type ServiceSchemas } from './generated/protocol/protocol';
 
@@ -23,60 +18,8 @@ export type AnnotationId = string & { readonly __brand: 'AnnotationId' };
 export const resourceId = (value: string): ResourceId => value as ResourceId;
 export const annotationId = (value: string): AnnotationId => value as AnnotationId;
 export const kbDid = (domain: string): string => `did:web:${domain}`;
-/** A job's id as the dispatcher mints one at admission (JOBS.md, JobMetadata.json): `job-` and a version 4 UUID as 32 lower-case hex digits. */
-export const mintedJobId = (): string => `job-${randomUUID().replaceAll('-', '')}`;
 
 export const JOBS_STREAM_SUBJECTS = [`${jobsStorage.stream.subjectRoot}.>`] as const;
-
-const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const spec = new Spec(join(root, 'specs/openapi.json'));
-
-type Validation<T> = ((value: unknown) => value is T) & {
-  errors: ErrorObject[] | null | undefined;
-};
-
-function validator<T>(name: string): Validation<T> {
-  const validate = spec.component(name);
-  const wrapped = ((value: unknown): value is T => validate(value)) as Validation<T>;
-  Object.defineProperty(wrapped, 'errors', { get: () => validate.errors });
-  return wrapped;
-}
-
-export const validators = {
-  Agent: validator<components['schemas']['Agent']>('Agent'),
-  Motivation: validator<components['schemas']['Motivation']>('Motivation'),
-  AnnotationSelector: validator<components['schemas']['AnnotationSelector']>('AnnotationSelector'),
-  Annotation: validator<Annotation>('Annotation'),
-  ResourceDescriptor: validator<ResourceDescriptor>('ResourceDescriptor'),
-};
-
-export function formatErrors(errors: { instancePath: string; message?: string }[] | null | undefined): string {
-  return (errors ?? []).map((error) => `${error.instancePath || '/'} ${error.message ?? ''}`).join('; ');
-}
-
-type BodyItem = components['schemas']['AnnotationBody'];
-function bodyItems(body: Annotation['body']): BodyItem[] {
-  if (body === undefined) return [];
-  return Array.isArray(body) ? body as BodyItem[] : [body as BodyItem];
-}
-
-export function getBodySource(body: Annotation['body']): ResourceId | null {
-  const item = bodyItems(body).find((candidate) => candidate.type === 'SpecificResource');
-  return item?.type === 'SpecificResource' ? item.source as ResourceId : null;
-}
-
-export function getEntityTypes(annotation: { body?: Annotation['body'] }): string[] {
-  return bodyItems(annotation.body)
-    .flatMap((item) => item.type === 'TextualBody' && item.purpose === 'tagging' && item.value.length > 0 ? [item.value] : []);
-}
-
-export function getTargetSource(target: Annotation['target']): ResourceId {
-  return (typeof target === 'string' ? target : target.source) as ResourceId;
-}
-
-export function getTargetSelector(target: Annotation['target']) {
-  return typeof target === 'string' ? undefined : target.selector;
-}
 
 interface IssuerKey {
   kid: string;

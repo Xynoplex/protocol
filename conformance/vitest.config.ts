@@ -44,19 +44,6 @@ export default defineConfig({
           globalSetup: ['harness/global-setup.ts', 'harness/worker-service-setup.ts'],
         },
       },
-      {
-        extends: true,
-        test: {
-          name: 'weaver',
-          include: ['weaver/**/*.test.ts'],
-          provide: { gatewayCommand: implementations.gateway, archivistCommand: implementations.archivist, weaverServices: implementations.weaverServices },
-          globalSetup: ['harness/global-setup.ts', 'harness/archivist-setup.ts', 'harness/weaver-setup.ts'],
-          // One file at a time: the files share one graph database, which a
-          // rebuild of the whole graph clears, and a Weaver's health port is a
-          // constant, so two cannot run at once.
-          fileParallelism: false,
-        },
-      },
     ],
   },
 });
