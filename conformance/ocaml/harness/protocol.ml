@@ -675,3 +675,14 @@ let challenge_refused origin =
 let path_of which meth template fill =
   fill_template (path which meth template)
     (List.map (fun (name, value) -> (name, uri_component value)) fill)
+
+(* The row of identifiers/kinds.json for the identifier schema [kind]: what
+   it accepts and refuses. *)
+let identifiers kind : Tables.Identifiers_kinds.kinds_item =
+  match
+    List.find_opt
+      (fun (row : Tables.Identifiers_kinds.kinds_item) -> row.schema = kind)
+      (tables ()).identifiers_kinds.kinds
+  with
+  | Some row -> row
+  | None -> failwith ("identifiers/kinds.json names no kind " ^ kind)

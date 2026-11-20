@@ -14,7 +14,12 @@ type frame = {
   scope : string option;
 }
 
-type message = { event : string; id : string option; frame : frame option }
+type message = {
+  event : string;
+  id : string option;
+  frame : frame option;
+  at : float;  (** When it arrived. *)
+}
 
 type t = {
   messages : message Dynarray.t;
@@ -92,7 +97,7 @@ let accept t event id data =
                  "a frame on %s with no correlationId carried id %s"
                  frame.channel id))
   | _ -> ());
-  let received = { event; id; frame } in
+  let received = { event; id; frame; at = Run.now () } in
   Dynarray.add_last t.messages received;
   List.iter (fun listener -> listener received) t.listeners;
   Eio.Condition.broadcast t.changed
