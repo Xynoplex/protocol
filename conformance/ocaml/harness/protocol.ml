@@ -383,10 +383,11 @@ let transport_word : Sdk_rows.transport -> string = function
 let names_sdk_row used (transport, name) =
   List.mem (transport_word transport) used || List.mem name used
 
-(* The rows a service exports where it runs on no plane: its rows of the
-   service table, and the SDK table's rows it names; each marked expected
-   when its cases must make it export it. *)
-let telemetry (service : service) =
+(* The rows a service exports: its rows of the service table, and the SDK
+   table's rows it names; each marked expected when its cases must make it
+   export it, on [plane] where a row names planes, and where it runs on no
+   plane a row that names planes is not. *)
+let telemetry ?plane (service : service) =
   let service_table = (tables ()).service_telemetry_telemetry in
   let sdk_table = (tables ()).sdk_telemetry_telemetry in
   let used =
@@ -410,7 +411,12 @@ let telemetry (service : service) =
          ^ " of the SDK table, which is neither a transport nor a row of it"))
     used;
   let expected (when_ : Service_rows.when_) planes =
-    (when_ = Export || when_ = Traffic) && planes = None
+    (when_ = Export || when_ = Traffic)
+    &&
+    match (planes, plane) with
+    | None, _ -> true
+    | Some planes, Some plane -> List.mem plane planes
+    | Some _, None -> false
   in
   let spans =
     List.filter_map
