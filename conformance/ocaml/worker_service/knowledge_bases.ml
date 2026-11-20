@@ -68,9 +68,8 @@ let hold_confirmation (kb : W.kb) =
    each, each used for highlighting: the world's first engine at the world's,
    its second at the second. *)
 let serving_both ?client ?(spawn = false) (w : W.t) second =
-  let highlighting = [ Dispatcher_world.marks "highlighting" ] in
-  let engines = [ W.entry w here highlighting ]
-  and serving = [ (second, [ W.entry w there highlighting ], client) ] in
+  let engines = [ W.entry w here highlighting_only ]
+  and serving = [ (second, [ W.entry w there highlighting_only ], client) ] in
   if spawn then W.spawn ~engines ~serving w else W.start ~engines ~serving w
 
 (* Each knowledge base's sign-ins, by the DID the gateway named the worker
@@ -85,9 +84,6 @@ let signed_in_as served kbs =
               (W.sign_ins (W.at served kb))))
        kbs)
 
-let grants (kb : W.kb) =
-  Option.value ~default:0 (Hashtbl.find_opt kb.world.issuer.grants kb.client)
-
 let both_claimed_at (w : W.t) second =
   Run.eventually "both knowledge bases to have been claimed at" 15.0 (fun () ->
       if
@@ -96,13 +92,8 @@ let both_claimed_at (w : W.t) second =
       then Some ()
       else None)
 
-let opened_by (s : W.opened) =
-  match s.opened_by with Some did -> str did | None -> `Null
-
-let streams_by served = `List (List.map opened_by (W.streams served))
-
-let lines (served : W.served) name =
-  logged (Worker_service.stdout served.worker) (kb_log name)
+let streams_by served =
+  `List (List.map (fun (s : W.opened) -> by_of s.opened_by) (W.streams served))
 
 let domains_of entries =
   strs
@@ -110,21 +101,6 @@ let domains_of entries =
        (List.map (fun e -> text_of (Check.at e [ "domain" ])) entries))
 
 let states (served : W.served) = knowledge_bases_of (health served.worker)
-
-(* Hold a line its log wrote of a knowledge base: at [level], of [domain],
-   with each of [said] a text. *)
-let logs_of ~level ~domain ?(said = []) line =
-  Check.like "the line its log wrote"
-    (`Assoc [ ("level", str level); ("domain", str domain) ])
-    line;
-  List.iter
-    (fun name ->
-      Check.that
-        (Printf.sprintf "the line says %s" name)
-        (match Protocol.at line [ name ] with
-        | Some (`String _) -> true
-        | _ -> false))
-    said
 
 let working (kb : W.kb) state =
   Check.like
@@ -173,28 +149,6 @@ let subscriptions (at : W.served) =
     (fun (r : Client_proxy.request) -> r.path = "/bus/subscribe")
     (W.requests at)
 
-(* The answer to the worker's question of which knowledge base this is, as
-   its stream carried it. *)
-let answer_to (at : W.served) (asked : W.emitted) =
-  match
-    List.find_opt
-      (fun (c : W.carried) ->
-        Some (member "correlationId" c.frame)
-        = Option.map str asked.correlation_id)
-      (W.carried at "browse:kb-result")
-  with
-  | Some answer -> answer
-  | None -> failwith "its question was answered on no stream it read"
-
-let said_on (e : W.emitted) =
-  `Assoc
-    [
-      ("by", match e.emitted_by with Some d -> str d | None -> `Null);
-      ("payload", e.payload);
-      ("scope", match e.scope with Some s -> str s | None -> `Null);
-      ("status", match e.status with Some s -> `Int s | None -> `Null);
-    ]
-
 let asks_once (w : W.t) =
   let second = W.second w in
   let served = serving_both w second in
@@ -237,7 +191,7 @@ let asks_once (w : W.t) =
                ])
       | _ -> failwith ("it opened two streams and asked once at " ^ W.domain kb))
     [ w.own; second ];
-  let confirmed = lines served "confirmed" in
+  let confirmed = kb_logged served "confirmed" in
   Check.equal "the knowledge bases its log says are confirmed"
     (domains_of
        (List.map
@@ -309,23 +263,7 @@ let runs_each_job (w : W.t) =
   in
   (* The two knowledge bases' engines work at once, so the provider answers
      by which model asked. *)
-  w.ollama.choose <-
-    Some
-      (fun body ->
-        Some
-          (answer
-             (Yojson.Safe.to_string
-                (`List
-                   [
-                     `Assoc
-                       [
-                         ( "exact",
-                           str
-                             (if member "model" body = str here.model then
-                                "the first program"
-                              else "Charles Babbage") );
-                       ];
-                   ]))));
+  answer_by_model w;
   let served = serving_both w second in
   List.iter2
     (fun ((kb : W.kb), engine) (job : W.job) ->
@@ -351,10 +289,7 @@ let runs_each_job (w : W.t) =
         (strs [ W.did kb ])
         (`List
            (List.sort_uniq compare
-              (List.map
-                 (fun (e : W.emitted) ->
-                   match e.emitted_by with Some d -> str d | None -> `Null)
-                 said)));
+              (List.map (fun (e : W.emitted) -> by_of e.emitted_by) said)));
       (* What it made names the agent by its DID there, and the engine. *)
       let commits = Dynarray.to_list kb.commits in
       Check.equal
@@ -397,18 +332,7 @@ let health_in_order (w : W.t) =
           (states served)
       then Some ()
       else None);
-  let engine_of engine =
-    `Assoc
-      ([
-         ( "engine",
-           `Assoc
-             [
-               ("provider", str engine.W.provider); ("model", str engine.model);
-             ] );
-         ("jobs", `List [ Dispatcher_world.marks "highlighting" ]);
-       ]
-      @ Yojson.Safe.Util.to_assoc idle)
-  in
+  let engine_of engine = idle_engine engine (`List highlighting_only) in
   Check.equal "its health"
     (`Assoc
        [
@@ -450,15 +374,9 @@ let refuses_one confirmation (w : W.t) =
   let at_second = W.at served second in
   let refused_at =
     Run.eventually "the refusal in its log" 15.0 (fun () ->
-        if lines served "refused" <> [] then Some (Run.now ()) else None)
+        if kb_logged served "refused" <> [] then Some (Run.now ()) else None)
   in
-  (match lines served "refused" with
-  | [ line ] ->
-      logs_of ~level:"error" ~domain:(W.domain second) ~said:[ "reason" ] line
-  | lines ->
-      failwith
-        (Printf.sprintf "its log says %d times that a knowledge base refused it"
-           (List.length lines)));
+  logs_refusal served second;
   (* Its stream there is closed, and nothing was said there after the
      question: no name, no claim. *)
   Client_proxy.until ~timeout:15.0 at_second.proxy "its stream there to end"
@@ -490,7 +408,7 @@ let refuses_one confirmation (w : W.t) =
   Check.equal "its streams there" (`Int 1)
     (`Int (List.length (W.streams at_second)));
   Check.equal "the refusals in its log" (`Int 1)
-    (`Int (List.length (lines served "refused")));
+    (`Int (List.length (kb_logged served "refused")));
   keeps_secret served ((key w :: W.tokens served) @ W.tokens at_second)
 
 let issuer_refuses (w : W.t) =
@@ -498,14 +416,8 @@ let issuer_refuses (w : W.t) =
   (* A client the second issuer does not hold. *)
   let served = serving_both ~client:"xynolog-worker-unregistered" w second in
   Run.eventually "the refusal in its log" 15.0 (fun () ->
-      if lines served "refused" <> [] then Some () else None);
-  (match lines served "refused" with
-  | [ line ] ->
-      logs_of ~level:"error" ~domain:(W.domain second) ~said:[ "reason" ] line
-  | lines ->
-      failwith
-        (Printf.sprintf "its log says %d times that a knowledge base refused it"
-           (List.length lines)));
+      if kb_logged served "refused" <> [] then Some () else None);
+  logs_refusal served second;
   (* It got no token there, so it asked that gateway nothing. *)
   Check.equal "what it asked that gateway" (`Int 0)
     (`Int (List.length (W.requests (W.at served second))));
@@ -580,13 +492,13 @@ let stream_drops (w : W.t) =
      again: this one was not. *)
   Run.sleep (Float.max 0.0 (cut_at +. reconnect +. 1.0 -. Run.now ()));
   Check.equal "the trouble in its log" (`List [])
-    (`List (lines served "trouble"));
+    (`List (kb_logged served "trouble"));
   Check.equal "how often its log says the world's is confirmed" (`Int 1)
     (`Int
        (List.length
           (List.filter
              (fun l -> Check.at l [ "domain" ] = str (W.domain w.own))
-             (lines served "confirmed"))));
+             (kb_logged served "confirmed"))));
   Check.equal "the grants of its issuer" (`Int before) (`Int (grants w.own));
   Check.equal "who it signed in as"
     (`List [ strs [ W.did w.own ] ])
@@ -622,7 +534,9 @@ let trouble failure (w : W.t) =
   let served = serving_both w second in
   let trouble =
     Run.eventually "the trouble in its log" 15.0 (fun () ->
-        match lines served "trouble" with line :: _ -> Some line | [] -> None)
+        match kb_logged served "trouble" with
+        | line :: _ -> Some line
+        | [] -> None)
   in
   logs_of ~level:"warn" ~domain:(W.domain w.own) ~said:[ "error" ] trouble;
   Check.equal "how long it says it waits" (`Int reconnect_ms)
@@ -684,7 +598,7 @@ let trouble failure (w : W.t) =
   (match
      List.filter
        (fun l -> Check.at l [ "domain" ] = str (W.domain w.own))
-       (lines served "confirmed")
+       (kb_logged served "confirmed")
    with
   | [ line ] ->
       Check.like "the confirmation" (`Assoc [ ("did", str (W.did w.own)) ]) line
@@ -693,7 +607,7 @@ let trouble failure (w : W.t) =
         (Printf.sprintf "its log says %d times that the world's is confirmed"
            (List.length lines)));
   Check.equal "the trouble in its log" (`Int 1)
-    (`Int (List.length (lines served "trouble")));
+    (`Int (List.length (kb_logged served "trouble")));
   working w.own (List.hd (states served));
   other_kept w served second held;
   keeps_secret served

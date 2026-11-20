@@ -7,26 +7,10 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* The resource the cases' jobs are about, as worker/prompt-cases.json names
-   it. *)
-let source =
-  text_of
-    (Check.at (params "yield-markdown")
-       [ "context"; "focus"; "resource"; "@id" ])
-
-let model = (List.hd W.ollama_engines).model
-
 (* What the first case asks for: the job whose prompt is kept as
    yield-markdown. *)
-let markdown_job (w : W.t) = yield_job w.own ~source (params "yield-markdown")
-
-let upload_of (w : W.t) =
-  match uploads w with
-  | [ upload ] -> upload
-  | uploads ->
-      failwith
-        (Printf.sprintf "it uploaded %d resources, not one"
-           (List.length uploads))
+let markdown_job (w : W.t) =
+  yield_job w.own ~source:case_source (params "yield-markdown")
 
 (* An upload's fields but [apart], and each of [apart] read as JSON. *)
 let fields_of (upload : Archivist_standin.upload) apart =
@@ -40,8 +24,6 @@ let fields_of (upload : Archivist_standin.upload) apart =
         | Some value -> Yojson.Safe.from_string value
         | None -> failwith ("its upload has no field " ^ name))
       apart )
-
-let shows_of (w : W.t) = `List (Dynarray.to_list w.ollama.shows)
 
 (* The ids the cases below work out are worked out by the table's rule: the
    suite's own reckoning is held to every case of it. *)
@@ -86,9 +68,7 @@ let end_to_end (w : W.t) =
   let completion = settled served job in
   (* One generation, with the job's own temperature and length, and no
      format: the answer is the document. *)
-  Check.equal "what it asked of its model's limits"
-    (`List [ `Assoc [ ("model", str model) ] ])
-    (shows_of w);
+  expect_shows w [ model ];
   expect_generations w.ollama [ generation model "yield-markdown" ];
   (* It reads nothing of the source: what it knows of it is in the job. *)
   expect_sequence served
@@ -121,7 +101,7 @@ let end_to_end (w : W.t) =
          ("format", str "text/markdown");
          ("storageUri", str "file://generated/analytical-engine.md");
          ("language", str "en");
-         ("sourceResourceId", str source);
+         ("sourceResourceId", str case_source);
          ("generationPrompt", str "Write three sentences.");
          ("jobId", str job.id);
        ])
@@ -155,7 +135,7 @@ let end_to_end (w : W.t) =
     `Assoc
       [
         ("type", str "SpecificResource");
-        ("source", str source);
+        ("source", str case_source);
         ("purpose", str "linking");
       ]
   in
@@ -170,7 +150,7 @@ let end_to_end (w : W.t) =
        [
          `Assoc
            [
-             ("resourceId", str source);
+             ("resourceId", str case_source);
              ("jobId", str job.id);
              ( "annotations",
                `List
@@ -181,11 +161,11 @@ let end_to_end (w : W.t) =
                        ("type", str "Annotation");
                        ( "id",
                          str
-                           (annotation_id_of ~body:linked source "linking"
+                           (annotation_id_of ~body:linked case_source "linking"
                               (str "")) );
                        ("motivation", str "linking");
                        ("generator", W.generator w.own);
-                       ("target", `Assoc [ ("source", str source) ]);
+                       ("target", `Assoc [ ("source", str case_source) ]);
                        ("body", linked);
                      ];
                  ] );
@@ -232,7 +212,7 @@ let end_to_end (w : W.t) =
     completion
 
 let anchored (w : W.t) =
-  let job = yield_job w.own ~source (params "yield-annotation") in
+  let job = yield_job w.own ~source:case_source (params "yield-annotation") in
   let annotation_id =
     Check.at job.running [ "params"; "context"; "focus"; "annotation"; "id" ]
   in
@@ -262,8 +242,7 @@ let anchored (w : W.t) =
       "emit job:complete";
       "emit job:claim";
     ];
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_commits_count w 0;
   let upload = upload_of w in
   Check.equal "what it uploaded" (str written) (str upload.file);
   let fields, read = fields_of upload [ "generator" ] in
@@ -274,7 +253,7 @@ let anchored (w : W.t) =
          ("format", str "text/plain");
          ("storageUri", str "file://generated/babbage.txt");
          ("language", str "de");
-         ("sourceResourceId", str source);
+         ("sourceResourceId", str case_source);
          ("sourceAnnotationId", annotation_id);
          ("jobId", str job.id);
        ])
@@ -318,15 +297,14 @@ let anchored (w : W.t) =
 (* Hold that a yield job asked its model nothing, uploaded nothing, and
    failed. *)
 let made_nothing_of (w : W.t) served =
-  Check.equal "its generations" (`Int 0)
-    (`Int (Dynarray.length w.ollama.generations));
+  expect_generations_count w 0;
   Check.equal "its uploads" (`Int 0) (`Int (List.length (uploads w)));
   expect_sequence served
     [ "emit job:claim"; "emit job:start"; "emit job:fail"; "emit job:claim" ]
 
 let unsupported_format (w : W.t) =
   let job =
-    yield_job w.own ~source
+    yield_job w.own ~source:case_source
       (`Assoc
          [
            ("title", str "A page");
@@ -339,7 +317,7 @@ let unsupported_format (w : W.t) =
                    `Assoc
                      [
                        ("kind", str "resource");
-                       ("resource", source_descriptor source);
+                       ("resource", source_descriptor case_source);
                      ] );
                  ("graph", `Assoc [ ("nodes", `List []); ("edges", `List []) ]);
                  ("metadata", `Assoc []);
@@ -354,7 +332,7 @@ let unsupported_format (w : W.t) =
   Check.equal "its failure"
     (failed ~failure_class:"deterministic" ~will_retry:false job)
     failure;
-  Check.equal "what it asked of its model's limits" (`List []) (shows_of w);
+  expect_shows w [];
   made_nothing_of w served
 
 let over_the_window (w : W.t) =
@@ -368,9 +346,7 @@ let over_the_window (w : W.t) =
     (failed ~failure_class:"deterministic" ~will_retry:false job)
     failure;
   says "its error" error "693";
-  Check.equal "what it asked of its model's limits"
-    (`List [ `Assoc [ ("model", str model) ] ])
-    (shows_of w);
+  expect_shows w [ model ];
   made_nothing_of w served
 
 let fills_the_window (w : W.t) =

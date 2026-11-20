@@ -7,12 +7,10 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-
 let end_to_end (w : W.t) =
   let job = case_job w.own "assessing" in
   let resource_id = job.resource_id in
-  let proposed =
+  let assessed =
     `Assoc
       [
         ("exact", str "nobody tested that claim for a century");
@@ -21,17 +19,12 @@ let end_to_end (w : W.t) =
   in
   Ollama.script w.ollama
     [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                proposed;
-                proposed;
-                `Assoc
-                  [
-                    ("exact", str "London was wrong."); ("assessment", str " ");
-                  ];
-              ]));
+      proposed
+        [
+          assessed;
+          assessed;
+          `Assoc [ ("exact", str "London was wrong."); ("assessment", str " ") ];
+        ];
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -103,21 +96,13 @@ let end_to_end (w : W.t) =
     [
       report ~extra job 10 (code "loading");
       report ~extra job 30 (code "analyzing");
-      report ~extra job 60
-        (code ~members:[ ("count", `Int 1) ] "creating-annotations");
-      report ~extra job 100
-        (code
-           ~members:[ ("count", `Int 1); ("motivation", str "assessing") ]
-           "complete-created");
+      creating ~extra job 1;
+      complete_created ~extra job "assessing" 1;
     ];
   (* Two proposed, one recorded: the second is the first again, and the one
      with nothing to say is not counted. *)
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 2); ("persisted", `Int 1) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 2); ("persisted", `Int 1) ])
     completion
 
 let tests implementations =

@@ -7,123 +7,29 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* The size, in tokens, a linking job cuts [text] at: what its units'
-   cursors state. *)
-let chunk_size = 2658
-let model = (List.hd W.ollama_engines).model
-
 (* The cursor of a unit that took [text] as one piece and emitted all it
    found. *)
 let whole found =
-  cursor ~next:(code_points text) ~size:chunk_size ~found ~emitted:found
+  cursor ~next:(code_points text) ~size:linking_piece ~found ~emitted:found
     ~errors:0
 
-(* What a linking job echoes of what it was asked with, on its reports: the
-   entity types it names, as [types]. *)
-let request_params types =
-  ( "requestParams",
-    `List [ `Assoc [ ("label", str "entity-types"); ("value", str types) ] ] )
-
-(* An entity type among the finished, with what it found and recorded. *)
-let completed_item ?under_reported kind ~found ~persisted =
-  `Assoc
-    ([
-       ("value", str kind);
-       ("foundCount", `Int found);
-       ("persistedCount", `Int persisted);
-     ]
-    @
-    match under_reported with
-    | Some (pieces, found, counted) ->
-        [
-          ( "underReported",
-            `Assoc
-              [
-                ("pieces", `Int pieces);
-                ("found", `Int found);
-                ("counted", `Int counted);
-              ] );
-        ]
-    | None -> [])
-
-(* A report of where [job] stands while it works on the entity type
-   [kind], one of [total]. [expected] is left out until a count has said
-   it. *)
-let standing ~request_params ~total job percentage kind ~processed ~found
-    ?expected ~emitted completed =
-  report job percentage
-    (code ~members:[ ("entityType", str kind) ] "detecting-entities")
-    ~extra:
-      ([
-         ("current", `Assoc [ ("kind", str "entity-type"); ("value", str kind) ]);
-         ("processed", `Int processed);
-         ("total", `Int total);
-         ("entitiesFound", `Int found);
-       ]
-      @ (match expected with
-        | Some n -> [ ("entitiesExpected", `Int n) ]
-        | None -> [])
-      @ [
-          ("entitiesEmitted", `Int emitted);
-          ("completedItems", `List completed);
-          request_params;
-        ])
-
-(* The report of a linking job that finished, having made [count]. *)
-let finished_report ~request_params job ~count ~expected completed =
-  report job 100
-    (code
-       ~members:[ ("count", `Int count); ("motivation", str "linking") ]
-       "complete-created")
-    ~extra:
-      [
-        ("entitiesExpected", `Int expected);
-        ("completedItems", `List completed);
-        request_params;
-      ]
-
-let sizes_of_batches (w : W.t) =
-  `List
-    (List.map
-       (fun (c : W.commit) -> `Int (List.length c.annotations))
-       (Dynarray.to_list w.own.commits))
-
-let spans items = Yojson.Safe.to_string (`List items)
-
-let mention ?prefix ?suffix exact kind =
-  `Assoc
-    ([ ("exact", str exact); ("entityType", str kind) ]
-    @ (match prefix with Some p -> [ ("prefix", str p) ] | None -> [])
-    @ match suffix with Some s -> [ ("suffix", str s) ] | None -> [])
-
 let each_type_in_turn (w : W.t) =
-  let job =
-    mark_job w.own "linking"
-      (`Assoc
-         [
-           ("motivation", str "linking");
-           ("entityTypes", strs [ "Person"; "Place" ]);
-         ])
-  in
+  let job = mark_job w.own "linking" (linking [ "Person"; "Place" ]) in
   let resource_id = job.resource_id in
   Ollama.script w.ollama
     [
-      answer
-        (spans
-           [
-             mention "Ada Lovelace" "Person" ~prefix:"" ~suffix:" published";
-             mention "Charles Babbage" "Person";
-           ]);
+      proposed
+        [
+          mention "Ada Lovelace" "Person" ~prefix:"" ~suffix:" published";
+          mention "Charles Babbage" "Person";
+        ];
       counting 2;
-      answer
-        (spans
-           [
-             mention "London" "Place" ~prefix:"engine in " ~suffix:", but";
-             mention "London" "Place" ~prefix:"standards, and "
-               ~suffix:" ignored";
-             mention "London" "Place" ~prefix:"ignored it. "
-               ~suffix:" was wrong";
-           ]);
+      proposed
+        [
+          mention "London" "Place" ~prefix:"engine in " ~suffix:", but";
+          mention "London" "Place" ~prefix:"standards, and " ~suffix:" ignored";
+          mention "London" "Place" ~prefix:"ignored it. " ~suffix:" was wrong";
+        ];
       counting 3;
     ];
   let served = W.start w in
@@ -228,36 +134,32 @@ let each_type_in_turn (w : W.t) =
          checkpoint job ~completed:[ "Person"; "Place" ] [ person; place ];
        ])
     (checkpoints served);
-  let request_params = request_params "Person, Place" in
-  let person = completed_item "Person" ~found:2 ~persisted:2
-  and place = completed_item "Place" ~found:3 ~persisted:3 in
-  let standing = standing ~request_params ~total:2 job in
+  let types = [ "Person"; "Place" ] in
+  let person = finished_type "Person" ~found:2 ~persisted:2
+  and place = finished_type "Place" ~found:3 ~persisted:3 in
+  let standing = detecting ~types job in
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ request_params ];
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
       (* Person: begun, counted, committed, finished. *)
-      standing 20 "Person" ~processed:0 ~found:0 ~emitted:0 [];
-      standing 20 "Person" ~processed:0 ~found:0 ~expected:2 ~emitted:0 [];
-      standing 20 "Person" ~processed:0 ~found:2 ~expected:2 ~emitted:2 [];
-      standing 50 "Person" ~processed:1 ~found:2 ~expected:2 ~emitted:2
+      standing "Person" 20 ~processed:0 ~found:0 ~emitted:0 [];
+      standing "Person" 20 ~processed:0 ~found:0 ~expected:2 ~emitted:0 [];
+      standing "Person" 20 ~processed:0 ~found:2 ~expected:2 ~emitted:2 [];
+      standing "Person" 50 ~processed:1 ~found:2 ~expected:2 ~emitted:2
         [ person ];
       (* Place: the same four. *)
-      standing 50 "Place" ~processed:1 ~found:2 ~expected:2 ~emitted:2
+      standing "Place" 50 ~processed:1 ~found:2 ~expected:2 ~emitted:2
         [ person ];
-      standing 50 "Place" ~processed:1 ~found:2 ~expected:5 ~emitted:2
+      standing "Place" 50 ~processed:1 ~found:2 ~expected:5 ~emitted:2
         [ person ];
-      standing 50 "Place" ~processed:1 ~found:5 ~expected:5 ~emitted:5
+      standing "Place" 50 ~processed:1 ~found:5 ~expected:5 ~emitted:5
         [ person ];
-      standing 80 "Place" ~processed:2 ~found:5 ~expected:5 ~emitted:5
+      standing "Place" 80 ~processed:2 ~found:5 ~expected:5 ~emitted:5
         [ person; place ];
-      finished_report ~request_params job ~count:5 ~expected:5 [ person; place ];
+      linking_complete ~types job ~count:5 ~expected:5 [ person; place ];
     ];
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 5); ("persisted", `Int 5) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 5); ("persisted", `Int 5) ])
     completion
 
 let other_type (w : W.t) =
@@ -267,13 +169,12 @@ let other_type (w : W.t) =
     [
       (* Asked for people: a person, a place, and a person spelled as no type
          that was asked for. *)
-      answer
-        (spans
-           [
-             mention "Ada Lovelace" "Person";
-             mention "London" "Place" ~prefix:"engine in " ~suffix:", but";
-             mention "Charles Babbage" "person";
-           ]);
+      proposed
+        [
+          mention "Ada Lovelace" "Person";
+          mention "London" "Place" ~prefix:"engine in " ~suffix:", but";
+          mention "Charles Babbage" "person";
+        ];
       counting 2;
     ];
   let served = W.start w in
@@ -294,7 +195,7 @@ let other_type (w : W.t) =
     (batches served);
   let person =
     ( "Person",
-      cursor ~next:(code_points text) ~size:chunk_size ~found:3 ~emitted:1
+      cursor ~next:(code_points text) ~size:linking_piece ~found:3 ~emitted:1
         ~errors:2 )
   in
   Check.equal "its checkpoints"
@@ -306,29 +207,17 @@ let other_type (w : W.t) =
     (checkpoints served);
   (* Three proposed, one recorded, two that made nothing. *)
   Check.equal "its completion"
-    (identified job
-       [
-         ( "result",
-           `Assoc
-             [ ("found", `Int 3); ("persisted", `Int 1); ("errors", `Int 2) ] );
-         ("durability", str "acknowledged");
-       ])
+    (completed job
+       [ ("found", `Int 3); ("persisted", `Int 1); ("errors", `Int 2) ])
     completion
 
 let unchecked (w : W.t) =
   let job = mark_job w.own "linking-unchecked" (params "linking-place") in
   Ollama.script w.ollama
     [
-      answer
-        (spans
-           [ mention "London" "Place" ~prefix:"engine in " ~suffix:", but" ]);
+      proposed [ mention "London" "Place" ~prefix:"engine in " ~suffix:", but" ];
       (* Words, cut off at the count's limit before any number: no count. *)
-      Ollama.Answer
-        {
-          response = "There are several mentions of places in";
-          stop = Cut_off;
-          usage = None;
-        };
+      cut_off "There are several mentions of places in";
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -357,29 +246,18 @@ let unchecked (w : W.t) =
     | `Assoc members -> not (List.mem_assoc "entitiesExpected" members)
     | _ -> false);
   Check.equal "the types its finished report names"
-    (`List [ completed_item "Place" ~found:1 ~persisted:1 ])
+    (`List [ finished_type "Place" ~found:1 ~persisted:1 ])
     (Check.at finished [ "completedItems" ]);
   Check.equal "its completion"
-    (identified job
-       [
-         ( "result",
-           `Assoc
-             [
-               ("found", `Int 1);
-               ("persisted", `Int 1);
-               ("uncheckedPieces", `Int 1);
-             ] );
-         ("durability", str "acknowledged");
-       ])
+    (completed job
+       [ ("found", `Int 1); ("persisted", `Int 1); ("uncheckedPieces", `Int 1) ])
     completion
 
 let under_reported (w : W.t) =
   let job = mark_job w.own "linking-under-reported" (params "linking-place") in
   Ollama.script w.ollama
     [
-      answer
-        (spans
-           [ mention "London" "Place" ~prefix:"engine in " ~suffix:", but" ]);
+      proposed [ mention "London" "Place" ~prefix:"engine in " ~suffix:", but" ];
       (* More than twice what the extraction found. *)
       counting 9;
     ];
@@ -390,34 +268,29 @@ let under_reported (w : W.t) =
   expect_generations w.ollama
     [ generation model "linking-place"; generation model "linking-place-count" ];
   Check.equal "the sizes of its batches" (`List [ `Int 1 ]) (sizes_of_batches w);
-  let request_params = request_params "Place" in
+  let types = [ "Place" ] in
   let place =
-    completed_item "Place" ~found:1 ~persisted:1 ~under_reported:(1, 1, 9)
+    finished_type "Place" ~found:1 ~persisted:1 ~under_reported:(1, 1, 9)
   in
   let standing percentage ~processed ~found ?expected completed =
-    standing ~request_params ~total:1 job percentage "Place" ~processed ~found
-      ?expected ~emitted:found completed
+    detecting ~types job "Place" percentage ~processed ~found ?expected
+      ~emitted:found completed
   in
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ request_params ];
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
       standing 20 ~processed:0 ~found:0 [];
       standing 20 ~processed:0 ~found:0 ~expected:9 [];
       standing 20 ~processed:0 ~found:1 ~expected:9 [];
       standing 80 ~processed:1 ~found:1 ~expected:9 [ place ];
-      finished_report ~request_params job ~count:1 ~expected:9 [ place ];
+      linking_complete ~types job ~count:1 ~expected:9 [ place ];
     ];
   Check.equal "its completion"
-    (identified job
+    (completed job
        [
-         ( "result",
-           `Assoc
-             [
-               ("found", `Int 1);
-               ("persisted", `Int 1);
-               ("underReportedPieces", `Int 1);
-             ] );
-         ("durability", str "acknowledged");
+         ("found", `Int 1);
+         ("persisted", `Int 1);
+         ("underReportedPieces", `Int 1);
        ])
     completion
 
@@ -431,16 +304,14 @@ let at_the_boundary (w : W.t) =
      names a marker of the overlap. *)
   Ollama.script w.ollama
     [
-      answer
-        (spans [ mention "marker 103" "Person"; mention "marker 601" "Person" ]);
+      proposed [ mention "marker 103" "Person"; mention "marker 601" "Person" ];
       counting 2;
-      answer (spans [ mention "marker 702" "Person" ]);
+      proposed [ mention "marker 702" "Person" ];
       counting 1;
     ];
   let served = W.start w in
   let completion = settled served job in
-  Check.equal "the generations its model was asked for" (`Int 4)
-    (`Int (Dynarray.length w.ollama.generations));
+  expect_generations_count w 4;
   expect_sequence served
     [
       "emit job:claim";
@@ -472,15 +343,15 @@ let at_the_boundary (w : W.t) =
          checkpoint job ~completed:[ "Person" ] [ person length 3 ];
        ])
     (checkpoints served);
-  let request_params = request_params "Person" in
-  let person = completed_item "Person" ~found:3 ~persisted:3 in
+  let types = [ "Person" ] in
+  let person = finished_type "Person" ~found:3 ~persisted:3 in
   let standing percentage ~processed ~found ?expected completed =
-    standing ~request_params ~total:1 job percentage "Person" ~processed ~found
-      ?expected ~emitted:found completed
+    detecting ~types job "Person" percentage ~processed ~found ?expected
+      ~emitted:found completed
   in
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ request_params ];
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
       standing 20 ~processed:0 ~found:0 [];
       (* The first piece: counted, and committed. *)
       standing 20 ~processed:0 ~found:0 ~expected:2 [];
@@ -493,14 +364,10 @@ let at_the_boundary (w : W.t) =
       standing 20 ~processed:0 ~found:2 ~expected:3 [];
       standing 20 ~processed:0 ~found:3 ~expected:3 [];
       standing 80 ~processed:1 ~found:3 ~expected:3 [ person ];
-      finished_report ~request_params job ~count:3 ~expected:3 [ person ];
+      linking_complete ~types job ~count:3 ~expected:3 [ person ];
     ];
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 3); ("persisted", `Int 3) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 3); ("persisted", `Int 3) ])
     completion
 
 let tests implementations =

@@ -122,15 +122,8 @@ let job_span (otlp : Otlp.t) (job : W.job) =
       List.assoc_opt "job.id" s.attributes = Some (Otlp.Text job.id))
 
 let in_the_job's_trace (w : W.t) =
-  let job =
-    mark_job w.own "traced" (`Assoc [ ("motivation", str "highlighting") ])
-  in
-  Ollama.script w.ollama
-    [
-      answer
-        (Yojson.Safe.to_string
-           (`List [ `Assoc [ ("exact", str "the first program") ] ]));
-    ];
+  let job = highlighting_job w.own "traced" in
+  Ollama.script w.ollama [ proposed [ exact "the first program" ] ];
   with_env w
     (fun otlp -> [ endpoint otlp; ("OTEL_BSP_SCHEDULE_DELAY", Some "100") ])
     (fun served otlp ->
@@ -145,15 +138,15 @@ let in_the_job's_trace (w : W.t) =
         a_job_sends)
 
 let a_trace_each (w : W.t) =
-  let highlighting name =
-    mark_job w.own name (`Assoc [ ("motivation", str "highlighting") ])
+  let jobs =
+    [
+      highlighting_job w.own "traced-first";
+      highlighting_job w.own "traced-second";
+    ]
   in
-  let jobs = [ highlighting "traced-first"; highlighting "traced-second" ] in
   Ollama.script w.ollama
     (List.map
-       (fun exact ->
-         answer
-           (Yojson.Safe.to_string (`List [ `Assoc [ ("exact", str exact) ] ])))
+       (fun text -> proposed [ exact text ])
        [ "the first program"; "Charles Babbage" ]);
   with_env w
     (fun otlp -> [ endpoint otlp; ("OTEL_BSP_SCHEDULE_DELAY", Some "100") ])
@@ -287,11 +280,7 @@ let metric_interval (w : W.t) =
 
 let span_delay (w : W.t) =
   with_env w
-    ~engines:
-      [
-        W.entry w (List.hd W.ollama_engines)
-          [ Dispatcher_world.marks "highlighting" ];
-      ]
+    ~engines:[ W.entry w (List.hd W.ollama_engines) highlighting_only ]
     (fun otlp -> [ endpoint otlp; ("OTEL_BSP_SCHEDULE_DELAY", Some "100") ])
     (fun _ otlp ->
       (* An announcement the worker hears and does not claim: its filters do

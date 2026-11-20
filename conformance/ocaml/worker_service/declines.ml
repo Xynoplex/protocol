@@ -7,30 +7,18 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* What worker/messages.json states a worker calls a mark job of
-   [motivation] in its errors. *)
-let mark_named motivation =
-  Protocol.fill_template (messages ()).M.job.M.mark
-    [ ("motivation", motivation) ]
-
 (* A job that ends before any work: nothing was asked of the model, nothing
    committed, and no progress was reported. *)
 let did_no_work (w : W.t) served (job : W.job) =
-  Check.equal "what it asked of its model's limits" (`List [])
-    (`List (Dynarray.to_list w.ollama.shows));
-  Check.equal "the generations its model was asked for" (`Int 0)
-    (`Int (Dynarray.length w.ollama.generations));
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_shows w [];
+  expect_generations_count w 0;
+  expect_commits_count w 0;
   Check.equal "its progress reports" (`List [])
     (`List (W.progress served job.id));
   said_nothing served [ "job:checkpoint" ]
 
 let declined_as_empty about (w : W.t) =
-  let job =
-    mark_job ~about w.own "empty"
-      (`Assoc [ ("motivation", str "highlighting") ])
-  in
+  let job = highlighting_job ~about w.own "empty" in
   let served = W.start w in
   let completion = settled served job in
   Check.equal "its completion"
@@ -107,19 +95,13 @@ let unknown_resource (w : W.t) =
   did_no_work w served job
 
 let not_served (w : W.t) =
-  let job =
-    mark_job w.own "not-served" (`Assoc [ ("motivation", str "assessing") ])
-  in
+  let job = mark_job w.own "not-served" (motivated "assessing") in
   (* No dispatcher does this: the claim asks for highlighting jobs, and is
      handed an assessing one. *)
   w.own.hooks <- { w.own.hooks with hand_any_job = true };
   let served =
     W.start
-      ~engines:
-        [
-          W.entry w (List.hd W.ollama_engines)
-            [ Dispatcher_world.marks "highlighting" ];
-        ]
+      ~engines:[ W.entry w (List.hd W.ollama_engines) highlighting_only ]
       w
   in
   let rest, error = failure_of (settled ~channel:"job:fail" served job) in
@@ -151,10 +133,8 @@ let no_schema (w : W.t) =
     rest;
   says "its error" error
     (Support.error "no-processor" [ ("job", mark_named "tagging") ]);
-  Check.equal "the generations its model was asked for" (`Int 0)
-    (`Int (Dynarray.length w.ollama.generations));
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits))
+  expect_generations_count w 0;
+  expect_commits_count w 0
 
 let tests implementations =
   in_world implementations "declines"

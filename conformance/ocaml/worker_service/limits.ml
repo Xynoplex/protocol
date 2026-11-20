@@ -7,32 +7,11 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* Ask for the limits on [kb]'s bus as a client does, and read the one
-   reply: its payload without the members the gateway adds, and who the
-   gateway says sent it. *)
-let limits_at (kb : W.kb) =
-  let listener = W.listen kb [ "job:limits-result"; "job:limits-failed" ] in
-  let correlation_id = Fresh.uuid () in
-  let reply =
-    World.emit kb.world listener.token
-      (`Assoc
-         [
-           ("channel", str "job:limits-requested");
-           ("payload", `Assoc []);
-           ("correlationId", str correlation_id);
-           ("clientId", str listener.client_id);
-         ])
-  in
-  Check.equal "the gateway's answer to the suite's limits request" (`Int 202)
-    (`Int reply.status);
-  let message =
-    Bus_stream.next ~timeout:15.0 listener.stream "the limits" (fun m ->
-        match m.frame with
-        | Some f -> f.correlation_id = Some correlation_id
-        | None -> false)
-  in
+(* The one reply to the limits asked for on [kb]'s bus: its payload without
+   the members the gateway adds, and who the gateway says sent it. *)
+let limits_at kb =
   let frame =
-    match message.frame with
+    match (limits_asked kb).frame with
     | Some frame -> frame
     | None -> failwith "the limits came in no frame"
   in
@@ -73,7 +52,6 @@ let limit (engine : W.engine) limits =
 let answered limits =
   `Assoc [ ("response", `Assoc [ ("limits", `List limits) ]) ]
 
-let highlighting = [ Dispatcher_world.marks "highlighting" ]
 let yields = [ Dispatcher_world.yields ]
 
 let two_of = function
@@ -85,7 +63,9 @@ let two_of = function
 let started (w : W.t) engines =
   let first, second = two_of engines in
   let served =
-    W.start ~engines:[ W.entry w first highlighting; W.entry w second yields ] w
+    W.start
+      ~engines:[ W.entry w first highlighting_only; W.entry w second yields ]
+      w
   in
   Run.eventually "both engines to have claimed" 15.0 (fun () ->
       if Dynarray.length w.own.claims >= 2 then Some () else None);
@@ -94,8 +74,7 @@ let started (w : W.t) engines =
 let answered_by served =
   `List
     (List.map
-       (fun (e : W.emitted) ->
-         match e.emitted_by with Some did -> str did | None -> `Null)
+       (fun (e : W.emitted) -> by_of e.emitted_by)
        (W.emits ~channel:"job:limits-result" served))
 
 let by_model shows =
@@ -153,11 +132,6 @@ let remembers (w : W.t) =
   Check.equal "how often it asked of its models' limits" (`Int asked)
     (`Int (Dynarray.length w.ollama.shows))
 
-let requested (w : W.t) =
-  List.map
-    (fun (r : Anthropic.request) -> r.meth ^ " " ^ r.path)
-    (Dynarray.to_list w.anthropic.requests)
-
 let of_anthropic (w : W.t) =
   let first, second = two_of W.anthropic_engines in
   (* The second reads and writes less. *)
@@ -194,7 +168,7 @@ let of_anthropic (w : W.t) =
     (strs
        (List.sort compare
           [ "GET /v1/models/" ^ first.model; "GET /v1/models/" ^ second.model ]))
-    (strs (List.sort compare (requested w)));
+    (strs (List.sort compare (anthropic_requests w)));
   (* What it learned it keeps: the provider is asked nothing more. *)
   Check.equal "its limits, learned" stated (payload_at w.own);
   Check.equal "how often it asked its provider" (`Int 2)
@@ -207,11 +181,11 @@ let each_knowledge_base (w : W.t) =
      of its own. *)
   let served =
     W.start
-      ~engines:[ W.entry w first highlighting ]
+      ~engines:[ W.entry w first highlighting_only ]
       ~serving:
         [
           ( second,
-            [ W.entry w other highlighting; W.entry w first yields ],
+            [ W.entry w other highlighting_only; W.entry w first yields ],
             None );
         ]
       w

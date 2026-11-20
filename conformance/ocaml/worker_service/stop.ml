@@ -18,12 +18,6 @@ let claimed_at what (kbs : W.kb list) =
       then Some ()
       else None)
 
-let highlighting_job kb name =
-  mark_job kb name (`Assoc [ ("motivation", str "highlighting") ])
-
-let exit_code code =
-  match code with Some code -> `Int code | None -> `String "a signal"
-
 (* Its exit code once it has exited of its own accord. *)
 let exited (served : W.served) =
   match
@@ -32,20 +26,6 @@ let exited (served : W.served) =
   with
   | Ok code -> exit_code code
   | Error `Timeout -> failwith "the worker did not exit within 30 s"
-
-let stopped (served : W.served) = exit_code (Worker_service.stop served.worker)
-
-let refusals (served : W.served) =
-  logged (Worker_service.stdout served.worker) (kb_log "refused")
-
-(* A line its log wrote of a refused knowledge base: an error, of [kb], with
-   a reason. *)
-let refusal_of (kb : W.kb) line =
-  Check.like "the refusal its log wrote"
-    (`Assoc [ ("level", str "error"); ("domain", str (W.domain kb)) ])
-    line;
-  Check.that "the refusal says its reason"
-    (match member "reason" line with `String _ -> true | _ -> false)
 
 let says_nothing_on_stderr (served : W.served) =
   Check.equal "what it wrote on stderr" (`List [])
@@ -71,21 +51,7 @@ let holding (w : W.t) =
   Ollama.script w.ollama [ Hold ];
   let served = W.start w in
   Ollama.asked w.ollama 1;
-  Check.equal "its exit code" (`Int 0) (stopped served);
-  let failures = W.emits ~channel:"job:fail" served in
-  Check.equal "the gateway's answers to its failures"
-    (`List [ `Int 202 ])
-    (`List
-       (List.map
-          (fun (e : W.emitted) ->
-            match e.status with Some s -> `Int s | None -> `Null)
-          failures));
-  let failure, error = failure_of (List.hd failures).payload in
-  (* No class is stated: the job's retry budget decides. *)
-  Check.equal "its failure" (failed ~will_retry:true job) failure;
-  Check.that
-    (Printf.sprintf "its error says it stopped: %s" error)
-    (Check.matches_re "stopped" error);
+  stopped_holding served job;
   said_nothing served [ "job:complete" ];
   (* Having failed the job, it claims no other. *)
   Check.equal "its claims" (`Int 1)
@@ -102,12 +68,7 @@ let refused_alone (w : W.t) =
   Check.equal "its exit code" (`Int 1) (exited served);
   ignore (Worker_service.stop served.worker : int option);
   said_nothing served [ "job:start" ];
-  (match refusals served with
-  | [ line ] -> refusal_of w.own line
-  | lines ->
-      failwith
-        (Printf.sprintf "its log says %d times that a knowledge base refused it"
-           (List.length lines)));
+  logs_refusal served w.own;
   (* The knowledge base was confirmed first, so the service had started:
      everything it wrote is its log. *)
   says_nothing_on_stderr served
@@ -137,13 +98,8 @@ let refused_one_then_the_other (w : W.t) =
         Some ()
       else None);
   Run.eventually "the refusal in its log" 15.0 (fun () ->
-      if refusals served <> [] then Some () else None);
-  (match refusals served with
-  | [ line ] -> refusal_of second line
-  | lines ->
-      failwith
-        (Printf.sprintf "its log says %d times that a knowledge base refused it"
-           (List.length lines)));
+      if kb_logged served "refused" <> [] then Some () else None);
+  logs_refusal served second;
   let state kb =
     `Assoc
       (List.filter_map
@@ -178,7 +134,10 @@ let refused_one_then_the_other (w : W.t) =
   ignore (Worker_service.stop served.worker : int option);
   Check.equal "the knowledge bases its log says refused it"
     (strs [ W.domain second; W.domain w.own ])
-    (`List (List.map (fun line -> member "domain" line) (refusals served)));
+    (`List
+       (List.map
+          (fun line -> member "domain" line)
+          (kb_logged served "refused")));
   says_nothing_on_stderr served
 
 let refused_otherwise (w : W.t) =

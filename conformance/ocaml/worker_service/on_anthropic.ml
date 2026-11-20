@@ -25,8 +25,6 @@ let said ?stop text =
     { text; usage = { input = 412; output = 57 }; stop_reason = stop }
 
 let json_text json = Yojson.Safe.to_string json
-let spans items = json_text (`List items)
-let exact text = `Assoc [ ("exact", str text) ]
 
 (* A refusal, as the provider words one. *)
 let refused ?(headers = []) status kind words =
@@ -37,17 +35,10 @@ let refused ?(headers = []) status kind words =
    stand-in describes as it does unless told otherwise. *)
 let highlighting () = message claude.model "highlighting"
 
-(* The resource a yield job is focused on, as worker/prompt-cases.json
-   names it. *)
-let source =
-  text_of
-    (Check.at (params "yield-markdown")
-       [ "context"; "focus"; "resource"; "@id" ])
-
-(* A yield job focused on [source], queued, asking as the case [asked] of
-   worker/prompt-cases.json does. *)
+(* A yield job focused on [case_source], queued, asking as the case [asked]
+   of worker/prompt-cases.json does. *)
 let yield_job kb name asked =
-  yield_job ~stored_as:name kb ~source (params asked)
+  yield_job ~stored_as:name kb ~source:case_source (params asked)
 
 (* The highlight of "the first program" in the short text, on
    [resource_id]. *)
@@ -61,28 +52,19 @@ let first_program generator resource_id =
        Analytical"
     "the first program"
 
-let highlighting_job (w : W.t) name =
-  mark_job w.own name (`Assoc [ ("motivation", str "highlighting") ])
-
-let requested (w : W.t) =
-  strs
-    (List.map
-       (fun (r : Anthropic.request) -> r.meth ^ " " ^ r.path)
-       (Dynarray.to_list w.anthropic.requests))
-
 let generation (w : W.t) at = Dynarray.get w.anthropic.generations at
 
 let early_reports job =
   [ report job 10 (code "loading"); report job 30 (code "analyzing") ]
 
 let asks_once_then_each (w : W.t) =
-  let first = highlighting_job w "anthropic-highlighting" in
-  let second = highlighting_job w "anthropic-highlighting-again" in
+  let first = highlighting_job w.own "anthropic-highlighting" in
+  let second = highlighting_job w.own "anthropic-highlighting-again" in
   let resource_id = first.resource_id in
   Anthropic.script w.anthropic
     [
       said
-        (spans
+        (proposing
            [
              `Assoc
                [
@@ -115,7 +97,7 @@ let asks_once_then_each (w : W.t) =
          "POST /v1/messages";
          "POST /v1/messages";
        ])
-    (requested w);
+    (strs (anthropic_requests w));
   Check.equal "what it asked of its model's ceilings" (`List [ `Null ])
     (`List
        (List.map
@@ -191,13 +173,8 @@ let asks_once_then_each (w : W.t) =
        ])
     (List.hd (W.payloads served "job:checkpoint"));
   Check.equal "its completion"
-    (identified first
-       [
-         ( "result",
-           `Assoc
-             [ ("found", `Int 3); ("persisted", `Int 2); ("errors", `Int 1) ] );
-         ("durability", str "acknowledged");
-       ])
+    (completed first
+       [ ("found", `Int 3); ("persisted", `Int 2); ("errors", `Int 1) ])
     completion
 
 let budget (max_input_tokens, max_output_tokens, size) (w : W.t) =
@@ -205,7 +182,7 @@ let budget (max_input_tokens, max_output_tokens, size) (w : W.t) =
     { W.anthropic_model with Anthropic.max_input_tokens; max_output_tokens }
   in
   Hashtbl.replace w.anthropic.models claude.model facts;
-  let job = highlighting_job w "anthropic-budget" in
+  let job = highlighting_job w.own "anthropic-budget" in
   Anthropic.script w.anthropic [ said "[]" ];
   let served = started w in
   ignore (settled served job : Yojson.Safe.t);
@@ -223,12 +200,14 @@ let budget (max_input_tokens, max_output_tokens, size) (w : W.t) =
     (checkpoints served)
 
 let no_temperature (w : W.t) =
-  let mark = highlighting_job w "anthropic-no-temperature" in
+  let mark = highlighting_job w.own "anthropic-no-temperature" in
   let made =
     yield_job w.own "anthropic-no-temperature-yield" "yield-markdown"
   in
   Anthropic.script w.anthropic
-    [ said (spans [ exact "the first program" ]); said "It was never built." ];
+    [
+      said (proposing [ exact "the first program" ]); said "It was never built.";
+    ];
   let served = started w in
   (* The stand-in refuses a temperature with 400 on every model, as the
      provider does: a job that sent one would fail here. *)
@@ -241,7 +220,7 @@ let no_temperature (w : W.t) =
 let no_schema (w : W.t) =
   let facts = { W.anthropic_model with Anthropic.structured_outputs = false } in
   Hashtbl.replace w.anthropic.models claude.model facts;
-  let mark = highlighting_job w "anthropic-no-schema" in
+  let mark = highlighting_job w.own "anthropic-no-schema" in
   let made = yield_job w.own "anthropic-no-schema-yield" "yield-markdown" in
   Anthropic.script w.anthropic [ said "It was never built." ];
   let served = started w in
@@ -261,7 +240,7 @@ let no_schema (w : W.t) =
     (`Int (Dynarray.length w.anthropic.described));
   expect_messages w.anthropic [ message ~facts claude.model "yield-markdown" ];
   expect_sequence served (all_but_last (made_nothing mark) @ yielded);
-  Check.equal "what it committed to" (strs [ source ])
+  Check.equal "what it committed to" (strs [ case_source ])
     (strs
        (List.map
           (fun (c : W.commit) -> c.committed_to)
@@ -288,10 +267,7 @@ let with_message body content =
 
 let linking_four_at_once (w : W.t) =
   let types = [ "Person"; "Place"; "Date"; "Machine"; "Number" ] in
-  let job =
-    mark_job w.own "anthropic-linking"
-      (`Assoc [ ("motivation", str "linking"); ("entityTypes", strs types) ])
-  in
+  let job = mark_job w.own "anthropic-linking" (linking types) in
   let resource_id = job.resource_id in
   (* What is asked of a type is what is kept as asked of Person, with the
      type's own name. *)
@@ -332,21 +308,9 @@ let linking_four_at_once (w : W.t) =
      answered as it is asked, with what its extraction is to find. *)
   let found =
     [
-      ( "Person",
-        [
-          `Assoc
-            [ ("exact", str "Charles Babbage"); ("entityType", str "Person") ];
-        ] );
+      ("Person", [ mention "Charles Babbage" "Person" ]);
       ( "Place",
-        [
-          `Assoc
-            [
-              ("exact", str "London");
-              ("entityType", str "Place");
-              ("prefix", str "engine in ");
-              ("suffix", str ", but");
-            ];
-        ] );
+        [ mention "London" "Place" ~prefix:"engine in " ~suffix:", but" ] );
       ("Date", []);
       ("Machine", []);
       ("Number", []);
@@ -374,7 +338,7 @@ let linking_four_at_once (w : W.t) =
           Option.map
             (fun kind ->
               said
-                (spans
+                (proposing
                    [
                      `Assoc
                        [ ("count", `Int (List.length (List.assoc kind found))) ];
@@ -383,7 +347,7 @@ let linking_four_at_once (w : W.t) =
         else Some Anthropic.Hold);
   let extracted body =
     match type_of body extraction with
-    | Some kind -> said (spans (List.assoc kind found))
+    | Some kind -> said (proposing (List.assoc kind found))
     | None ->
         failwith ("an extraction of no type the job names: " ^ Check.shown body)
   in
@@ -395,8 +359,7 @@ let linking_four_at_once (w : W.t) =
   Check.equal "what is with its model"
     (sorted (List.map extraction (List.filteri (fun at _ -> at < 4) types)))
     (sorted (asked ()));
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_commits_count w 0;
   Anthropic.release w.anthropic extracted;
   (* Once one of the four is done, the fifth is asked about. *)
   Run.eventually "the fifth type to be asked about" 15.0 (fun () ->
@@ -461,15 +424,13 @@ let linking_four_at_once (w : W.t) =
           ]))
     (by_text (batches served));
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 2); ("persisted", `Int 2) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 2); ("persisted", `Int 2) ])
     completion
 
 let refused_thrice (status, kind, words) (w : W.t) =
-  let job = highlighting_job w ("anthropic-refused-" ^ string_of_int status) in
+  let job =
+    highlighting_job w.own ("anthropic-refused-" ^ string_of_int status)
+  in
   let refusal = refused status kind words in
   Anthropic.script w.anthropic [ refusal; refusal; refusal ];
   let served = started w in
@@ -497,7 +458,7 @@ let refused_thrice (status, kind, words) (w : W.t) =
   expect_sequence served (made_nothing job)
 
 let refused_as_its_fault (w : W.t) =
-  let job = highlighting_job w "anthropic-refused-400" in
+  let job = highlighting_job w.own "anthropic-refused-400" in
   Anthropic.script w.anthropic
     [ refused 400 "invalid_request_error" "max_tokens: the model writes fewer" ];
   let served = started w in
@@ -513,13 +474,13 @@ let refused_as_its_fault (w : W.t) =
 let over_its_rate = "the account is over its rate"
 
 let refused_then_answered (w : W.t) =
-  let job = highlighting_job w "anthropic-refused-once" in
+  let job = highlighting_job w.own "anthropic-refused-once" in
   Anthropic.script w.anthropic
     [
       refused
         ~headers:[ ("retry-after", "2") ]
         429 "rate_limit_error" over_its_rate;
-      said (spans [ exact "the first program" ]);
+      said (proposing [ exact "the first program" ]);
     ];
   let served = started w in
   let completion = settled served job in
@@ -531,16 +492,12 @@ let refused_then_answered (w : W.t) =
     (Printf.sprintf "it waited %g ms before asking again" waited)
     (waited >= 1990.0);
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 1); ("persisted", `Int 1) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 1); ("persisted", `Int 1) ])
     completion;
   said_nothing served [ "job:fail" ]
 
 let told_to_wait (w : W.t) =
-  let job = highlighting_job w "anthropic-told-to-wait" in
+  let job = highlighting_job w.own "anthropic-told-to-wait" in
   (* Two minutes and a second. A second asking is scripted no answer: one
      made would fail the case as a request nothing scripted. *)
   Anthropic.script w.anthropic
@@ -567,7 +524,7 @@ let told_to_wait (w : W.t) =
 let unlearned_told_to_wait (w : W.t) =
   w.anthropic.models_refusal <-
     Some { Anthropic.status = 429; headers = [ ("retry-after-ms", "121000") ] };
-  let job = highlighting_job w "anthropic-unlearned-told-to-wait" in
+  let job = highlighting_job w.own "anthropic-unlearned-told-to-wait" in
   let served = started w in
   let failure, error = failure_of (settled ~channel:"job:fail" served job) in
   Check.equal "its failure"
@@ -579,11 +536,11 @@ let unlearned_told_to_wait (w : W.t) =
   (* Asked once, and nothing else was: no generation. *)
   Check.equal "what it asked its provider"
     (strs [ "GET /v1/models/" ^ claude.model ])
-    (requested w);
+    (strs (anthropic_requests w));
   expect_sequence served (made_nothing job)
 
 let dropped (w : W.t) =
-  let job = highlighting_job w "anthropic-dropped" in
+  let job = highlighting_job w.own "anthropic-dropped" in
   Anthropic.script w.anthropic
     [ Anthropic.Drop; Anthropic.Drop; Anthropic.Drop ];
   let served = started w in
@@ -596,7 +553,7 @@ let dropped (w : W.t) =
 let unlearned (status, failure_class, askings) (w : W.t) =
   w.anthropic.models_refusal <- Some { Anthropic.status; headers = [] };
   let job =
-    highlighting_job w ("anthropic-unlearned-" ^ string_of_int status)
+    highlighting_job w.own ("anthropic-unlearned-" ^ string_of_int status)
   in
   let served = started w in
   let failure, error = failure_of (settled ~channel:"job:fail" served job) in
@@ -614,7 +571,7 @@ let unlearned (status, failure_class, askings) (w : W.t) =
   expect_sequence served (made_nothing job);
   (* What it could not learn it did not keep: the next job asks again. *)
   w.anthropic.models_refusal <- None;
-  let next = highlighting_job w "anthropic-learned" in
+  let next = highlighting_job w.own "anthropic-learned" in
   Anthropic.script w.anthropic [ said "[]" ];
   W.announce w.own next;
   ignore (settled served next : Yojson.Safe.t);
@@ -624,8 +581,10 @@ let unlearned (status, failure_class, askings) (w : W.t) =
   expect_messages w.anthropic [ highlighting () ]
 
 let cut_off_twice (w : W.t) =
-  let job = highlighting_job w "anthropic-cut-off" in
-  let cut_off = said ~stop:"max_tokens" (spans [ exact "the first program" ]) in
+  let job = highlighting_job w.own "anthropic-cut-off" in
+  let cut_off =
+    said ~stop:"max_tokens" (proposing [ exact "the first program" ])
+  in
   Anthropic.script w.anthropic [ cut_off; cut_off ];
   let served = started w in
   let failure, _ = failure_of (settled ~channel:"job:fail" served job) in
@@ -634,8 +593,7 @@ let cut_off_twice (w : W.t) =
     (failed ~failure_class:"deterministic" ~will_retry:false job)
     failure;
   (* What a cut-off answer did carry is not committed. *)
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits))
+  expect_commits_count w 0
 
 let two_uploads (w : W.t) =
   match uploads w with
@@ -698,7 +656,7 @@ let yield_empty (w : W.t) =
   said_nothing served [ "job:complete" ]
 
 let withheld (w : W.t) =
-  let mark = highlighting_job w "anthropic-withheld" in
+  let mark = highlighting_job w.own "anthropic-withheld" in
   let generation =
     yield_job w.own "anthropic-yield-withheld" "yield-markdown"
   in
@@ -706,7 +664,7 @@ let withheld (w : W.t) =
      highlight, and the start of a document. *)
   Anthropic.script w.anthropic
     [
-      said ~stop:"refusal" (spans [ exact "the first program" ]);
+      said ~stop:"refusal" (proposing [ exact "the first program" ]);
       said ~stop:"refusal" "Charles Babbage designed the engine in";
     ];
   let served = started w in
@@ -728,8 +686,7 @@ let withheld (w : W.t) =
     (fun error ->
       says "its error" error (Support.error "withheld" [ ("why", "") ]))
     [ mark_error; yield_error ];
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_commits_count w 0;
   Check.equal "its uploads" (`Int 0) (`Int (List.length (uploads w)));
   said_nothing served [ "job:complete" ]
 
@@ -776,7 +733,7 @@ let carried (metric : Otlp.metric) =
        (Dynarray.to_list metric.attributes))
 
 let counted otlp (w : W.t) =
-  let job = highlighting_job w "anthropic-telemetry" in
+  let job = highlighting_job w.own "anthropic-telemetry" in
   (* The generation is refused once and then answered: it is one generation
      all the same. *)
   Anthropic.script w.anthropic
@@ -784,7 +741,7 @@ let counted otlp (w : W.t) =
       refused 429 "rate_limit_error" over_its_rate;
       Anthropic.Answer
         {
-          text = spans [ exact "the first program" ];
+          text = proposing [ exact "the first program" ];
           usage = { input = 4127; output = 571 };
           stop_reason = None;
         };
@@ -848,7 +805,7 @@ let counted otlp (w : W.t) =
          "POST /v1/messages";
          "POST /v1/messages";
        ])
-    (requested w);
+    (strs (anthropic_requests w));
   let ended =
     `Assoc
       [
@@ -876,7 +833,7 @@ let counted otlp (w : W.t) =
     (carried durations)
 
 let cancelled (w : W.t) =
-  let job = highlighting_job w "anthropic-cancelled" in
+  let job = highlighting_job w.own "anthropic-cancelled" in
   let resource_id = job.resource_id in
   Anthropic.script w.anthropic [ Anthropic.Hold ];
   let served = started w in
@@ -887,7 +844,7 @@ let cancelled (w : W.t) =
     (not (Anthropic.abandoned (generation w 0)));
   said_nothing served [ "job:cancel" ];
   Anthropic.release w.anthropic (fun _ ->
-      said (spans [ exact "the first program" ]));
+      said (proposing [ exact "the first program" ]));
   let cancel = settled ~channel:"job:cancel" served job in
   expect_messages w.anthropic [ highlighting () ];
   Check.that "its request was answered, not ended"
@@ -900,19 +857,11 @@ let cancelled (w : W.t) =
          `List [ first_program (W.generator ~engine:claude w.own) resource_id ];
        ])
     (batches served);
-  Check.equal "its cancel"
-    (`Assoc
-       [
-         ("resourceId", str resource_id);
-         ("jobId", str job.id);
-         ("jobType", str "mark");
-         ("completedUnits", strs [ "highlighting" ]);
-       ])
-    cancel;
+  Check.equal "its cancel" (cancel_of ~completed:[ "highlighting" ] job) cancel;
   said_nothing served [ "job:complete" ]
 
 let stopped (w : W.t) =
-  let job = highlighting_job w "anthropic-stopped" in
+  let job = highlighting_job w.own "anthropic-stopped" in
   (* The model never answers: the worker holds the job when it is told to
      stop. *)
   Anthropic.script w.anthropic [ Anthropic.Hold ];
@@ -920,23 +869,7 @@ let stopped (w : W.t) =
   Anthropic.asked w.anthropic 1;
   Check.that "its request is under way"
     (not (Anthropic.abandoned (generation w 0)));
-  Check.equal "its exit code" (`Int 0)
-    (match Worker_service.stop served.worker with
-    | Some code -> `Int code
-    | None -> `Null);
-  let failures = W.emits ~channel:"job:fail" served in
-  Check.equal "the gateway's answers to its failures"
-    (`List [ `Int 202 ])
-    (`List
-       (List.map
-          (fun (e : W.emitted) ->
-            match e.status with Some s -> `Int s | None -> `Null)
-          failures));
-  let failure, error = failure_of (List.hd failures).payload in
-  Check.equal "its failure" (failed ~will_retry:true job) failure;
-  Check.that
-    (Printf.sprintf "its error says it stopped: %s" error)
-    (Re.execp (Re.compile (Re.str "stopped")) error);
+  stopped_holding served job;
   (* The provider saw the connection close with no answer sent. *)
   Run.eventually "the provider to see the request ended" 5.0 (fun () ->
       if Anthropic.abandoned (generation w 0) then Some () else None);

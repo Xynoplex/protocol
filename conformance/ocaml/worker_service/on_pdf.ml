@@ -70,27 +70,13 @@ let reads_no_bytes (job : W.job) =
     "GET /resources/" ^ job.resource_id ^ "/anchored-text";
   ]
 
-(* How worker/messages.json names a highlighting job in what it says. *)
-let named_job () =
-  Protocol.fill_template (messages ()).job.mark
-    [ ("motivation", "highlighting") ]
-
-let no_generations (w : W.t) =
-  Check.equal "its generations" (`Int 0)
-    (`Int (Dynarray.length w.ollama.generations))
-
 let anchored (w : W.t) =
   let job = pdf_job w "pdf" (Some (extracted pdf_text items)) in
   let resource_id = job.resource_id in
   Ollama.script w.ollama
     [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc [ ("exact", str "Ada Lovelace") ];
-                `Assoc [ ("exact", str "the first program. Charles Babbage") ];
-              ]));
+      proposed
+        [ exact "Ada Lovelace"; exact "the first program. Charles Babbage" ];
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -187,11 +173,7 @@ let anchored (w : W.t) =
        ])
     (batches served);
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 2); ("persisted", `Int 2) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 2); ("persisted", `Int 2) ])
     completion
 
 let declined answer reason (w : W.t) =
@@ -206,9 +188,8 @@ let declined answer reason (w : W.t) =
     completion;
   expect_sequence served
     (reads_no_bytes job @ [ "emit job:complete"; "emit job:claim" ]);
-  no_generations w;
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits))
+  expect_generations_count w 0;
+  expect_commits_count w 0
 
 let not_yet (w : W.t) =
   let job =
@@ -225,7 +206,7 @@ let not_yet (w : W.t) =
      attempt. *)
   Check.equal "how often it read the anchored text" (`Int 1)
     (`Int (List.length (W.anchored_text_reads w.own)));
-  no_generations w
+  expect_generations_count w 0
 
 let absent answer kind (w : W.t) =
   let job = pdf_job w "pdf-absent" answer in
@@ -237,11 +218,11 @@ let absent answer kind (w : W.t) =
   says "its error" said
     (error "anchored-declined"
        [
-         ("job", named_job ());
+         ("job", mark_named "highlighting");
          ("resourceId", job.resource_id);
          ("declined", kind);
        ]);
-  no_generations w
+  expect_generations_count w 0
 
 let declined_kind declined =
   `Assoc [ ("kind", str "declined"); ("declined", str declined) ]

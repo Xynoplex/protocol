@@ -54,11 +54,6 @@ let two_engines (w : W.t) =
       if Dynarray.length w.own.claims >= 2 then Some () else None);
   served
 
-let grants (w : W.t) =
-  Option.value ~default:0
-    (Hashtbl.find_opt w.own.world.issuer.grants W.worker_client)
-
-let by_of = function Some did -> str did | None -> `Null
 let scope_of = function Some scope -> str scope | None -> `Null
 
 (* In an order of their own, whatever order a party wrote their members in:
@@ -75,15 +70,17 @@ let signed_in_as served =
   strs (List.map (fun (s : W.sign_in) -> s.signed_in_as) (W.sign_ins served))
 
 let signs_in_once (w : W.t) =
-  let before = grants w in
+  let before = grants w.own in
   let served = two_engines w in
   (* One grant of its account, and one question of the gateway, whatever the
      engines it runs. *)
   Check.equal "who it signed in as" (strs [ W.did w.own ]) (signed_in_as served);
-  Check.equal "the grants of its account" (`Int (before + 1)) (`Int (grants w))
+  Check.equal "the grants of its account"
+    (`Int (before + 1))
+    (`Int (grants w.own))
 
 let client_of_its_document (w : W.t) =
-  let before = grants w in
+  let before = grants w.own in
   (* A client the issuer does not hold: a worker that signed in as it would
      be refused. *)
   let served =
@@ -93,7 +90,9 @@ let client_of_its_document (w : W.t) =
       w
   in
   Check.equal "who it signed in as" (strs [ W.did w.own ]) (signed_in_as served);
-  Check.equal "the grants of its account" (`Int (before + 1)) (`Int (grants w))
+  Check.equal "the grants of its account"
+    (`Int (before + 1))
+    (`Int (grants w.own))
 
 let sorted_texts items = strs (List.sort compare (List.map text_of items))
 
@@ -186,31 +185,6 @@ let claims_with_its_filters (w : W.t) =
                  ])
              (W.emits ~channel:"job:claim" served))))
 
-let said_on (e : W.emitted) =
-  `Assoc
-    [
-      ("by", by_of e.emitted_by);
-      ("payload", e.payload);
-      ("scope", scope_of e.scope);
-      ("status", match e.status with Some s -> `Int s | None -> `Null);
-    ]
-
-(* The answer to the worker's question of which knowledge base this is, as
-   its stream carried it. *)
-let answer_to served (asked : W.emitted) =
-  let correlation_id =
-    match asked.correlation_id with
-    | Some id -> str id
-    | None -> failwith "it asked which knowledge base this is uncorrelated"
-  in
-  match
-    List.find_opt
-      (fun (c : W.carried) -> member "correlationId" c.frame = correlation_id)
-      (W.carried served "browse:kb-result")
-  with
-  | Some answer -> answer
-  | None -> failwith "its question was answered on no stream it read"
-
 let says_its_name (w : W.t) =
   let served = two_engines w in
   Check.equal "what it said it is called"
@@ -252,23 +226,6 @@ let says_its_name (w : W.t) =
       failwith
         "it did not ask which knowledge base this is, say what it is called \
          and claim"
-
-let idle_members () =
-  match idle with
-  | `Assoc members -> members
-  | other -> failwith ("an idle engine is an object: " ^ Check.shown other)
-
-(* What [engine], used for [jobs], says of itself when it has done
-   nothing. *)
-let idle_engine (engine : W.engine) jobs =
-  `Assoc
-    ([
-       ( "engine",
-         `Assoc
-           [ ("provider", str engine.provider); ("model", str engine.model) ] );
-       ("jobs", jobs);
-     ]
-    @ idle_members ())
 
 let answers_health (w : W.t) =
   let served = two_engines w in
@@ -401,33 +358,29 @@ let says_in_health (w : W.t) =
 let runs_on_its_engine (w : W.t) =
   let did = str (W.did w.own) in
   let highlights = mark_job w.own "by-first" (params "highlighting") in
-  let comments =
-    mark_job w.own "by-second" (`Assoc [ ("motivation", str "commenting") ])
-  in
+  let comments = mark_job w.own "by-second" (motivated "commenting") in
   (* The two engines work at once, so the provider answers by which model
      asked. *)
   w.ollama.choose <-
     Some
       (fun body ->
         Some
-          (answer
-             (Yojson.Safe.to_string
-                (`List
-                   [
-                     (if member "model" body = str first.model then
-                        `Assoc [ ("exact", str "the first program") ]
-                      else
-                        `Assoc
-                          [
-                            ("exact", str "Charles Babbage");
-                            ("comment", str "He designed the engine.");
-                          ]);
-                   ]))));
+          (proposed
+             [
+               (if member "model" body = str first.model then
+                  exact "the first program"
+                else
+                  `Assoc
+                    [
+                      ("exact", str "Charles Babbage");
+                      ("comment", str "He designed the engine.");
+                    ]);
+             ]));
   let served =
     W.start
       ~engines:
         [
-          W.entry w first [ Dispatcher_world.marks "highlighting" ];
+          W.entry w first highlighting_only;
           W.entry w second [ Dispatcher_world.marks "commenting" ];
         ]
       w
@@ -443,7 +396,7 @@ let runs_on_its_engine (w : W.t) =
             `Assoc
               [
                 ("by", did);
-                ("accepts", `List [ Dispatcher_world.marks "highlighting" ]);
+                ("accepts", `List highlighting_only);
                 ("answered", str highlights.id);
               ];
             `Assoc
@@ -553,7 +506,7 @@ let runs_on_its_engine (w : W.t) =
              (commits_of highlights))
             .annotations));
   Check.equal "the text from 23 to 40" (str "the first program")
-    (str (Code_points.code_point_slice text 23 40))
+    (str (code_point_slice text 23 40))
 
 let tests implementations =
   in_world implementations "started" ~category:[ "a started worker" ]

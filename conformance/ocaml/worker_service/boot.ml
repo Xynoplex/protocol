@@ -115,14 +115,9 @@ let not_said what (refusal : Worker_service.refusal) value =
    each as it was. *)
 let dialled (w : W.t) =
   let second = W.second w in
-  let grants (kb : W.kb) =
-    `Int
-      (Option.value ~default:0
-         (Hashtbl.find_opt kb.world.issuer.grants kb.client))
-  in
   `Assoc
     [
-      ("grants", `List [ grants w.own; grants second ]);
+      ("grants", `List [ `Int (grants w.own); `Int (grants second) ]);
       ("shows", `Int (Dynarray.length w.ollama.shows));
       ( "claims",
         `List

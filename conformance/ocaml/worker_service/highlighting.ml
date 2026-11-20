@@ -8,29 +8,20 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* The size, in tokens, the job cuts its text at: what its unit's cursor
-   states. *)
-let chunk_size = 2641
-let model = (List.hd W.ollama_engines).model
-
 let checkpoint (job : W.job) ~found ~emitted ~errors =
   checkpoint job
     [
       ( "highlighting",
-        cursor ~next:(code_points text) ~size:chunk_size ~found ~emitted ~errors
-      );
+        cursor ~next:(code_points text) ~size:highlighting_piece ~found ~emitted
+          ~errors );
     ]
 
 let reports ?extra job ~count =
   [
     report ?extra job 10 (code "loading");
     report ?extra job 30 (code "analyzing");
-    report ?extra job 60
-      (code ~members:[ ("count", `Int count) ] "creating-annotations");
-    report ?extra job 100
-      (code
-         ~members:[ ("count", `Int count); ("motivation", str "highlighting") ]
-         "complete-created");
+    creating ?extra job count;
+    complete_created ?extra job "highlighting" count;
   ]
 
 let end_to_end (w : W.t) =
@@ -38,27 +29,25 @@ let end_to_end (w : W.t) =
   let resource_id = job.resource_id in
   Ollama.script w.ollama
     [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc
-                  [
-                    ("exact", str "the first program");
-                    ("prefix", str "Ada Lovelace published ");
-                    ("suffix", str " in 1843");
-                  ];
-                (* Three times in the text: what the model says is around it
-                   tells which. *)
-                `Assoc
-                  [
-                    ("exact", str "London");
-                    ("prefix", str "standards, and ");
-                    ("suffix", str " ignored it");
-                  ];
-                (* Nowhere in the text. *)
-                `Assoc [ ("exact", str "a steam locomotive crossing the Alps") ];
-              ]));
+      proposed
+        [
+          `Assoc
+            [
+              ("exact", str "the first program");
+              ("prefix", str "Ada Lovelace published ");
+              ("suffix", str " in 1843");
+            ];
+          (* Three times in the text: what the model says is around it tells
+             which. *)
+          `Assoc
+            [
+              ("exact", str "London");
+              ("prefix", str "standards, and ");
+              ("suffix", str " ignored it");
+            ];
+          (* Nowhere in the text. *)
+          exact "a steam locomotive crossing the Alps";
+        ];
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -85,9 +74,7 @@ let end_to_end (w : W.t) =
     (strs (W.anchored_text_reads w.own));
   (* What it asked its model: its limits once, and one generation over the
      whole text. *)
-  Check.equal "what it asked of its model's limits"
-    (`List [ `Assoc [ ("model", str model) ] ])
-    (`List (Dynarray.to_list w.ollama.shows));
+  expect_shows w [ model ];
   expect_generations w.ollama [ generation model "highlighting" ];
   (* What it committed: one batch, for the job, of the two spans that are in
      the text. *)
@@ -132,13 +119,8 @@ let end_to_end (w : W.t) =
   expect_progress served job (reports job ~count:2);
   (* Three proposed, two recorded, one that could not be anchored. *)
   Check.equal "its completion"
-    (identified job
-       [
-         ( "result",
-           `Assoc
-             [ ("found", `Int 3); ("persisted", `Int 2); ("errors", `Int 1) ] );
-         ("durability", str "acknowledged");
-       ])
+    (completed job
+       [ ("found", `Int 3); ("persisted", `Int 2); ("errors", `Int 1) ])
     completion
 
 let finds_nothing (w : W.t) =
@@ -156,8 +138,7 @@ let finds_nothing (w : W.t) =
       "emit job:complete";
       "emit job:claim";
     ];
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_commits_count w 0;
   Check.equal "its checkpoint"
     (`List [ checkpoint job ~found:0 ~emitted:0 ~errors:0 ])
     (`List (W.payloads served "job:checkpoint"));
@@ -171,11 +152,7 @@ let finds_nothing (w : W.t) =
 
 let instructed (w : W.t) =
   let job = case_job w.own "highlighting-instructed" in
-  Ollama.script w.ollama
-    [
-      answer
-        (Yojson.Safe.to_string (`List [ `Assoc [ ("exact", str "1843") ] ]));
-    ];
+  Ollama.script w.ollama [ proposed [ exact "1843" ] ];
   let served = W.start w in
   let completion = settled served job in
   expect_generations w.ollama [ generation model "highlighting-instructed" ];
@@ -211,11 +188,7 @@ let instructed (w : W.t) =
        ])
     (batches served);
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 1); ("persisted", `Int 1) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 1); ("persisted", `Int 1) ])
     completion
 
 let tests implementations =

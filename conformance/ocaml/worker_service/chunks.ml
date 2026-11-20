@@ -7,19 +7,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-
-(* The size, in tokens, every piece is cut at: the provider reports no
-   usage, so the size never moves. *)
-let chunk_size = 311
-
-(* An answer of [spans], as JSON. *)
-let spans items = answer (Yojson.Safe.to_string (`List items))
-let marker n = `Assoc [ ("exact", str (Printf.sprintf "marker %d" n)) ]
-
-(* An answer that finds each marker of [markers]. *)
-let found markers = spans (List.map marker markers)
-
 let piece_by_piece (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
   let job = mark_job ~about:long_text w.own "chunks" (params "chunks-1") in
@@ -28,18 +15,14 @@ let piece_by_piece (w : W.t) =
     [
       (* The first piece ends where the second paragraph does. Marker 205 is
          in the overlap, so the second piece sees it too. *)
-      found [ 103; 205 ];
-      found [ 205; 304 ];
-      spans
+      finding [ 103; 205 ];
+      finding [ 205; 304 ];
+      proposed
         [
           marker 502;
-          `Assoc
-            [
-              ( "exact",
-                str "marker 999 beside the Rh\u{00f4}ne was never recorded" );
-            ];
+          exact "marker 999 beside the Rh\u{00f4}ne was never recorded";
         ];
-      found [];
+      finding [];
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -51,9 +34,7 @@ let piece_by_piece (w : W.t) =
     (List.map
        (fun name -> generation ~context_length:small_context_length model name)
        [ "chunks-1"; "chunks-2"; "chunks-3"; "chunks-4" ]);
-  Check.equal "what it asked of its model's limits"
-    (`List [ `Assoc [ ("model", str model) ] ])
-    (`List (Dynarray.to_list w.ollama.shows));
+  expect_shows w [ model ];
   (* Each piece's spans are on the record, and its cursor said, before the
      next piece is asked for. *)
   expect_sequence served
@@ -102,7 +83,8 @@ let piece_by_piece (w : W.t) =
   let at next ~found ~emitted ~errors =
     checkpoint job
       [
-        ("highlighting", cursor ~next ~size:chunk_size ~found ~emitted ~errors);
+        ( "highlighting",
+          cursor ~next ~size:small_highlighting_piece ~found ~emitted ~errors );
       ]
   in
   Check.equal "its checkpoints"
@@ -114,37 +96,26 @@ let piece_by_piece (w : W.t) =
          at (code_points long_text) ~found:6 ~emitted:4 ~errors:1;
        ])
     (checkpoints served);
-  let creating n =
-    report job 60 (code ~members:[ ("count", `Int n) ] "creating-annotations")
-  in
   expect_progress served job
     [
       report job 10 (code "loading");
       report job 30 (code "analyzing");
       (* After each piece: what the job has made so far, and then how far
          through the text the next piece starts. *)
-      creating 2;
+      creating job 2;
       report job 35 (code "analyzing");
-      creating 3;
+      creating job 3;
       report job 43 (code "analyzing");
-      creating 4;
+      creating job 4;
       report job 50 (code "analyzing");
-      creating 4;
-      report job 100
-        (code
-           ~members:[ ("count", `Int 4); ("motivation", str "highlighting") ]
-           "complete-created");
+      creating job 4;
+      complete_created job "highlighting" 4;
     ];
   (* Six proposed, the repeat among them; four recorded; one that is nowhere
      in the text. *)
   Check.equal "its completion"
-    (identified job
-       [
-         ( "result",
-           `Assoc
-             [ ("found", `Int 6); ("persisted", `Int 4); ("errors", `Int 1) ] );
-         ("durability", str "acknowledged");
-       ])
+    (completed job
+       [ ("found", `Int 6); ("persisted", `Int 4); ("errors", `Int 1) ])
     completion
 
 let tests implementations =

@@ -91,34 +91,22 @@ let pdf_job (w : W.t) =
   W.queued w.own "mark"
     (`Assoc [ ("resourceId", str pdf); ("motivation", str "highlighting") ])
 
-let spans_said members =
-  answer (Yojson.Safe.to_string (`List (List.map (fun m -> `Assoc m) members)))
-
-let highlighting = `Assoc [ ("motivation", str "highlighting") ]
-
-let linking types =
-  `Assoc [ ("motivation", str "linking"); ("entityTypes", strs types) ]
-
 (* One job of each motivation, a generation, a job on a PDF, and each way a
    job ends that a case can make: failed by its provider, declined, cut off
    twice, kept though its count says it missed mentions, and cancelled. They
    are queued in this order and run one at a time. *)
 let traffic otlp (w : W.t) =
   let job name params = mark_job w.own ("telemetry-" ^ name) params in
-  let highlighted = job "highlighting" highlighting in
-  let commented =
-    job "commenting" (`Assoc [ ("motivation", str "commenting") ])
-  in
-  let assessed = job "assessing" (`Assoc [ ("motivation", str "assessing") ]) in
+  let highlighted = job "highlighting" (motivated "highlighting") in
+  let commented = job "commenting" (motivated "commenting") in
+  let assessed = job "assessing" (motivated "assessing") in
   let linked = job "linking" (linking [ "Person" ]) in
   let tagged = job "tagging" (tagging (argument_of_claims ()) [ "Claim" ]) in
   let yielded = titled_yield w.own ~source "telemetry" in
   let on_pdf = pdf_job w in
-  let failed = job "failed" highlighting in
-  let declined =
-    mark_job ~about:" \n" w.own "telemetry-declined" highlighting
-  in
-  let cut_off = job "cut-off" highlighting in
+  let failed = job "failed" (motivated "highlighting") in
+  let declined = highlighting_job ~about:" \n" w.own "telemetry-declined" in
+  let cut_off = job "cut-off" (motivated "highlighting") in
   let under_reported = job "under-reported" (linking [ "Place" ]) in
   let cancelled = job "cancelled" (linking [ "Person"; "Place" ]) in
   (* The last job is cancelled while its first entity type's batch is being
@@ -134,16 +122,7 @@ let traffic otlp (w : W.t) =
                 (`Assoc [ ("jobId", str cancelled.id) ]);
             None);
     };
-  let cut =
-    Ollama.Answer
-      {
-        response =
-          Yojson.Safe.to_string
-            (`List [ `Assoc [ ("exact", str "the first program") ] ]);
-        stop = Cut_off;
-        usage = None;
-      }
-  in
+  let cut = Support.cut_off (proposing [ exact "the first program" ]) in
   Ollama.script w.ollama
     [
       (* Highlighting: the provider reports its token usage, and the four
@@ -151,59 +130,51 @@ let traffic otlp (w : W.t) =
       Ollama.Answer
         {
           response =
-            Yojson.Safe.to_string
-              (`List
-                 [
-                   `Assoc [ ("exact", str "the first program") ];
-                   `Assoc
-                     [
-                       ("exact", str "London");
-                       ("prefix", str "standards, and ");
-                       ("suffix", str " ignored it");
-                     ];
-                   `Assoc [ ("exact", str "London") ];
-                   `Assoc [ ("exact", str "CHARLES BABBAGE") ];
-                 ]);
+            proposing
+              [
+                exact "the first program";
+                `Assoc
+                  [
+                    ("exact", str "London");
+                    ("prefix", str "standards, and ");
+                    ("suffix", str " ignored it");
+                  ];
+                exact "London";
+                exact "CHARLES BABBAGE";
+              ];
           stop = Done;
           usage = Some (412, 57);
         };
-      spans_said
+      proposed
         [
-          [
-            ("exact", str "Ada Lovelace");
-            ("comment", str "She wrote the notes.");
-          ];
+          `Assoc
+            [
+              ("exact", str "Ada Lovelace");
+              ("comment", str "She wrote the notes.");
+            ];
         ];
-      spans_said
+      proposed
         [
-          [
-            ("exact", str "nobody tested that claim for a century");
-            ("assessment", str "No source is given.");
-          ];
+          `Assoc
+            [
+              ("exact", str "nobody tested that claim for a century");
+              ("assessment", str "No source is given.");
+            ];
         ];
-      spans_said
-        [ [ ("exact", str "Ada Lovelace"); ("entityType", str "Person") ] ];
+      proposed [ mention "Ada Lovelace" "Person" ];
       counting 1;
-      spans_said [ [ ("exact", str "London was wrong.") ] ];
+      proposed [ exact "London was wrong." ];
       answer "The engine was designed in London and never built.";
       Fails (500, {|{"error":"overloaded"}|});
       cut;
       cut;
       (* One place found where the count says nine: the piece cannot be cut
          smaller, so what was found is kept. *)
-      spans_said
-        [
-          [
-            ("exact", str "London");
-            ("entityType", str "Place");
-            ("prefix", str "engine in ");
-          ];
-        ];
+      proposed [ mention "London" "Place" ~prefix:"engine in " ];
       counting 9;
       (* The cancelled job's first entity type: its second is never asked
          for. *)
-      spans_said
-        [ [ ("exact", str "Charles Babbage"); ("entityType", str "Person") ] ];
+      proposed [ mention "Charles Babbage" "Person" ];
       counting 1;
     ];
   let served = W.start ~env:(exporting otlp) w in
@@ -332,27 +303,13 @@ let names_its_knowledge_base otlp (w : W.t) =
   and there = List.nth W.ollama_engines 1 in
   let jobs =
     [
-      (w.own, mark_job w.own "telemetry-here" highlighting);
-      (second, mark_job second "telemetry-there" highlighting);
+      (w.own, highlighting_job w.own "telemetry-here");
+      (second, highlighting_job second "telemetry-there");
     ]
   in
   (* The two knowledge bases' engines work at once, so the provider answers
      by which model asked. *)
-  w.ollama.choose <-
-    Some
-      (fun body ->
-        Some
-          (spans_said
-             [
-               [
-                 ( "exact",
-                   str
-                     (if member "model" body = str here.model then
-                        "the first program"
-                      else "Charles Babbage") );
-               ];
-             ]));
-  let highlighting_only = [ Dispatcher_world.marks "highlighting" ] in
+  answer_by_model w;
   let served =
     W.start
       ~engines:[ W.entry w here highlighting_only ]

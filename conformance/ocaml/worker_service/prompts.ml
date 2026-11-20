@@ -8,8 +8,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-
 (* The cases of worker/prompt-cases.json a case asks as its file says. *)
 let asked =
   [

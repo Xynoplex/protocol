@@ -6,51 +6,30 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-
-(* A comment's body: what the model wrote, as plain text, in the language
-   the job asked for. *)
-let comment value =
-  `List
-    [
-      `Assoc
-        [
-          ("type", str "TextualBody");
-          ("value", str value);
-          ("purpose", str "commenting");
-          ("format", str "text/plain");
-          ("language", str "fr");
-        ];
-    ]
-
 let end_to_end (w : W.t) =
   let job = case_job w.own "commenting" in
   let resource_id = job.resource_id in
   Ollama.script w.ollama
     [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc
-                  [
-                    ("exact", str "Ada Lovelace");
-                    ("prefix", str "");
-                    ("suffix", str " published");
-                    ( "comment",
-                      str "Math\u{00e9}maticienne anglaise (1815\u{2013}1852)."
-                    );
-                  ];
-                `Assoc
-                  [
-                    ("exact", str "Charles Babbage");
-                    ("comment", str "Inventeur de la machine analytique.");
-                  ];
-                (* A comment that says nothing is no proposal: it is neither
-                   committed nor counted. *)
-                `Assoc
-                  [ ("exact", str "Bernoulli numbers"); ("comment", str "   ") ];
-              ]));
+      proposed
+        [
+          `Assoc
+            [
+              ("exact", str "Ada Lovelace");
+              ("prefix", str "");
+              ("suffix", str " published");
+              ( "comment",
+                str "Math\u{00e9}maticienne anglaise (1815\u{2013}1852)." );
+            ];
+          `Assoc
+            [
+              ("exact", str "Charles Babbage");
+              ("comment", str "Inventeur de la machine analytique.");
+            ];
+          (* A comment that says nothing is no proposal: it is neither
+             committed nor counted. *)
+          `Assoc [ ("exact", str "Bernoulli numbers"); ("comment", str "   ") ];
+        ];
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -85,7 +64,7 @@ let end_to_end (w : W.t) =
                        " published the first program in 1843 \u{2014} a method \
                         for computing Bernoulli"
                      ~body:
-                       (comment
+                       (comment ~language:"fr"
                           "Math\u{00e9}maticienne anglaise (1815\u{2013}1852).")
                      "Ada Lovelace";
                    text_annotation generator resource_id "commenting"
@@ -96,7 +75,9 @@ let end_to_end (w : W.t) =
                      ~suffix:
                        " designed the engine in London, but it was never \
                         built. Lovelace"
-                     ~body:(comment "Inventeur de la machine analytique.")
+                     ~body:
+                       (comment ~language:"fr"
+                          "Inventeur de la machine analytique.")
                      "Charles Babbage";
                  ] );
            ];
@@ -134,19 +115,11 @@ let end_to_end (w : W.t) =
     [
       report ~extra job 10 (code "loading");
       report ~extra job 30 (code "analyzing");
-      report ~extra job 60
-        (code ~members:[ ("count", `Int 2) ] "creating-annotations");
-      report ~extra job 100
-        (code
-           ~members:[ ("count", `Int 2); ("motivation", str "commenting") ]
-           "complete-created");
+      creating ~extra job 2;
+      complete_created ~extra job "commenting" 2;
     ];
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 2); ("persisted", `Int 2) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 2); ("persisted", `Int 2) ])
     completion
 
 let tests implementations =

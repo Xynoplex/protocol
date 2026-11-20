@@ -26,37 +26,29 @@ let ran (w : W.t) log_format =
       job "linking" (params "linking-person");
     ]
   in
-  let proposals members =
-    answer
-      (Yojson.Safe.to_string (`List (List.map (fun m -> `Assoc m) members)))
-  in
   Ollama.script w.ollama
     [
-      proposals
-        [ [ ("exact", str "the first program") ]; [ ("exact", str nowhere) ] ];
-      proposals
+      proposed [ exact "the first program"; exact nowhere ];
+      proposed
         [
-          [
-            ("exact", str "Ada Lovelace");
-            ("comment", str "She wrote the notes.");
-          ];
-          [ ("exact", str nowhere); ("comment", str "Nowhere.") ];
+          `Assoc
+            [
+              ("exact", str "Ada Lovelace");
+              ("comment", str "She wrote the notes.");
+            ];
+          `Assoc [ ("exact", str nowhere); ("comment", str "Nowhere.") ];
         ];
-      proposals
+      proposed
         [
-          [
-            ("exact", str "London was wrong.");
-            ("assessment", str "No source is given.");
-          ];
-          [ ("exact", str nowhere); ("assessment", str "Nowhere.") ];
+          `Assoc
+            [
+              ("exact", str "London was wrong.");
+              ("assessment", str "No source is given.");
+            ];
+          `Assoc [ ("exact", str nowhere); ("assessment", str "Nowhere.") ];
         ];
-      proposals
-        [ [ ("exact", str "London was wrong.") ]; [ ("exact", str nowhere) ] ];
-      proposals
-        [
-          [ ("exact", str "Ada Lovelace"); ("entityType", str "Person") ];
-          [ ("exact", str nowhere); ("entityType", str "Person") ];
-        ];
+      proposed [ exact "London was wrong."; exact nowhere ];
+      proposed [ mention "Ada Lovelace" "Person"; mention nowhere "Person" ];
       counting 2;
     ];
   let served =
@@ -66,10 +58,7 @@ let ran (w : W.t) log_format =
         |> Edit.set_at [ "logFormat" ] (str log_format))
   in
   List.iter (fun job -> ignore (settled served job : Yojson.Safe.t)) jobs;
-  Check.equal "its exit code" (`Int 0)
-    (match Worker_service.stop served.worker with
-    | Some code -> `Int code
-    | None -> `Null);
+  Check.equal "its exit code" (`Int 0) (stopped served);
   served
 
 (* Hold that the worker wrote something on stdout. *)

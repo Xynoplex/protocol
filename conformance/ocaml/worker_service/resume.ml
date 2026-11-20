@@ -7,25 +7,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-
-(* An answer of [spans], as JSON. *)
-let spans items = answer (Yojson.Safe.to_string (`List items))
-let marker n = `Assoc [ ("exact", str (Printf.sprintf "marker %d" n)) ]
-
-(* An answer that finds each marker of [markers]. *)
-let found markers = spans (List.map marker markers)
-
-(* The size, in tokens, a linking job cuts the short text at. *)
-let linking_size = 2658
-
-(* The tag schema the tagging case's prompt states, as the dispatcher adds
-   it to a tagging job. *)
-let tag_schema () =
-  match prompt_case "tagging-evidence" with
-  | P.Mark { schema = Some schema; _ } -> schema
-  | _ -> failwith "worker/prompt-cases.json's tagging-evidence states no schema"
-
 (* What every lifecycle message of [job] carries, said of attempt [n], with
    [members] after it. *)
 let of_attempt n job members =
@@ -35,78 +16,12 @@ let of_attempt n job members =
        (identity_members job)
     @ members)
 
-(* The text of [s] from code point [start] to code point [stop]. *)
-let code_point_slice s start stop =
-  let rec offset at n =
-    if n = 0 then at
-    else
-      offset (at + Uchar.utf_decode_length (String.get_utf_8_uchar s at)) (n - 1)
-  in
-  let from = offset 0 start in
-  String.sub s from (offset from (stop - start) - from)
-
-(* The entity types of the linking jobs here, as every report of one repeats
-   them. *)
-let types =
-  ( "requestParams",
-    `List
-      [
-        `Assoc [ ("label", str "entity-types"); ("value", str "Person, Place") ];
-      ] )
-
-(* A report of where a linking job of Person and Place stands while it works
-   on [entity_type]. *)
-let detecting ?expected ~entity_type job percentage ~processed ~found ~emitted
-    completed =
-  report job percentage
-    (code ~members:[ ("entityType", str entity_type) ] "detecting-entities")
-    ~extra:
-      ([
-         ( "current",
-           `Assoc [ ("kind", str "entity-type"); ("value", str entity_type) ] );
-         ("processed", `Int processed);
-         ("total", `Int 2);
-         ("entitiesFound", `Int found);
-       ]
-      @ (match expected with
-        | Some n -> [ ("entitiesExpected", `Int n) ]
-        | None -> [])
-      @ [
-          ("entitiesEmitted", `Int emitted);
-          ("completedItems", `List completed);
-          types;
-        ])
-
-let on_place = detecting ~entity_type:"Place"
-
-(* A finished entity type, as a report lists it. *)
-let item value ~found ~persisted =
-  `Assoc
-    [
-      ("value", str value);
-      ("foundCount", `Int found);
-      ("persistedCount", `Int persisted);
-    ]
-
-let completed_linking job ~count ~expected items =
-  report job 100
-    (code
-       ~members:[ ("count", `Int count); ("motivation", str "linking") ]
-       "complete-created")
-    ~extra:
-      [
-        ("entitiesExpected", `Int expected);
-        ("completedItems", `List items);
-        types;
-      ]
+(* The entity types of the linking jobs here. *)
+let types = [ "Person"; "Place" ]
+let on_place job = detecting ~types job "Place"
 
 let linking_job (w : W.t) name metadata =
-  mark_job w.own name ~metadata
-    (`Assoc
-       [
-         ("motivation", str "linking");
-         ("entityTypes", strs [ "Person"; "Place" ]);
-       ])
+  mark_job w.own name ~metadata (linking types)
 
 (* The extraction and the count of Place, and no more. *)
 let place_asked () =
@@ -121,14 +36,7 @@ let london_after_engine generator resource_id id =
        manipulate"
     ~body:(entity "Place") "London"
 
-let first_london =
-  `Assoc
-    [
-      ("exact", str "London");
-      ("entityType", str "Place");
-      ("prefix", str "engine in ");
-      ("suffix", str ", but");
-    ]
+let first_london = mention "London" "Place" ~prefix:"engine in " ~suffix:", but"
 
 let completion_of ?(errors = []) n job ~found ~persisted =
   of_attempt n job
@@ -157,13 +65,15 @@ let at_cursor (w : W.t) =
             `Assoc
               [
                 ( "highlighting",
-                  cursor ~next:1666 ~size:311 ~found:4 ~emitted:3 ~errors:0 );
+                  cursor ~next:1666 ~size:small_highlighting_piece ~found:4
+                    ~emitted:3 ~errors:0 );
               ] );
         ]
       (params "resume-1")
   in
   let resource_id = job.resource_id in
-  Ollama.script w.ollama [ found [ 502 ]; found []; found [ 701 ]; found [] ];
+  Ollama.script w.ollama
+    [ finding [ 502 ]; finding []; finding [ 701 ]; finding [] ];
   let served = W.start w in
   let completion = settled served job in
   (* It says which attempt this is. *)
@@ -211,24 +121,18 @@ let at_cursor (w : W.t) =
          at (code_points long_text) ~found:6 ~emitted:5;
        ])
     (checkpoints served);
-  let creating n =
-    report job 60 (code ~members:[ ("count", `Int n) ] "creating-annotations")
-  in
   expect_progress served job
     [
       report job 10 (code "loading");
       report job 30 (code "analyzing");
-      creating 4;
+      creating job 4;
       report job 47 (code "analyzing");
-      creating 4;
+      creating job 4;
       report job 50 (code "analyzing");
-      creating 5;
+      creating job 5;
       report job 54 (code "analyzing");
-      creating 5;
-      report job 100
-        (code
-           ~members:[ ("count", `Int 5); ("motivation", str "highlighting") ]
-           "complete-created");
+      creating job 5;
+      complete_created job "highlighting" 5;
     ];
   (* The counts are the whole text's: the earlier attempt's four and three,
      and this one's two. *)
@@ -242,7 +146,7 @@ let finished_not_again (w : W.t) =
       [ ("retryCount", `Int 2); ("completedUnits", strs [ "Person" ]) ]
   in
   let resource_id = job.resource_id in
-  Ollama.script w.ollama [ spans [ first_london ]; counting 1 ];
+  Ollama.script w.ollama [ proposed [ first_london ]; counting 1 ];
   let served = W.start w in
   let completion = settled served job in
   expect_start served 3 job;
@@ -273,7 +177,7 @@ let finished_not_again (w : W.t) =
      it. *)
   let place =
     ( "Place",
-      cursor ~next:(code_points text) ~size:linking_size ~found:1 ~emitted:1
+      cursor ~next:(code_points text) ~size:linking_piece ~found:1 ~emitted:1
         ~errors:0 )
   in
   Check.equal "its checkpoints"
@@ -286,16 +190,16 @@ let finished_not_again (w : W.t) =
   (* Both types are the job's, and one of them is finished from the first
      report. Nothing says what it found: it is not listed, and adds
      nothing. *)
-  let place_item = item "Place" ~found:1 ~persisted:1 in
+  let place_item = finished_type "Place" ~found:1 ~persisted:1 in
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ types ];
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
       on_place job 50 ~processed:1 ~found:0 ~emitted:0 [];
-      on_place ~expected:1 job 50 ~processed:1 ~found:0 ~emitted:0 [];
-      on_place ~expected:1 job 50 ~processed:1 ~found:1 ~emitted:1 [];
-      on_place ~expected:1 job 80 ~processed:2 ~found:1 ~emitted:1
+      on_place job 50 ~expected:1 ~processed:1 ~found:0 ~emitted:0 [];
+      on_place job 50 ~expected:1 ~processed:1 ~found:1 ~emitted:1 [];
+      on_place job 80 ~expected:1 ~processed:2 ~found:1 ~emitted:1
         [ place_item ];
-      completed_linking job ~count:1 ~expected:1 [ place_item ];
+      linking_complete ~types job ~count:1 ~expected:1 [ place_item ];
     ];
   Check.equal "its completion"
     (completion_of 3 job ~found:1 ~persisted:1)
@@ -306,7 +210,7 @@ let finished_by_cursor (w : W.t) =
      that made nothing. Its cursor is where it ended. *)
   let person =
     ( "Person",
-      cursor ~next:(code_points text) ~size:linking_size ~found:3 ~emitted:2
+      cursor ~next:(code_points text) ~size:linking_piece ~found:3 ~emitted:2
         ~errors:1 )
   in
   let job =
@@ -320,23 +224,11 @@ let finished_by_cursor (w : W.t) =
   let resource_id = job.resource_id in
   Ollama.script w.ollama
     [
-      spans
+      proposed
         [
           first_london;
-          `Assoc
-            [
-              ("exact", str "London");
-              ("entityType", str "Place");
-              ("prefix", str "standards, and ");
-              ("suffix", str " ignored");
-            ];
-          `Assoc
-            [
-              ("exact", str "London");
-              ("entityType", str "Place");
-              ("prefix", str "ignored it. ");
-              ("suffix", str " was wrong");
-            ];
+          mention "London" "Place" ~prefix:"standards, and " ~suffix:" ignored";
+          mention "London" "Place" ~prefix:"ignored it. " ~suffix:" was wrong";
         ];
       counting 3;
     ];
@@ -372,7 +264,7 @@ let finished_by_cursor (w : W.t) =
      claimed with it, beside the cursor of the type this attempt runs. *)
   let place =
     ( "Place",
-      cursor ~next:(code_points text) ~size:linking_size ~found:3 ~emitted:3
+      cursor ~next:(code_points text) ~size:linking_piece ~found:3 ~emitted:3
         ~errors:0 )
   in
   Check.equal "its checkpoints"
@@ -385,19 +277,20 @@ let finished_by_cursor (w : W.t) =
   (* The finished type is among the finished, with what its cursor counted,
      from the first report. What was counted of mentions is this attempt's:
      a cursor carries none. *)
-  let person_item = item "Person" ~found:3 ~persisted:2 in
-  let place_item = item "Place" ~found:3 ~persisted:3 in
+  let person_item = finished_type "Person" ~found:3 ~persisted:2 in
+  let place_item = finished_type "Place" ~found:3 ~persisted:3 in
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ types ];
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
       on_place job 50 ~processed:1 ~found:3 ~emitted:2 [ person_item ];
-      on_place ~expected:3 job 50 ~processed:1 ~found:3 ~emitted:2
+      on_place job 50 ~expected:3 ~processed:1 ~found:3 ~emitted:2
         [ person_item ];
-      on_place ~expected:3 job 50 ~processed:1 ~found:6 ~emitted:5
+      on_place job 50 ~expected:3 ~processed:1 ~found:6 ~emitted:5
         [ person_item ];
-      on_place ~expected:3 job 80 ~processed:2 ~found:6 ~emitted:5
+      on_place job 80 ~expected:3 ~processed:2 ~found:6 ~emitted:5
         [ person_item; place_item ];
-      completed_linking job ~count:5 ~expected:3 [ person_item; place_item ];
+      linking_complete ~types job ~count:5 ~expected:3
+        [ person_item; place_item ];
     ];
   (* The counts are the whole job's: the finished type's three, two and one,
      and this attempt's three and three. *)
@@ -410,7 +303,7 @@ let ended_named_finished (w : W.t) =
      named the type finished. *)
   let person =
     ( "Person",
-      cursor ~next:(code_points text) ~size:linking_size ~found:2 ~emitted:2
+      cursor ~next:(code_points text) ~size:linking_piece ~found:2 ~emitted:2
         ~errors:0 )
   in
   let job =
@@ -418,7 +311,7 @@ let ended_named_finished (w : W.t) =
       [ ("retryCount", `Int 1); ("unitCursors", `Assoc [ person ]) ]
   in
   let resource_id = job.resource_id in
-  Ollama.script w.ollama [ spans [ first_london ]; counting 1 ];
+  Ollama.script w.ollama [ proposed [ first_london ]; counting 1 ];
   let served = W.start w in
   let completion = settled served job in
   (* Nothing is asked about the type that has no text left. *)
@@ -437,7 +330,7 @@ let ended_named_finished (w : W.t) =
      cursor the job was claimed with. *)
   let place =
     ( "Place",
-      cursor ~next:(code_points text) ~size:linking_size ~found:1 ~emitted:1
+      cursor ~next:(code_points text) ~size:linking_piece ~found:1 ~emitted:1
         ~errors:0 )
   in
   Check.equal "its checkpoints"
@@ -448,24 +341,25 @@ let ended_named_finished (w : W.t) =
          checkpoint job ~completed:[ "Person"; "Place" ] [ person; place ];
        ])
     (checkpoints served);
-  let person_item = item "Person" ~found:2 ~persisted:2 in
-  let place_item = item "Place" ~found:1 ~persisted:1 in
-  let on_person = detecting ~entity_type:"Person" in
+  let person_item = finished_type "Person" ~found:2 ~persisted:2 in
+  let place_item = finished_type "Place" ~found:1 ~persisted:1 in
+  let on_person = detecting ~types job "Person" in
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ types ];
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
       (* Person: begun, and finished. No piece was asked about, so none was
          counted and none committed. *)
-      on_person job 20 ~processed:0 ~found:2 ~emitted:2 [];
-      on_person job 50 ~processed:1 ~found:2 ~emitted:2 [ person_item ];
+      on_person 20 ~processed:0 ~found:2 ~emitted:2 [];
+      on_person 50 ~processed:1 ~found:2 ~emitted:2 [ person_item ];
       on_place job 50 ~processed:1 ~found:2 ~emitted:2 [ person_item ];
-      on_place ~expected:1 job 50 ~processed:1 ~found:2 ~emitted:2
+      on_place job 50 ~expected:1 ~processed:1 ~found:2 ~emitted:2
         [ person_item ];
-      on_place ~expected:1 job 50 ~processed:1 ~found:3 ~emitted:3
+      on_place job 50 ~expected:1 ~processed:1 ~found:3 ~emitted:3
         [ person_item ];
-      on_place ~expected:1 job 80 ~processed:2 ~found:3 ~emitted:3
+      on_place job 80 ~expected:1 ~processed:2 ~found:3 ~emitted:3
         [ person_item; place_item ];
-      completed_linking job ~count:3 ~expected:1 [ person_item; place_item ];
+      linking_complete ~types job ~count:3 ~expected:1
+        [ person_item; place_item ];
     ];
   Check.equal "its completion"
     (completion_of 2 job ~found:3 ~persisted:3)
@@ -476,27 +370,17 @@ let unit_at_end (w : W.t) =
      began Evidence: three proposed, two recorded, one that made nothing. *)
   let claim =
     ( "Claim",
-      cursor ~next:(code_points text) ~size:2621 ~found:3 ~emitted:2 ~errors:1
-    )
+      cursor ~next:(code_points text) ~size:claim_piece ~found:3 ~emitted:2
+        ~errors:1 )
   in
-  let schema = tag_schema () in
   let job =
     mark_job w.own "resume-tagging"
       ~metadata:[ ("retryCount", `Int 1); ("unitCursors", `Assoc [ claim ]) ]
-      (`Assoc
-         [
-           ("motivation", str "tagging");
-           ("schemaId", Check.at schema [ "id" ]);
-           ("categories", strs [ "Claim"; "Evidence" ]);
-           ("schema", schema);
-         ])
+      (tagging (argument ()) [ "Claim"; "Evidence" ])
   in
   let resource_id = job.resource_id in
   Ollama.script w.ollama
-    [
-      spans
-        [ `Assoc [ ("exact", str "nobody tested that claim for a century") ] ];
-    ];
+    [ proposed [ exact "nobody tested that claim for a century" ] ];
   let served = W.start w in
   let completion = settled served job in
   (* One generation: the category that was never begun. *)
@@ -515,25 +399,7 @@ let unit_at_end (w : W.t) =
                  ".\n\n\
                   The program was na\u{00ef}ve by later standards, and London \
                   ignored it"
-               ~body:
-                 (`List
-                    [
-                      `Assoc
-                        [
-                          ("type", str "TextualBody");
-                          ("value", str "Evidence");
-                          ("purpose", str "tagging");
-                          ("format", str "text/plain");
-                          ("language", str "en");
-                        ];
-                      `Assoc
-                        [
-                          ("type", str "TextualBody");
-                          ("value", str "argument");
-                          ("purpose", str "classifying");
-                          ("format", str "text/plain");
-                        ];
-                    ])
+               ~body:(tagged "Evidence")
                "nobody tested that claim for a century";
            ];
        ])
@@ -547,34 +413,20 @@ let unit_at_end (w : W.t) =
            [
              claim;
              ( "Evidence",
-               cursor ~next:(code_points text) ~size:2618 ~found:1 ~emitted:1
-                 ~errors:0 );
+               cursor ~next:(code_points text) ~size:evidence_piece ~found:1
+                 ~emitted:1 ~errors:0 );
            ];
        ])
     (checkpoints served);
-  let at category processed completed =
-    [
-      ("current", `Assoc [ ("kind", str "category"); ("value", str category) ]);
-      ("processed", `Int processed);
-      ("total", `Int 2);
-      ("completedItems", `List completed);
-    ]
-  in
   expect_progress served job
     [
       report job 10 (code "loading");
-      report job 30 (code "analyzing-tags");
-      report job 30 (code "analyzing-tags") ~extra:(at "Claim" 0 []);
-      report job 45 (code "analyzing-tags")
-        ~extra:
-          (at "Evidence" 1
-             [ `Assoc [ ("value", str "Claim"); ("foundCount", `Int 3) ] ]);
-      report job 60
-        (code ~members:[ ("count", `Int 3) ] "creating-tag-annotations");
-      report job 100
-        (code
-           ~members:[ ("count", `Int 3); ("motivation", str "tagging") ]
-           "complete-created");
+      analyzing_tags job 30;
+      analyzing_tags job 30 ~extra:(on_category "Claim" 0 []);
+      analyzing_tags job 45
+        ~extra:(on_category "Evidence" 1 [ found_in "Claim" 3 ]);
+      creating_tags job 3;
+      complete_created job "tagging" 3;
     ];
   (* The counts are the whole job's, by category as in all: the earlier
      attempt's two for Claim, and this one's for Evidence. *)

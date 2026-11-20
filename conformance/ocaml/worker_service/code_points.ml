@@ -29,15 +29,6 @@ let tools = "\u{1F6E0}"
 let utf_16_length s =
   List.fold_left (fun n (_, _, units) -> n + units) 0 (Anthropic.code_points s)
 
-(* The text of [s] from code point [start] to code point [stop]. *)
-let code_point_slice s start stop =
-  let starts =
-    List.map (fun (at, _, _) -> at) (Anthropic.code_points s)
-    @ [ String.length s ]
-  in
-  let from = List.nth starts start in
-  String.sub s from (List.nth starts stop - from)
-
 (* A text too long for one request of a model with a small window: a
    paragraph that ends in a tally of sixty marks, and eight paragraphs of six
    sentences, each naming a marker no other names, with a compass in every
@@ -78,10 +69,6 @@ let engine =
        as numbers; nobody tested that claim for a century.\n"
       tools
 
-(* The size, in tokens, every piece of [survey] is cut at: the provider
-   reports no usage, so the size never moves. *)
-let chunk_size = 311
-
 (* What stands either side of a marker's sentence in [survey]. *)
 let before paragraph sentence =
   Printf.sprintf
@@ -93,30 +80,6 @@ let after paragraph sentence =
     " beside the Rh\u{00f4}ne. Paragraph %d, sentence %d: the survey party %s \
      recorded"
     paragraph sentence compass
-
-let model = (List.hd W.ollama_engines).model
-
-let proposed spans =
-  answer
-    (Yojson.Safe.to_string
-       (`List
-          (List.map
-             (fun members ->
-               `Assoc (List.map (fun (k, v) -> (k, str v)) members))
-             spans)))
-
-let completed job ~found ~persisted ~errors =
-  identified job
-    [
-      ( "result",
-        `Assoc
-          [
-            ("found", `Int found);
-            ("persisted", `Int persisted);
-            ("errors", `Int errors);
-          ] );
-      ("durability", str "acknowledged");
-    ]
 
 let by_code_points (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
@@ -131,32 +94,26 @@ let by_code_points (w : W.t) =
     [
       (* The first piece ends where the second paragraph of entries does.
          Marker 205 is in the overlap, so the second piece sees it too. *)
+      proposed [ exact ("the clerk " ^ script_c); marker 103; exact marker_205 ];
       proposed
         [
-          [ ("exact", "the clerk " ^ script_c) ];
-          [ ("exact", "marker 103") ];
-          [ ("exact", marker_205) ];
+          exact marker_205;
+          `Assoc
+            [
+              ("exact", str "marker 304");
+              ("prefix", str (Printf.sprintf "party %s recorded " compass));
+              ("suffix", str " beside");
+            ];
         ];
       proposed
         [
-          [ ("exact", marker_205) ];
-          [
-            ("exact", "marker 304");
-            ("prefix", Printf.sprintf "party %s recorded " compass);
-            ("suffix", " beside");
-          ];
+          marker 502;
+          exact
+            (Printf.sprintf
+               "marker 999 beside the Rh\u{00f4}ne %s was never recorded"
+               compass);
         ];
-      proposed
-        [
-          [ ("exact", "marker 502") ];
-          [
-            ( "exact",
-              Printf.sprintf
-                "marker 999 beside the Rh\u{00f4}ne %s was never recorded"
-                compass );
-          ];
-        ];
-      proposed [ [ ("exact", "marker 806") ] ];
+      finding [ 806 ];
     ];
   let served = W.start w in
   let completion = settled served job in
@@ -250,7 +207,8 @@ let by_code_points (w : W.t) =
   let at_piece ~next ~found ~emitted ~errors =
     checkpoint job
       [
-        ("highlighting", cursor ~next ~size:chunk_size ~found ~emitted ~errors);
+        ( "highlighting",
+          cursor ~next ~size:small_highlighting_piece ~found ~emitted ~errors );
       ]
   in
   Check.equal "its checkpoints"
@@ -262,9 +220,6 @@ let by_code_points (w : W.t) =
          at_piece ~next:4140 ~found:8 ~emitted:6 ~errors:1;
        ])
     (checkpoints served);
-  let creating count =
-    code ~members:[ ("count", `Int count) ] "creating-annotations"
-  in
   expect_progress served job
     [
       report job 10 (code "loading");
@@ -272,36 +227,21 @@ let by_code_points (w : W.t) =
       (* How far through the text the next piece starts: the cursor over the
          text's length, both in code points. Over 4,250 the last two would be
          43 and 50. *)
-      report job 60 (creating 3);
+      creating job 3;
       report job 37 (code "analyzing");
-      report job 60 (creating 4);
+      creating job 4;
       report job 44 (code "analyzing");
-      report job 60 (creating 5);
+      creating job 5;
       report job 51 (code "analyzing");
-      report job 60 (creating 6);
-      report job 100
-        (code
-           ~members:[ ("count", `Int 6); ("motivation", str "highlighting") ]
-           "complete-created");
+      creating job 6;
+      complete_created job "highlighting" 6;
     ];
   (* Eight proposed, the repeat among them; six recorded; one that is
      nowhere in the text. *)
   Check.equal "its completion"
-    (completed job ~found:8 ~persisted:6 ~errors:1)
+    (completed job
+       [ ("found", `Int 8); ("persisted", `Int 6); ("errors", `Int 1) ])
     completion
-
-let comment value =
-  `List
-    [
-      `Assoc
-        [
-          ("type", str "TextualBody");
-          ("value", str value);
-          ("purpose", str "commenting");
-          ("format", str "text/plain");
-          ("language", str "en");
-        ];
-    ]
 
 let comments_by_code_points (w : W.t) =
   let job = case_job ~about:engine w.own "code-points-commenting" in
@@ -310,26 +250,31 @@ let comments_by_code_points (w : W.t) =
     [
       proposed
         [
-          [
-            ("exact", "Charles Babbage");
-            ("comment", "Designed the Analytical Engine.");
-          ];
+          `Assoc
+            [
+              ("exact", str "Charles Babbage");
+              ("comment", str "Designed the Analytical Engine.");
+            ];
           (* One code point long. *)
-          [
-            ("exact", bold_b);
-            ("prefix", "numbers ");
-            ("comment", "The Bernoulli numbers.");
-          ];
-          [
-            ("exact", "London");
-            ("prefix", "engine in ");
-            ("comment", "Where Babbage worked.");
-          ];
+          `Assoc
+            [
+              ("exact", str bold_b);
+              ("prefix", str "numbers ");
+              ("comment", str "The Bernoulli numbers.");
+            ];
+          `Assoc
+            [
+              ("exact", str "London");
+              ("prefix", str "engine in ");
+              ("comment", str "Where Babbage worked.");
+            ];
           (* Nowhere in the text. *)
-          [
-            ("exact", Printf.sprintf "a difference engine %s of brass" tools);
-            ("comment", "Nowhere in the text.");
-          ];
+          `Assoc
+            [
+              ( "exact",
+                str (Printf.sprintf "a difference engine %s of brass" tools) );
+              ("comment", str "Nowhere in the text.");
+            ];
         ];
     ];
   let served = W.start w in
@@ -341,12 +286,12 @@ let comments_by_code_points (w : W.t) =
      and the window is sized from that. Its 1,610 UTF-16 code units would be
      one token more, and num_ctx 5794. *)
   expect_generations w.ollama [ generation model "code-points-commenting" ];
-  Check.equal "what it asked of its model's limits"
-    (`List [ `Assoc [ ("model", str model) ] ])
-    (`List (Dynarray.to_list w.ollama.shows));
+  expect_shows w [ model ];
   let commented id ~start ~stop ~prefix ~suffix exact said =
     text_annotation (W.generator w.own) resource_id "commenting" id ~start ~stop
-      ~prefix ~suffix ~body:(comment said) exact
+      ~prefix ~suffix
+      ~body:(comment ~language:"en" said)
+      exact
   in
   Check.equal "what it committed"
     (`List
@@ -407,14 +352,12 @@ let comments_by_code_points (w : W.t) =
     [
       report job 10 (code "loading");
       report job 30 (code "analyzing");
-      report job 60 (code ~members:[ ("count", `Int 3) ] "creating-annotations");
-      report job 100
-        (code
-           ~members:[ ("count", `Int 3); ("motivation", str "commenting") ]
-           "complete-created");
+      creating job 3;
+      complete_created job "commenting" 3;
     ];
   Check.equal "its completion"
-    (completed job ~found:4 ~persisted:3 ~errors:1)
+    (completed job
+       [ ("found", `Int 4); ("persisted", `Int 3); ("errors", `Int 1) ])
     completion
 
 let tests implementations =

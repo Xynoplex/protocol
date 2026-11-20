@@ -30,24 +30,6 @@ let stopped_after_one_piece ?(held = true) resource_id checkpoints =
   @ List.init checkpoints (fun _ -> "emit job:checkpoint")
   @ [ "emit job:cancel"; "emit job:claim" ]
 
-let cancel_of ?completed (job : W.job) =
-  `Assoc
-    ([
-       ("resourceId", str job.resource_id);
-       ("jobId", str job.id);
-       ("jobType", str job.job_type);
-     ]
-    @
-    match completed with
-    | Some units -> [ ("completedUnits", strs units) ]
-    | None -> [])
-
-let generations (w : W.t) = Dynarray.length w.ollama.generations
-
-let expect_generations_count (w : W.t) n =
-  Check.equal "the generations its model was asked for" (`Int n)
-    (`Int (generations w))
-
 let first_not_abandoned (w : W.t) =
   Check.that "the cancellation did not end the request it waits on"
     (not (snd (Dynarray.get w.ollama.generations 0)).abandoned)
@@ -84,10 +66,7 @@ let cancel_on_first_commit (w : W.t) (job : W.job) =
 
 let highlighting_partway (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
-  let job =
-    mark_job ~about:long_text w.own "cancel-highlighting"
-      (`Assoc [ ("motivation", str "highlighting") ])
-  in
+  let job = highlighting_job ~about:long_text w.own "cancel-highlighting" in
   let resource_id = job.resource_id in
   (* The text is four pieces. The first is held with the model while the
      cancellation arrives. *)
@@ -97,13 +76,7 @@ let highlighting_partway (w : W.t) =
      and has said nothing of the job since. *)
   first_not_abandoned w;
   said_nothing served [ "job:cancel" ];
-  Ollama.release w.ollama
-    (Yojson.Safe.to_string
-       (`List
-          [
-            `Assoc [ ("exact", str "marker 103") ];
-            `Assoc [ ("exact", str "marker 205") ];
-          ]));
+  Ollama.release w.ollama (proposing [ marker 103; marker 205 ]);
   let cancel = settled ~channel:"job:cancel" served job in
   (* One generation: the second piece was never asked about. *)
   expect_generations_count w 1;
@@ -126,7 +99,8 @@ let highlighting_partway (w : W.t) =
          checkpoint job
            [
              ( "highlighting",
-               cursor ~next:704 ~size:311 ~found:2 ~emitted:2 ~errors:0 );
+               cursor ~next:704 ~size:small_highlighting_piece ~found:2
+                 ~emitted:2 ~errors:0 );
            ];
        ])
     (checkpoints served);
@@ -140,29 +114,27 @@ let highlighting_partway (w : W.t) =
     [
       report job 10 (code "loading");
       report job 30 (code "analyzing");
-      report job 60 (code ~members:[ ("count", `Int 2) ] "creating-annotations");
+      creating job 2;
     ];
   said_nothing served [ "job:complete"; "job:fail" ]
 
 let commenting_partway (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
   let job =
-    mark_job ~about:long_text w.own "cancel-commenting"
-      (`Assoc [ ("motivation", str "commenting") ])
+    mark_job ~about:long_text w.own "cancel-commenting" (motivated "commenting")
   in
   let resource_id = job.resource_id in
   Ollama.script w.ollama [ Hold ];
   let served = cancelled_while_held w job in
   Ollama.release w.ollama
-    (Yojson.Safe.to_string
-       (`List
-          [
-            `Assoc
-              [
-                ("exact", str "marker 103");
-                ("comment", str "The third marker of the first paragraph.");
-              ];
-          ]));
+    (proposing
+       [
+         `Assoc
+           [
+             ("exact", str "marker 103");
+             ("comment", str "The third marker of the first paragraph.");
+           ];
+       ]);
   let cancel = settled ~channel:"job:cancel" served job in
   expect_generations_count w 1;
   Check.equal "what it committed"
@@ -179,18 +151,8 @@ let commenting_partway (w : W.t) =
                  " beside the Rh\u{00f4}ne. Paragraph 1, sentence 4: the \
                   survey party recorded"
                ~body:
-                 (`List
-                    [
-                      `Assoc
-                        [
-                          ("type", str "TextualBody");
-                          ( "value",
-                            str "The third marker of the first paragraph." );
-                          ("purpose", str "commenting");
-                          ("format", str "text/plain");
-                          ("language", str "en");
-                        ];
-                    ])
+                 (comment ~language:"en"
+                    "The third marker of the first paragraph.")
                "marker 103";
            ];
        ])
@@ -211,7 +173,7 @@ let commenting_partway (w : W.t) =
     [
       report job 10 (code "loading");
       report job 30 (code "analyzing");
-      report job 60 (code ~members:[ ("count", `Int 1) ] "creating-annotations");
+      creating job 1;
     ];
   said_nothing served [ "job:complete" ]
 
@@ -225,9 +187,7 @@ let tagging_partway (w : W.t) =
      with the model. *)
   Ollama.script w.ollama [ Hold ];
   let served = cancelled_while_held w job in
-  Ollama.release w.ollama
-    (Yojson.Safe.to_string
-       (`List [ `Assoc [ ("exact", str "London was wrong.") ] ]));
+  Ollama.release w.ollama (proposing [ exact "London was wrong." ]);
   let cancel = settled ~channel:"job:cancel" served job in
   expect_generations_count w 1;
   Check.equal "what it committed"
@@ -240,27 +200,7 @@ let tagging_partway (w : W.t) =
                ~prefix:
                  "The program was na\u{00ef}ve by later standards, and London \
                   ignored it. "
-               ~suffix:"\n"
-               ~body:
-                 (`List
-                    [
-                      `Assoc
-                        [
-                          ("type", str "TextualBody");
-                          ("value", str "Claim");
-                          ("purpose", str "tagging");
-                          ("format", str "text/plain");
-                          ("language", str "en");
-                        ];
-                      `Assoc
-                        [
-                          ("type", str "TextualBody");
-                          ("value", str "argument");
-                          ("purpose", str "classifying");
-                          ("format", str "text/plain");
-                        ];
-                    ])
-               "London was wrong.";
+               ~suffix:"\n" ~body:(tagged "Claim") "London was wrong.";
            ];
        ])
     (batches served);
@@ -270,8 +210,8 @@ let tagging_partway (w : W.t) =
          checkpoint job
            [
              ( "Claim",
-               cursor ~next:(code_points text) ~size:2621 ~found:1 ~emitted:1
-                 ~errors:0 );
+               cursor ~next:(code_points text) ~size:claim_piece ~found:1
+                 ~emitted:1 ~errors:0 );
            ];
        ])
     (checkpoints served);
@@ -281,18 +221,9 @@ let tagging_partway (w : W.t) =
   expect_progress served job
     [
       report job 10 (code "loading");
-      report job 30 (code "analyzing-tags");
-      report job 30 (code "analyzing-tags")
-        ~extra:
-          [
-            ( "current",
-              `Assoc [ ("kind", str "category"); ("value", str "Claim") ] );
-            ("processed", `Int 0);
-            ("total", `Int 2);
-            ("completedItems", `List []);
-          ];
-      report job 60
-        (code ~members:[ ("count", `Int 1) ] "creating-tag-annotations");
+      analyzing_tags job 30;
+      analyzing_tags job 30 ~extra:(on_category "Claim" 0 []);
+      creating_tags job 1;
     ];
   said_nothing served [ "job:complete" ]
 
@@ -300,23 +231,14 @@ let linking_partway (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
   let job =
     mark_job ~about:long_text w.own "cancel-linking-partway"
-      (`Assoc
-         [
-           ("motivation", str "linking");
-           ("entityTypes", strs [ "Person"; "Place" ]);
-         ])
+      (linking [ "Person"; "Place" ])
   in
   let resource_id = job.resource_id in
   (* The text is four pieces for each type. The first piece's extraction is
      held with the model; its count is answered when asked. *)
   Ollama.script w.ollama [ Hold; counting 1 ];
   let served = cancelled_while_held w job in
-  Ollama.release w.ollama
-    (Yojson.Safe.to_string
-       (`List
-          [
-            `Assoc [ ("exact", str "marker 103"); ("entityType", str "Person") ];
-          ]));
+  Ollama.release w.ollama (proposing [ mention "marker 103" "Person" ]);
   let cancel = settled ~channel:"job:cancel" served job in
   (* The piece's two generations, its extraction and its count, and no more:
      not the type's next piece, and not the next type. *)
@@ -351,60 +273,24 @@ let linking_partway (w : W.t) =
     (checkpoints served);
   expect_sequence served (stopped_after_one_piece resource_id 1);
   Check.equal "its cancel" (cancel_of job) cancel;
-  let request_params =
-    ( "requestParams",
-      `List
-        [
-          `Assoc
-            [ ("label", str "entity-types"); ("value", str "Person, Place") ];
-        ] )
-  in
-  let standing expected =
-    report job 20
-      (code ~members:[ ("entityType", str "Person") ] "detecting-entities")
-      ~extra:
-        ([
-           ( "current",
-             `Assoc [ ("kind", str "entity-type"); ("value", str "Person") ] );
-           ("processed", `Int 0);
-           ("total", `Int 2);
-           ("entitiesFound", `Int 0);
-         ]
-        @ (match expected with
-          | Some n -> [ ("entitiesExpected", `Int n) ]
-          | None -> [])
-        @ [
-            ("entitiesEmitted", `Int 0);
-            ("completedItems", `List []);
-            request_params;
-          ])
-  in
+  let types = [ "Person"; "Place" ] in
   (* The type begun, and its mentions counted: both said while the piece was
      being asked about. Nothing after its checkpoint. *)
   expect_progress served job
     [
-      report job 10 (code "loading") ~extra:[ request_params ];
-      standing None;
-      standing (Some 1);
+      report job 10 (code "loading") ~extra:[ echoed_entity_types types ];
+      detecting ~types job "Person" 20 ~processed:0 ~found:0 ~emitted:0 [];
+      detecting ~types job "Person" 20 ~processed:0 ~found:0 ~expected:1
+        ~emitted:0 [];
     ];
   said_nothing served [ "job:complete" ]
 
 let linking_last (w : W.t) =
-  let job =
-    mark_job w.own "cancel-linking-last"
-      (`Assoc
-         [ ("motivation", str "linking"); ("entityTypes", strs [ "Person" ]) ])
-  in
+  let job = mark_job w.own "cancel-linking-last" (linking [ "Person" ]) in
   let resource_id = job.resource_id in
   Ollama.script w.ollama [ Hold; counting 1 ];
   let served = cancelled_while_held w job in
-  Ollama.release w.ollama
-    (Yojson.Safe.to_string
-       (`List
-          [
-            `Assoc
-              [ ("exact", str "Ada Lovelace"); ("entityType", str "Person") ];
-          ]));
+  Ollama.release w.ollama (proposing [ mention "Ada Lovelace" "Person" ]);
   let cancel = settled ~channel:"job:cancel" served job in
   expect_generations_count w 2;
   Check.equal "what it committed"
@@ -425,8 +311,8 @@ let linking_last (w : W.t) =
      among the finished with its cursor still, as for any type. *)
   let person =
     ( "Person",
-      cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1 ~errors:0
-    )
+      cursor ~next:(code_points text) ~size:linking_piece ~found:1 ~emitted:1
+        ~errors:0 )
   in
   Check.equal "its checkpoints"
     (`List
@@ -444,28 +330,10 @@ let linking_last (w : W.t) =
   said_nothing served [ "job:complete" ]
 
 let linking_between (w : W.t) =
-  let job =
-    mark_job w.own "cancel"
-      (`Assoc
-         [
-           ("motivation", str "linking");
-           ("entityTypes", strs [ "Person"; "Place" ]);
-         ])
-  in
+  let job = mark_job w.own "cancel" (linking [ "Person"; "Place" ]) in
   let resource_id = job.resource_id in
   Ollama.script w.ollama
-    [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc
-                  [
-                    ("exact", str "Ada Lovelace"); ("entityType", str "Person");
-                  ];
-              ]));
-      counting 1;
-    ];
+    [ proposed [ mention "Ada Lovelace" "Person" ]; counting 1 ];
   cancel_on_first_commit w job;
   let served = W.start w in
   let cancel = settled ~channel:"job:cancel" served job in
@@ -473,16 +341,11 @@ let linking_between (w : W.t) =
   expect_generations_count w 2;
   (* What the first type found is on the record, and the type is
      checkpointed as finished, with the cursor it ended at. *)
-  Check.equal "the sizes of its batches"
-    (`List [ `Int 1 ])
-    (`List
-       (List.map
-          (fun (c : W.commit) -> `Int (List.length c.annotations))
-          (Dynarray.to_list w.own.commits)));
+  Check.equal "the sizes of its batches" (`List [ `Int 1 ]) (sizes_of_batches w);
   let person =
     ( "Person",
-      cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1 ~errors:0
-    )
+      cursor ~next:(code_points text) ~size:linking_piece ~found:1 ~emitted:1
+        ~errors:0 )
   in
   Check.equal "its checkpoints"
     (`List
@@ -503,8 +366,8 @@ let linking_resumed (w : W.t) =
      batch of Place is committed. *)
   let person =
     ( "Person",
-      cursor ~next:(code_points text) ~size:2658 ~found:2 ~emitted:2 ~errors:0
-    )
+      cursor ~next:(code_points text) ~size:linking_piece ~found:2 ~emitted:2
+        ~errors:0 )
   in
   let job =
     mark_job w.own "cancel-resumed"
@@ -514,43 +377,23 @@ let linking_resumed (w : W.t) =
           ("completedUnits", strs [ "Person" ]);
           ("unitCursors", `Assoc [ person ]);
         ]
-      (`Assoc
-         [
-           ("motivation", str "linking");
-           ("entityTypes", strs [ "Person"; "Place" ]);
-         ])
+      (linking [ "Person"; "Place" ])
   in
   let resource_id = job.resource_id in
   Ollama.script w.ollama
     [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc
-                  [
-                    ("exact", str "London");
-                    ("entityType", str "Place");
-                    ("prefix", str "engine in ");
-                    ("suffix", str ", but");
-                  ];
-              ]));
+      proposed [ mention "London" "Place" ~prefix:"engine in " ~suffix:", but" ];
       counting 1;
     ];
   cancel_on_first_commit w job;
   let served = W.start w in
   let cancel = settled ~channel:"job:cancel" served job in
   expect_generations_count w 2;
-  Check.equal "the sizes of its batches"
-    (`List [ `Int 1 ])
-    (`List
-       (List.map
-          (fun (c : W.commit) -> `Int (List.length c.annotations))
-          (Dynarray.to_list w.own.commits)));
+  Check.equal "the sizes of its batches" (`List [ `Int 1 ]) (sizes_of_batches w);
   let place =
     ( "Place",
-      cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1 ~errors:0
-    )
+      cursor ~next:(code_points text) ~size:linking_piece ~found:1 ~emitted:1
+        ~errors:0 )
   in
   Check.equal "its checkpoints"
     (`List
@@ -564,16 +407,11 @@ let linking_resumed (w : W.t) =
   said_nothing served [ "job:complete" ]
 
 let highlighting_last (w : W.t) =
-  let job =
-    mark_job w.own "cancel-highlighting-last"
-      (`Assoc [ ("motivation", str "highlighting") ])
-  in
+  let job = highlighting_job w.own "cancel-highlighting-last" in
   let resource_id = job.resource_id in
   Ollama.script w.ollama [ Hold ];
   let served = cancelled_while_held w job in
-  Ollama.release w.ollama
-    (Yojson.Safe.to_string
-       (`List [ `Assoc [ ("exact", str "the first program") ] ]));
+  Ollama.release w.ollama (proposing [ exact "the first program" ]);
   let cancel = settled ~channel:"job:cancel" served job in
   Check.equal "what it committed"
     (`List
@@ -596,8 +434,8 @@ let highlighting_last (w : W.t) =
          checkpoint job
            [
              ( "highlighting",
-               cursor ~next:(code_points text) ~size:2641 ~found:1 ~emitted:1
-                 ~errors:0 );
+               cursor ~next:(code_points text) ~size:highlighting_piece ~found:1
+                 ~emitted:1 ~errors:0 );
            ];
        ])
     (checkpoints served);
@@ -607,15 +445,12 @@ let highlighting_last (w : W.t) =
     [
       report job 10 (code "loading");
       report job 30 (code "analyzing");
-      report job 60 (code ~members:[ ("count", `Int 1) ] "creating-annotations");
+      creating job 1;
     ];
   said_nothing served [ "job:complete" ]
 
 let before_first_piece (w : W.t) =
-  let job =
-    mark_job w.own "cancel-before"
-      (`Assoc [ ("motivation", str "highlighting") ])
-  in
+  let job = highlighting_job w.own "cancel-before" in
   let resource_id = job.resource_id in
   (* The cancellation is asked for while the job reads its resource's
      description, before that is answered. *)
@@ -630,11 +465,9 @@ let before_first_piece (w : W.t) =
     };
   let served = W.start w in
   let cancel = settled ~channel:"job:cancel" served job in
-  Check.equal "what it asked of its model's limits" (`List [])
-    (`List (Dynarray.to_list w.ollama.shows));
+  expect_shows w [];
   expect_generations_count w 0;
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_commits_count w 0;
   expect_sequence served
     [
       "emit job:claim";
@@ -660,8 +493,7 @@ let yield_before_upload (w : W.t) =
      no commit. *)
   expect_generations_count w 1;
   Check.equal "its uploads" (`Int 0) (`Int (List.length (uploads w)));
-  Check.equal "what it committed" (`Int 0)
-    (`Int (Dynarray.length w.own.commits));
+  expect_commits_count w 0;
   (* (The limits it answered are the request that told this case the
      cancellation had arrived.) *)
   expect_sequence served
@@ -694,17 +526,9 @@ let yield_after_upload (w : W.t) =
     };
   let served = W.start w in
   let completion = settled served job in
-  let uploaded =
-    match uploads w with
-    | [ upload ] -> upload
-    | uploads ->
-        failwith
-          (Printf.sprintf "it uploaded %d resources, not one"
-             (List.length uploads))
-  in
   expect_sequence served yielded;
   Check.equal "its completion"
-    (generated job uploaded ~truncated:false)
+    (generated job (upload_of w) ~truncated:false)
     completion;
   said_nothing served [ "job:cancel" ];
   expect_progress served job

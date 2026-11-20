@@ -8,21 +8,10 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-let highlighting = `Assoc [ ("motivation", str "highlighting") ]
-
-let expect_generations_count (w : W.t) n =
-  Check.equal "the generations its model was asked for" (`Int n)
-    (`Int (Dynarray.length w.ollama.generations))
-
-let expect_commits_count (w : W.t) n =
-  Check.equal "the batches it committed" (`Int n)
-    (`Int (Dynarray.length w.own.commits))
-
 (* Run a highlighting job over the short text against [replies], and return
    it, its failure, and the worker that failed it. *)
 let run_failing ?metadata (w : W.t) name replies =
-  let job = mark_job ?metadata w.own name highlighting in
+  let job = highlighting_job ?metadata w.own name in
   Ollama.script w.ollama replies;
   let served = W.start w in
   let failure = settled ~channel:"job:fail" served job in
@@ -125,9 +114,7 @@ let window_too_small (w : W.t) =
   let error = classed job failure "deterministic" false in
   says "its error" error "461";
   (* It learned its model's window, and asked the model nothing. *)
-  Check.equal "what it asked of its model's limits"
-    (`List [ `Assoc [ ("model", str model) ] ])
-    (`List (Dynarray.to_list w.ollama.shows));
+  expect_shows w [ model ];
   expect_generations_count w 0;
   expect_sequence served (made_nothing job)
 
@@ -148,14 +135,10 @@ let unreadable response (w : W.t) =
     ];
   expect_commits_count w 0
 
-let cut_off response = Ollama.Answer { response; stop = Cut_off; usage = None }
-
-let first_program =
-  Yojson.Safe.to_string
-    (`List [ `Assoc [ ("exact", str "the first program") ] ])
+let first_program = proposing [ exact "the first program" ]
 
 let cut_off_twice (w : W.t) =
-  let job = mark_job w.own "truncated" highlighting in
+  let job = highlighting_job w.own "truncated" in
   Ollama.script w.ollama [ cut_off first_program; cut_off first_program ];
   let served = W.start w in
   let failure = settled ~channel:"job:fail" served job in
@@ -167,43 +150,23 @@ let cut_off_twice (w : W.t) =
   expect_commits_count w 0
 
 let cut_off_once (w : W.t) =
-  let job = mark_job w.own "truncated-once" highlighting in
+  let job = highlighting_job w.own "truncated-once" in
   Ollama.script w.ollama
     [
       cut_off first_program;
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc [ ("exact", str "the first program") ];
-                `Assoc [ ("exact", str "Charles Babbage") ];
-              ]));
+      proposed [ exact "the first program"; exact "Charles Babbage" ];
     ];
   let served = W.start w in
   let completion = settled served job in
   expect_generations_count w 2;
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 2); ("persisted", `Int 2) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 2); ("persisted", `Int 2) ])
     completion
 
 let failed_partway (w : W.t) =
   w.ollama.show <- Ollama.Context small_context_length;
-  let job = mark_job ~about:long_text w.own "failed-partway" highlighting in
-  Ollama.script w.ollama
-    [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc [ ("exact", str "marker 103") ];
-                `Assoc [ ("exact", str "marker 205") ];
-              ]));
-      overloaded;
-    ];
+  let job = highlighting_job ~about:long_text w.own "failed-partway" in
+  Ollama.script w.ollama [ finding [ 103; 205 ]; overloaded ];
   let served = W.start w in
   let rest, error = failure_of (settled ~channel:"job:fail" served job) in
   expect_commits_count w 1;
@@ -216,7 +179,8 @@ let failed_partway (w : W.t) =
            `Assoc
              [
                ( "highlighting",
-                 cursor ~next:704 ~size:311 ~found:2 ~emitted:2 ~errors:0 );
+                 cursor ~next:704 ~size:small_highlighting_piece ~found:2
+                   ~emitted:2 ~errors:0 );
              ] );
          ("failureClass", str "transient");
          ("willRetry", `Bool true);
@@ -236,28 +200,9 @@ let failed_partway (w : W.t) =
     ]
 
 let failed_after_a_unit (w : W.t) =
-  let job =
-    mark_job w.own "failed-unit"
-      (`Assoc
-         [
-           ("motivation", str "linking");
-           ("entityTypes", strs [ "Person"; "Place" ]);
-         ])
-  in
+  let job = mark_job w.own "failed-unit" (linking [ "Person"; "Place" ]) in
   Ollama.script w.ollama
-    [
-      answer
-        (Yojson.Safe.to_string
-           (`List
-              [
-                `Assoc
-                  [
-                    ("exact", str "Ada Lovelace"); ("entityType", str "Person");
-                  ];
-              ]));
-      counting 1;
-      overloaded;
-    ];
+    [ proposed [ mention "Ada Lovelace" "Person" ]; counting 1; overloaded ];
   let served = W.start w in
   let rest, error = failure_of (settled ~channel:"job:fail" served job) in
   expect_commits_count w 1;
@@ -269,8 +214,8 @@ let failed_after_a_unit (w : W.t) =
            `Assoc
              [
                ( "Person",
-                 cursor ~next:(code_points text) ~size:2658 ~found:1 ~emitted:1
-                   ~errors:0 );
+                 cursor ~next:(code_points text) ~size:linking_piece ~found:1
+                   ~emitted:1 ~errors:0 );
              ] );
          ("failureClass", str "transient");
          ("willRetry", `Bool true);
@@ -280,7 +225,7 @@ let failed_after_a_unit (w : W.t) =
 
 let commit_refused (w : W.t) =
   let reason = "the record refuses this batch" in
-  let job = mark_job w.own "commit-refused" highlighting in
+  let job = highlighting_job w.own "commit-refused" in
   Ollama.script w.ollama [ answer first_program ];
   w.own.hooks <- { w.own.hooks with commit = Some (fun _ -> Some reason) };
   let served = W.start w in

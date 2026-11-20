@@ -56,6 +56,17 @@ let code_points s =
   in
   count 0 0
 
+(* The text of [s] from code point [start] up to code point [stop], as a
+   selector counts them. *)
+let code_point_slice s start stop =
+  let rec offset at n =
+    if n = 0 then at
+    else
+      offset (at + Uchar.utf_decode_length (String.get_utf_8_uchar s at)) (n - 1)
+  in
+  let from = offset 0 start in
+  String.sub s from (offset from (stop - start) - from)
+
 (* A text too long for one request of a model with a small window: eight
    paragraphs of six sentences, 3847 characters, each sentence naming a
    marker no other names. *)
@@ -82,6 +93,18 @@ let middling_context_length = 2400
    another. *)
 let context_length = 8192
 
+(* The sizes, in tokens, a job asked with no more than its motivation, its
+   entity types or its categories cuts [text] at in that window: what its
+   units' cursors state. *)
+let highlighting_piece = 2641
+let linking_piece = 2658
+let claim_piece = 2621
+let evidence_piece = 2618
+
+(* The size a highlighting job cuts a text too long for one request at in a
+   window of [small_context_length], its provider reporting no usage. *)
+let small_highlighting_piece = 311
+
 (* ── The worker's health ─────────────────────────────────────────────── *)
 
 (* The worker's health: answered 200, as JSON, and held to the spec's
@@ -105,11 +128,15 @@ let health (worker : Worker_service.t) =
 
 let knowledge_bases_of health = Check.list health [ "knowledgeBases" ]
 
-(* What an idle engine that has done nothing says of itself in the worker's
-   health. *)
-let idle =
+(* What [engine], used for [jobs], says of itself in the worker's health
+   when it has done nothing. *)
+let idle_engine (engine : W.engine) jobs =
   `Assoc
     [
+      ( "engine",
+        `Assoc
+          [ ("provider", str engine.provider); ("model", str engine.model) ] );
+      ("jobs", jobs);
       ("lastQueuedEventAt", `Null);
       ("lastClaimAt", `Null);
       ("lastFinishedAt", `Null);
@@ -119,6 +146,10 @@ let idle =
     ]
 
 (* ── What a worker asks its model ───────────────────────────────────── *)
+
+(* The model of the world's first Ollama engine: the one a worker runs when
+   a case names no engines. *)
+let model = (List.hd W.ollama_engines).model
 
 (* The case [name] of worker/prompt-cases.json. *)
 let prompt_case name =
@@ -220,6 +251,17 @@ let expect_generations (ollama : Ollama.t) expected =
     (`List (List.map (fun g -> member "prompt" g) asked));
   Check.equal "what its model was asked" (`List expected) (`List asked)
 
+let expect_generations_count (w : W.t) n =
+  Check.equal "the generations its model was asked for" (`Int n)
+    (`Int (Dynarray.length w.ollama.generations))
+
+(* Hold what a worker asked of its Ollama's limits to a request for each of
+   [models], in the order asked. *)
+let expect_shows (w : W.t) models =
+  Check.equal "what it asked of its model's limits"
+    (`List (List.map (fun m -> `Assoc [ ("model", str m) ]) models))
+    (`List (Dynarray.to_list w.ollama.shows))
+
 (* The request the case [name] states a worker makes of an Anthropic model
    of [facts]: the row of its requests for that model's two ceilings, and
    streamed or not as [stream] says. *)
@@ -293,13 +335,59 @@ let expect_messages (anthropic : Anthropic.t) expected =
     (`List (List.map (fun g -> member "messages" g) asked));
   Check.equal "what its model was asked" (`List expected) (`List asked)
 
+(* What the worker asked the stand-in Anthropic, request by request: each
+   its method and its path. *)
+let anthropic_requests (w : W.t) =
+  List.map
+    (fun (r : Anthropic.request) -> r.meth ^ " " ^ r.path)
+    (Dynarray.to_list w.anthropic.requests)
+
+(* What a model says when it proposes [items]: their array, as JSON. *)
+let proposing items = Yojson.Safe.to_string (`List items)
+
 (* A stand-in Ollama's answer of [response], its model done. *)
 let answer response = Ollama.Answer { response; stop = Done; usage = None }
 
+(* A stand-in Ollama's answer of [response], its model cut off. *)
+let cut_off response = Ollama.Answer { response; stop = Cut_off; usage = None }
+
+(* A stand-in Ollama's answer that proposes [items]. *)
+let proposed items = answer (proposing items)
+
+(* A proposal of the span [text], with nothing said of it. *)
+let exact text = `Assoc [ ("exact", str text) ]
+
+(* A proposal of marker [n] of [long_text]. *)
+let marker n = exact (Printf.sprintf "marker %d" n)
+
+(* A stand-in Ollama's answer that proposes each marker of [markers]. *)
+let finding markers = proposed (List.map marker markers)
+
+(* A proposal of a mention of the entity type [kind]. *)
+let mention ?prefix ?suffix text kind =
+  `Assoc
+    ([ ("exact", str text); ("entityType", str kind) ]
+    @ (match prefix with Some p -> [ ("prefix", str p) ] | None -> [])
+    @ match suffix with Some s -> [ ("suffix", str s) ] | None -> [])
+
 (* A stand-in Ollama's answer to a count: the one element a count is asked
    for. *)
-let counting n =
-  answer (Yojson.Safe.to_string (`List [ `Assoc [ ("count", `Int n) ] ]))
+let counting n = proposed [ `Assoc [ ("count", `Int n) ] ]
+
+(* Have the stand-in Ollama answer by which model asked, as engines that work
+   at once need: [model] finds the first program, any other Charles
+   Babbage. *)
+let answer_by_model (w : W.t) =
+  w.ollama.choose <-
+    Some
+      (fun body ->
+        Some
+          (proposed
+             [
+               exact
+                 (if member "model" body = str model then "the first program"
+                  else "Charles Babbage");
+             ]))
 
 (* ── What a worker commits ──────────────────────────────────────────── *)
 
@@ -544,6 +632,20 @@ let limits_asked kb =
       | Some f -> f.correlation_id = Some correlation_id
       | None -> false)
 
+(* The cancel of [job], naming the units it finished when it finished
+   any. *)
+let cancel_of ?completed (job : W.job) =
+  `Assoc
+    ([
+       ("resourceId", str job.resource_id);
+       ("jobId", str job.id);
+       ("jobType", str job.job_type);
+     ]
+    @
+    match completed with
+    | Some units -> [ ("completedUnits", strs units) ]
+    | None -> [])
+
 (* Ask for [job] to be cancelled, as the gateway relays a cancellation to
    every worker, and wait until the worker has had it. Its one stream
    carries frames in the order they were sent, so the worker's answer to a
@@ -567,6 +669,20 @@ let mark_job ?metadata ?(about = text) kb name params =
 (* The case [name] of worker/prompt-cases.json as a mark job, queued. *)
 let case_job ?metadata ?about kb name =
   mark_job ?metadata ?about kb name (params name)
+
+(* A mark job's parameters that name its [motivation] and nothing more. *)
+let motivated motivation = `Assoc [ ("motivation", str motivation) ]
+
+(* The jobs of an engine used for highlighting alone. *)
+let highlighting_only = [ Dispatcher_world.marks "highlighting" ]
+
+(* A highlighting job of nothing more, queued. *)
+let highlighting_job ?metadata ?about kb name =
+  mark_job ?metadata ?about kb name (motivated "highlighting")
+
+(* A linking job's parameters, asking for the entity types [types]. *)
+let linking types =
+  `Assoc [ ("motivation", str "linking"); ("entityTypes", strs types) ]
 
 (* The schema worker/prompt-cases.json's tagging cases are asked with, as
    the dispatcher adds it to the job it hands over: two categories. *)
@@ -597,6 +713,12 @@ let tagging schema categories =
       ("categories", strs categories);
       ("schema", schema);
     ]
+
+(* The resource worker/prompt-cases.json's yield cases are focused on. *)
+let case_source =
+  text_of
+    (Check.at (params "yield-markdown")
+       [ "context"; "focus"; "resource"; "@id" ])
 
 (* The description of a text resource [id] a yield job is focused on. *)
 let source_descriptor id =
@@ -734,17 +856,56 @@ let batches served =
        (fun p -> without_created (member "annotations" p))
        (W.payloads served "mark:commit"))
 
+(* How many annotations each batch the worker committed carried. *)
+let sizes_of_batches (w : W.t) =
+  `List
+    (List.map
+       (fun (c : W.commit) -> `Int (List.length c.annotations))
+       (Dynarray.to_list w.own.commits))
+
+let expect_commits_count (w : W.t) n =
+  Check.equal "the batches it committed" (`Int n)
+    (`Int (Dynarray.length w.own.commits))
+
+let tag_body category =
+  `Assoc
+    [
+      ("type", str "TextualBody");
+      ("value", str category);
+      ("purpose", str "tagging");
+      ("format", str "text/plain");
+      ("language", str "en");
+    ]
+
 (* An unresolved reference's body: the entity type, as a tag. *)
-let entity kind =
+let entity kind = `List [ tag_body kind ]
+
+(* A tag's bodies: the category, and the schema it is a category of. *)
+let tagged category =
+  `List
+    [
+      tag_body category;
+      `Assoc
+        [
+          ("type", str "TextualBody");
+          ("value", Check.at (argument ()) [ "id" ]);
+          ("purpose", str "classifying");
+          ("format", str "text/plain");
+        ];
+    ]
+
+(* A comment's body: what the model wrote, as plain text, in the language
+   the job asked for. *)
+let comment ~language value =
   `List
     [
       `Assoc
         [
           ("type", str "TextualBody");
-          ("value", str kind);
-          ("purpose", str "tagging");
+          ("value", str value);
+          ("purpose", str "commenting");
           ("format", str "text/plain");
-          ("language", str "en");
+          ("language", str language);
         ];
     ]
 
@@ -770,6 +931,119 @@ let checkpoint ?(completed = []) (job : W.job) cursors =
     ]
 
 let checkpoints served = `List (W.payloads served "job:checkpoint")
+
+(* ── What a mark job reports ────────────────────────────────────────── *)
+
+(* The report of a mark job that has made [count] so far. *)
+let creating ?extra job count =
+  report ?extra job 60
+    (code ~members:[ ("count", `Int count) ] "creating-annotations")
+
+(* The report of a mark job of [motivation] that finished, having made
+   [count]. *)
+let complete_created ?extra job motivation count =
+  report ?extra job 100
+    (code
+       ~members:[ ("count", `Int count); ("motivation", str motivation) ]
+       "complete-created")
+
+(* The completion of a mark job of [result] whose commits the record
+   acknowledged. *)
+let completed job result =
+  identified job
+    [ ("result", `Assoc result); ("durability", str "acknowledged") ]
+
+(* What a linking job of the entity types [types] echoes of what it was
+   asked with, on every report. *)
+let echoed_entity_types types =
+  ( "requestParams",
+    `List
+      [
+        `Assoc
+          [
+            ("label", str "entity-types");
+            ("value", str (String.concat ", " types));
+          ];
+      ] )
+
+(* An entity type among the finished, with what it found and recorded, and
+   what a count said was missed when it said so: the pieces, what they
+   found, and what was counted. *)
+let finished_type ?under_reported kind ~found ~persisted =
+  `Assoc
+    ([
+       ("value", str kind);
+       ("foundCount", `Int found);
+       ("persistedCount", `Int persisted);
+     ]
+    @
+    match under_reported with
+    | Some (pieces, found, counted) ->
+        [
+          ( "underReported",
+            `Assoc
+              [
+                ("pieces", `Int pieces);
+                ("found", `Int found);
+                ("counted", `Int counted);
+              ] );
+        ]
+    | None -> [])
+
+(* A report of where a linking job of [types] stands while it works on the
+   entity type [kind]. [expected] is left out until a count has said it. *)
+let detecting ~types job kind percentage ~processed ~found ?expected ~emitted
+    completed =
+  report job percentage
+    (code ~members:[ ("entityType", str kind) ] "detecting-entities")
+    ~extra:
+      ([
+         ("current", `Assoc [ ("kind", str "entity-type"); ("value", str kind) ]);
+         ("processed", `Int processed);
+         ("total", `Int (List.length types));
+         ("entitiesFound", `Int found);
+       ]
+      @ (match expected with
+        | Some n -> [ ("entitiesExpected", `Int n) ]
+        | None -> [])
+      @ [
+          ("entitiesEmitted", `Int emitted);
+          ("completedItems", `List completed);
+          echoed_entity_types types;
+        ])
+
+(* The report of a linking job of [types] that finished, having made
+   [count]. *)
+let linking_complete ~types job ~count ~expected completed =
+  complete_created job "linking" count
+    ~extra:
+      [
+        ("entitiesExpected", `Int expected);
+        ("completedItems", `List completed);
+        echoed_entity_types types;
+      ]
+
+(* Where a tagging job of two categories stands as it begins [category],
+   with [processed] of them behind it. *)
+let on_category category processed completed =
+  [
+    ("current", `Assoc [ ("kind", str "category"); ("value", str category) ]);
+    ("processed", `Int processed);
+    ("total", `Int 2);
+    ("completedItems", `List completed);
+  ]
+
+(* A category among a tagging job's finished, with what it found. *)
+let found_in category count =
+  `Assoc [ ("value", str category); ("foundCount", `Int count) ]
+
+let analyzing_tags ?extra job percentage =
+  report ?extra job percentage (code "analyzing-tags")
+
+(* The report of a tagging job that has made [count] so far. *)
+let creating_tags job count =
+  report job 60
+    (code ~members:[ ("count", `Int count) ] "creating-tag-annotations")
 
 (* A failure's payload, its error taken away, and the error. *)
 let failure_of payload =
@@ -799,6 +1073,15 @@ let says what said words =
     (Re.execp (Re.compile (Re.str words)) said)
 
 let uploads (w : W.t) = Dynarray.to_list w.own.world.archivist.uploads
+
+(* The one resource the worker uploaded. *)
+let upload_of (w : W.t) =
+  match uploads w with
+  | [ upload ] -> upload
+  | uploads ->
+      failwith
+        (Printf.sprintf "it uploaded %d resources, not one"
+           (List.length uploads))
 
 (* The completion of a yield job that made [upload], named by the job's
    title. *)
@@ -842,6 +1125,42 @@ let logged lines message =
       | exception Yojson.Json_error _ -> None)
     lines
 
+(* The lines the worker's log wrote of a knowledge base, as
+   worker/messages.json's [logged] row [name] states it. *)
+let kb_logged (served : W.served) name =
+  logged (Worker_service.stdout served.worker) (kb_log name)
+
+(* Hold a line its log wrote of a knowledge base: at [level], of [domain],
+   with each of [said] a text. *)
+let logs_of ~level ~domain ~said line =
+  Check.like "the line its log wrote"
+    (`Assoc [ ("level", str level); ("domain", str domain) ])
+    line;
+  List.iter
+    (fun name ->
+      Check.that
+        (Printf.sprintf "the line says %s" name)
+        (match Protocol.at line [ name ] with
+        | Some (`String _) -> true
+        | _ -> false))
+    said
+
+(* Hold that its log says once that a knowledge base refused it, and of
+   [kb], with its reason. *)
+let logs_refusal served (kb : W.kb) =
+  match kb_logged served "refused" with
+  | [ line ] ->
+      logs_of ~level:"error" ~domain:(W.domain kb) ~said:[ "reason" ] line
+  | lines ->
+      failwith
+        (Printf.sprintf "its log says %d times that a knowledge base refused it"
+           (List.length lines))
+
+(* What worker/messages.json states a worker calls a mark job of
+   [motivation] in what it says. *)
+let mark_named motivation =
+  Protocol.fill_template (messages ()).job.mark [ ("motivation", motivation) ]
+
 (* The detail worker/messages.json states for [name], filled. *)
 let detail name fill =
   match
@@ -872,6 +1191,70 @@ let error name fill =
   with
   | Some row -> Protocol.fill_template row.error fill
   | None -> failwith ("worker/messages.json states no error " ^ name)
+
+(* ── Who it is, and who said what ────────────────────────────────────── *)
+
+(* The grants [kb]'s issuer has answered the worker's account there. An
+   issuer holds a count for an account only once it has granted it one, so
+   no count is none. *)
+let grants (kb : W.kb) =
+  Option.value ~default:0 (Hashtbl.find_opt kb.world.issuer.grants kb.client)
+
+(* Who the gateway named the party that did a thing, or null for none. *)
+let by_of = function Some did -> str did | None -> `Null
+
+(* What the worker said on a channel: who the gateway named it, what it
+   said, to which scope, and what the gateway answered. *)
+let said_on (e : W.emitted) =
+  `Assoc
+    [
+      ("by", by_of e.emitted_by);
+      ("payload", e.payload);
+      ("scope", match e.scope with Some s -> str s | None -> `Null);
+      ("status", match e.status with Some s -> `Int s | None -> `Null);
+    ]
+
+(* The answer to the worker's question [asked] of which knowledge base this
+   is, as its stream carried it. *)
+let answer_to served (asked : W.emitted) =
+  let correlation_id =
+    match asked.correlation_id with
+    | Some id -> str id
+    | None -> failwith "it asked which knowledge base this is uncorrelated"
+  in
+  match
+    List.find_opt
+      (fun (c : W.carried) -> member "correlationId" c.frame = correlation_id)
+      (W.carried served "browse:kb-result")
+  with
+  | Some answer -> answer
+  | None -> failwith "its question was answered on no stream it read"
+
+(* ── Stopping ───────────────────────────────────────────────────────── *)
+
+let exit_code code =
+  match code with Some code -> `Int code | None -> `String "a signal"
+
+(* Stop the worker with SIGTERM, and its exit code. *)
+let stopped (served : W.served) = exit_code (Worker_service.stop served.worker)
+
+(* Stop the worker while it holds [job], and hold what it does: it exits 0,
+   having failed the job, with no class and as the gateway took it, saying
+   the worker stopped. *)
+let stopped_holding served job =
+  Check.equal "its exit code" (`Int 0) (stopped served);
+  let failures = W.emits ~channel:"job:fail" served in
+  Check.equal "the gateway's answers to its failures"
+    (`List [ `Int 202 ])
+    (`List
+       (List.map
+          (fun (e : W.emitted) ->
+            match e.status with Some s -> `Int s | None -> `Null)
+          failures));
+  let failure, error = failure_of (List.hd failures).payload in
+  (* No class is stated: the job's retry budget decides. *)
+  Check.equal "its failure" (failed ~will_retry:true job) failure;
+  says "its error" error "stopped"
 
 (* ── What a worker exports ──────────────────────────────────────────── *)
 

@@ -7,61 +7,14 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-
-(* The schema the job's schemaId names, as the dispatcher adds it to the job
-   it hands over: the one worker/prompt-cases.json's tagging cases are
-   asked with. *)
-let schema () = Check.at (params "tagging-claim") [ "schema" ]
-
 (* A tagging job of both the schema's categories, about [about]. *)
 let tagging_job ?about (w : W.t) name =
-  let schema = schema () in
-  mark_job ?about w.own name
-    (`Assoc
-       [
-         ("motivation", str "tagging");
-         ("schemaId", Check.at schema [ "id" ]);
-         ("categories", strs [ "Claim"; "Evidence" ]);
-         ("schema", schema);
-       ])
-
-(* Where a tagging job stands as it begins [category], with [processed] of
-   its two categories behind it. *)
-let at category processed completed =
-  [
-    ("current", `Assoc [ ("kind", str "category"); ("value", str category) ]);
-    ("processed", `Int processed);
-    ("total", `Int 2);
-    ("completedItems", `List completed);
-  ]
-
-let found_in category count =
-  `Assoc [ ("value", str category); ("foundCount", `Int count) ]
-
-let analyzing ?extra job percentage =
-  report ?extra job percentage (code "analyzing-tags")
-
-let creating job count =
-  report job 60
-    (code ~members:[ ("count", `Int count) ] "creating-tag-annotations")
-
-let complete job count =
-  report job 100
-    (code
-       ~members:[ ("count", `Int count); ("motivation", str "tagging") ]
-       "complete-created")
+  mark_job ?about w.own name (tagging (argument ()) [ "Claim"; "Evidence" ])
 
 let each_category (w : W.t) =
   let job = tagging_job w "tagging" in
   let resource_id = job.resource_id in
-  Ollama.script w.ollama
-    [
-      answer
-        (Yojson.Safe.to_string
-           (`List [ `Assoc [ ("exact", str "London was wrong.") ] ]));
-      answer "[]";
-    ];
+  Ollama.script w.ollama [ proposed [ exact "London was wrong." ]; proposed [] ];
   let served = W.start w in
   let completion = settled served job in
   expect_generations w.ollama
@@ -95,29 +48,7 @@ let each_category (w : W.t) =
                      ~prefix:
                        "The program was na\u{00ef}ve by later standards, and \
                         London ignored it. "
-                     ~suffix:"\n"
-                     ~body:
-                       (* Two bodies: the category, and the schema it is a
-                          category of. *)
-                       (`List
-                          [
-                            `Assoc
-                              [
-                                ("type", str "TextualBody");
-                                ("value", str "Claim");
-                                ("purpose", str "tagging");
-                                ("format", str "text/plain");
-                                ("language", str "en");
-                              ];
-                            `Assoc
-                              [
-                                ("type", str "TextualBody");
-                                ("value", str "argument");
-                                ("purpose", str "classifying");
-                                ("format", str "text/plain");
-                              ];
-                          ])
-                     "London was wrong.";
+                     ~suffix:"\n" ~body:(tagged "Claim") "London was wrong.";
                  ] );
            ];
        ])
@@ -126,7 +57,7 @@ let each_category (w : W.t) =
      and none is ever said to be finished. *)
   let next = code_points text in
   let claim =
-    ("Claim", cursor ~next ~size:2621 ~found:1 ~emitted:1 ~errors:0)
+    ("Claim", cursor ~next ~size:claim_piece ~found:1 ~emitted:1 ~errors:0)
   in
   Check.equal "its checkpoints"
     (`List
@@ -135,33 +66,31 @@ let each_category (w : W.t) =
          checkpoint job
            [
              claim;
-             ("Evidence", cursor ~next ~size:2618 ~found:0 ~emitted:0 ~errors:0);
+             ( "Evidence",
+               cursor ~next ~size:evidence_piece ~found:0 ~emitted:0 ~errors:0
+             );
            ];
        ])
     (checkpoints served);
   expect_progress served job
     [
       report job 10 (code "loading");
-      analyzing job 30;
-      analyzing job 30 ~extra:(at "Claim" 0 []);
-      creating job 1;
-      analyzing job 45 ~extra:(at "Evidence" 1 [ found_in "Claim" 1 ]);
+      analyzing_tags job 30;
+      analyzing_tags job 30 ~extra:(on_category "Claim" 0 []);
+      creating_tags job 1;
+      analyzing_tags job 45
+        ~extra:(on_category "Evidence" 1 [ found_in "Claim" 1 ]);
       (* Said after each category's answer, with what the job has made so
          far. *)
-      creating job 1;
-      complete job 1;
+      creating_tags job 1;
+      complete_created job "tagging" 1;
     ];
   Check.equal "its completion"
-    (identified job
+    (completed job
        [
-         ( "result",
-           `Assoc
-             [
-               ("found", `Int 1);
-               ("persisted", `Int 1);
-               ("byCategory", `Assoc [ ("Claim", `Int 1) ]);
-             ] );
-         ("durability", str "acknowledged");
+         ("found", `Int 1);
+         ("persisted", `Int 1);
+         ("byCategory", `Assoc [ ("Claim", `Int 1) ]);
        ])
     completion
 
@@ -171,17 +100,11 @@ let at_the_boundary (w : W.t) =
   let resource_id = job.resource_id in
   (* The text is two pieces for each category. No answer names a marker of
      the overlap. *)
-  let found marker =
-    answer
-      (Yojson.Safe.to_string
-         (`List
-            [ `Assoc [ ("exact", str (Printf.sprintf "marker %d" marker)) ] ]))
-  in
-  Ollama.script w.ollama [ found 103; found 702; found 205; found 801 ];
+  Ollama.script w.ollama
+    [ finding [ 103 ]; finding [ 702 ]; finding [ 205 ]; finding [ 801 ] ];
   let served = W.start w in
   let completion = settled served job in
-  Check.equal "the generations its model was asked for" (`Int 4)
-    (`Int (Dynarray.length w.ollama.generations));
+  expect_generations_count w 4;
   expect_sequence served
     [
       "emit job:claim";
@@ -201,10 +124,7 @@ let at_the_boundary (w : W.t) =
     ];
   Check.equal "the sizes of its batches"
     (`List [ `Int 1; `Int 1; `Int 1; `Int 1 ])
-    (`List
-       (List.map
-          (fun (c : W.commit) -> `Int (List.length c.annotations))
-          (Dynarray.to_list w.own.commits)));
+    (sizes_of_batches w);
   (* For each category the first piece ends where the fifth paragraph does,
      and the second starts 256 code points before that. *)
   let boundary = 2147 and length = code_points long_text in
@@ -231,31 +151,26 @@ let at_the_boundary (w : W.t) =
   expect_progress served job
     [
       report job 10 (code "loading");
-      analyzing job 30;
+      analyzing_tags job 30;
       (* Claim: begun, its first piece, the boundary, its second piece. The
          second is the text's last, so no boundary follows it. *)
-      analyzing job 30 ~extra:(at "Claim" 0 []);
-      creating job 1;
-      analyzing job 38 ~extra:(at "Claim" 0 []);
-      creating job 2;
+      analyzing_tags job 30 ~extra:(on_category "Claim" 0 []);
+      creating_tags job 1;
+      analyzing_tags job 38 ~extra:(on_category "Claim" 0 []);
+      creating_tags job 2;
       (* Evidence: the same four. *)
-      analyzing job 45 ~extra:(at "Evidence" 1 claimed);
-      creating job 3;
-      analyzing job 53 ~extra:(at "Evidence" 1 claimed);
-      creating job 4;
-      complete job 4;
+      analyzing_tags job 45 ~extra:(on_category "Evidence" 1 claimed);
+      creating_tags job 3;
+      analyzing_tags job 53 ~extra:(on_category "Evidence" 1 claimed);
+      creating_tags job 4;
+      complete_created job "tagging" 4;
     ];
   Check.equal "its completion"
-    (identified job
+    (completed job
        [
-         ( "result",
-           `Assoc
-             [
-               ("found", `Int 4);
-               ("persisted", `Int 4);
-               ("byCategory", `Assoc [ ("Claim", `Int 2); ("Evidence", `Int 2) ]);
-             ] );
-         ("durability", str "acknowledged");
+         ("found", `Int 4);
+         ("persisted", `Int 4);
+         ("byCategory", `Assoc [ ("Claim", `Int 2); ("Evidence", `Int 2) ]);
        ])
     completion
 

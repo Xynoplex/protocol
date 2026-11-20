@@ -6,15 +6,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let model = (List.hd W.ollama_engines).model
-let marker n = `Assoc [ ("exact", str (Printf.sprintf "marker %d" n)) ]
-
-(* What the model says when it finds each marker of [markers]. *)
-let said markers = Yojson.Safe.to_string (`List (List.map marker markers))
-
-(* An answer that finds each marker of [markers]. *)
-let found markers = answer (said markers)
-
 (* A window at which [long_text] is cut at 400 tokens, and its first piece,
    ended at a paragraph break, is three paragraphs. *)
 let window = 1467
@@ -27,20 +18,20 @@ let halves (w : W.t) =
     ([
        (* The first piece, of 1441 code points, 361 tokens, though it was cut
           at 400: the model runs out of room partway through its answer. *)
-       Ollama.Answer { response = said [ 103 ]; stop = Cut_off; usage = None };
+       cut_off (proposing [ marker 103 ]);
        (* The same text again in four pieces of at most 180 tokens: half the
           piece's own 361, and not half the 400 it was cut at. *)
-       found [ 103 ];
-       found [ 205 ];
-       found [];
-       found [ 304 ];
+       finding [ 103 ];
+       finding [ 205 ];
+       finding [];
+       finding [ 304 ];
        (* The rest of the text, in pieces of 180 tokens, the size the halves
           came back whole at. Marker 304 and marker 404 are each seen
           twice. *)
-       found [ 304; 404 ];
-       found [ 404 ];
+       finding [ 304; 404 ];
+       finding [ 404 ];
      ]
-    @ List.init 6 (fun _ -> found []));
+    @ List.init 6 (fun _ -> finding []));
   let served = W.start w in
   let completion = settled served job in
   expect_generations w.ollama
@@ -90,34 +81,21 @@ let halves (w : W.t) =
            (fun next -> at next ~size:180 ~found:6 ~emitted:4)
            [ 1987; 2147; 2548; 2949; 3109; 3510; code_points long_text ]))
     (checkpoints served);
-  let creating n =
-    report job 60 (code ~members:[ ("count", `Int n) ] "creating-annotations")
-  in
   expect_progress served job
     ([
        report job 10 (code "loading");
        report job 30 (code "analyzing");
-       creating 3;
+       creating job 3;
        report job 39 (code "analyzing");
      ]
     @ List.concat_map
         (fun percentage ->
-          [ creating 4; report job percentage (code "analyzing") ])
+          [ creating job 4; report job percentage (code "analyzing") ])
         [ 42; 45; 47; 50; 53; 54; 57 ]
-    @ [
-        creating 4;
-        report job 100
-          (code
-             ~members:[ ("count", `Int 4); ("motivation", str "highlighting") ]
-             "complete-created");
-      ]);
+    @ [ creating job 4; complete_created job "highlighting" 4 ]);
   (* What the cut-off answer carried is counted nowhere. *)
   Check.equal "its completion"
-    (identified job
-       [
-         ("result", `Assoc [ ("found", `Int 6); ("persisted", `Int 4) ]);
-         ("durability", str "acknowledged");
-       ])
+    (completed job [ ("found", `Int 6); ("persisted", `Int 4) ])
     completion
 
 let tests implementations =
