@@ -16,5 +16,6 @@ let suite : Xynolog_conformance.Suite.t =
             Prompts.tests;
             Knowledge_bases.tests;
             Cancel.tests;
+            On_anthropic.tests;
           ]);
   }
