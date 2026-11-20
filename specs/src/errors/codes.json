@@ -289,6 +289,14 @@
         "docs": "What the request needs to reach did not answer: the knowledge base, its issuer, or a codespace's forward."
       },
       {
+        "code": "control.instance-in-use",
+        "docs": "An instance of the name the run gives already runs on this machine for its target, whichever control server or command started it. Nothing was started."
+      },
+      {
+        "code": "control.instance-not-found",
+        "docs": "No run of an instance of the name the request gives is in flight on this machine for its target: none was started, or its run has been answered."
+      },
+      {
         "code": "control.confirmation-required",
         "docs": "The request would destroy something, and does not state that a person confirmed it."
       },

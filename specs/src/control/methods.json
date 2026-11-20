@@ -144,6 +144,33 @@
       "exclusive": true,
       "sends": [],
       "docs": "Where a machine document is: xynolog settings <document> --path."
+    },
+    {
+      "name": "service.host",
+      "params": "https://xynolog.org/protocol/ServiceHostParams.json",
+      "result": "https://xynolog.org/protocol/ServiceHostResult.json",
+      "exclusive": false,
+      "sends": [],
+      "docs": "Where this machine and a run's instance meet under a runtime: the host address an instance's ports are published on and its dials of this machine go to. A caller asks it before it writes an instance's document."
+    },
+    {
+      "name": "service.run",
+      "params": "https://xynolog.org/protocol/ServiceRunParams.json",
+      "result": "https://xynolog.org/protocol/ServiceRunResult.json",
+      "exclusive": true,
+      "sends": [
+        "notifications/serviceStarted",
+        "notifications/serviceOutput"
+      ],
+      "docs": "Run one instance of a knowledge base's own service once, from the image its stack documents name, unsupervised, on the caller's document, arguments, environment and mounts, and answer when it exits: xynolog run. Exclusive until its container runs; the wait for its exit is not."
+    },
+    {
+      "name": "service.signal",
+      "params": "https://xynolog.org/protocol/ServiceSignalParams.json",
+      "result": "https://xynolog.org/protocol/ServiceSignalResult.json",
+      "exclusive": false,
+      "sends": [],
+      "docs": "Send a run's instance SIGTERM, then SIGKILL if it outlives 15 seconds, or SIGKILL at once: xynolog signal."
     }
   ],
   "notifications": [
@@ -164,6 +191,18 @@
       "from": "launcher",
       "params": "https://xynolog.org/protocol/LogRecord.json",
       "docs": "A line a followed service wrote."
+    },
+    {
+      "name": "notifications/serviceStarted",
+      "from": "launcher",
+      "params": "https://xynolog.org/protocol/ServiceStarted.json",
+      "docs": "A run's instance is running."
+    },
+    {
+      "name": "notifications/serviceOutput",
+      "from": "launcher",
+      "params": "https://xynolog.org/protocol/ServiceOutput.json",
+      "docs": "A line a run's instance wrote."
     },
     {
       "name": "notifications/cancelled",

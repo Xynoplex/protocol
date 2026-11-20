@@ -723,7 +723,9 @@ let load root =
   in
   let client_types_rules = Client_types_rules.refusals ~ids ~files ~read_json in
   let protocol_rules = Protocol_rules.refusals ~ids ~read_json in
-  let control_rules = Control_rules.refusals ~ids tables.control_methods in
+  let control_rules =
+    Control_rules.refusals ~ids ~read_json tables.control_methods
+  in
   let retry_rules =
     Retry_rules.refusals tables.retry_rules tables.retry_cases
   in

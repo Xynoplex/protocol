@@ -123,10 +123,20 @@ let corpus_case = "conformance/ConformanceCase.json"
 let driver_line = "conformance/ConformanceDriverLine.json"
 let corpus_models = [ corpus_case; driver_line ]
 
-(* The schemas a corpus model reads in the table dialect through a [$ref]:
-   its own, and the steps', fetches' and failures' it names. *)
+(* The implementations manifest (ConformanceImplementations.json): the file
+   a run of the harness is given with --implementations. Its schema, from
+   specs/src, is read in the table dialect and has a model, named as the
+   corpus's are, though it is neither a table's nor the corpus's. *)
+let implementations = "conformance/ConformanceImplementations.json"
+
+(* Every model of the conformance harness's own files: the corpus's and the
+   manifest's. *)
+let harness_models = corpus_models @ [ implementations ]
+
+(* The schemas a harness model reads in the table dialect through a [$ref]:
+   its own, and the steps', fetches' and failures' the corpus's name. *)
 let corpus_schemas =
-  corpus_models
+  harness_models
   @ [
       "conformance/ConformanceStep.json";
       "conformance/ConformanceBusFetch.json";
