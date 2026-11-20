@@ -553,6 +553,31 @@
         "field"
       ],
       "additionalProperties": false
+    },
+    "stamps": {
+      "description": "The members of an emitted payload the gateway writes.",
+      "type": "object",
+      "properties": {
+        "meaning": {
+          "$ref": "#/properties/docs/properties/eventName/items/oneOf/0"
+        },
+        "emitter": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The member that names the emitter."
+        },
+        "roles": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The member that holds its token's roles."
+        }
+      },
+      "required": [
+        "meaning",
+        "emitter",
+        "roles"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -565,7 +590,8 @@
     "kind",
     "audience",
     "effect",
-    "trace"
+    "trace",
+    "stamps"
   ],
   "additionalProperties": false
 }

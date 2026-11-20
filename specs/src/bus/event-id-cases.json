@@ -1,0 +1,110 @@
+{
+  "$comment": "AUTHORITY for the id of each `bus-event` message the gateway writes (TRANSPORT-HTTP.md § Event ids), which BusEventMessage's `id` admits in three forms. THE RULE takes the first of these that applies. A frame with a `scope` whose payload carries an integer `metadata.sequenceNumber` is persisted: its id is `p-<scope>-<sequenceNumber>` (PersistedEventId). A frame with a `correlationId` is a reply: its id is `e-<channel>:<correlationId>` (ReplyEventId). Any other frame is ephemeral: its id is `e-` and the UUID the frame was given when it was published, the same on every connection that carries it and through every replica (EphemeralEventId). The frames the gateway makes for one connection alone, a `bus:resume-gap`, are ephemeral, each with an id of its own. A case gives a frame, as BusFrame states one, and the id it is carried under.",
+  "cases": [
+    {
+      "why": "A scoped frame of the record, with its sequence: persisted.",
+      "frame": {
+        "channel": "mark:added",
+        "payload": {
+          "metadata": {
+            "sequenceNumber": 7
+          }
+        },
+        "scope": "res-1"
+      },
+      "id": {
+        "persisted": "p-res-1-7"
+      }
+    },
+    {
+      "why": "A persisted frame is persisted even when it carries a correlationId.",
+      "frame": {
+        "channel": "mark:added",
+        "payload": {
+          "metadata": {
+            "sequenceNumber": 8
+          }
+        },
+        "correlationId": "c-1",
+        "scope": "res-1"
+      },
+      "id": {
+        "persisted": "p-res-1-8"
+      }
+    },
+    {
+      "why": "A scope whose own id holds hyphens is the scope whole.",
+      "frame": {
+        "channel": "mark:added",
+        "payload": {
+          "metadata": {
+            "sequenceNumber": 1
+          }
+        },
+        "scope": "res-a-b"
+      },
+      "id": {
+        "persisted": "p-res-a-b-1"
+      }
+    },
+    {
+      "why": "A frame with a correlationId and no scope: a reply.",
+      "frame": {
+        "channel": "browse:resource-result",
+        "payload": {},
+        "correlationId": "c-2"
+      },
+      "id": {
+        "reply": "e-browse:resource-result:c-2"
+      }
+    },
+    {
+      "why": "A scoped frame without a sequence, with a correlationId: a reply.",
+      "frame": {
+        "channel": "mark:create-ok",
+        "payload": {},
+        "correlationId": "c-3",
+        "scope": "res-1"
+      },
+      "id": {
+        "reply": "e-mark:create-ok:c-3"
+      }
+    },
+    {
+      "why": "A sequence on a frame with no scope does not persist it: a reply.",
+      "frame": {
+        "channel": "mark:added",
+        "payload": {
+          "metadata": {
+            "sequenceNumber": 3
+          }
+        },
+        "correlationId": "c-4"
+      },
+      "id": {
+        "reply": "e-mark:added:c-4"
+      }
+    },
+    {
+      "why": "An unscoped frame with no correlationId: ephemeral.",
+      "frame": {
+        "channel": "beckon:focus",
+        "payload": {}
+      },
+      "id": {
+        "ephemeral": true
+      }
+    },
+    {
+      "why": "A scoped frame with neither a sequence nor a correlationId: ephemeral.",
+      "frame": {
+        "channel": "beckon:focus",
+        "payload": {},
+        "scope": "res-1"
+      },
+      "id": {
+        "ephemeral": true
+      }
+    }
+  ]
+}

@@ -41,6 +41,11 @@
             "type": "string",
             "minLength": 1,
             "description": "What the attribute says."
+          },
+          "default": {
+            "type": "string",
+            "pattern": "\\{service\\}",
+            "description": "Its value when nothing says another, with `{service}` the service's name."
           }
         },
         "required": [

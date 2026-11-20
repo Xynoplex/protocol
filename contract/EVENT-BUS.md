@@ -143,7 +143,7 @@ if let Some(roles) = principal.roles.as_ref().filter(|r| !r.is_empty()) {
 
 In the schema, `_userId` is **optional** with the canonical description "Authenticated user's DID, injected by the /bus/emit gateway. Clients do not set this." Handlers reading the channel can rely on `_userId` being present for any payload that came through the gateway — and treat its absence as a malformed event: the Stower refuses a `yield:create` that carries none.
 
-The underscore prefix is the convention's marker — anything starting with `_` on a payload is gateway plumbing, not consumer-supplied data. This applies uniformly across every command schema that needs auth context: `MarkCommitCommand`, `MarkArchiveCommand`, `YieldCreateCommand`, `YieldCloneCreateCommand`, `JobCompleteCommand`, etc.
+The underscore prefix is the convention's marker — anything starting with `_` on a payload is gateway plumbing, not consumer-supplied data. The `stamps` of [`bus/registry.json`](../specs/src/bus/registry.json) name the two members, and its `trace` the third, which carries a relayed frame's trace. This applies uniformly across every command schema that needs auth context: `MarkCommitCommand`, `MarkArchiveCommand`, `YieldCreateCommand`, `YieldCloneCreateCommand`, `JobCompleteCommand`, etc.
 
 ## Correlation: request/response over a fan-out bus
 
@@ -264,7 +264,7 @@ With the bus log switched on, every cross-transport event prints one grep-friend
 [bus GET] content trace=8f3ca4ed {resourceId}
 ```
 
-A line is the operation, the channel (`content` for an upload or a read of content), and then `scope=` (the resource a frame is about), `cid=` (the first eight characters of the correlation id) and `trace=` (the first eight of the active trace's id), each written only where there is one. The payload is the last thing on it.
+A line is the operation, the channel (`content` for an upload or a read of content), and then `scope=` (the resource a frame is about), `cid=` (the first eight characters of the correlation id) and `trace=` (the first eight of the active trace's id), each written only where there is one. The payload is the last thing on it. [`service-telemetry/log-lines.json`](../specs/src/service-telemetry/log-lines.json) states the line's form.
 
 **No line holds a credential.** Every bus log writes the value of a member whose whole name is one a credential goes by as `[withheld]`, wherever in a payload the member is and whatever its value is. The names are a short list, the `names` of [`specs/src/bus/log-cases.json`](../specs/src/bus/log-cases.json). One is `token`, which is what the bus's own payloads name the one credential they declare: the token a resource is cloned by (`yield:clone-resource-requested`, `yield:clone-create`, and the `response` of `yield:clone-token-generated`). The rest are the names a credential has elsewhere (`password`, `apiKey`, `refreshToken` and `authorization` among them): some payloads take any member, and a credential put in one is withheld under such a name too. A name is matched whole and in the same case, so a member whose name only contains one (`maxTokens`, `apiKeyEnv`) is written as it is, and so is everything else. That table is the rule, and each implementation's tests run it.
 

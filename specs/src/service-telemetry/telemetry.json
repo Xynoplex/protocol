@@ -36,7 +36,8 @@
         "weaver",
         "worker"
       ],
-      "meaning": "The service's name: `xynolog-<service>`, or what `OTEL_SERVICE_NAME` says."
+      "meaning": "The service's name: what `OTEL_SERVICE_NAME` says, or, when it is unset, `default` with `{service}` the service's name.",
+      "default": "xynolog-{service}"
     },
     {
       "key": "service.version",
