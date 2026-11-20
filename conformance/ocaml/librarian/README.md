@@ -188,11 +188,11 @@ named in an implementation manifest. This suite does not build consumer code.
 From the repository's root, with the four store variables set:
 
 ```bash
-dune build ./conformance/ocaml
+dune build --root conformance/ocaml
 ```
 
 ```bash
-./_build/default/conformance/ocaml/bin/main.exe librarian --implementations /absolute/path/to/implementations.json
+./conformance/ocaml/_build/default/bin/main.exe librarian --implementations /absolute/path/to/implementations.json
 ```
 
 Review the setup requirements above before running: the suite clears the

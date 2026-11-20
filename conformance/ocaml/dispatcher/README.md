@@ -107,11 +107,11 @@ named in an implementation manifest. This suite does not build consumer
 code. `nats-server` must be on `PATH`. From the repository's root:
 
 ```bash
-dune build ./conformance/ocaml
+dune build --root conformance/ocaml
 ```
 
 ```bash
-./_build/default/conformance/ocaml/bin/main.exe dispatcher --implementations /absolute/path/to/implementations.json
+./conformance/ocaml/_build/default/bin/main.exe dispatcher --implementations /absolute/path/to/implementations.json
 ```
 
 The suite runs four workers unless `-j` says otherwise.
