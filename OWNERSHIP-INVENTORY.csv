@@ -278,6 +278,7 @@ conformance/ocaml/harness/call.ml,Portable conformance,xynolog/protocol,Protocol
 conformance/ocaml/harness/case.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/census.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/check.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/harness/client_proxy.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/dispatcher.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/dispatcher_world.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/harness/dune,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.

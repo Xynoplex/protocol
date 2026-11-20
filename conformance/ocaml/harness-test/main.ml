@@ -162,6 +162,125 @@ let stop_ends_kept_alive () =
 
 let outlives_its_bound () = Run.sleep 30.0
 
+(* ── The client proxy, in front of a stand-in ───────────────────────── *)
+
+let has needle text =
+  let n = String.length needle in
+  let rec at i =
+    i + n <= String.length text && (String.sub text i n = needle || at (i + 1))
+  in
+  at 0
+
+let port_of (proxy : Client_proxy.t) =
+  Option.get (Uri.port (Uri.of_string proxy.origin))
+
+(* [body] run on a proxy in front of a stand-in that answers with
+   [handler]. *)
+let behind handler body =
+  let server = Serve.start handler in
+  Fun.protect ~finally:server.stop @@ fun () ->
+  let proxy = Client_proxy.start server.origin in
+  Fun.protect ~finally:(fun () -> Client_proxy.close proxy) @@ fun () ->
+  body proxy
+
+let ok _ =
+  Serve.Reply
+    {
+      Serve.status = 200;
+      headers = [ ("content-type", "application/json") ];
+      body = {|{"ok":true}|};
+    }
+
+let closes proxy (r : Client_proxy.request) =
+  Client_proxy.until proxy "its exchange to close" (fun () ->
+      if r.closed then Some () else None)
+
+let unanswered_is_empty () =
+  behind ok @@ fun proxy ->
+  Client_proxy.leave_unanswered proxy (fun _ -> true) 1;
+  check "a request left unanswered is answered with no byte"
+    (raw_get (port_of proxy) "/" = "");
+  let left = Client_proxy.next proxy "the request" (fun _ -> true) in
+  closes proxy left;
+  check "it records no answer" (left.status = None && left.answered = None);
+  check "the next is passed on" ((Call.call proxy.origin "GET" "/").status = 200)
+
+let lost_is_empty () =
+  behind ok @@ fun proxy ->
+  Client_proxy.lose_answer proxy (fun _ -> true) 1;
+  check "a request whose answer is lost is answered with no byte"
+    (raw_get (port_of proxy) "/" = "");
+  let lost = Client_proxy.next proxy "the request" (fun _ -> true) in
+  closes proxy lost;
+  check "it records the stand-in's whole answer"
+    (lost.status = Some 200 && lost.answer_lost
+    && lost.answer = Some (`Assoc [ ("ok", `Bool true) ]));
+  check "the next is passed on"
+    ((Call.call proxy.origin "GET" "/").status = 200
+    && not (Dynarray.get_last proxy.requests).answer_lost)
+
+let events_stream events =
+  Serve.Stream
+    {
+      status = 200;
+      headers = [ ("content-type", "text/event-stream") ];
+      events;
+    }
+
+let rechunked () =
+  behind (fun _ ->
+      events_stream (fun write ->
+          write "event: ping\ndata: {}\n\n";
+          write "event: bus-event\nid: e-1\ndata: {\"channel\":\"c\"}\n\n"))
+  @@ fun proxy ->
+  Client_proxy.rechunk proxy 1;
+  let text = raw_get (port_of proxy) "/events" in
+  check "each byte is a chunk of its own" (has "\r\n1\r\ne\r\n1\r\nv\r\n" text);
+  check "the stream ends with its last chunk" (has "\r\n0\r\n\r\n" text);
+  let stream = Client_proxy.next proxy "the stream" (fun _ -> true) in
+  closes proxy stream;
+  match Dynarray.to_list stream.events with
+  | [ ping; frame ] ->
+      check "it records each event as the stand-in wrote it"
+        (ping.event = "ping" && ping.data = "{}" && ping.id = None
+       && frame.event = "bus-event" && frame.id = Some "e-1"
+        && frame.data = {|{"channel":"c"}|});
+      check "each after the stream was answered, in order"
+        (Option.get stream.answered < ping.at && ping.at < frame.at)
+  | events ->
+      failwith
+        (Printf.sprintf "it recorded %d events, not 2" (List.length events))
+
+let cut_is_abrupt () =
+  let never, _ = Eio.Promise.create () in
+  behind (fun _ ->
+      events_stream (fun write ->
+          write "event: ping\ndata: {}\n\n";
+          Eio.Promise.await never))
+  @@ fun proxy ->
+  Eio.Switch.run @@ fun sw ->
+  let flow =
+    Eio.Net.connect ~sw (Run.net ())
+      (`Tcp (Eio.Net.Ipaddr.V4.loopback, port_of proxy))
+  in
+  Eio.Flow.copy_string "GET /events HTTP/1.1\r\nhost: x\r\n\r\n" flow;
+  let input = Eio.Buf_read.of_flow ~max_size:max_int flow in
+  let rec until_event () =
+    if Eio.Buf_read.line input <> "event: ping" then until_event ()
+  in
+  Eio.Time.with_timeout_exn (Run.clock ()) 5.0 until_event;
+  let stream = Client_proxy.next proxy "the stream" (fun _ -> true) in
+  Client_proxy.cut proxy;
+  let rest =
+    Eio.Time.with_timeout_exn (Run.clock ()) 5.0 (fun () ->
+        match Eio.Buf_read.take_all input with
+        | text -> text
+        | exception Eio.Io _ -> "")
+  in
+  check "the cut stream ends with no last chunk"
+    (not (has "\r\n0\r\n\r\n" rest));
+  closes proxy stream
+
 (* ── OTLP ───────────────────────────────────────────────────────────── *)
 
 module Proto = Opentelemetry_proto
@@ -459,6 +578,15 @@ let tests _env =
         partly_answered;
       Testo.create ~category:[ "serve" ]
         "ends a kept-alive connection when it stops" stop_ends_kept_alive;
+      Testo.create ~category:[ "client proxy" ]
+        "ends a request it leaves unanswered with no byte" unanswered_is_empty;
+      Testo.create ~category:[ "client proxy" ]
+        "records an answer it keeps from the client, and writes none of it"
+        lost_is_empty;
+      Testo.create ~category:[ "client proxy" ]
+        "passes a stream on a byte at a time, and records each event" rechunked;
+      Testo.create ~category:[ "client proxy" ]
+        "ends a stream it cuts with no last chunk" cut_is_abrupt;
       Testo.create ~category:[ "runner" ] ~max_duration:2.0
         ~expected_outcome:(Should_fail "it sleeps past its bound")
         "is stopped when it outlives its bound" outlives_its_bound;
