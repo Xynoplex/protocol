@@ -20,24 +20,6 @@ let broadcast = "beckon:focus"
 (* An operation's request whose payload validates with resourceId alone. *)
 let request = "browse:resource-requested"
 
-let described =
-  `Assoc
-    [
-      ( "response",
-        `Assoc
-          [
-            ( "resource",
-              `Assoc
-                [
-                  ("@context", `String "https://schema.org/");
-                  ("@id", `String "r");
-                  ("name", `String "r");
-                  ("representations", `List []);
-                ] );
-            ("lastSequence", `Int 1);
-          ] );
-    ]
-
 (* A command a watcher can pick out by [marker]. *)
 let command marker =
   `Assoc
@@ -245,14 +227,14 @@ let request_repeated (w : World.t) =
       (`Assoc
          [
            ("channel", `String result);
-           ("payload", described);
+           ("payload", described ());
            ("correlationId", `String correlation_id);
          ])
   in
   status "the reply" 202 reply;
   let delivered = Bus_stream.frame replies result ~matches:ours in
   Check.equal "the delivered reply"
-    (Check.at described [ "response" ])
+    (Check.at (described ()) [ "response" ])
     (Check.at delivered.payload [ "response" ]);
   exactly_one "the request's frames" (settled heard request ours)
 

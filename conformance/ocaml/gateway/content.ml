@@ -349,12 +349,7 @@ let paths_called calls =
 
 let not_an_id { world = w; _ } =
   let token = World.person w "reader" in
-  let kind =
-    List.find
-      (fun (k : Xynolog_protocol.Tables.Identifiers_kinds.kinds_item) ->
-        k.schema = "ResourceId")
-      (Protocol.tables ()).identifiers_kinds.kinds
-  in
+  let kind = Protocol.identifiers "ResourceId" in
   (* Left out: the empty string, . and .., which a URL parser resolves before
      the request is sent, so they reach no route. *)
   let named =
