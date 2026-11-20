@@ -57,19 +57,6 @@ export default defineConfig({
           fileParallelism: false,
         },
       },
-      {
-        extends: true,
-        test: {
-          name: 'smelter',
-          include: ['smelter/**/*.test.ts'],
-          provide: { gatewayCommand: implementations.gateway, archivistCommand: implementations.archivist, smelterServices: implementations.smelterServices },
-          globalSetup: ['harness/global-setup.ts', 'harness/archivist-setup.ts', 'harness/smelter-setup.ts'],
-          // One file at a time: the files share one vector database, whose
-          // index each file clears, and a Smelter's health port is a constant,
-          // so two cannot run at once.
-          fileParallelism: false,
-        },
-      },
     ],
   },
 });

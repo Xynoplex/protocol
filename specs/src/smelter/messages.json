@@ -1,0 +1,54 @@
+{
+  "$comment": "AUTHORITY for the words of the Smelter's refusals and of the messages it logs that a reader of its output relies on (SMELTER.md), word for word. A text's `{name}` is filled as the row's `situation` says, and nothing else in it varies. `refusals` is each refusal of an operation, the `message` of its failure. `logged` is each message the Smelter logs, at its `level`, with the facts named in `fields`, each of the form given, and the facts named in `carries` beside them.",
+  "refusals": [
+    {
+      "name": "rebuild-incomplete",
+      "operation": "smelt:rebuild-anchors",
+      "situation": "A rebuild of anchored text that could not do every resource it set out to (SMELTER.md § Rebuild): `{failed}` is how many it could not do, and `{total}` how many it set out to do, each in decimal digits.",
+      "message": "{failed} of {total} resources failed to re-anchor: see the Smelter's log"
+    }
+  ],
+  "logged": [
+    {
+      "name": "not-indexed",
+      "level": "warn",
+      "situation": "A resource the Smelter decided not to index (SMELTER.md § What it decides): `{resourceId}` is the resource, `{reason}` the `reason` its `smelt:settled` carries, `{mediaType}` the media type its bytes were read as, and `{checksum}` the checksum of those bytes.",
+      "message": "Smelter did not index resource",
+      "fields": {
+        "resourceId": "{resourceId}",
+        "reason": "{reason}",
+        "contentType": "{mediaType}",
+        "contentChecksum": "{checksum}"
+      },
+      "carries": []
+    },
+    {
+      "name": "content-unread",
+      "level": "warn",
+      "situation": "A resource whose bytes the Smelter could not read (SMELTER.md § What it decides): `{resourceId}` is the resource. `error` says why.",
+      "message": "Smelter could not read resource content",
+      "fields": {
+        "resourceId": "{resourceId}"
+      },
+      "carries": [
+        "error"
+      ]
+    },
+    {
+      "name": "event-failed",
+      "level": "error",
+      "situation": "An event the Smelter could not apply because its embedding provider failed a request (SMELTER.md § The embedding provider): `{resourceId}` is the event's resource, `{provider}` the provider's `type` (EmbeddingConfig), `{model}` the model it was asked for, and `{status}` the status it answered with. `slice` is which request of the batch it was, and `error` says why.",
+      "message": "Smelter failed to process event",
+      "fields": {
+        "resourceId": "{resourceId}",
+        "provider": "{provider}",
+        "model": "{model}",
+        "status": "{status}"
+      },
+      "carries": [
+        "slice",
+        "error"
+      ]
+    }
+  ]
+}

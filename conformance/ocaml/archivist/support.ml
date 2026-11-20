@@ -136,28 +136,6 @@ let persisted_id frame =
 (* An agent, named by its DID alone. *)
 let named did = `Assoc [ ("@id", str did) ]
 
-(* Whether [actual] holds what [partial] states, as toMatchObject holds it:
-   each member an object states held in turn, a list's items held one for
-   one, as many as it has, and anything else equal. *)
-let rec alike (partial : Yojson.Safe.t) (actual : Yojson.Safe.t) =
-  match (partial, actual) with
-  | `Assoc members, `Assoc _ ->
-      List.for_all
-        (fun (key, value) ->
-          match Protocol.at actual [ key ] with
-          | Some held -> alike value held
-          | None -> false)
-        members
-  | `List items, `List held ->
-      List.length items = List.length held && List.for_all2 alike items held
-  | _ -> Check.canonical partial = Check.canonical actual
-
-let like what partial actual =
-  if not (alike partial actual) then
-    failwith
-      (Printf.sprintf "%s: %s does not hold %s" what (Check.shown actual)
-         (Check.shown partial))
-
 (* A text annotation's parts, as mark:create-request takes them. *)
 let highlight resource_id exact start =
   `Assoc

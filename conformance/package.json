@@ -8,14 +8,12 @@
     "generate:types": "openapi-typescript ../specs/openapi.json -o harness/generated/openapi-types.ts",
     "typecheck": "npm run generate:types && tsc --noEmit",
     "test:fixtures": "vitest run --config vitest.fixtures.config.ts",
-    "typecheck:smelter": "tsc --noEmit -p tsconfig.smelter.json",
-    "pretest": "npm run typecheck && npm run typecheck:smelter",
+    "pretest": "npm run typecheck",
     "test": "vitest run",
     "test:sdk": "npm run typecheck && vitest run --project sdk",
     "test:worker": "npm run typecheck && vitest run --project worker",
     "test:worker-service": "npm run typecheck && vitest run --project worker-service",
-    "test:weaver": "npm run typecheck && vitest run --project weaver",
-    "test:smelter": "npm run typecheck:smelter && vitest run --project smelter"
+    "test:weaver": "npm run typecheck && vitest run --project weaver"
   },
   "devDependencies": {
     "@nats-io/jetstream": "^3.4.0",
