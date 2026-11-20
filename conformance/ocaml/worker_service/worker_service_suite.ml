@@ -10,5 +10,7 @@ let suite : Xynolog_conformance.Suite.t =
       (fun implementations ->
         List.concat_map
           (fun tests -> tests implementations)
-          [ Boot.tests; Highlighting.tests; Prompts.tests ]);
+          [
+            Boot.tests; Highlighting.tests; Prompts.tests; Knowledge_bases.tests;
+          ]);
   }

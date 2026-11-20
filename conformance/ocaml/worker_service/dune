@@ -12,4 +12,6 @@
   http
   x509
   mirage-crypto-ec
+  base64
+  digestif
   testo))

@@ -220,6 +220,79 @@ let expect_generations (ollama : Ollama.t) expected =
     (`List (List.map (fun g -> member "prompt" g) asked));
   Check.equal "what its model was asked" (`List expected) (`List asked)
 
+(* The request the case [name] states a worker makes of an Anthropic model
+   of [facts]: the row of its requests for that model's two ceilings, and
+   streamed or not as [stream] says. *)
+let anthropic_request ?(facts = W.anthropic_model) ?stream name =
+  match
+    List.find_map
+      (function
+        | P.Anthropic row
+          when row.max_input_tokens = facts.max_input_tokens
+               && row.max_output_tokens = facts.max_output_tokens
+               && (stream = None || stream = Some row.stream) ->
+            Some row
+        | _ -> None)
+      (requests name)
+  with
+  | Some row -> row
+  | None ->
+      failwith
+        (Printf.sprintf
+           "worker/prompt-cases.json's %s states no request of an Anthropic \
+            model that reads %d tokens and writes %d"
+           name facts.max_input_tokens facts.max_output_tokens)
+
+(* What a detection asks of a model the stand-in Anthropic describes as it
+   does unless a case says otherwise: the tokens of answer the highlighting
+   case states. *)
+let anthropic_output () = (anthropic_request "highlighting").max_tokens
+
+(* The size, in tokens, a detection on that model cuts its text at: what its
+   unit's cursor states. *)
+let anthropic_piece = 5333
+
+(* The request a worker makes of Anthropic for the case [name], on a model
+   of [facts]: nothing more, and nothing less. A detection asks for its
+   answer format when the model answers in a schema. *)
+let message ?(facts = W.anthropic_model) ?stream model name =
+  let row = anthropic_request ~facts ?stream name in
+  `Assoc
+    ([ ("model", str model); ("max_tokens", `Int row.max_tokens) ]
+    @ (if row.stream then [ ("stream", `Bool true) ] else [])
+    @ [
+        ( "messages",
+          `List
+            [ `Assoc [ ("role", str "user"); ("content", str (prompt name)) ] ]
+        );
+      ]
+    @
+    match format_of name with
+    | Some schema when facts.structured_outputs ->
+        [
+          ( "output_config",
+            `Assoc
+              [
+                ( "format",
+                  `Assoc [ ("type", str "json_schema"); ("schema", schema) ] );
+              ] );
+        ]
+    | _ -> [])
+
+(* Hold what Anthropic was asked to [expected], request by request. What was
+   said to the model is compared first and apart, so a difference reads as
+   text. *)
+let expect_messages (anthropic : Anthropic.t) expected =
+  let asked =
+    List.map
+      (fun (r : Anthropic.request) -> Option.value r.body ~default:`Null)
+      (Dynarray.to_list anthropic.generations)
+  in
+  Check.equal "what was said to its model"
+    (`List (List.map (fun e -> member "messages" e) expected))
+    (`List (List.map (fun g -> member "messages" g) asked));
+  Check.equal "what its model was asked" (`List expected) (`List asked)
+
 (* A stand-in Ollama's answer of [response], its model done. *)
 let answer response = Ollama.Answer { response; stop = Done; usage = None }
 
@@ -317,6 +390,41 @@ let marker_highlight generator resource_id id n start =
           party recorded"
          paragraph (sentence + 1))
     exact
+
+(* JSON with the members of every object in order of their names by code
+   point, at every depth, arrays in their own order, and no white space. *)
+let rec canonical : Yojson.Safe.t -> string = function
+  | `Assoc members ->
+      "{"
+      ^ String.concat ","
+          (List.map
+             (fun (name, value) ->
+               Yojson.Safe.to_string (`String name) ^ ":" ^ canonical value)
+             (List.sort (fun (a, _) (b, _) -> String.compare a b) members))
+      ^ "}"
+  | `List items -> "[" ^ String.concat "," (List.map canonical items) ^ "]"
+  | other -> Yojson.Safe.to_string other
+
+(* The id of an annotation, derived from what it is as
+   specs/src/annotations/id-cases.json states: for an annotation whose
+   resource a case learns only as it runs, and so cannot state its id
+   beforehand. [body] is left out for an annotation that has none. The
+   yield file holds this to every case of that table. *)
+let annotation_id_of ?body resource_id motivation anchor =
+  let identity =
+    `Assoc
+      ([
+         ("resourceId", str resource_id);
+         ("motivation", str motivation);
+         ("anchor", anchor);
+       ]
+      @ match body with Some b -> [ ("body", b) ] | None -> [])
+  in
+  String.sub
+    (Base64.encode_string ~pad:false ~alphabet:Base64.uri_safe_alphabet
+       (Digestif.SHA256.to_raw_string
+          (Digestif.SHA256.digest_string (canonical identity))))
+    0 21
 
 (* ── A job's messages ───────────────────────────────────────────────── *)
 
@@ -449,6 +557,27 @@ let logged lines message =
       | _ -> None
       | exception Yojson.Json_error _ -> None)
     lines
+
+(* The detail worker/messages.json states for [name], filled. *)
+let detail name fill =
+  match
+    List.find_opt
+      (fun (row : M.details_item) -> row.name = name)
+      (messages ()).details
+  with
+  | Some row -> Protocol.fill_template row.detail fill
+  | None -> failwith ("worker/messages.json states no detail " ^ name)
+
+(* What worker/messages.json states a worker says of a wait, for [name],
+   filled. *)
+let wait name fill =
+  match
+    List.find_opt
+      (fun (row : M.waits_item) -> row.name = name)
+      (messages ()).waits
+  with
+  | Some row -> Protocol.fill_template row.said fill
+  | None -> failwith ("worker/messages.json states no wait " ^ name)
 
 (* The error worker/messages.json states for [name], filled. *)
 let error name fill =
