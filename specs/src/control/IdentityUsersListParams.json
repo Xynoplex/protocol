@@ -9,7 +9,7 @@
       "$ref": "https://xynolog.org/protocol/ApiVersion.json"
     },
     "target": {
-      "$ref": "https://xynolog.org/protocol/IdentityLocalTarget.json"
+      "$ref": "https://xynolog.org/protocol/LocalTarget.json"
     }
   },
   "required": [

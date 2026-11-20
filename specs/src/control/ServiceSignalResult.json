@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceSignalResult.json",
+  "title": "ServiceSignalResult",
+  "type": "object",
+  "description": "A signal sent, or not needed. The instance's exit is its run's answer, not this one.",
+  "properties": {
+    "delivered": {
+      "type": "boolean",
+      "description": "Whether the instance still ran when the signal came. false: it had already exited, and nothing was sent."
+    }
+  },
+  "required": [
+    "delivered"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceStarted.json",
+  "title": "ServiceStarted",
+  "type": "object",
+  "description": "notifications/serviceStarted: a run's instance is running. Sent once, before any of its output.",
+  "properties": {
+    "requestId": {
+      "$ref": "https://xynolog.org/protocol/RequestId.json"
+    },
+    "instance": {
+      "$ref": "https://xynolog.org/protocol/ServiceRunParams.json#/properties/instance"
+    },
+    "container": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The runtime's name for the instance's container."
+    },
+    "documentPath": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "Where the instance reads its document: the path the image's own arguments name. Present when the run gave a document."
+    },
+    "address": {
+      "$ref": "https://xynolog.org/protocol/ServiceHostResult.json#/properties/address"
+    }
+  },
+  "required": [
+    "requestId",
+    "instance",
+    "container",
+    "address"
+  ],
+  "additionalProperties": false
+}

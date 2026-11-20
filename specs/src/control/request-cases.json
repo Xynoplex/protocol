@@ -367,6 +367,93 @@
       }
     },
     {
+      "name": "a run names one of the knowledge base's own services",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":21,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"neo4j\",\"instance\":\"dispatcher-2\",\"environment\":{},\"mounts\":[],\"ports\":[24105]}}",
+      "answer": {
+        "id": 21,
+        "error": {
+          "code": -32602,
+          "data": {
+            "code": "control.invalid-params",
+            "retryable": false,
+            "fields": [
+              "/service"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "a run's instance is named in lower case, with hyphens",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":22,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"dispatcher\",\"instance\":\"Dispatcher 2\",\"environment\":{},\"mounts\":[],\"ports\":[24105]}}",
+      "answer": {
+        "id": 22,
+        "error": {
+          "code": -32602,
+          "data": {
+            "code": "control.invalid-params",
+            "retryable": false,
+            "fields": [
+              "/instance"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "a run states its environment, mounts and ports, empty when it has none",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":23,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"dispatcher\",\"instance\":\"dispatcher-2\"}}",
+      "answer": {
+        "id": 23,
+        "error": {
+          "code": -32602,
+          "data": {
+            "code": "control.invalid-params",
+            "retryable": false,
+            "fields": [
+              "/environment",
+              "/mounts",
+              "/ports"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "a run names its local root explicitly",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":24,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\"},\"service\":\"dispatcher\",\"instance\":\"dispatcher-2\",\"environment\":{},\"mounts\":[],\"ports\":[24105]}}",
+      "answer": {
+        "id": 24,
+        "error": {
+          "code": -32602,
+          "data": {
+            "code": "control.invalid-params",
+            "retryable": false,
+            "fields": [
+              "/target/root"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "a signal is term or kill",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":25,\"method\":\"service.signal\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"instance\":\"dispatcher-2\",\"signal\":\"hup\"}}",
+      "answer": {
+        "id": 25,
+        "error": {
+          "code": -32602,
+          "data": {
+            "code": "control.invalid-params",
+            "retryable": false,
+            "fields": [
+              "/signal"
+            ]
+          }
+        }
+      }
+    },
+    {
       "name": "a cancellation is a notification: it is never answered",
       "line": "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/cancelled\",\"params\":{\"requestId\":99}}",
       "answer": null

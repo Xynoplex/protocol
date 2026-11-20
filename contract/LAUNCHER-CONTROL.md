@@ -103,6 +103,13 @@ exist.
   *Held by the method and schemas in `specs/src/control/` and the
   handler in `cli/internal/launcher/control_ops.go`.*
 
+- **P5.** `service.run` and `service.signal` name one local root explicitly,
+  as identity's methods do: a run belongs to that knowledge base's stack, and
+  a codespace's stack runs none. A run states its `environment`, `mounts`
+  and `ports`, each empty when it has none, and names one of the seven
+  Xynolog services.
+  *Held by `specs/src/control/request-cases.json`.*
+
 ## Answers and errors
 
 - **E1.** Every request gets exactly one answer: a result that holds to its
@@ -167,11 +174,13 @@ exist.
   at once. A request waiting for its turn that is cancelled is answered with
   `control.cancelled`, and never runs.
   *Held by `cli/internal/launcher/control_units_test.go`.*
-- **C2.** Two methods give up their turn before they are answered:
+- **C2.** Three methods give up their turn before they are answered:
   - `auth.login`, once it has sent the device code, because it then waits for
     a person and holds no other request off;
   - `logs.follow`, once it has found the sources it follows, because it
-    streams until it is cancelled.
+    streams until it is cancelled;
+  - `service.run`, once its instance's container runs, because it is
+    answered only when the instance exits (R6).
   *Held by no case.*
 - **C3.** Each turn ends with the server back in the directory it was started
   in, so one request's start in a root does not move where the next request
@@ -207,6 +216,71 @@ exist.
   stdin, and waits a bounded time for it to exit before it kills it.
   *Held by `desktop/electron/control-client.test.ts`.*
 
+## Runs
+
+`service.run` runs one instance of one of a knowledge base's own services,
+once, so that a program can hold the service to Protocol: the conformance
+harness starts, stops, crashes and misconfigures a service through it, and
+reads the service's exit and every line it writes. It is not how a stack runs
+a service: `stack.start` does that, supervised, on the documents the launcher
+writes. `service.signal` signals a run's instance, and `service.host` says the
+address an instance and this machine meet at.
+
+- **R1.** A run is unsupervised. Its instance's image runs without the
+  supervisor (`XYNOLOG_SUPERVISE` is not set), is never restarted, and is not
+  waited on for its health: the run's answer is its instance's exit, and its
+  `exitCode` is the service's own. A program that needs it serving asks its
+  health itself.
+  *Held by no case.*
+- **R2.** An instance runs the image the target's stack documents name for
+  the service, with the launcher's checks of that image, as a start would.
+  It is given the image's own environment and the run's `environment`, and
+  nothing of the launcher's: no service account, no OTLP endpoint. With a
+  `document`, the text is written as it is at the path the image's own
+  arguments name, and `notifications/serviceStarted` says that path; `args`
+  replaces the image's arguments to its program, and `pathFirst` the front
+  of its PATH.
+  *Held by no case.*
+- **R3.** An instance's `ports` are published at the same numbers on the host
+  address `service.host` names for the runtime, and the instance reaches this
+  machine's listeners at that address. A document names that address for
+  each of this machine's services it is to reach, and a caller reaches the
+  instance there.
+  *Held by no case.*
+- **R4.** Each of a run's `mounts` and `pathFirst` directories is mounted
+  read-write at its own path, and the instance runs as the launcher's own
+  user, so that a file it writes there is the caller's to read, change and
+  remove between runs.
+  *Held by no case.*
+- **R5.** Each value of a run's `environment`, and its `document`, enters the
+  launcher's list of secret values (Z1) when the request is read, so that
+  neither appears in progress, in a diagnostic or in a line of
+  `notifications/serviceOutput`. A program that holds a value it gave to be
+  in its instance's output does not give it as a secret: it sends one shorter
+  than eight characters, or none.
+  *Held by no case.*
+- **R6.** `service.run` is exclusive until its instance's container runs,
+  then gives up its turn (C2). It sends `notifications/serviceStarted` once,
+  then `notifications/serviceOutput` for every line the instance writes,
+  each with the stream it was on, and is answered when the instance exits,
+  after the last of them (O3). An instance's name is unique among the
+  target's instances that run on this machine: a run of a name in use is
+  refused with `control.instance-in-use`, whichever control server or
+  command runs it. `service.signal` of a name that runs nothing is refused
+  with `control.instance-not-found`.
+  *Held by no case.*
+- **R7.** A cancelled run's instance is sent SIGTERM, and SIGKILL if it has
+  not exited 15 seconds later, and the run is answered with
+  `control.cancelled`. When the control server shuts down (S1), each run in
+  flight is cancelled so. An instance a launcher left running (a control
+  server that was killed) is removed by `stack.stop` of its target, which
+  stops and removes each of the target's instances with its stack.
+  *Held by no case.*
+- **R8.** What a client acts on of a run is in its notifications and its
+  answer: the document's path, the instance's lines, its exit code and how
+  long it ran. None is read out of progress (O4).
+  *Held by no case.*
+
 ## stdin and the person
 
 - **I1.** An operation that would ask a person something reads end of file
@@ -230,7 +304,8 @@ exist.
   - a secret provider's answer;
   - a secret in the environment;
   - a password it generated;
-  - a sign-in's tokens.
+  - a sign-in's tokens;
+  - a run's environment values and its document (R5).
 
   Each value on the list is replaced wherever it appears, the longest first.
   A value shorter than eight characters is not replaced, since replacing it

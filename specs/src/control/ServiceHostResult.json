@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceHostResult.json",
+  "title": "ServiceHostResult",
+  "type": "object",
+  "description": "Where this machine and a run's instance meet, under a runtime: the address the launcher publishes an instance's ports on, and the address the instance reaches this machine's listeners at. A caller writes it into a document before the run.",
+  "properties": {
+    "runtime": {
+      "$ref": "https://xynolog.org/protocol/Runtime.json"
+    },
+    "address": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The host address: an IP address or a host name, as the launcher's own stack dials it under this runtime."
+    }
+  },
+  "required": [
+    "runtime",
+    "address"
+  ],
+  "additionalProperties": false
+}

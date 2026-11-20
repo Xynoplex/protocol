@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceOutput.json",
+  "title": "ServiceOutput",
+  "type": "object",
+  "description": "notifications/serviceOutput: one line a run's instance wrote, from its start, every line, in the order of its stream. The launcher replaces each secret value it holds (Z1, R5); it keeps no copy.",
+  "properties": {
+    "requestId": {
+      "$ref": "https://xynolog.org/protocol/RequestId.json"
+    },
+    "instance": {
+      "$ref": "https://xynolog.org/protocol/ServiceRunParams.json#/properties/instance"
+    },
+    "stream": {
+      "$ref": "https://xynolog.org/protocol/LogRecord.json#/properties/stream"
+    },
+    "line": {
+      "type": "string",
+      "description": "The line, without its newline."
+    }
+  },
+  "required": [
+    "requestId",
+    "instance",
+    "stream",
+    "line"
+  ],
+  "additionalProperties": false
+}

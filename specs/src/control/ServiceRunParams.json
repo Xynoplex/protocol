@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceRunParams.json",
+  "title": "ServiceRunParams",
+  "type": "object",
+  "description": "service.run's params: one instance of one of a knowledge base's own services, run once from the image the target's stack documents name, unsupervised, on the caller's document, arguments and environment. contract/LAUNCHER-CONTROL.md, R1-R8.",
+  "properties": {
+    "apiVersion": {
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json",
+      "description": "The version of the control API the request is written to."
+    },
+    "target": {
+      "$ref": "https://xynolog.org/protocol/LocalTarget.json",
+      "description": "The knowledge base whose stack documents name the service's image, and whose stack the instance belongs to: stack.stop of it removes the instance too."
+    },
+    "runtime": {
+      "$ref": "https://xynolog.org/protocol/Runtime.json",
+      "description": "The container runtime to ask, as --runtime names it. Absent: the one the stack's record names, else the first installed one."
+    },
+    "service": {
+      "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/services/items",
+      "description": "The service whose image runs."
+    },
+    "instance": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 40,
+      "description": "The caller's name for the instance, unique among the target's instances that run on this machine: a second dispatcher beside the first is another instance. The launcher names its container from the target's key and this name."
+    },
+    "document": {
+      "type": "string",
+      "description": "The configuration document's text, written as it is, at the path the image's own arguments name: it need not be JSON. Absent: no file is at that path."
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The arguments the image's program is given in place of the image's own (--config and the document's path). Absent: the image's own."
+    },
+    "environment": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "https://xynolog.org/protocol/ServiceEnvironmentVariables.json#/properties/variables/items/properties/name"
+      },
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Every variable the instance is given beside the image's own, by name: nothing of the launcher's is added (R2). Each value is a secret the launcher holds (R5). Empty: none."
+    },
+    "mounts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^/"
+      },
+      "description": "Directories of this machine, each mounted read-write at its own path, so that a path the document names is the same inside the instance and out (R4). Empty: none."
+    },
+    "pathFirst": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^/"
+      },
+      "description": "Directories put before the image's PATH, in order, each mounted at its own path. Absent: the image's PATH as it is."
+    },
+    "ports": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 65535
+      },
+      "description": "The ports the instance listens on, each published at the same number on the host address (R3). Empty: none."
+    }
+  },
+  "required": [
+    "apiVersion",
+    "target",
+    "service",
+    "instance",
+    "environment",
+    "mounts",
+    "ports"
+  ],
+  "additionalProperties": false
+}

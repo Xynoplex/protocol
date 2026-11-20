@@ -287,6 +287,16 @@ let () =
     "control/methods.json" "methods/0/result"
     (fun _ -> `String (id "AboutResult.json#/properties/version"))
     ("/methods/0/result: " ^ control_id);
+  changed specs ~why:"has a control method send a notification none states"
+    "control/methods.json" "methods/2/sends/0"
+    (fun _ -> `String "notifications/nowhere")
+    "/methods/2/sends/0: notifications/nowhere, which the table states no \
+     notification of";
+  changed specs ~why:"has a control method send what the client sends"
+    "control/methods.json" "methods/2/sends/0"
+    (fun _ -> `String "notifications/cancelled")
+    "/methods/2/sends/0: notifications/cancelled, which the client sends, not \
+     the launcher";
   changed specs ~why:"has control/methods.json name an $id no schema states"
     "control/methods.json" "errorData"
     (fun _ -> `String (id "Nowhere.json"))

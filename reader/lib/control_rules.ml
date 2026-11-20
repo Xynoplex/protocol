@@ -2,7 +2,8 @@
    as a [$ref] does: the version's, the error data's, each method's params and
    result, and each notification's params. Each names a schema some file
    states, and that schema is control/'s. A name not under [Decode.base] is
-   its table's schema's to refuse, by its pattern. *)
+   its table's schema's to refuse, by its pattern. Each notification a method
+   sends is one the table states, from the launcher. *)
 
 let file = "control/methods.json"
 let area = "control/"
@@ -31,6 +32,32 @@ let refusals ~ids (table : Tables.Control_methods.t) =
            let at = "" / "methods" / string_of_int m in
            named (at / "params") method_.params
            @ named (at / "result") method_.result)
+         table.methods)
+  @ List.concat
+      (List.mapi
+         (fun m (method_ : Tables.Control_methods.methods_item) ->
+           List.concat
+             (List.mapi
+                (fun s sent ->
+                  let pointer =
+                    "" / "methods" / string_of_int m / "sends" / string_of_int s
+                  in
+                  let refuse message =
+                    [
+                      { Decode.file; pointer; message = sent ^ ", " ^ message };
+                    ]
+                  in
+                  match
+                    List.find_opt
+                      (fun (n : Tables.Control_methods.notifications_item) ->
+                        n.name = sent)
+                      table.notifications
+                  with
+                  | None -> refuse "which the table states no notification of"
+                  | Some { from = Client; _ } ->
+                      refuse "which the client sends, not the launcher"
+                  | Some { from = Launcher; _ } -> [])
+                method_.sends))
          table.methods)
   @ List.concat
       (List.mapi
