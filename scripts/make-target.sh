@@ -7,9 +7,9 @@ RUNTIME="$(detect_container_runtime)"
 TARGET="${1:-}"
 
 case "$TARGET" in
-  install|bundle|lint|reader|validate) ;;
+  bundle|reader|validate) ;;
   *)
-    echo 'Usage: scripts/make-target.sh {install|bundle|lint|reader|validate}' >&2
+    echo 'Usage: scripts/make-target.sh {bundle|reader|validate}' >&2
     exit 2
     ;;
 esac
@@ -34,7 +34,7 @@ reader() {
     xynolog-ocaml-toolchain bash -euc '
       exec 3>&1 1>&2
       mkdir /tmp/protocol
-      tar -C /source --exclude=./node_modules --exclude=./_build --exclude=./conformance/ocaml/_build -cf - . | tar -C /tmp/protocol -xf -
+      tar -C /source --exclude=./_build --exclude=./conformance/ocaml/_build -cf - . | tar -C /tmp/protocol -xf -
       git config --global --add safe.directory /tmp/protocol
       cd /tmp/protocol
       printf "==> Building the reader\n"
@@ -59,30 +59,7 @@ reader() {
 }
 
 case "$TARGET" in
-  reader)
-    reader check
-    exit
-    ;;
-  bundle)
-    reader bundle | tar -C "$ROOT" -xf -
-    exit
-    ;;
+  reader) reader check ;;
+  bundle) reader bundle | tar -C "$ROOT" -xf - ;;
   validate) reader check-and-bundle | tar -C "$ROOT" -xf - ;;
-  lint) reader bundle | tar -C "$ROOT" -xf - ;;
 esac
-
-case "$TARGET" in
-  install) COMMAND='npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null' ;;
-  lint) COMMAND='npm run --silent specs:lint' ;;
-  validate)
-    COMMAND='printf "==> Installing protocol dependencies\n"; npm ci --silent --no-audit --no-fund --no-update-notifier --loglevel=error >/dev/null; printf "==> Linting specifications\n"; npm run --silent specs:lint'
-    ;;
-esac
-
-"$RUNTIME" run --rm \
-  --volume "$ROOT:/workspace" \
-  --workdir /workspace \
-  --user "$(id -u):$(id -g)" \
-  --env HOME=/tmp \
-  --env npm_config_cache=/tmp/npm-cache \
-  node:26-bookworm bash -euc "$COMMAND"

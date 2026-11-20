@@ -1262,6 +1262,97 @@ let () =
     "openapi.json: /paths/~1bus~1emit: POST /bus/emit: holds a key for 1 s, \
      and a client's attempts at one emit may span 377.5 s (two emitRetry \
      budgets and a refreshRetry, specs/src/client/timing.json)";
+  let rekey ~from ~onto =
+    members
+      (List.map (fun (path, item) ->
+           ((if path = from then onto else path), item)))
+  in
+  let add_path path item =
+    members (fun paths -> paths @ [ (path, `Assoc [ ("$ref", `String item) ]) ])
+  in
+  changed specs ~why:"joins its paths to a server with two slashes"
+    "openapi.json" "servers/0/url"
+    (fun _ -> `String "http://{host}:{port}/")
+    "/servers/0: server http://{host}:{port}/: ends in a slash, so a path \
+     joined to it begins with two";
+  changed specs ~why:"names a server variable it does not define" "openapi.json"
+    "servers/0/url"
+    (fun _ -> `String "http://{host}:{port}/{base}")
+    "/servers/0: server http://{host}:{port}/{base}: names {base}, which its \
+     variables do not define";
+  changed specs ~why:"defines a server variable its URL does not name"
+    "openapi.json" "servers/0/variables"
+    (members (fun variables ->
+         variables @ [ ("base", `Assoc [ ("default", `String "x") ]) ]))
+    "/servers/0/variables/base: server http://{host}:{port}: defines variable \
+     \"base\", which its URL does not name";
+  changed specs ~why:"ends a path in a slash" "openapi.json" "paths"
+    (rekey ~from:"/api/status" ~onto:"/api/status/")
+    "/paths/~1api~1status~1: path \"/api/status/\": is not \"/\" or a \"/\" \
+     before each of its segments, each a whole {parameter} or holding none of \
+     \"{\", \"}\", \"?\" and \"#\"";
+  changed specs ~why:"has two paths that differ by a parameter's name"
+    "openapi.json" "paths"
+    (add_path "/resources/{rid}/jsonld" "paths/get-resource-json-ld.json")
+    "/paths/~1resources~1{rid}~1jsonld: paths /resources/{id}/jsonld and \
+     /resources/{rid}/jsonld: one request could match both";
+  changed specs ~why:"has two paths one request could match" "openapi.json"
+    "paths"
+    (add_path "/resources/special/{id}" "paths/get-resource-json-ld.json")
+    "/paths/~1resources~1special~1{id}: paths /resources/{id}/jsonld and \
+     /resources/special/{id}: one request could match both";
+  refused specs ~why:"names a path parameter its operation does not declare"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "openapi.json")
+        (update [ "paths" ]
+           (rekey ~from:"/api/status" ~onto:"/api/status/{since}")))
+    "paths/get-status.json: /get/parameters: GET /api/status/{since}: declares \
+     no path parameter \"since\", which its path names";
+  refused specs ~why:"declares a path parameter its path does not name"
+    (fun copied ->
+      rewrite
+        (Filename.concat copied "openapi.json")
+        (update [ "paths" ]
+           (rekey ~from:"/resources/{id}/jsonld" ~onto:"/resources/jsonld")))
+    "paths/get-resource-json-ld.json: /get/parameters: GET /resources/jsonld: \
+     declares path parameter \"id\", which its path does not name";
+  changed specs ~why:"declares a header twice, in another case"
+    "paths/emit-on-bus.json" "post/parameters"
+    (function
+      | `List (first :: rest) ->
+          `List
+            ((first :: rest)
+            @ [ update [ "name" ] (fun _ -> `String "idempotency-key") first ])
+      | _ -> failwith "no parameters")
+    "/post/parameters: POST /bus/emit: declares header parameter \
+     \"idempotency-key\" twice";
+  changed specs ~why:"gives two operations one operationId" "openapi.json"
+    "paths"
+    (add_path "/api/status-again" "paths/get-status.json")
+    "/paths/~1api~1status-again: GET /api/status-again: has operationId \
+     \"getStatus\", which GET /api/status has too";
+  changed specs ~why:"keys a response by a range" "paths/get-status.json"
+    "get/responses"
+    (members (fun responses ->
+         responses @ [ ("2XX", List.assoc "200" responses) ]))
+    "/get/responses: GET /api/status: answers \"2XX\", which is no HTTP status";
+  changed specs ~why:"declares no 2xx" "paths/get-status.json" "get/responses"
+    (members (List.remove_assoc "200"))
+    "/get/responses: GET /api/status: declares no 2xx";
+  changed specs ~why:"takes a parameter and declares no 4xx"
+    "paths/get-health.json" "get"
+    (members (fun operation ->
+         operation
+         @ [
+             ( "parameters",
+               Yojson.Safe.from_string
+                 {|[{"name":"verbose","in":"query","required":false,
+                     "description":"d","schema":{"type":"boolean"}}]|}
+             );
+           ]))
+    "/get/responses: GET /api/health: takes a credential, a parameter or a \
+     body and declares no 4xx";
   if !failures > 0 then exit 1;
   print_endline
     "The model reads every file of Protocol, and refuses a copy with a stray \
@@ -1277,6 +1368,9 @@ let () =
      disagrees with itself, an Archivist stated short, a graph schema that \
      names what neither it nor the codec holds, an id nothing checks, a client \
      type that disagrees with what restates it, a control schema named by \
-     other than its $id, a retry row its rule's sets disagree with, or a \
-     protocol fact left to the code; and it reads each value as the type its \
-     schema states"
+     other than its $id, a retry row its rule's sets disagree with, a server \
+     URL its variables disagree with, a malformed or ambiguous path, a path \
+     parameter undeclared or unnamed, a parameter or an operationId twice, a \
+     response keyed by no status, an operation without the 2xx or the 4xx it \
+     owes, or a protocol fact left to the code; and it reads each value as the \
+     type its schema states"
