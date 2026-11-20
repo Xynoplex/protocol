@@ -221,6 +221,36 @@ let frame ?timeout ?(matches = fun _ -> true) t channel =
   | Some f -> f
   | None -> assert false
 
+(* Return once the connection has ended, or fail after [timeout] s. *)
+let ends ?(timeout = 10.0) t =
+  let deadline = Run.now () +. timeout in
+  let rec wait () =
+    if not t.ended then (
+      let remaining = deadline -. Run.now () in
+      if remaining <= 0.0 then
+        raise
+          (Run.Timed_out
+             (Printf.sprintf "the stream was still open after %g s" timeout));
+      ignore
+        (Eio.Time.with_timeout (Run.clock ()) remaining (fun () ->
+             Ok (Eio.Condition.await_no_mutex t.changed)));
+      wait ())
+  in
+  wait ()
+
+(* Nothing [matches] ever arrives on [channel]: after waiting [wait] s for
+   anything still in flight, no frame the stream has carried since it
+   opened matches. *)
+let quiet ?(matches = fun _ -> true) t channel wait =
+  Run.sleep wait;
+  match List.filter matches (frames ~channel t) with
+  | [] -> ()
+  | arrived ->
+      failwith
+        (Printf.sprintf "expected nothing on %s, got %s" channel
+           (Yojson.Safe.to_string
+              (`List (List.map (fun (f : frame) -> f.payload) arrived))))
+
 type subscribed = Stream of t | Refused of Call.reply
 
 (* Open a stream. A connection the gateway closes before it answers raises
@@ -340,27 +370,26 @@ let stalled_subscriber origin token body =
     close = (fun () -> once closing close);
   }
 
+(* A scoped entry of a subscription: [scope]'s [channels], resumed after
+   [last_event_id] when it is given. *)
+let scope ?last_event_id scope channels =
+  `Assoc
+    ([
+       ("scope", `String scope);
+       ("channels", `List (List.map (fun c -> `String c) channels));
+     ]
+    @
+    match last_event_id with
+    | Some id -> [ ("lastEventId", `String id) ]
+    | None -> [])
+
 let subscribe_body ~client_id ?(global = []) ?(scoped = [])
     ?(pending_replies = []) () =
   `Assoc
     ([ ("clientId", `String client_id) ]
     @ (if global = [] then []
        else [ ("global", `List (List.map (fun c -> `String c) global)) ])
-    @ (if scoped = [] then []
-       else
-         [
-           ( "scoped",
-             `List
-               (List.map
-                  (fun (scope, channels) ->
-                    `Assoc
-                      [
-                        ("scope", `String scope);
-                        ( "channels",
-                          `List (List.map (fun c -> `String c) channels) );
-                      ])
-                  scoped) );
-         ])
+    @ (if scoped = [] then [] else [ ("scoped", `List scoped) ])
     @
     if pending_replies = [] then []
     else

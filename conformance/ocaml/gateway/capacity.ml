@@ -59,7 +59,7 @@ let queued_bytes_reached (w : World.t) =
   in
   conforms "POST" "/bus/subscribe" refused;
   Check.that "the refusal's code is capacity"
-    (text_member "code" refused = "capacity");
+    (text_member "code" refused = Protocol.message_code "capacity");
   stalled.resume ();
   Run.eventually "a stream admitted once the queues drained" 15.0 (fun () ->
       match Bus_stream.subscribe (World.origin w) (Some prober) (probe ()) with
@@ -99,7 +99,7 @@ let connection_cap (w : World.t) =
   List.iter Bus_stream.close held
 
 let tests implementations =
-  each_plane
+  each_plane ~world:Fun.id ~close:World.close
     ~make:
       (with_capacity ~queued:queued_bytes ~connections:50_000 implementations)
     "a gateway whose queued bytes reach its capacity"
@@ -109,7 +109,7 @@ let tests implementations =
          queues drain"
         queued_bytes_reached;
     ]
-  @ each_plane
+  @ each_plane ~world:Fun.id ~close:World.close
       ~make:
         (with_capacity
            ~queued:(1024 * 1024 * 1024)

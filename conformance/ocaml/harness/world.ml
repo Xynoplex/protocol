@@ -199,6 +199,12 @@ let upload ?key t token parts =
     (origin t) "POST"
     (Protocol.path Gateway "POST" "/resources")
 
+type responder = {
+  stream : Bus_stream.t;
+  token : string;  (** The agent token it emits with. *)
+  client_id : string;
+}
+
 (* A participant the suite plays: subscribed to [channels], answering each
    frame with what [answer] returns, emitted with the frame's correlationId.
    It stands for the rest of the file. *)
@@ -236,7 +242,8 @@ let responder ?origin t channels answer =
                         (Printf.sprintf "the responder could not emit %s: %s"
                            channel
                            (Printexc.to_string failure))))
-      | _ -> ())
+      | _ -> ());
+  { stream; token; client_id }
 
 (* Every violation since the last call: carried by the streams a case
    opened, which are then closed, and by the standing ones, and anything the

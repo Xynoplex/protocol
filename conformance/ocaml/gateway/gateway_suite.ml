@@ -9,5 +9,14 @@ let suite : Xynolog_conformance.Suite.t =
       (fun implementations ->
         List.concat_map
           (fun tests -> tests implementations)
-          [ Broker.tests; Issuer.tests; Outage.tests; Capacity.tests ]);
+          [
+            Broker.tests;
+            Issuer.tests;
+            Outage.tests;
+            Capacity.tests;
+            Content.tests;
+            Stream.tests;
+            Boot.tests;
+            Bounds.tests;
+          ]);
   }

@@ -88,9 +88,10 @@ its description (`GET /resources/{id}/jsonld`), of its annotations
   - CORS is open and credential-less. `Access-Control-Allow-Origin: *` and
     no `Access-Control-Allow-Credentials`, since the API is bearer-only and
     no origin can ride a browser's ambient credentials.
-  - Security headers: a `Content-Security-Policy` and a `Permissions-Policy`
-    that allow nothing, `nosniff`, `DENY`, `no-referrer`, and a
-    `Strict-Transport-Security` that a browser honours only over HTTPS.
+  - Security headers: a `Content-Security-Policy` that allows nothing, a
+    `Permissions-Policy` that turns off the six features the table names,
+    `nosniff`, `DENY`, `no-referrer`, and a `Strict-Transport-Security` that
+    a browser honours only over HTTPS.
   - `X-Request-ID` names the request in the gateway's logs.
 - **The gateway's own words.** The `error` and `hint` of each refusal the
   gateway makes itself are those

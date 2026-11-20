@@ -160,6 +160,12 @@ let limit which meth path key =
       | _ -> failwith (Printf.sprintf "%s %s states no count %s" meth path key))
   | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
 
+(* One of a document's own x-xynolog-limits that is a count. *)
+let document_limit which key =
+  match List.assoc_opt key (document which).limits with
+  | Some (Openapi.Count n) -> n
+  | _ -> failwith (Printf.sprintf "the document states no count %s" key)
+
 (* One of a gateway security scheme's x-xynolog-limits that is a count. *)
 let scheme_limit scheme key =
   match List.assoc_opt scheme (spec ()).gateway.components.security_schemes with
@@ -602,5 +608,70 @@ let declared word =
   | _ -> failwith ("the bearerAuth scheme no longer declares " ^ word)
 
 let service_role () = declared "xynolog-service"
+let worker_role () = declared "xynolog-worker"
 let kind_claim () = declared "kind"
 let agent_kind () = declared "agent"
+
+(* ── What the gateway answers ─────────────────────────────────────────── *)
+
+(* [template] with each of its {placeholders} filled from [fill], which must
+   fill every one. *)
+let fill_template template fill =
+  let text =
+    List.fold_left
+      (fun text (name, value) ->
+        Re.replace_string
+          (Re.compile (Re.str ("{" ^ name ^ "}")))
+          ~by:value text)
+      template fill
+  in
+  match Re.exec_opt (Re.compile (Re.Perl.re "\\{[A-Za-z]+\\}")) text with
+  | Some left ->
+      failwith
+        (Printf.sprintf "%S is left with %s unfilled" template
+           (Re.Group.get left 0))
+  | None -> text
+
+(* A row of gateway/messages.json, by its name. *)
+let message name : Tables.Gateway_messages.messages_item =
+  match
+    List.find_opt
+      (fun (row : Tables.Gateway_messages.messages_item) -> row.name = name)
+      (tables ()).gateway_messages.messages
+  with
+  | Some row -> row
+  | None -> failwith ("gateway/messages.json states no message " ^ name)
+
+(* The error text of the message [name], its placeholders filled. *)
+let message_text ?(fill = []) name = fill_template (message name).error fill
+
+(* The code of the message [name], which states one. *)
+let message_code name =
+  match (message name).code with
+  | Some code -> code
+  | None -> failwith ("gateway/messages.json's " ^ name ^ " states no code")
+
+(* A failure the gateway answers on the bus, by its name. *)
+let failure name : Tables.Gateway_messages.failures_item =
+  match
+    List.find_opt
+      (fun (row : Tables.Gateway_messages.failures_item) -> row.name = name)
+      (tables ()).gateway_messages.failures
+  with
+  | Some row -> row
+  | None -> failwith ("gateway/messages.json states no failure " ^ name)
+
+(* The WWW-Authenticate challenges, for the gateway at [origin]. *)
+let challenge_no_credential origin =
+  fill_template (tables ()).gateway_messages.challenges.no_credential
+    [ ("origin", origin) ]
+
+let challenge_refused origin =
+  fill_template (tables ()).gateway_messages.challenges.refused
+    [ ("origin", origin) ]
+
+(* The concrete path of [template], which [which] must declare an operation
+   of [meth] on, its parameters filled from [fill], each encoded. *)
+let path_of which meth template fill =
+  fill_template (path which meth template)
+    (List.map (fun (name, value) -> (name, uri_component value)) fill)

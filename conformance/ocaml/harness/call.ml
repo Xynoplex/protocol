@@ -23,9 +23,14 @@ let parsed text =
    body, a chunk at a time, as cohttp's reader decodes it. *)
 let exchange ~sw ?(headers = []) ?body meth url =
   let uri = Uri.of_string url in
+  (* An IPv6 host, bare: getaddrinfo takes it so, and a Host header in
+     brackets. *)
   let host =
     match Uri.host uri with
-    | Some host -> host
+    | Some host ->
+        if String.starts_with ~prefix:"[" host then
+          String.sub host 1 (String.length host - 2)
+        else host
     | None -> failwith (url ^ " names no host")
   in
   let port =
@@ -42,7 +47,12 @@ let exchange ~sw ?(headers = []) ?body meth url =
   in
   let socket = Eio.Net.connect ~sw (Run.net ()) address in
   let headers =
-    [ ("host", Printf.sprintf "%s:%d" host port); ("connection", "close") ]
+    [
+      ( "host",
+        if String.contains host ':' then Printf.sprintf "[%s]:%d" host port
+        else Printf.sprintf "%s:%d" host port );
+      ("connection", "close");
+    ]
     @ (match body with
       | Some text -> [ ("content-length", string_of_int (String.length text)) ]
       | None -> [])

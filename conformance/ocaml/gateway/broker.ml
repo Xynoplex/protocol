@@ -12,10 +12,8 @@ let jobs () = (Protocol.tables ()).jobs_storage.stream.name
 
 type world = { world : World.t; nc : Nats.client }
 
-let make implementations () =
-  let world =
-    World.create ~command:implementations.Implementations.gateway Nats
-  in
+let make implementations plane =
+  let world = Support.plain implementations plane in
   let broker = Option.get world.broker in
   let nc = Nats.connect broker.port in
   (* The dispatcher's stream, as the dispatcher declares it. *)
@@ -32,17 +30,11 @@ let close { world; nc } =
   nc.close ();
   World.close world
 
-let holds_no_stream world () =
-  let { world; nc } = world () in
-  World.end_case
-    ~account:(fun () ->
-      "gateway output:\n"
-      ^ String.concat "\n" (Process.output world.gateway.process))
-    ~settle:(fun () -> World.drain world)
-  @@ fun () ->
+let holds_no_stream { world; nc } =
   (* Traffic of every kind: a broadcast, a scoped broadcast, a request, its reply, a recovery. *)
   let result = (Protocol.operation_for request).result in
-  World.responder world [ request ] (fun _ ->
+  ignore
+  @@ World.responder world [ request ] (fun _ ->
       Some
         ( result,
           `Assoc
@@ -66,7 +58,7 @@ let holds_no_stream world () =
   let stream =
     World.subscribe world alice
       (Bus_stream.subscribe_body ~client_id ~global:[ result; "beckon:focus" ]
-         ~scoped:[ ("res-broker", [ "beckon:focus" ]) ]
+         ~scoped:[ Bus_stream.scope "res-broker" [ "beckon:focus" ] ]
          ())
   in
   let emitted body =
@@ -129,14 +121,13 @@ let holds_no_stream world () =
            n)
 
 let tests implementations =
-  let world =
-    Suite.world "gateway/broker" ~make:(make implementations) ~close
-  in
-  [
-    Testo.create
-      ~category:[ "the broker (nats plane)" ]
-      ~max_duration:120.0
-      "holds no stream the gateway made but its key-value tables, and nothing \
-       it published is in the job stream"
-      (holds_no_stream world);
-  ]
+  Support.(
+    each_plane ~planes:[ Nats ] ~make:(make implementations)
+      ~world:(fun { world; _ } -> world)
+      ~close "the broker"
+      [
+        case ~timeout:120.0
+          "holds no stream the gateway made but its key-value tables, and \
+           nothing it published is in the job stream"
+          holds_no_stream;
+      ])
