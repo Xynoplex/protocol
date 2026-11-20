@@ -9,4 +9,5 @@ let () =
       Archivist_suite.suite;
       Smelter_suite.suite;
       Worker_service_suite.suite;
+      Weaver_suite.suite;
     ]

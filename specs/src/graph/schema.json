@@ -1,0 +1,51 @@
+{
+  "$comment": "AUTHORITY for the shape of the graph every store keeps (WEAVER.md § What the graph holds), as a reader of a store finds it: each kind of node by its label, the property it is one of its kind by (`key`) and the properties a reader finds one by (`lookups`); each kind of relationship by its type, the kind of node it goes from and the kind it goes to; and the stub. What a node holds is its codec row, the `properties` and `json` of graph/codec-cases.json's part that `row` names; a node without a row holds its key alone. How a store spells a node, a list or a property is its own dialect, as graph/codec-cases.json says of a row. A link's target the graph has not been given yet is a stub: a node holding its key and the marker, `true`, and nothing else. It is not a resource the graph holds: no read answers it, lists it, counts it or follows it. Storing the resource fills it in, and the marker goes. A store makes what else it likes of its own, such as a second label or an index; no reader reads it.",
+  "nodes": {
+    "resource": {
+      "label": "Resource",
+      "row": "resourceStored",
+      "key": "id",
+      "lookups": [
+        "name",
+        "entityTypes"
+      ]
+    },
+    "annotation": {
+      "label": "Annotation",
+      "row": "annotationStored",
+      "key": "id",
+      "lookups": [
+        "resourceId"
+      ]
+    },
+    "entityType": {
+      "label": "EntityType",
+      "key": "name",
+      "lookups": []
+    }
+  },
+  "relationships": {
+    "belongsTo": {
+      "type": "BELONGS_TO",
+      "from": "annotation",
+      "to": "resource",
+      "says": "The resource the annotation is on, the one its row's `resourceId` names. An annotation has one."
+    },
+    "references": {
+      "type": "REFERENCES",
+      "from": "annotation",
+      "to": "resource",
+      "says": "The resource the annotation links to, the one its row's `source` names, held or a stub. An annotation has one where its row has a `source`, and none where it has not."
+    },
+    "taggedAs": {
+      "type": "TAGGED_AS",
+      "from": "annotation",
+      "to": "entityType",
+      "says": "One of the annotation's entity tags, the entity type of that name. An annotation has one to each of its tags."
+    }
+  },
+  "stub": {
+    "node": "resource",
+    "marker": "stub"
+  }
+}

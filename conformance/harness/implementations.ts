@@ -65,8 +65,6 @@ const SCHEMA = {
 } as const;
 
 export type Implementations = JTDDataType<typeof SCHEMA>;
-/** How one implementation of the Weaver is started and reached. */
-export type WeaverService = Implementations['weaverServices'][string];
 
 const ajv = new Ajv();
 const validate = ajv.compile<Implementations>(SCHEMA);
