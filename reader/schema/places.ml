@@ -41,10 +41,13 @@ let is_table name =
 let sorted_entries directory =
   Sys.readdir directory |> Array.to_list |> List.sort compare
 
+(* The areas of specs/src at [root]: each directory at its top named in kebab
+   case (D5), but components/ and paths/. Spec refuses a directory otherwise
+   named. *)
 let areas root =
   sorted_entries root
   |> List.filter (fun area ->
-      area <> "components" && area <> "paths"
+      area <> "components" && area <> "paths" && is_kebab area
       && Sys.is_directory (Filename.concat root area))
 
 (* Every table of specs/src at [root], as a path from it, in order. *)

@@ -392,6 +392,26 @@ let () =
         (identified "lower-case.json" {|"type":"string"|}))
     "components/schemas/lower-case.json: /: is named lower-case, and a JSON \
      Schema's file is its name in PascalCase";
+  refused specs ~why:"has a directory not named in kebab case"
+    (fun copied ->
+      Sys.rename
+        (Filename.concat copied "librarian/elements")
+        (Filename.concat copied "librarian/Elements"))
+    "librarian/Elements: /: is a directory named Elements, and a directory's \
+     name is in kebab case";
+  refused specs ~why:"has a case table in an area not named in kebab case"
+    (fun copied ->
+      Sys.mkdir (Filename.concat copied "Stray_Area") 0o755;
+      write
+        (Filename.concat copied "Stray_Area/notes-cases.json")
+        (identified "notes-cases.json" {|"type":"object"|}))
+    "Stray_Area: /: is a directory named Stray_Area, and a directory's name is \
+     in kebab case";
+  refused specs ~why:"names a fixture's file not in kebab case"
+    (fun copied ->
+      write (Filename.concat copied "smelter/fixtures/Stray.pdf") "")
+    "smelter/fixtures/Stray.pdf: /: is named Stray, and a file that names no \
+     component is named in kebab case";
   refused specs ~why:"has two responses of one name"
     (fun copied ->
       write
