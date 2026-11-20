@@ -5,8 +5,12 @@
    request is recorded as it was sent. A generation no case scripted, and a
    request of any other path, lands in [violations]. *)
 
+(* Why the model stopped: it was done, or it ran out of room to write
+   ([done_reason] "stop" and "length"). *)
+type stop = Done | Cut_off
+
 type scripted =
-  | Answer of { response : string; usage : (int * int) option }
+  | Answer of { response : string; stop : stop; usage : (int * int) option }
       (** The model answered, and stopped; [usage] is the prompt's and the
           output's token counts, as a real Ollama reports them. *)
   | Fails of int * string  (** The provider refused: this status, this body. *)
@@ -35,13 +39,14 @@ type t = {
   arrived : Eio.Condition.t;
 }
 
-let generated response usage =
+let generated response stop usage =
   Serve.json_reply 200
     (`Assoc
        ([
           ("response", `String response);
           ("done", `Bool true);
-          ("done_reason", `String "stop");
+          ( "done_reason",
+            `String (match stop with Done -> "stop" | Cut_off -> "length") );
         ]
        @
        match usage with
@@ -102,8 +107,8 @@ let start ?(context_length = 8192) () =
                 json 500
                   (`Assoc
                      [ ("error", `String "the stand-in has no reply scripted") ])
-            | Some (Answer { response; usage }) ->
-                Serve.Reply (generated response usage)
+            | Some (Answer { response; stop; usage }) ->
+                Serve.Reply (generated response stop usage)
             | Some (Fails (status, body)) ->
                 Serve.Reply
                   {
@@ -182,7 +187,7 @@ let end_held t answer =
   Dynarray.clear t.held
 
 (* Answer every held generation with [response]. *)
-let release t response = end_held t (Some (generated response None))
+let release t response = end_held t (Some (generated response Done None))
 
 (* Forget what was scripted and recorded, and end every held generation
    unanswered: the next case starts clean. *)

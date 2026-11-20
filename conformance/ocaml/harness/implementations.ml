@@ -16,6 +16,7 @@ type t = {
   dispatcher : string list;
   archivist : string list;
   weavers : (string * weaver) list;
+  workers : (string * string list) list;
   smelters : (string * string list) list;
   librarians : (string * string list) list;
   model_catalogue : string option;
@@ -35,7 +36,7 @@ let decode base =
       let dispatcher = Decode.required o "dispatcher" command in
       let archivist = Decode.required o "archivist" command in
       let _sdks = Decode.required o "sdks" Decode.json in
-      let _workers = Decode.required o "workerServices" (Decode.map command) in
+      let workers = Decode.required o "workerServices" (Decode.map command) in
       let weavers =
         Decode.required o "weaverServices"
           (Decode.map
@@ -58,6 +59,7 @@ let decode base =
         dispatcher;
         archivist;
         weavers;
+        workers;
         smelters;
         librarians;
         model_catalogue;

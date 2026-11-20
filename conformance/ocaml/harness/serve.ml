@@ -16,7 +16,8 @@ type request = {
   headers : Http.Header.t;
   body : string;
   mutable abandoned : bool;
-      (** Whether the client ended the connection before it was answered. *)
+      (** Whether the client ended the connection before it was answered in
+          full. *)
 }
 
 type reply = { status : int; headers : (string * string) list; body : string }
@@ -123,12 +124,22 @@ let connection handler flow _peer =
               headers
               @ [ ("transfer-encoding", "chunked"); ("connection", "close") ]
             in
-            Response_io.write ~flush:true
-              (fun writer ->
-                events (fun text ->
-                    Response_io.write_body writer text;
-                    Eio.Buf_write.flush oc))
-              (head status headers) oc
+            (* A client on a stream sends nothing more: one that ends the
+               connection has left, and [events] is cancelled then. *)
+            Eio.Fiber.first
+              (fun () ->
+                Response_io.write ~flush:true
+                  (fun writer ->
+                    events (fun text ->
+                        Response_io.write_body writer text;
+                        Eio.Buf_write.flush oc))
+                  (head status headers) oc)
+              (fun () ->
+                match until_gone ic with
+                | `Gone ->
+                    asked.abandoned <- true;
+                    raise Drop
+                | `Spoke -> Eio.Fiber.await_cancel ())
         | Held answered -> (
             match
               Eio.Fiber.first

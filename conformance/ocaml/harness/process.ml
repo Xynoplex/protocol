@@ -7,6 +7,9 @@ type t = {
   name : string;
   output : string Dynarray.t;
   stdout : string Dynarray.t;
+  stderr : string Dynarray.t;
+  drained : unit Eio.Promise.t;
+      (** Resolved once both its pipes are read to their end. *)
   process : Eio_unix.Process.ty Eio.Resource.t Eio.Promise.t;
   exited : int option Eio.Promise.t;
       (** Its exit code, once it has exited; None when a signal ended it. *)
@@ -114,7 +117,10 @@ let reap () =
   if Sys.file_exists file then Sys.remove file
 
 let spawn name command env =
-  let output = Dynarray.create () and stdout = Dynarray.create () in
+  let output = Dynarray.create ()
+  and stdout = Dynarray.create ()
+  and stderr = Dynarray.create () in
+  let drained, drain = Eio.Promise.create () in
   let started, start = Eio.Promise.create () in
   let exited, exit = Eio.Promise.create () in
   let mgr = Run.process_mgr () in
@@ -148,15 +154,18 @@ let spawn name command env =
       Eio.Promise.resolve start (child :> Eio_unix.Process.ty Eio.Resource.t);
       Eio.Fiber.all
         [
-          (fun () -> lines_of out_r [ output; stdout ]);
-          (fun () -> lines_of err_r [ output ]);
+          (fun () ->
+            Eio.Fiber.both
+              (fun () -> lines_of out_r [ output; stdout ])
+              (fun () -> lines_of err_r [ output; stderr ]);
+            Eio.Promise.resolve drain ());
           (fun () ->
             Eio.Promise.resolve exit
               (match Eio.Process.await child with
               | `Exited code -> Some code
               | `Signaled _ -> None));
         ]);
-  { name; output; stdout; process = started; exited }
+  { name; output; stdout; stderr; drained; process = started; exited }
 
 let running t = not (Eio.Promise.is_resolved t.exited)
 
