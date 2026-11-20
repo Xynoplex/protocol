@@ -144,16 +144,39 @@ let messages () = (Protocol.tables ()).archivist_messages
 
 module M = Xynolog_protocol.Tables.Archivist_messages
 
-(* The refusal [name] of archivist/messages.json, filled: [channel] is the
-   operation refused. *)
-let refusal ?(channel = "") name fill =
+let refusal_item name =
   match
     List.find_opt
       (fun (r : M.refusals_item) -> r.name = name)
       (messages ()).refusals
   with
-  | Some r -> filled r.message (("channel", channel) :: fill)
+  | Some r -> r
   | None -> failwith ("archivist/messages.json states no refusal " ^ name)
+
+(* The refusal [name] of archivist/messages.json, filled: [channel] is the
+   operation refused. *)
+let refusal ?(channel = "") name fill =
+  filled (refusal_item name).message (("channel", channel) :: fill)
+
+(* The payload of the failure the refusal [name] is answered with: its
+   message, filled, and its code where it carries one. *)
+let refusal_body ?channel name fill =
+  `Assoc
+    (("message", str (refusal ?channel name fill))
+    ::
+    (match (refusal_item name).code with
+    | Some c -> [ ("code", str (M.command_error_code_value c)) ]
+    | None -> []))
+
+(* The message [name] of archivist/messages.json's [unsent], unfilled. *)
+let unsent name =
+  match
+    List.find_opt
+      (fun (u : M.unsent_item) -> u.name = name)
+      (messages ()).unsent
+  with
+  | Some u -> u.message
+  | None -> failwith ("archivist/messages.json states no unsent " ^ name)
 
 let http_row name =
   match
