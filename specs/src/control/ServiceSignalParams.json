@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceSignalParams.json",
+  "title": "ServiceSignalParams",
+  "type": "object",
+  "description": "service.signal's params: a signal for a run's instance.",
+  "properties": {
+    "apiVersion": {
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json",
+      "description": "The version of the control API the request is written to."
+    },
+    "target": {
+      "$ref": "https://xynolog.org/protocol/LocalTarget.json",
+      "description": "The knowledge base whose stack documents name the service's image, and whose stack the instance belongs to: stack.stop of it removes the instance too."
+    },
+    "runtime": {
+      "$ref": "https://xynolog.org/protocol/Runtime.json",
+      "description": "The container runtime to ask, as --runtime names it. Absent: the one the stack's record names, else the first installed one."
+    },
+    "instance": {
+      "$ref": "https://xynolog.org/protocol/RunInstance.json"
+    },
+    "signal": {
+      "type": "string",
+      "enum": [
+        "term",
+        "kill"
+      ],
+      "description": "term: SIGTERM, and SIGKILL 15 seconds later if it has not exited. kill: SIGKILL, so nothing it would settle on the way out is settled."
+    }
+  },
+  "required": [
+    "apiVersion",
+    "target",
+    "instance",
+    "signal"
+  ],
+  "additionalProperties": false
+}

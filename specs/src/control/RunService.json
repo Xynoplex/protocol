@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/RunService.json",
+  "title": "RunService",
+  "type": "string",
+  "enum": [
+    "archivist",
+    "dispatcher",
+    "gateway",
+    "librarian",
+    "smelter",
+    "weaver",
+    "worker"
+  ],
+  "description": "One of a knowledge base's own services, which service.run runs: the seven Xynolog services, as service-telemetry/telemetry.json names them. The reader holds the two lists to each other."
+}

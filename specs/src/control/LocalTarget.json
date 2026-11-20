@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/LocalTarget.json",
+  "title": "LocalTarget",
+  "type": "object",
+  "description": "A local knowledge base, named explicitly: the operations that act on one local stack and never resolve one for the caller (identity administration, a service's run).",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "local",
+      "description": "Only a local stack."
+    },
+    "root": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The knowledge base's clone, by its path."
+    }
+  },
+  "required": [
+    "kind",
+    "root"
+  ],
+  "additionalProperties": false
+}

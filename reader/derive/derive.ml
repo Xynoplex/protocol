@@ -1,6 +1,6 @@
 (* derive.exe SPECS: every table's model, derived from its schema, as OCaml
-   source on standard output, and the conformance corpus's models
-   (Places.corpus_models). SPECS is specs/src.
+   source on standard output, and the conformance harness's models
+   (Places.harness_models). SPECS is specs/src.
 
    Each table is a module named as its schema (Places.model_of), of types
    and strict decoders, its own model [t] and [decode] last; then [t], every
@@ -1155,8 +1155,9 @@ let ocaml () =
         | exception Stop -> None)
       tables
   in
-  (* Each model of the conformance corpus: a module of the types its schema
-     gives, its own [t] and [decode] last, though it is no table's. *)
+  (* Each model of the conformance harness's files, the corpus's and the
+     manifest's: a module of the types its schema gives, its own [t] and
+     [decode] last, though it is no table's. *)
   List.iter
     (fun file ->
       reset ();
@@ -1164,11 +1165,11 @@ let ocaml () =
       | _ ->
           Printf.bprintf buffer "module %s = struct\n"
             (String.capitalize_ascii (Places.corpus_model_of file));
-          Printf.bprintf buffer "  (* %s, the conformance corpus's *)\n\n" file;
+          Printf.bprintf buffer "  (* %s, the conformance harness's *)\n\n" file;
           List.iter (print_decl buffer) (List.rev !decls);
           Buffer.add_string buffer "end\n\n"
       | exception Stop -> ())
-    Places.corpus_models;
+    Places.harness_models;
   stop_on_refusals ();
   Buffer.add_string buffer "type t = {\n";
   List.iter

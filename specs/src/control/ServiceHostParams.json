@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceHostParams.json",
+  "title": "ServiceHostParams",
+  "type": "object",
+  "description": "service.host's params.",
+  "properties": {
+    "apiVersion": {
+      "$ref": "https://xynolog.org/protocol/ApiVersion.json",
+      "description": "The version of the control API the request is written to."
+    },
+    "runtime": {
+      "$ref": "https://xynolog.org/protocol/Runtime.json",
+      "description": "The container runtime to ask, as --runtime names it. Absent: the one the stack's record names, else the first installed one."
+    }
+  },
+  "required": [
+    "apiVersion"
+  ],
+  "additionalProperties": false
+}

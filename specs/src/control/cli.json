@@ -453,6 +453,114 @@
           "cliOnly": "help text, for a person"
         }
       }
+    },
+    "run": {
+      "parser": "Run",
+      "method": "service.run",
+      "positionals": [
+        {
+          "name": "<service>",
+          "fields": [
+            "service.run.service"
+          ]
+        }
+      ],
+      "flags": {
+        "--root": {
+          "fields": [
+            "service.run.target.root"
+          ],
+          "notes": "a run's target is always local and always named: the command line refuses a run without --root"
+        },
+        "--runtime": {
+          "fields": [
+            "service.run.runtime"
+          ]
+        },
+        "--instance": {
+          "fields": [
+            "service.run.instance"
+          ]
+        },
+        "--document": {
+          "fields": [
+            "service.run.document"
+          ],
+          "notes": "the command line names a file, whose text becomes the document"
+        },
+        "--arg": {
+          "fields": [
+            "service.run.args"
+          ],
+          "notes": "repeated, in order: each one argument"
+        },
+        "--env": {
+          "fields": [
+            "service.run.environment"
+          ],
+          "notes": "repeated: NAME=VALUE, or NAME alone for the value in the command's own environment, which never reaches argv"
+        },
+        "--mount": {
+          "fields": [
+            "service.run.mounts"
+          ],
+          "notes": "repeated"
+        },
+        "--path-first": {
+          "fields": [
+            "service.run.pathFirst"
+          ],
+          "notes": "repeated, in order"
+        },
+        "--publish": {
+          "fields": [
+            "service.run.ports"
+          ],
+          "notes": "repeated"
+        },
+        "--help": {
+          "cliOnly": "help text, for a person"
+        },
+        "-h": {
+          "cliOnly": "help text, for a person"
+        }
+      }
+    },
+    "signal": {
+      "parser": "Signal",
+      "method": "service.signal",
+      "positionals": [
+        {
+          "name": "<instance>",
+          "fields": [
+            "service.signal.instance"
+          ]
+        },
+        {
+          "name": "term|kill",
+          "fields": [
+            "service.signal.signal"
+          ]
+        }
+      ],
+      "flags": {
+        "--root": {
+          "fields": [
+            "service.signal.target.root"
+          ]
+        },
+        "--runtime": {
+          "fields": [
+            "service.signal.runtime"
+          ]
+        },
+        "--help": {
+          "cliOnly": "help text, for a person"
+        },
+        "-h": {
+          "cliOnly": "help text, for a person"
+        }
+      }
     }
   }
 }

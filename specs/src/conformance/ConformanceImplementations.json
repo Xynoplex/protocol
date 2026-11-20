@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceImplementations.json",
+  "description": "The implementations manifest: the file a run of the conformance harness is given with --implementations, naming what the run holds to Protocol. Every service is run by the xynolog launcher, from the image the knowledge base's stack documents name (contract/LAUNCHER-CONTROL.md, service.run): an implementation is a knowledge base whose documents name its images, and another implementation is another manifest. Each SDK's drivers are programs the harness starts itself, since none is a service. There is no default manifest. The reader reads this schema in the table dialect and derives its model (Tables.Conformance_implementations), for the harness to decode a manifest by.",
+  "type": "object",
+  "properties": {
+    "launcher": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "How the launcher's control API is served: the xynolog command, run with control. A command and its arguments, as the harness starts it. An argument that starts with ./ or ../ is a path, resolved against the manifest's own directory; every other is passed as written."
+    },
+    "target": {
+      "$ref": "https://xynolog.org/protocol/LocalTarget.json",
+      "description": "The knowledge base whose stack documents name each service's image, and whose stack runs the record and index the suites need. A relative root is resolved against the manifest's own directory."
+    },
+    "sdks": {
+      "type": "object",
+      "description": "Each SDK's drivers, by the SDK's name: the programs the SDK and worker suites talk to in its place (conformance/sdk/README.md, \"The driver protocol\").",
+      "additionalProperties": {
+        "type": "object",
+        "description": "One SDK's drivers.",
+        "properties": {
+          "wire": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "How its wire driver is started. A command and its arguments, as the harness starts it. An argument that starts with ./ or ../ is a path, resolved against the manifest's own directory; every other is passed as written."
+          },
+          "live": {
+            "type": "object",
+            "description": "How its live driver is started, and the tier of the live corpus the SDK is held to.",
+            "properties": {
+              "command": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "How its live driver is started. A command and its arguments, as the harness starts it. An argument that starts with ./ or ../ is a path, resolved against the manifest's own directory; every other is passed as written."
+              },
+              "tier": {
+                "$ref": "https://xynolog.org/protocol/ConformanceCase.json#/properties/tier"
+              }
+            },
+            "required": [
+              "command",
+              "tier"
+            ],
+            "additionalProperties": false
+          },
+          "worker": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "How its worker driver is started, when the SDK has a worker's surface (conformance/worker/README.md). A command and its arguments, as the harness starts it. An argument that starts with ./ or ../ is a path, resolved against the manifest's own directory; every other is passed as written."
+          },
+          "exempt": {
+            "type": "object",
+            "description": "The wire cases its driver cannot be put through, by the case's name, each with why. The suite holds an exemption as it holds a case: the driver must answer unsupported to what the case asks, or the exemption is stale.",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "modelCatalogue": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The model catalogue the implementation supplies, by its path; a relative one is resolved against the manifest's own directory. The Librarian's and the worker service's documents name one, so a run of either suite without it refuses to start."
+    }
+  },
+  "required": [
+    "launcher",
+    "target",
+    "sdks"
+  ],
+  "additionalProperties": false
+}
