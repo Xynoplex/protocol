@@ -46,7 +46,8 @@ let source =
 
 (* A yield job focused on [source], queued, asking as the case [asked] of
    worker/prompt-cases.json does. *)
-let yield_job kb name asked = yield_job kb name (params asked)
+let yield_job kb name asked =
+  yield_job ~stored_as:name kb ~source (params asked)
 
 (* The highlight of "the first program" in the short text, on
    [resource_id]. *)

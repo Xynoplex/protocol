@@ -391,19 +391,54 @@ let marker_highlight generator resource_id id n start =
          paragraph (sentence + 1))
     exact
 
-(* JSON with the members of every object in order of their names by code
-   point, at every depth, arrays in their own order, and no white space. *)
+(* A string in the canonical form specs/src/annotations/id-cases.json
+   states: a double quote and a backslash escaped, the five control
+   characters that have a short escape written so, every other below U+0020
+   as \u and four lower-case hexadecimal digits, and every other character
+   as itself. *)
+let canonical_string text =
+  let out = Buffer.create (String.length text + 2) in
+  Buffer.add_char out '"';
+  String.iter
+    (fun c ->
+      match c with
+      | '"' -> Buffer.add_string out "\\\""
+      | '\\' -> Buffer.add_string out "\\\\"
+      | '\b' -> Buffer.add_string out "\\b"
+      | '\t' -> Buffer.add_string out "\\t"
+      | '\n' -> Buffer.add_string out "\\n"
+      | '\012' -> Buffer.add_string out "\\f"
+      | '\r' -> Buffer.add_string out "\\r"
+      | c when Char.code c < 0x20 ->
+          Buffer.add_string out (Printf.sprintf "\\u%04x" (Char.code c))
+      | c -> Buffer.add_char out c)
+    text;
+  Buffer.add_char out '"';
+  Buffer.contents out
+
+(* What the annotation an id is worked out from is, in the canonical form
+   specs/src/annotations/id-cases.json states: no white space, the members of
+   every object in order of their names by code point (their UTF-8 bytes) at
+   every depth, arrays in their own order, whole numbers as their digits. *)
 let rec canonical : Yojson.Safe.t -> string = function
   | `Assoc members ->
       "{"
       ^ String.concat ","
           (List.map
              (fun (name, value) ->
-               Yojson.Safe.to_string (`String name) ^ ":" ^ canonical value)
+               canonical_string name ^ ":" ^ canonical value)
              (List.sort (fun (a, _) (b, _) -> String.compare a b) members))
       ^ "}"
   | `List items -> "[" ^ String.concat "," (List.map canonical items) ^ "]"
-  | other -> Yojson.Safe.to_string other
+  | `String text -> canonical_string text
+  | `Int n -> string_of_int n
+  | `Float f when Float.is_integer f -> Printf.sprintf "%.0f" f
+  | `Bool b -> string_of_bool b
+  | `Null -> "null"
+  | other ->
+      failwith
+        ("specs/src/annotations/id-cases.json states no canonical form of "
+        ^ Yojson.Safe.to_string other)
 
 (* The id of an annotation, derived from what it is as
    specs/src/annotations/id-cases.json states: for an annotation whose
@@ -550,28 +585,29 @@ let source_descriptor id =
           ] );
     ]
 
-(* A yield job of [params], queued: its resource the one its context is
-   focused on, and what it makes stored under [name]. Held to the spec's
-   GenerationJobParams first. *)
-let yield_job kb name params =
+(* A yield job of [params] on the resource [source], queued, and held to
+   the spec's GenerationJobParams first. What it makes is stored where
+   [params] says, or under [stored_as] when a case names it. *)
+let yield_job ?stored_as kb ~source params =
   let members =
     match params with
     | `Assoc members -> members
     | other ->
         failwith ("a yield job's parameters are an object: " ^ Check.shown other)
   in
-  let focus = Check.at params [ "context"; "focus"; "resource"; "@id" ] in
-  let storage_uri = str (Printf.sprintf "file://generated/%s.md" name) in
-  let params =
-    `Assoc
-      (("resourceId", focus)
-      ::
-      (if List.mem_assoc "storageUri" members then
-         List.map
-           (fun (k, v) -> if k = "storageUri" then (k, storage_uri) else (k, v))
-           members
-       else members @ [ ("storageUri", storage_uri) ]))
+  let members =
+    match stored_as with
+    | None -> members
+    | Some name ->
+        let storage_uri = str (Printf.sprintf "file://generated/%s.md" name) in
+        if List.mem_assoc "storageUri" members then
+          List.map
+            (fun (k, v) ->
+              if k = "storageUri" then (k, storage_uri) else (k, v))
+            members
+        else members @ [ ("storageUri", storage_uri) ]
   in
+  let params = `Assoc (("resourceId", str source) :: members) in
   (match Protocol.against "GenerationJobParams" params with
   | [] -> ()
   | refusals ->

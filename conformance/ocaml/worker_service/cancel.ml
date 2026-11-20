@@ -42,7 +42,7 @@ let source = "res-ws-cancel-source"
 
 (* A yield job focused on [source], queued. *)
 let yield_job (kb : W.kb) name =
-  yield_job kb name
+  yield_job ~stored_as:name kb ~source
     (`Assoc
        [
          ("title", str "The Analytical Engine");
