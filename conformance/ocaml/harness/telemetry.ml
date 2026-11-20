@@ -323,3 +323,48 @@ let outside_the_table ?plane (otlp : Otlp.t) service (kb : string option) =
       (Dynarray.to_list resources)
   in
   uniq (unlisted @ of_resources)
+
+(* ── Log lines (service-telemetry/log-lines.json) ───────────────────── *)
+
+(* What [template] holds before its [{placeholder}]. *)
+let before placeholder template =
+  match Re.exec_opt (Re.compile (Re.str placeholder)) template with
+  | Some found -> String.sub template 0 (Re.Group.start found 0)
+  | None -> failwith (Printf.sprintf "%S names no %s" template placeholder)
+
+(* The bus log's line for [op] on [channel]; and what every line of it
+   starts with. *)
+let bus_line op channel =
+  let bus = (Protocol.tables ()).service_telemetry_log_lines.bus in
+  if not (List.mem op bus.ops) then
+    failwith ("service-telemetry/log-lines.json lists no bus op " ^ op);
+  Protocol.fill_template bus.line [ ("op", op); ("channel", channel) ]
+
+let bus_line_start () =
+  before "{op}" (Protocol.tables ()).service_telemetry_log_lines.bus.line
+
+(* A supervisor's events file, as SUPERVISE_EVENTS names one: [lives]
+   starts of the service it calls [name], each its log line. [body] runs
+   with its path, and it is removed after. *)
+let with_supervisor_events ~name ~lives body =
+  let events =
+    Filename.concat
+      (Filename.get_temp_dir_name ())
+      (Printf.sprintf "%s-conformance-supervisor-%s.log" name (Fresh.uuid ()))
+  in
+  let life n =
+    Protocol.fill_template
+      (Protocol.tables ()).service_telemetry_log_lines.supervisor.line
+      [
+        ("time", Printf.sprintf "2026-09-27T00:00:0%dZ" n);
+        ("name", name);
+        ("count", string_of_int n);
+      ]
+  in
+  Out_channel.with_open_text events (fun out ->
+      List.iter
+        (fun n -> output_string out (life n ^ "\n"))
+        (List.init lives Fun.id));
+  Fun.protect
+    ~finally:(fun () -> if Sys.file_exists events then Sys.remove events)
+    (fun () -> body events)

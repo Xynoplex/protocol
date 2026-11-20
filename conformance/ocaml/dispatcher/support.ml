@@ -22,7 +22,7 @@ let with_dispatcher (implementations : Implementations.t) ?timing ?vocabulary
   let made =
     Suite.world ("dispatcher/" ^ title)
       ~make:(fun () ->
-        D.create ~gateway:implementations.gateway
+        D.start ~gateway:implementations.gateway
           ~command:implementations.dispatcher ?timing ?vocabulary ?credentials
           ?env ())
       ~close:D.close

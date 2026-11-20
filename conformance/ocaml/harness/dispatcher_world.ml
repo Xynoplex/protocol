@@ -495,7 +495,7 @@ let start_browser t vocabulary =
    Archivist is absent. [credentials] are what the queue's broker admits
    alone, handed to the dispatcher by the variables its document names.
    [env] is more of its environment. *)
-let create ~gateway ~command ?(timing = []) ?(vocabulary = Some vocabulary)
+let start ~gateway ~command ?(timing = []) ?(vocabulary = Some vocabulary)
     ?credentials ?(env = []) () =
   let secret = Fresh.hex 24 in
   let world =

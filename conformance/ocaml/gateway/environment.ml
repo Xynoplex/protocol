@@ -14,12 +14,6 @@ let dispatch () =
 
 let contains text needle = Re.execp (Re.compile (Re.str needle)) text
 
-(* What [template] holds before its [{placeholder}]. *)
-let before placeholder template =
-  match Re.exec_opt (Re.compile (Re.str placeholder)) template with
-  | Some found -> String.sub template 0 (Re.Group.start found 0)
-  | None -> failwith (Printf.sprintf "%S names no %s" template placeholder)
-
 (* A gateway with [env] (and, when given, a changed document), exporting to
    its own receiver. *)
 let with_gateway implementations ?document env run =
@@ -172,17 +166,6 @@ let schedule_delay implementations () =
            (fun () -> dispatched otlp)
           : Otlp.span))
 
-(* The bus log's line for [op] on [channel]; and what every line of it
-   starts with. *)
-let bus_line op channel =
-  let bus = (Protocol.tables ()).service_telemetry_log_lines.bus in
-  if not (List.mem op bus.ops) then
-    failwith ("service-telemetry/log-lines.json lists no bus op " ^ op);
-  Protocol.fill_template bus.line [ ("op", op); ("channel", channel) ]
-
-let bus_line_start () =
-  before "{op}" (Protocol.tables ()).service_telemetry_log_lines.bus.line
-
 let bus_log implementations () =
   List.iter
     (fun on ->
@@ -191,7 +174,7 @@ let bus_log implementations () =
         (fun w _ ->
           emit w;
           if on then
-            let line = bus_line "EMIT" "beckon:focus" in
+            let line = Telemetry.bus_line "EMIT" "beckon:focus" in
             Run.eventually (Printf.sprintf "a %s line" line) 5.0 (fun () ->
                 if in_output w line then Some () else None)
           else (
@@ -200,32 +183,14 @@ let bus_log implementations () =
               (`List
                  (List.filter_map
                     (fun line ->
-                      if contains line (bus_line_start ()) then
+                      if contains line (Telemetry.bus_line_start ()) then
                         Some (`String line)
                       else None)
                     (Process.output w.gateway.process))))))
     [ false; true ]
 
 let supervised implementations () =
-  let events =
-    Filename.concat
-      (Filename.get_temp_dir_name ())
-      (Printf.sprintf "gateway-conformance-supervisor-%s.log" (Fresh.uuid ()))
-  in
-  let life n =
-    Protocol.fill_template
-      (Protocol.tables ()).service_telemetry_log_lines.supervisor.line
-      [
-        ("time", Printf.sprintf "2026-09-27T00:00:0%dZ" n);
-        ("name", "gateway");
-        ("count", string_of_int n);
-      ]
-  in
-  Out_channel.with_open_text events (fun out ->
-      List.iter (fun n -> output_string out (life n ^ "\n")) [ 0; 1; 2 ]);
-  Fun.protect ~finally:(fun () ->
-      if Sys.file_exists events then Sys.remove events)
-  @@ fun () ->
+  Telemetry.with_supervisor_events ~name:"gateway" ~lives:3 @@ fun events ->
   with_gateway implementations
     (fun otlp ->
       [
@@ -340,7 +305,7 @@ let simple_start () =
                         ("the simple format's {" ^ other ^ "} is unknown here")))
             (Re.split_full
                (Re.compile (Re.Perl.re "\\{([A-Za-z]+)\\}"))
-               (before "{message}"
+               (Telemetry.before "{message}"
                   (Protocol.tables ()).service_telemetry_log_lines.logger.simple))
        ))
 
