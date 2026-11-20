@@ -636,7 +636,7 @@ let bearer_of (r : Client_proxy.request) =
       if String.starts_with ~prefix:"Bearer " value then
         String.sub value 7 (String.length value - 7)
       else value)
-    (List.assoc_opt "authorization" r.headers)
+    (Http.Header.get r.headers "authorization")
 
 type sign_in = { signed_in_as : string; token : string }
 
@@ -691,7 +691,7 @@ let carried served channel =
     (fun (r : Client_proxy.request) ->
       if r.meth = "POST" && r.path = "/bus/subscribe" then
         List.filter_map
-          (fun (event : Client_proxy.carried) ->
+          (fun (event : Client_proxy.event) ->
             match
               if event.event = "bus-event" then Call.parsed event.data else None
             with
