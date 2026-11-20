@@ -35,15 +35,6 @@ export default defineConfig({
           globalSetup: ['harness/global-setup.ts'],
         },
       },
-      {
-        extends: true,
-        test: {
-          name: 'worker-service',
-          include: ['worker-service/**/*.test.ts'],
-          provide: { gatewayCommand: implementations.gateway, workerServices: implementations.workerServices },
-          globalSetup: ['harness/global-setup.ts', 'harness/worker-service-setup.ts'],
-        },
-      },
     ],
   },
 });

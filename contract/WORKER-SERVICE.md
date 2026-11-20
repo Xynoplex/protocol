@@ -16,9 +16,9 @@ corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and the case of
 the worker-service conformance suite
-([`conformance/worker-service`](../conformance/worker-service/README.md))
+([`conformance/ocaml/worker_service`](../conformance/ocaml/worker_service/README.md))
 that fails when a Worker service breaks it: `worker-service/<case>` is the
-file `<case>.test.ts` there. The suite starts the service as a process and
+file `<case>.ml` there. The suite starts the service as a process and
 meets it only at its boundary, so the same cases judge every implementation. A
 rule marked "Held by no case" is one nothing checks.
 `npm run lint:transport-contract` fails when a case named here does not exist,
@@ -125,7 +125,7 @@ engine share its provider's client.
   knowledge base's gateway. The agent's DID there is the one that gateway
   answers `GET /api/users/me` with. The service uses it as answered, and
   derives it from nothing else. No engine signs in for itself.
-  *Held by `worker-service/started`, `worker-service/knowledge-bases`.*
+  *Held by `worker-service/started`, `worker-service/knowledge_bases`.*
 - **G2.** At each knowledge base, once it is confirmed
   ([R1](#knowledge-bases)), the service opens one stream of its own, and every
   engine of that knowledge base claims and runs its jobs over it. It names
@@ -145,13 +145,13 @@ engine share its provider's client.
   `generator`: `@type` `Software`, `@id` the agent's DID at the knowledge
   base the job came from, and `provider` and
   `model`. It states no `name`: what the agent is called is its profile (G5).
-  *Held by `worker-service/started`, `worker-service/knowledge-bases`.*
+  *Held by `worker-service/started`, `worker-service/knowledge_bases`.*
 - **G5.** Once a knowledge base is confirmed ([R1](#knowledge-bases)), and
   before any of its engines claims, the service says what the agent is called
   there: one `principal:profile` on that knowledge base's stream, whose `name`
   is that knowledge base's `identity.clientId`, emitted as the agent. Readers
   name the agent from its profile, as they name a person.
-  *Held by `worker-service/started`, `worker-service/knowledge-bases`.*
+  *Held by `worker-service/started`, `worker-service/knowledge_bases`.*
 
 ## Knowledge bases
 
@@ -180,7 +180,7 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   the request's deadline, or none for as long as it is asked again, is trouble
   ([R3](#knowledge-bases)). Told to stop while it asks, the service asks no
   more.
-  *Held by `worker-service/knowledge-bases`, and by `worker/tests/test_agent.py` and `worker/tests/test_service.py` for its asking again, the stream it asks on being closed before its own opens, and its being told to stop while it asks.*
+  *Held by `worker-service/knowledge_bases`, and by `worker/tests/test_agent.py` and `worker/tests/test_service.py` for its asking again, the stream it asks on being closed before its own opens, and its being told to stop while it asks.*
 - **R2.** A refused knowledge base stays refused until the service is started
   again: its stream is closed, its engines claim nothing there, and the
   service does not sign in there again. A knowledge base is refused when its
@@ -192,7 +192,7 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   says each refusal once in its log, as
   [`messages.json`](../specs/src/worker/messages.json) states `refused`, and
   nothing that carries the key or a token.
-  *Held by `worker-service/knowledge-bases`, `worker-service/stop`.*
+  *Held by `worker-service/knowledge_bases`, `worker-service/stop`.*
 - **R3.** Any other trouble at a knowledge base ends that knowledge base's
   work, and the service starts it again: a sign-in that gets no answer, or an
   answer the `refresh` rule tries again; a confirmation not answered
@@ -212,11 +212,11 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   [`messages.json`](../specs/src/worker/messages.json) states `trouble`, with
   how long it waits. The other knowledge bases keep their streams and their
   jobs throughout.
-  *Held by `worker-service/knowledge-bases`.*
+  *Held by `worker-service/knowledge_bases`.*
 - **R4.** The service's health first answers once a knowledge base is
   confirmed ([H1](#health)). Until then, every knowledge base that is not
   refused is starting, or waiting to start again as R3 says.
-  *Held by `worker-service/knowledge-bases`.*
+  *Held by `worker-service/knowledge_bases`.*
 - **R5.** A service every knowledge base of which is refused exits with status
   1, for whatever supervises it to start it again with a document or a grant
   that has changed. When none was confirmed first, it ends as B6 says: one
@@ -244,7 +244,7 @@ again), `working` (confirmed, its engines claiming), or `refused`.
   query string: `GET /health?probe=1` is answered as `GET /health` is. A
   request of any other path, and a request of `/health` by any other method,
   is answered `404` with no body.
-  *Held by `worker-service/started`, `worker-service/knowledge-bases`.*
+  *Held by `worker-service/started`, `worker-service/knowledge_bases`.*
 
 ## Limits
 
@@ -283,7 +283,7 @@ each of its models can take.
   `max_tokens` as `maxOutputTokens`, each a ceiling of its own.
   `acceptsTemperature` is `false`: under that version of its API, the
   provider refuses a `temperature` on every model.
-  *Held by `worker-service/limits`, `worker-service/anthropic`.*
+  *Held by `worker-service/limits`, `worker-service/on_anthropic`.*
 
 ## What a job reads
 
@@ -302,7 +302,7 @@ each of its models can take.
   read from the gateway (`GET /resources/{id}/anchored-text`, under the
   agent's token). The service reads no bytes, and never works the text out
   itself. For `none`, the job is not done ([N3](#declines)).
-  *Held by `worker-service/highlighting`, `worker-service/pdf`, `worker-service/declines`.*
+  *Held by `worker-service/highlighting`, `worker-service/on_pdf`, `worker-service/declines`.*
 - **J3.** A `yield` job reads nothing. Everything it knows of its source is
   the context in the job.
   *Held by `worker-service/yield`.*
@@ -343,7 +343,7 @@ job is one unit for each of its `categories`.
   every attempt. `num_predict` is `output`. With `P` the tokens of the whole
   prompt, `num_ctx` is the lesser of `C` and `P + num_predict + ceil(P × 0.2)
   + 64`.
-  *Held by `worker-service/highlighting`, `worker-service/chunks`, `worker-service/prompts`, `worker-service/code-points`, `worker-service/failures`.*
+  *Held by `worker-service/highlighting`, `worker-service/chunks`, `worker-service/prompts`, `worker-service/code_points`, `worker-service/failures`.*
 - **D20.** On an Anthropic engine a generation is `POST <baseUrl>/v1/messages`
   with `model`, `max_tokens`, `messages` (one message, of `role` `user`, whose
   `content` is the prompt), and, when the answer is to be an array of objects,
@@ -357,7 +357,7 @@ job is one unit for each of its `categories`.
   `capabilities.structured_outputs.supported` as `true` is not asked for an
   array of objects: a job that needs one fails as deterministic, with no
   generation asked for ([F13](#failures)).
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 - **D21.** On an Anthropic engine the budget of [D3](#the-request) is worked
   out from the model's two ceilings. With `M` its `maxOutputTokens`: `output
   = M`, and `input = C − M − S`. When `output` is over 10666, `input` becomes
@@ -367,7 +367,7 @@ job is one unit for each of its `categories`.
   at 108,000, the rate taken of a provider that states none. Then `input` is
   the lesser of itself and `floor(output / 2)`. `max_tokens` is `output`, and
   there is no `num_ctx`.
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 
 ### Pieces
 
@@ -383,12 +383,12 @@ job is one unit for each of its `categories`.
   code points before this one ended, so that a span at the cut is seen whole by
   one of the two, or where this one ended when that would be no further on
   than this one started. A piece that reaches the end of the text is the last.
-  *Held by `worker-service/chunks`, `worker-service/code-points`.*
+  *Held by `worker-service/chunks`, `worker-service/code_points`.*
 - **D5.** A span two pieces both see is one annotation. Two proposals alike in
   motivation, place and body are counted twice as found and committed once:
   within a job for highlighting, commenting, assessing and tagging, and within
   an entity type for linking.
-  *Held by `worker-service/chunks`, `worker-service/assessing`, `worker-service/code-points`.*
+  *Held by `worker-service/chunks`, `worker-service/assessing`, `worker-service/code_points`.*
 - **D6.** `size` holds from piece to piece when the provider reports no token
   usage.
   *Held by `worker-service/chunks`.*
@@ -434,7 +434,7 @@ job is one unit for each of its `categories`.
   until the character beyond is white space or one of ``. , ; : ! ? ' " ( )
   [ ] { } < > / \``. A span at the start of the text has no `prefix`, and one
   at its end no `suffix`.
-  *Held by `worker-service/highlighting`, `worker-service/commenting`, `worker-service/tagging`, `worker-service/code-points`.*
+  *Held by `worker-service/highlighting`, `worker-service/commenting`, `worker-service/tagging`, `worker-service/code_points`.*
 - **D10.** A span of a PDF is anchored by where its text is on the page, and
   by no offset: one `FragmentSelector` for each line it is on, top line first,
   `conformsTo` `http://tools.ietf.org/rfc/rfc3778`, with the value
@@ -445,7 +445,7 @@ job is one unit for each of its `categories`.
   runs the span touches, a run the span covers only part of counted in
   proportion to the code points covered; its `y` is the lowest of the runs',
   and its height reaches the highest top.
-  *Held by `worker-service/pdf`.*
+  *Held by `worker-service/on_pdf`.*
 
 ### The annotation
 
@@ -470,7 +470,7 @@ job is one unit for each of its `categories`.
   Canonical JSON has the members of every object in order of their names by
   code point, arrays in their own order, and no white space
   ([`id-cases.json`](../specs/src/annotations/id-cases.json)).
-  *Held by `worker-service/highlighting`, `worker-service/commenting`, `worker-service/assessing`, `worker-service/linking`, `worker-service/tagging`, `worker-service/pdf`, `worker-service/code-points`.*
+  *Held by `worker-service/highlighting`, `worker-service/commenting`, `worker-service/assessing`, `worker-service/linking`, `worker-service/tagging`, `worker-service/on_pdf`, `worker-service/code_points`.*
 
 ### Committing, and where a job stands
 
@@ -487,7 +487,7 @@ job is one unit for each of its `categories`.
   its last piece was cut at; and its `found`, `emitted` and `errors` so far.
   Only then is the next piece asked about. A piece with nothing to commit
   commits nothing and is checkpointed all the same.
-  *Held by `worker-service/highlighting`, `worker-service/chunks`, `worker-service/code-points`, `worker-service/linking`, `worker-service/resume`.*
+  *Held by `worker-service/highlighting`, `worker-service/chunks`, `worker-service/code_points`, `worker-service/linking`, `worker-service/resume`.*
 - **D14.** A linking job's checkpoints also state the entity types this
   attempt has finished, in `completedUnits`: when a type's last batch is
   established, a checkpoint names the type as finished, and carries its
@@ -531,7 +531,7 @@ job is one unit for each of its `categories`.
   and the motivation. Every report repeats what the job was asked
   with, as `requestParams`: its `instructions`, its `tone` and its `density`,
   those it has, in that order.
-  *Held by `worker-service/highlighting`, `worker-service/chunks`, `worker-service/commenting`, `worker-service/assessing`, `worker-service/code-points`.*
+  *Held by `worker-service/highlighting`, `worker-service/chunks`, `worker-service/commenting`, `worker-service/assessing`, `worker-service/code_points`.*
 - **D18.** A linking job reports `loading` at 10, and then
   `detecting-entities`, naming the entity type, at `20 + round(60 × finished /
   types)`: when a type is begun; for each piece, when its mentions have been
@@ -634,7 +634,7 @@ be written in, unless that is English.
   [K4](#the-five-kinds-of-mark-job) says, its count a generation with the
   count's `output_config` and a `max_tokens` of 32. So what the job asks its model,
   commits and checkpoints comes in no fixed order across its types.
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 
 ## Declines
 
@@ -650,21 +650,21 @@ deterministic, so that no attempt is spent on them again.
 - **N1.** A `mark` job on a text that is empty, or nothing but white space,
   completes with the result `{"declined": true, "reason": "empty"}`. Nothing
   is asked of the model, nothing is committed, and no progress is reported.
-  *Held by `worker-service/declines`, `worker-service/pdf`.*
+  *Held by `worker-service/declines`, `worker-service/on_pdf`.*
 - **N2.** A `mark` job on a PDF the Smelter declined completes declined, with
   the Smelter's reason: `encrypted`, `corrupt`, `no-text-layer` or
   `too-large`.
-  *Held by `worker-service/pdf`.*
+  *Held by `worker-service/on_pdf`.*
 - **N3.** A `mark` job on a resource whose media type has no text fails as
   deterministic, `unextractable`. No bytes are read.
   *Held by `worker-service/declines`.*
 - **N4.** A `mark` job on a PDF whose text the Smelter has not settled
   (`not-yet`) fails with no class, `not-settled`, so that a later attempt may
   find it. The service asks once, and does not wait.
-  *Held by `worker-service/pdf`.*
+  *Held by `worker-service/on_pdf`.*
 - **N5.** A `mark` job on a PDF the Smelter has no map of (`no-map`) or does
   not know (`unknown`) fails as deterministic, `anchored-declined`.
-  *Held by `worker-service/pdf`.*
+  *Held by `worker-service/on_pdf`.*
 - **N6.** A job its engine's filters do not take, handed over all the same, is
   started and then failed as deterministic, `not-served`. Nothing is read for
   it.
@@ -705,7 +705,7 @@ deterministic, so that no attempt is spent on them again.
   on an Anthropic engine it may be ([F10](#failures)), and the job fails by
   the last answer. A generation that fails with no status has no class: a
   connection that ends unanswered.
-  *Held by `worker-service/failures`, `worker-service/anthropic`.*
+  *Held by `worker-service/failures`, `worker-service/on_anthropic`.*
 - **F4.** An answer that cannot be read, from a model that finished, has no
   class, `unreadable`: one that is not JSON, one that is JSON and not an
   array, and one with nothing in it. The job fails so only once smaller pieces
@@ -714,12 +714,12 @@ deterministic, so that no attempt is spent on them again.
   requests in all. An answer with nothing in it cannot be read whatever was
   asked for: a `yield` job whose model answers nothing fails so, and uploads
   nothing.
-  *Held by `worker-service/failures`, `worker-service/anthropic`.*
+  *Held by `worker-service/failures`, `worker-service/on_anthropic`.*
 - **F5.** An answer the model was cut off in (Ollama's `done_reason`
   `length`, Anthropic's `stop_reason` `max_tokens`) is not used, whatever it
   carried. Over a piece that cannot be cut smaller the same request is made a
   second time, and no more; cut off again, the job fails as deterministic.
-  *Held by `worker-service/failures`, `worker-service/anthropic`.*
+  *Held by `worker-service/failures`, `worker-service/on_anthropic`.*
 - **F6.** A piece that can be cut smaller is asked again in halves when its
   answer is cut off: pieces of half the piece's own size, its tokens halved
   and rounded down, cut as [D4](#pieces) cuts them, each asked in turn, and
@@ -763,7 +763,7 @@ deterministic, so that no attempt is spent on them again.
   [F14](#failures) says of a request that learns a model's limits. A request
   refused with any other status is not made again, and neither is one whose
   refusal says to wait longer than two minutes ([F11](#failures)).
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 - **F11.** Before it asks again an Anthropic engine waits: as long as the
   refusal says, when it says and that is two minutes or less; and otherwise at
   least three eighths of a second before the second asking and at least three
@@ -774,7 +774,7 @@ deterministic, so that no attempt is spent on them again.
   generation and [F14](#failures) of a request that learns a model's limits,
   and its error says, beside what the provider said, the wait it stated, as
   the header stated it: `wait-stated`.
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 - **F12.** An answer the provider withheld (Anthropic's `stop_reason`
   `refusal`) is not used, whatever it carried: no annotation is made from it
   and no document is kept of it. The job fails as withheld, a class of its
@@ -783,7 +783,7 @@ deterministic, so that no attempt is spent on them again.
   the provider said of why. The request is not made again, and the job says it
   will not be retried, whatever budget it has left ([JOBS.md §
   Retries](./JOBS.md#retries)).
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 - **F13.** A job that needs an array of objects from a model not known to hold
   a reply to a schema fails as deterministic, with no generation asked for. No
   attempt changes what is known of the model, so the job says it will not be
@@ -792,7 +792,7 @@ deterministic, so that no attempt is spent on them again.
   `capabilities.structured_outputs.supported` as `true` ([D20](#the-request));
   an Ollama engine refuses no model. Every `mark` job needs such an array. A
   `yield` job needs none, and is done on such a model all the same.
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 - **F14.** A job whose engine cannot learn its model's limits ([M2 and
   M5](#limits)) fails with no generation asked for. When the provider refused
   a request that learns them with a status, the job fails in the class that
@@ -805,7 +805,7 @@ deterministic, so that no attempt is spent on them again.
   failure has no class: a connection that ends unanswered, and an answer that
   does not state the limits (`no-context-length`). What could not be learned
   is not kept ([M3](#limits)), and the next job asks again.
-  *Held by `worker-service/failures`, `worker-service/anthropic`.*
+  *Held by `worker-service/failures`, `worker-service/on_anthropic`.*
 
 ## Resuming
 
@@ -872,7 +872,7 @@ stopping place, and not at once.
   on working on an answer nobody will use, until the model answers or the
   ten-minute bound of [F9](#failures) ends the request. A cancellation can
   take that long to take effect.
-  *Held by `worker-service/cancel`, `worker-service/anthropic`.*
+  *Held by `worker-service/cancel`, `worker-service/on_anthropic`.*
 - **Q5.** A cancelled job reports no completion: no `complete-created` and no
   `complete-generated`. Once it has stopped it makes no progress report at
   all: a `mark` job, none after the checkpoint of the piece it stopped on; a
@@ -907,7 +907,7 @@ focused on a resource or on an annotation.
   ends and a code fence around it. When the model was cut off (Ollama's
   `done_reason` `length`, Anthropic's `stop_reason` `max_tokens`) the
   document is kept, and the job says `truncated`.
-  *Held by `worker-service/yield`, `worker-service/anthropic`.*
+  *Held by `worker-service/yield`, `worker-service/on_anthropic`.*
 - **Y4.** With `cite`, the model is asked to wrap the words of each claim in
   a mark naming its source, `[[<id>: <claim>]]`, the ids of several sources
   separated by commas. A mark is taken out of the document and its claim left
@@ -972,7 +972,7 @@ focused on a resource or on an annotation.
   the `stop_reason` of its `message_delta`. A length of 21333 or less is
   asked for without `stream`, and answered as one message. The job makes the
   same of either.
-  *Held by `worker-service/anthropic`.*
+  *Held by `worker-service/on_anthropic`.*
 
 ## Telemetry
 
@@ -990,13 +990,13 @@ focused on a resource or on an annotation.
   attributes, and, where the row lists values, only those values; and every
   one of those rows that the service's work can make arrives, with every
   attribute the row does not mark as conditional.
-  *Held by `worker-service/telemetry`.*
+  *Held by `worker-service/exported`.*
 - **T2.** A job is a `job:{jobType}` span, from the claim that handed it over
   to its settle, and is counted (`xynolog.job.outcome`) and timed
   (`xynolog.job.duration`) by its type, its motivation when it is a `mark`
   job, and how it ended: `completed`, a declined job among them, `failed`, or
   `cancelled`.
-  *Held by `worker-service/telemetry`.*
+  *Held by `worker-service/exported`.*
 - **T3.** A generation is a span, `inference:structured` when it asks for an
   array of objects and `inference:text` when it does not, that names the
   engine's provider and model and the tokens asked for. It is counted
@@ -1006,7 +1006,7 @@ focused on a resource or on an annotation.
   the model read as `input` and what it wrote as `output`, under the
   provider and the model. What learns a model's limits
   ([M2 and M5](#limits)) is no generation, and is not counted.
-  *Held by `worker-service/telemetry`, `worker-service/anthropic`.*
+  *Held by `worker-service/exported`, `worker-service/on_anthropic`.*
 - **T4.** Each span and data point of a row that lists the worker alone
   carries `xynolog.kb`: the DID of the knowledge base whose claims handed
   the job over, `did:web:` and the domain its document names there. Of a
@@ -1015,7 +1015,7 @@ focused on a resource or on an annotation.
   of itself, the SDK's rows, and what a provider's driver counts of a
   generation (`xynolog.inference.*`), since one engine's client serves every
   knowledge base that names it.
-  *Held by `worker-service/telemetry`.*
+  *Held by `worker-service/exported`.*
 
 ## Environment
 
@@ -1098,7 +1098,7 @@ these for the Worker service, but the keys its document names.
   ([WORKER-CONTRACT L8](./WORKER-CONTRACT.md#the-lifecycle)), claims no other,
   and exits with status 0. A request to its provider that is under way ends
   with the process, unanswered.
-  *Held by `worker-service/stop`, `worker-service/anthropic`.*
+  *Held by `worker-service/stop`, `worker-service/on_anthropic`.*
 - **P3.** A claim refused as `unauthorized` refuses its knowledge base
   ([R2](#knowledge-bases)): the grant is gone, and no later claim there
   changes that. When it was the last knowledge base not refused, the service

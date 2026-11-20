@@ -11,8 +11,7 @@
     "pretest": "npm run typecheck",
     "test": "vitest run",
     "test:sdk": "npm run typecheck && vitest run --project sdk",
-    "test:worker": "npm run typecheck && vitest run --project worker",
-    "test:worker-service": "npm run typecheck && vitest run --project worker-service"
+    "test:worker": "npm run typecheck && vitest run --project worker"
   },
   "devDependencies": {
     "@nats-io/jetstream": "^3.4.0",

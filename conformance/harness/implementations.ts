@@ -49,7 +49,7 @@ const SCHEMA = {
         },
       },
     },
-    /** How each Worker service is started: run with `--config <document>` (worker-service/README.md). */
+    /** How each Worker service is started: run with `--config <document>` (ocaml/worker_service/README.md). */
     workerServices: { values: COMMAND },
     /** How each Weaver is started, and the port its health answers on, which the harness writes into its document (weaver/README.md). */
     weaverServices: { values: { properties: { command: COMMAND, healthPort: { type: 'uint16' } } } },
