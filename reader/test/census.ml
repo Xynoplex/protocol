@@ -714,9 +714,8 @@ let () =
     (fun copied ->
       rewrite
         (Filename.concat copied "dispatcher/messages.json")
-        (update
-           [ "refusals"; "1"; "message" ]
-           (fun _ -> `String "Unknown entity type: {types}")))
+        (update [ "refusals"; "1"; "message" ] (fun _ ->
+             `String "Unknown entity type: {types}")))
     "archivist/messages.json: /refusals: the Archivist refuses an entity type \
      not registered in \"Entity type not registered: {types}\", and the \
      dispatcher in \"Unknown entity type: {types}\"";
