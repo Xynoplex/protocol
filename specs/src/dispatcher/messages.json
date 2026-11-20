@@ -1,0 +1,63 @@
+{
+  "$comment": "AUTHORITY for the words of the dispatcher's own refusals (JOBS.md § Channels): for each situation it refuses an operation in itself, the operation, the `message` of the CommandError it replies with on the operation's failure channel, and its `code` where it carries one, word for word. A refusal the dispatcher relays carries the relayed words, not these: a vocabulary read's failure (for an Archivist that is not connected, gateway/messages.json's failure `peer-unavailable`), and the store's error. A text's `{name}` is filled as the row's `situation` says. `errors` is each error the dispatcher writes into a job's record on its own, with its failure class.",
+  "refusals": [
+    {
+      "name": "create-without-user",
+      "operation": "job:create",
+      "situation": "A `job:create` with no `_userId` (check 1). The gateway stamps `_userId` on every frame it accepts, so only a frame that reached the bus around it is refused so.",
+      "message": "_userId is required (injected by bus gateway)"
+    },
+    {
+      "name": "entity-type-not-registered",
+      "operation": "job:create",
+      "situation": "A `mark` linking job, or a `yield` job, naming entity types that are not registered (checks 2 and 5): `{types}` is each that is not, in the order the job names them, joined by `, `.",
+      "message": "Entity type not registered: {types}"
+    },
+    {
+      "name": "tag-schema-not-registered",
+      "operation": "job:create",
+      "situation": "A `mark` tagging job whose `schemaId` names no registered tag schema (check 3): `{schemaId}` is the `schemaId`.",
+      "message": "Tag schema not registered: {schemaId}"
+    },
+    {
+      "name": "yield-parameter",
+      "operation": "job:create",
+      "situation": "A `yield` job given parameters GenerationJobParams does not name (check 4): `{params}` is each, in the order the job gives them, joined by `, `.",
+      "message": "a yield job takes no parameter {params}"
+    },
+    {
+      "name": "not-a-worker",
+      "operation": "job:claim",
+      "code": "unauthorized",
+      "situation": "A `job:claim` whose `_roles` does not hold the worker role, checked before the queue is consulted.",
+      "message": "job:claim refused: the caller is not a worker for this knowledge base"
+    },
+    {
+      "name": "none-pending",
+      "operation": "job:claim",
+      "code": "none-pending",
+      "situation": "A `job:claim` from a worker that no pending job matches: a decline, not an error.",
+      "message": "No pending job matches the claim"
+    },
+    {
+      "name": "claim-without-user",
+      "operation": "job:claim",
+      "situation": "A `job:claim` from a worker with no `_userId`, checked after the transition, which leaves the job `running`. The gateway stamps `_userId` on every frame it accepts, so only a frame that reached the bus around it is refused so.",
+      "message": "job:claim missing _userId (gateway injection)"
+    },
+    {
+      "name": "job-not-found",
+      "operation": "job:status-requested",
+      "situation": "A `job:status-requested` naming a job the queue holds no record of: never created, or deleted by retention.",
+      "message": "Job not found"
+    }
+  ],
+  "errors": [
+    {
+      "name": "presumed-dead",
+      "situation": "The dead-worker sweep's, for a running job with no write for `staleRunningMs`: `{minutes}` is `staleRunningMs` divided by 60000, as the shortest decimal that reads back as that number, with no `.0` when it is whole.",
+      "error": "worker presumed dead — no progress within {minutes} minutes",
+      "failureClass": "transient"
+    }
+  ]
+}

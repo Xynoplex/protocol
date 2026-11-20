@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/JobsBudgets.json",
+  "description": "jobs/budgets.json: the retry budget of each job type.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "budgets": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One row for each job type.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "jobType": {
+            "$ref": "https://xynolog.org/protocol/JobType.json"
+          },
+          "maxRetries": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many times a failed attempt of a job of this type may be retried: its record's `metadata.maxRetries`."
+          }
+        },
+        "required": [
+          "jobType",
+          "maxRetries"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "budgets"
+  ],
+  "additionalProperties": false
+}

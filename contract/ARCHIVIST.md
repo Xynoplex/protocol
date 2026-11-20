@@ -40,7 +40,8 @@ for each job and each actor, the port of its HTTP surface, whether to skip the b
 bounds, and its log level and format. Its image passes `--config /etc/xynolog/archivist.json`, and
 the launcher writes the document there, from the knowledge base's stack documents. Started without
 `--config`, or with a path that names no file, no JSON, or a document the schema refuses, the
-Archivist writes the reason to stderr and exits with status 1 before it serves.
+Archivist writes the refusal [`service-environment/boot-refusals.json`](../specs/src/service-environment/boot-refusals.json) states to stderr and exits with status 1 before it
+serves.
 
 The document carries no secret. The Archivist's own account at the issuer is the pair
 `XYNOLOG_OIDC_CLIENT_ID` and `XYNOLOG_OIDC_CLIENT_SECRET`; without both it does not start.
