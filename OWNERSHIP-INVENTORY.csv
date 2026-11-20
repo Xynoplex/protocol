@@ -100,6 +100,7 @@ conformance/harness/worker-setup.ts,Portable conformance,xynolog/protocol,Protoc
 conformance/harness/world.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/.ocamlformat,Portable conformance,xynolog/protocol,"The OCaml conformance harness's dune project, and its links to the root's workspace, format and reader."
 conformance/ocaml/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/anchored_text.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/annotations.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/archivist_suite.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
