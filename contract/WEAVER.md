@@ -151,6 +151,19 @@ second fold, which shares nothing with it, says the record leaves.
 [`codec-cases.json`](../specs/src/graph/codec-cases.json) states what is
 stored of an annotation and of a resource, what each stored thing is called,
 which are required, and what is refused.
+[`schema.json`](../specs/src/graph/schema.json) states the graph those rows
+are in, as every store keeps it: each kind of node by its label, the
+property it is one of its kind by and those a reader finds it by; each kind
+of relationship, from which kind of node to which; and the stub.
+
+- **A resource, an annotation and an entity type are each a node of its
+  kind.** An annotation belongs to the resource it is on, references the
+  resource it links to, and is tagged as each of its entity tags.
+  *Held by `weaver/record`.*
+- **A link's target the graph has not been given yet is a stub:** a
+  resource node with its id and the stub's marker, and nothing else. No read
+  answers, lists, counts or follows it, and storing the resource fills it
+  in. *Held by `weaver/record` and `weaver/repair`.*
 
 - **Of an annotation:** its id, the resource it is on, its motivation, its
   selector as given, its creator, when it was made and last changed, and the

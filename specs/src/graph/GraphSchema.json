@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GraphSchema.json",
+  "description": "graph/schema.json: the shape of the graph a store keeps, as a reader of the store finds it.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "nodes": {
+      "type": "object",
+      "description": "Each kind of node the graph holds.",
+      "properties": {
+        "resource": {
+          "type": "object",
+          "description": "A kind of node: its label, the codec row it holds, the property it is one of its kind by, and the properties a reader finds one by.",
+          "properties": {
+            "label": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Za-z]*$",
+              "description": "Its label."
+            },
+            "row": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The part of graph/codec-cases.json whose `properties` and `json` are the node's properties. A node without one holds its key alone."
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The property no two nodes of its kind share."
+            },
+            "lookups": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "The properties other than its key that a reader finds a node of its kind by."
+            }
+          },
+          "required": [
+            "label",
+            "key",
+            "lookups"
+          ],
+          "additionalProperties": false
+        },
+        "annotation": {
+          "$ref": "#/properties/nodes/properties/resource"
+        },
+        "entityType": {
+          "$ref": "#/properties/nodes/properties/resource"
+        }
+      },
+      "required": [
+        "resource",
+        "annotation",
+        "entityType"
+      ],
+      "additionalProperties": false
+    },
+    "relationships": {
+      "type": "object",
+      "description": "Each kind of relationship the graph holds.",
+      "properties": {
+        "belongsTo": {
+          "type": "object",
+          "description": "A kind of relationship: its type, the kind of node it goes from and the kind it goes to, and what it says.",
+          "properties": {
+            "type": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z_]*$",
+              "description": "Its type."
+            },
+            "from": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The kind of node it goes from, by its name under `nodes`."
+            },
+            "to": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The kind of node it goes to, by its name under `nodes`."
+            },
+            "says": {
+              "type": "string",
+              "minLength": 1,
+              "description": "What one says."
+            }
+          },
+          "required": [
+            "type",
+            "from",
+            "to",
+            "says"
+          ],
+          "additionalProperties": false
+        },
+        "references": {
+          "$ref": "#/properties/relationships/properties/belongsTo"
+        },
+        "taggedAs": {
+          "$ref": "#/properties/relationships/properties/belongsTo"
+        }
+      },
+      "required": [
+        "belongsTo",
+        "references",
+        "taggedAs"
+      ],
+      "additionalProperties": false
+    },
+    "stub": {
+      "type": "object",
+      "description": "A link's target the graph has not been given yet: a node of its kind that holds its key and the marker, `true`, and nothing else. A node without the marker is no stub.",
+      "properties": {
+        "node": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The kind of node a stub is, by its name under `nodes`."
+        },
+        "marker": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The property that marks a stub."
+        }
+      },
+      "required": [
+        "node",
+        "marker"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "nodes",
+    "relationships",
+    "stub"
+  ],
+  "additionalProperties": false
+}
