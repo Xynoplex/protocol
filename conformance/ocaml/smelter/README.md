@@ -55,7 +55,8 @@ Each file runs its cases in a world of its own
   a knowledge base, a real Archivist that records and answers and serves a
   resource's bytes, a real gateway, and the trusted issuer, which grants the
   Smelter's service account;
-- a real Qdrant, every collection of which is cleared when the world is made;
+- a real Qdrant, every collection of which is cleared when the world is made
+  and again when it is closed;
 - a stand-in for its embedding provider
   ([harness/ollama_embed.ml](../harness/ollama_embed.ml)): an Ollama's
   `POST /api/embed`. A vector is worked out from its text alone, so the same
@@ -82,7 +83,8 @@ any Smelter is, and every decision it carries is held to its schema.
 6333), **and the API key it was started with,** in `QDRANT_API_KEY`, and
 starts none. The Qdrant is run with its JWT access control on, as the
 launcher runs one. Without either variable the run fails, and names the one
-that is missing; it is not skipped. **It clears every collection of the
+that is missing, and so does a Qdrant that refuses the key or asks for none;
+it is not skipped. **It clears every collection of the
 database it is given,** so it is given one of its own:
 
 ```bash

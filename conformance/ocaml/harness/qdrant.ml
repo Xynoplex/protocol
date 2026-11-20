@@ -141,6 +141,19 @@ let collections_at database =
           (answered "list its collections"
              (ask database "GET" "/collections" None))))
 
+(* Fail unless the Qdrant of [database] is there, answers its key, and
+   refuses a request that presents nothing. One started without a key
+   answers every token as it answers the key, and so holds no refusal. *)
+let guarded database =
+  ignore (collections_at database : string list);
+  let bare : Call.reply = Call.call (origin database) "GET" "/collections" in
+  if bare.status <> 401 then
+    failwith
+      (Printf.sprintf
+         "Qdrant answered %d to GET %s/collections, which presented no key: it \
+          is to be started with an API key and its JWT access control on"
+         bare.status (origin database))
+
 type index = { database : database; names : (string * string) list }
 
 let index database did = { database; names = collection_names did }

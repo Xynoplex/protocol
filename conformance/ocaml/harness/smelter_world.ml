@@ -47,7 +47,7 @@ type t = {
 }
 
 (* The Qdrant the suite is given: where it is, and the API key it was
-   started with. *)
+   started with, which it must ask for. *)
 let database () =
   let named variable =
     match Sys.getenv_opt variable with
@@ -62,8 +62,11 @@ let database () =
               address and QDRANT_API_KEY to its key."
              variable)
   in
-  ({ host = named "QDRANT_HOST"; key = named "QDRANT_API_KEY" }
-    : Qdrant.database)
+  let database : Qdrant.database =
+    { host = named "QDRANT_HOST"; key = named "QDRANT_API_KEY" }
+  in
+  Qdrant.guarded database;
+  database
 
 let python (implementations : Implementations.t) =
   match List.assoc_opt "python" implementations.smelters with
