@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/BusEventIdCases.json",
+  "description": "bus/event-id-cases.json: the id a `bus-event` message carries for each frame.",
+  "allOf": [
+    {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "$comment": true,
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "why": {
+            "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/cases/items/properties/why"
+          },
+          "frame": {
+            "$ref": "https://xynolog.org/protocol/BusFrame.json"
+          },
+          "id": {
+            "oneOf": [
+              {
+                "title": "Persisted",
+                "type": "object",
+                "properties": {
+                  "persisted": {
+                    "$ref": "https://xynolog.org/protocol/PersistedEventId.json"
+                  }
+                },
+                "required": [
+                  "persisted"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "title": "Reply",
+                "type": "object",
+                "properties": {
+                  "reply": {
+                    "$ref": "https://xynolog.org/protocol/ReplyEventId.json"
+                  }
+                },
+                "required": [
+                  "reply"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "title": "Ephemeral",
+                "type": "object",
+                "properties": {
+                  "ephemeral": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  }
+                },
+                "required": [
+                  "ephemeral"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "description": "Its id: the persisted id it is, the reply id it is, or an ephemeral one."
+          }
+        },
+        "required": [
+          "why",
+          "frame",
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "cases"
+  ],
+  "additionalProperties": false
+}

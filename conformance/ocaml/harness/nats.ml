@@ -7,36 +7,73 @@
    The client is nats-client's protocol, on an Eio socket: enough of it for a
    suite to ask JetStream's API, under $JS.API, and read its JSON answers. *)
 
-type broker = { url : string; port : int; process : Process.t; store : string }
+(* A user and a password the broker admits, and admits no one else. *)
+type credentials = { user : string; password : string }
 
-let start_broker () =
+type broker = {
+  url : string;
+  port : int;
+  config : string;
+  store : string;
+  jetstream : bool;
+  mutable credentials : credentials option;
+      (** What it admits alone, when anything. *)
+  mutable process : Process.t option;
+}
+
+(* Start it on its port and store, admitting what it admits. *)
+let up broker =
+  let process =
+    Process.spawn "broker"
+      ([ "nats-server"; "-c"; broker.config; "-a"; "127.0.0.1"; "-p" ]
+      @ [ string_of_int broker.port ]
+      @ (if broker.jetstream then [ "-js"; "-sd"; broker.store ] else [])
+      @
+      match broker.credentials with
+      | Some { user; password } -> [ "--user"; user; "--pass"; password ]
+      | None -> [])
+      (Process.run_environment ())
+  in
+  broker.process <- Some process;
+  Net.wait_for_tcp "127.0.0.1" broker.port 10.0
+
+(* A broker on a free port, with JetStream unless [jetstream] is false, and
+   admitting only [credentials] when they are given. *)
+let start_broker ?(jetstream = true) ?credentials () =
   let port = Net.free_port () in
   let store = Filename.temp_dir "conformance-nats-" "" in
   let config = Filename.concat store "xynolog.conf" in
   Out_channel.with_open_bin config (fun out ->
       Printf.fprintf out "max_payload: %d\n"
         (2 * Protocol.limit Gateway "POST" "/bus/emit" "maxBodyBytes"));
-  let process =
-    Process.spawn "broker"
-      [
-        "nats-server";
-        "-c";
-        config;
-        "-a";
-        "127.0.0.1";
-        "-p";
-        string_of_int port;
-        "-js";
-        "-sd";
-        store;
-      ]
-      (Process.run_environment ())
+  let broker =
+    {
+      url = Printf.sprintf "nats://127.0.0.1:%d" port;
+      port;
+      config;
+      store;
+      jetstream;
+      credentials;
+      process = None;
+    }
   in
-  Net.wait_for_tcp "127.0.0.1" port 10.0;
-  { url = Printf.sprintf "nats://127.0.0.1:%d" port; port; process; store }
+  up broker;
+  broker
+
+(* Stop it, leaving its port closed until [up]. *)
+let down broker =
+  Option.iter (fun p -> ignore (Process.stop p : int option)) broker.process;
+  broker.process <- None
+
+(* Stop it and start it again on the same port and store: admitting
+   [credentials] alone from now on, when they are given. *)
+let restart ?credentials broker =
+  down broker;
+  Option.iter (fun c -> broker.credentials <- Some c) credentials;
+  up broker
 
 let stop_broker broker =
-  ignore (Process.stop broker.process : int option);
+  down broker;
   Gateway.remove broker.store
 
 module P = Nats_client.Protocol

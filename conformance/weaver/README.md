@@ -19,7 +19,7 @@ and its own reading of each row
 stated by
 [`specs/src/graph/codec-cases.json`](../../specs/src/graph/codec-cases.json),
 the case table the Weaver's codec is held to, and the harness's reader is held
-to the same table (`harness/graph-codec.test.ts`, which the gateway project
+to the same table (`harness/graph-codec.test.ts`, which `test:fixtures`
 runs with the harness's other tests of itself). So the suite judges a Weaver
 by something other than the Weaver's own code. The other way would be for
 `xynolog_graph` to offer a small command that prints a resource's rows,

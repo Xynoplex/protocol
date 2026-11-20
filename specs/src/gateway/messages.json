@@ -1,0 +1,180 @@
+{
+  "$comment": "AUTHORITY for the words of the gateway's own refusals (TRANSPORT-HTTP.md § Errors): for each situation it refuses a request in itself, the status, the ErrorResponse's (or LimitRefusal's) `error`, and its `code` and `hint` where it carries them, word for word. A refusal the gateway relays from the Archivist carries the Archivist's words, not these, and a refusal of one of these situations carries no other text. A text's `{name}` is filled as the row's `situation` says. What the gateway logs of a refusal is its own: a refused token is told only that it was refused, and its log says why. `failures` is each failure frame the gateway delivers itself on the stream of the client whose request it answers, in place of an answer nobody can give. `challenges` is the `WWW-Authenticate` of each 401, in the form the Unauthorized response states; a 429 that replaces a 401 carries none.",
+  "messages": [
+    {
+      "name": "no-credential",
+      "status": 401,
+      "situation": "A protected operation, asked with no credential: no `Authorization` header, a scheme that is not `Bearer`, a `Bearer` with no token, or a media token anywhere it is not accepted.",
+      "error": "Unauthorized",
+      "hint": "Authentication required: send an `Authorization: Bearer <token>` header. A raw browser navigation to a protected resource is unauthenticated."
+    },
+    {
+      "name": "refused-token",
+      "status": 401,
+      "situation": "A bearer token the gateway does not accept.",
+      "error": "Invalid token"
+    },
+    {
+      "name": "refused-media-token",
+      "status": 401,
+      "situation": "A media token `GET /api/resources/{id}` does not accept: expired, of another knowledge base, of another resource, or not one.",
+      "error": "Invalid media token"
+    },
+    {
+      "name": "refusal-rate",
+      "status": 429,
+      "code": "refusal-rate",
+      "situation": "Any of the 401s above, once the refusals its holder has had have used their allowance.",
+      "error": "The credential was refused, and its holder's refused requests have used their allowance"
+    },
+    {
+      "name": "not-json",
+      "status": 400,
+      "situation": "An operation whose body is JSON, given one that is not.",
+      "error": "The body is not JSON"
+    },
+    {
+      "name": "no-idempotency-key",
+      "status": 400,
+      "situation": "An operation that requires an `Idempotency-Key`, asked without one.",
+      "error": "The request carries no Idempotency-Key"
+    },
+    {
+      "name": "idempotency-key-not-text",
+      "status": 400,
+      "situation": "An `Idempotency-Key` with a character that is not visible ASCII.",
+      "error": "The Idempotency-Key is not text: only visible ASCII characters"
+    },
+    {
+      "name": "idempotency-key-length",
+      "status": 400,
+      "situation": "An `Idempotency-Key` shorter or longer than its parameter allows: `{minLength}` and `{maxLength}` are its schema's.",
+      "error": "The Idempotency-Key must be {minLength} to {maxLength} characters"
+    },
+    {
+      "name": "unknown-channel",
+      "status": 400,
+      "situation": "An emit on a channel the bus registry does not register: `{channel}` is the one it named.",
+      "error": "Unknown channel: {channel}"
+    },
+    {
+      "name": "invalid-payload",
+      "status": 400,
+      "situation": "An emit whose payload its channel's schema refuses: `{channel}` is the channel, and `{problems}` each refusal, as `<the member's JSON Pointer, or root>: <the refusal>`, joined by `; `.",
+      "error": "Invalid payload for {channel}: {problems}"
+    },
+    {
+      "name": "correlation-without-client",
+      "status": 400,
+      "situation": "An emit that carries a `correlationId` and no `clientId`: `{channel}` is its channel.",
+      "error": "clientId is required to emit {channel} with a correlationId"
+    },
+    {
+      "name": "no-subscription",
+      "status": 400,
+      "situation": "A subscription with no global channel and no scoped entry.",
+      "error": "At least one global channel or scoped entry is required"
+    },
+    {
+      "name": "duplicate-scope",
+      "status": 400,
+      "situation": "A subscription whose `scoped` names one scope twice: `{scope}` is that scope.",
+      "error": "duplicate scope \"{scope}\" in matrix"
+    },
+    {
+      "name": "not-found",
+      "status": 404,
+      "situation": "A path the gateway does not serve, or a method a path it serves does not take.",
+      "error": "Not found"
+    },
+    {
+      "name": "resource-not-found",
+      "status": 404,
+      "situation": "A resource the knowledge base does not hold: an `{id}` that is no ResourceId, one the Archivist holds no view of, or one whose bytes the Archivist answers it does not hold the resource of.",
+      "error": "Resource not found"
+    },
+    {
+      "name": "representation-not-found",
+      "status": 404,
+      "situation": "A resource the knowledge base holds, whose bytes the Archivist answers it does not hold.",
+      "error": "Resource representation not found"
+    },
+    {
+      "name": "correlation-claimed",
+      "status": 409,
+      "situation": "An emit whose `correlationId` another client has claimed: `{correlationId}` is it.",
+      "error": "correlationId {correlationId} is already claimed"
+    },
+    {
+      "name": "too-large",
+      "status": 413,
+      "situation": "A body larger than its operation's `maxBodyBytes`, which `{maxBodyBytes}` is.",
+      "error": "The body is larger than {maxBodyBytes} bytes, this operation's maxBodyBytes"
+    },
+    {
+      "name": "idempotency-key-reused",
+      "status": 422,
+      "code": "unprocessable",
+      "situation": "An emit sent again under its `Idempotency-Key` with another body.",
+      "error": "This Idempotency-Key was first sent with another body"
+    },
+    {
+      "name": "emit-rate",
+      "status": 429,
+      "code": "emit-rate",
+      "situation": "An emit past its principal's emit-rate bucket.",
+      "error": "This principal's emits have used its bucket"
+    },
+    {
+      "name": "unanswered-requests",
+      "status": 429,
+      "code": "unanswered-requests",
+      "situation": "A request on the bus past its client's unanswered requests: `{max}` is the most it may hold.",
+      "error": "client has {max} unanswered requests; retry when one settles"
+    },
+    {
+      "name": "streams",
+      "status": 429,
+      "code": "streams",
+      "situation": "A subscription past the streams its principal may hold.",
+      "error": "This principal holds as many streams as it may"
+    },
+    {
+      "name": "internal",
+      "status": 500,
+      "situation": "A fault of the gateway's own; its log says what.",
+      "error": "Internal server error"
+    },
+    {
+      "name": "content-store-unavailable",
+      "status": 503,
+      "situation": "A read or an upload the Archivist did not answer as its API states: it could not be reached, it did not answer in time, it refused the gateway, or it answered what its API does not; or the gateway could not get its own service token to ask it with.",
+      "error": "Content store unavailable"
+    },
+    {
+      "name": "plane-unavailable",
+      "status": 503,
+      "situation": "An emit, or anything that reads or writes a table the replicas share, while the signal plane's broker is not connected.",
+      "error": "The signal plane is unavailable: its broker is not connected"
+    },
+    {
+      "name": "capacity",
+      "status": 503,
+      "code": "capacity",
+      "situation": "A subscription past the queued bytes the gateway can hold.",
+      "error": "The gateway holds as many queued bytes as it can"
+    }
+  ],
+  "failures": [
+    {
+      "name": "peer-unavailable",
+      "code": "peer-unavailable",
+      "situation": "A request on the bus that no subscriber answers: `{channel}` is the request's channel. Its payload carries no stamp.",
+      "message": "No subscriber for {channel}: the service that answers it is not connected"
+    }
+  ],
+  "challenges": {
+    "noCredential": "Bearer resource_metadata=\"{origin}/.well-known/oauth-protected-resource\"",
+    "refused": "Bearer error=\"invalid_token\", resource_metadata=\"{origin}/.well-known/oauth-protected-resource\""
+  }
+}

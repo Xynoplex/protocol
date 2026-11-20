@@ -2,4 +2,9 @@
 (library
  (name gateway_suite)
  (package xynolog-conformance)
- (libraries xynolog_conformance xynolog-protocol yojson testo))
+ (libraries
+  xynolog_conformance
+  xynolog-protocol
+  xynolog-protocol.schema
+  yojson
+  testo))

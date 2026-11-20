@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ServiceTelemetryLogLines.json",
+  "description": "service-telemetry/log-lines.json: the lines a service writes to its log, and the line of its supervisor it counts.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "logger": {
+      "type": "object",
+      "description": "The lines of a service's logger.",
+      "properties": {
+        "services": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "archivist",
+              "dispatcher",
+              "gateway"
+            ]
+          },
+          "description": "The services whose document names a LogFormat."
+        },
+        "json": {
+          "type": "object",
+          "description": "A line of the `json` format.",
+          "properties": {
+            "first": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A member."
+              },
+              "description": "Its first members, in order."
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The member that names the request a line was logged while answering."
+            },
+            "trace": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A member."
+              },
+              "description": "The members that name the active trace and span, in that order."
+            },
+            "last": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Its last member: the moment."
+            }
+          },
+          "required": [
+            "first",
+            "requestId",
+            "trace",
+            "last"
+          ],
+          "additionalProperties": false
+        },
+        "simple": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A line of the `simple` format."
+        }
+      },
+      "required": [
+        "services",
+        "json",
+        "simple"
+      ],
+      "additionalProperties": false
+    },
+    "bus": {
+      "type": "object",
+      "description": "A line of the bus log.",
+      "properties": {
+        "line": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Its head."
+        },
+        "parts": {
+          "type": "array",
+          "minItems": 1,
+          "description": "What follows the head, in order, each where there is one.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "part": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What it shows."
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Its text."
+              },
+              "characters": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "How many characters of it are shown, from its first."
+              }
+            },
+            "required": [
+              "part",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "ops": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]+$"
+          },
+          "description": "Each operation a line names."
+        }
+      },
+      "required": [
+        "line",
+        "parts",
+        "ops"
+      ],
+      "additionalProperties": false
+    },
+    "supervisor": {
+      "type": "object",
+      "description": "The line the supervisor writes when it starts a service.",
+      "properties": {
+        "line": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The line."
+        },
+        "counted": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What a service counts the lines that hold of, for each of its lives."
+        }
+      },
+      "required": [
+        "line",
+        "counted"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "logger",
+    "bus",
+    "supervisor"
+  ],
+  "additionalProperties": false
+}

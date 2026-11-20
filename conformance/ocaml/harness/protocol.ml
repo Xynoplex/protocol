@@ -85,14 +85,6 @@ let refusals schema value =
     (fun (pointer, why) -> (if pointer = "" then "/" else pointer) ^ " " ^ why)
     (Validate.errors (spec ()).ids schema_at schema value "")
 
-(* A component schema of the gateway's document, by its name. *)
-let component name =
-  match List.assoc_opt name (spec ()).gateway.components.schemas with
-  | Some reference -> schema_of reference
-  | None -> failwith ("the gateway's document has no component schema " ^ name)
-
-let against name value = refusals (component name) value
-
 (* A service's own schema (Places.service_schemas): its configuration
    document, its health, by its name. *)
 let service_schema name =
@@ -114,6 +106,15 @@ type document = Gateway | Archivist
 let document = function
   | Gateway -> (spec ()).gateway
   | Archivist -> (spec ()).archivist
+
+(* A component schema of a document, by its name. *)
+let component which name =
+  match List.assoc_opt name (document which).components.schemas with
+  | Some reference -> schema_of reference
+  | None -> failwith ("the document has no component schema " ^ name)
+
+(* How [value] is not the gateway's component schema [name]. *)
+let against name value = refusals (component Gateway name) value
 
 let find_operation which meth path : Openapi.operation option =
   Option.bind (List.assoc_opt path (document which).paths) (fun reference ->
@@ -158,6 +159,55 @@ let limit which meth path key =
       | Some (Openapi.Count n) -> n
       | _ -> failwith (Printf.sprintf "%s %s states no count %s" meth path key))
   | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
+
+(* One of an operation's x-xynolog-limits that is a limit per principal:
+   its baseline, and its limit per role. *)
+let principal_limit which meth path key =
+  match (operation which meth path).limits with
+  | Some limits -> (
+      match List.assoc_opt key limits with
+      | Some (Openapi.Limits per) -> (
+          match (List.assoc_opt "baseline" per, List.assoc_opt "roles" per) with
+          | Some baseline, Some (Openapi.Limits roles) -> (baseline, roles)
+          | _ ->
+              failwith
+                (Printf.sprintf "%s %s's %s states no baseline and roles" meth
+                   path key))
+      | _ ->
+          failwith
+            (Printf.sprintf "%s %s states no principal limit %s" meth path key))
+  | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
+
+(* A limit that must be a count. *)
+let count = function
+  | Openapi.Count n -> n
+  | _ -> failwith "a limit that is not a count"
+
+(* The most items BusSubscribeRequest's array member [name] may hold: its
+   maxItems. *)
+let subscribe_max_items name =
+  match component Gateway "BusSubscribeRequest" with
+  | Xynolog_protocol_schema.Schema.Schema { properties = Some properties; _ }
+    -> (
+      match List.assoc_opt name properties with
+      | Some (Schema { max_items = Some n; _ }) -> n
+      | _ -> failwith ("BusSubscribeRequest's " ^ name ^ " states no maxItems"))
+  | _ -> failwith "BusSubscribeRequest states no properties"
+
+(* One of a document's own x-xynolog-limits that is a count. *)
+let document_limit which key =
+  match List.assoc_opt key (document which).limits with
+  | Some (Openapi.Count n) -> n
+  | _ -> failwith (Printf.sprintf "the document states no count %s" key)
+
+(* One of a gateway security scheme's x-xynolog-limits that is a count. *)
+let scheme_limit scheme key =
+  match List.assoc_opt scheme (spec ()).gateway.components.security_schemes with
+  | Some (Openapi.Http { limits = Some limits; _ }) -> (
+      match List.assoc_opt key limits with
+      | Some (Openapi.Count n) -> n
+      | _ -> failwith (Printf.sprintf "%s states no count %s" scheme key))
+  | _ -> failwith (Printf.sprintf "the gateway's %s states no limits" scheme)
 
 (* The template of a document's path that [concrete] fills, with an
    operation of [meth]: the template and its parameters' values. *)
@@ -333,10 +383,11 @@ let transport_word : Sdk_rows.transport -> string = function
 let names_sdk_row used (transport, name) =
   List.mem (transport_word transport) used || List.mem name used
 
-(* The rows a service exports where it runs on no plane: its rows of the
-   service table, and the SDK table's rows it names; each marked expected
-   when its cases must make it export it. *)
-let telemetry (service : service) =
+(* The rows a service exports: its rows of the service table, and the SDK
+   table's rows it names; each marked expected when its cases must make it
+   export it, on [plane] where a row names planes, and where it runs on no
+   plane a row that names planes is not. *)
+let telemetry ?plane (service : service) =
   let service_table = (tables ()).service_telemetry_telemetry in
   let sdk_table = (tables ()).sdk_telemetry_telemetry in
   let used =
@@ -360,7 +411,12 @@ let telemetry (service : service) =
          ^ " of the SDK table, which is neither a transport nor a row of it"))
     used;
   let expected (when_ : Service_rows.when_) planes =
-    (when_ = Export || when_ = Traffic) && planes = None
+    (when_ = Export || when_ = Traffic)
+    &&
+    match (planes, plane) with
+    | None, _ -> true
+    | Some planes, Some plane -> List.mem plane planes
+    | Some _, None -> false
   in
   let spans =
     List.filter_map
@@ -592,5 +648,95 @@ let declared word =
   | _ -> failwith ("the bearerAuth scheme no longer declares " ^ word)
 
 let service_role () = declared "xynolog-service"
+let worker_role () = declared "xynolog-worker"
 let kind_claim () = declared "kind"
 let agent_kind () = declared "agent"
+
+(* ── What the gateway answers ─────────────────────────────────────────── *)
+
+(* [template] with each of its {placeholders} filled from [fill], which must
+   fill every one. *)
+let fill_template template fill =
+  let text =
+    List.fold_left
+      (fun text (name, value) ->
+        Re.replace_string
+          (Re.compile (Re.str ("{" ^ name ^ "}")))
+          ~by:value text)
+      template fill
+  in
+  match Re.exec_opt (Re.compile (Re.Perl.re "\\{[A-Za-z]+\\}")) text with
+  | Some left ->
+      failwith
+        (Printf.sprintf "%S is left with %s unfilled" template
+           (Re.Group.get left 0))
+  | None -> text
+
+(* A row of gateway/messages.json, by its name. *)
+let message name : Tables.Gateway_messages.messages_item =
+  match
+    List.find_opt
+      (fun (row : Tables.Gateway_messages.messages_item) -> row.name = name)
+      (tables ()).gateway_messages.messages
+  with
+  | Some row -> row
+  | None -> failwith ("gateway/messages.json states no message " ^ name)
+
+(* The error text of the message [name], its placeholders filled. *)
+let message_text ?(fill = []) name = fill_template (message name).error fill
+
+(* The code of the message [name], which states one. *)
+let message_code name =
+  match (message name).code with
+  | Some code -> code
+  | None -> failwith ("gateway/messages.json's " ^ name ^ " states no code")
+
+(* A failure the gateway answers on the bus, by its name. *)
+let failure name : Tables.Gateway_messages.failures_item =
+  match
+    List.find_opt
+      (fun (row : Tables.Gateway_messages.failures_item) -> row.name = name)
+      (tables ()).gateway_messages.failures
+  with
+  | Some row -> row
+  | None -> failwith ("gateway/messages.json states no failure " ^ name)
+
+(* The WWW-Authenticate challenges, for the gateway at [origin]. *)
+let challenge_no_credential origin =
+  fill_template (tables ()).gateway_messages.challenges.no_credential
+    [ ("origin", origin) ]
+
+let challenge_refused origin =
+  fill_template (tables ()).gateway_messages.challenges.refused
+    [ ("origin", origin) ]
+
+(* The concrete path of [template], which [which] must declare an operation
+   of [meth] on, its parameters filled from [fill], each encoded. *)
+let path_of which meth template fill =
+  fill_template (path which meth template)
+    (List.map (fun (name, value) -> (name, uri_component value)) fill)
+
+(* The row of identifiers/kinds.json for the identifier schema [kind]: what
+   it accepts and refuses. *)
+let identifiers kind : Tables.Identifiers_kinds.kinds_item =
+  match
+    List.find_opt
+      (fun (row : Tables.Identifiers_kinds.kinds_item) -> row.schema = kind)
+      (tables ()).identifiers_kinds.kinds
+  with
+  | Some row -> row
+  | None -> failwith ("identifiers/kinds.json names no kind " ^ kind)
+
+(* The service.name [service] exports under when OTEL_SERVICE_NAME is unset:
+   the resource row's default, its {service} filled. *)
+let default_service_name service =
+  match
+    List.find_opt
+      (fun (row : Service_rows.resource_item) -> row.key = "service.name")
+      (tables ()).service_telemetry_telemetry.resource
+  with
+  | Some { default = Some form; _ } ->
+      fill_template form
+        [ ("service", Service_rows.services_item_value service) ]
+  | _ ->
+      failwith "service-telemetry/telemetry.json states no default service.name"

@@ -3,7 +3,9 @@
 
    Its lists: each channel is declared once and named only where declared;
    each crossing channel declares its kind and audience, and each emittable
-   one its effect, with no default for any.
+   one its effect, with no default for any; and each payload field the bus
+   writes, the trace's and the stamps', is a name that begins with [_] and a
+   letter.
 
    Its prose, which every SDK's generator lays out for its own language, so the
    registry states it in no language's shape: a text is one line of words,
@@ -265,23 +267,31 @@ let lists (reg : R.t) =
       ("/audience/declared", reg.audience.declared);
       ("/inProcess/channels", reg.in_process.channels);
     ];
-  let field = reg.trace.field in
   let word_char c =
     match c with
     | 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' | '_' -> true
     | _ -> false
   in
-  if
-    not
-      (String.length field >= 2
-      && field.[0] = '_'
-      && (match field.[1] with 'A' .. 'Z' | 'a' .. 'z' -> true | _ -> false)
-      && String.for_all word_char field)
-  then
-    refuse "/trace/field"
-      "is %S: it is a payload field the bus writes, so a name that begins with \
-       \"_\" and a letter"
-      field;
+  List.iter
+    (fun (pointer, field) ->
+      if
+        not
+          (String.length field >= 2
+          && field.[0] = '_'
+          && (match field.[1] with
+            | 'A' .. 'Z' | 'a' .. 'z' -> true
+            | _ -> false)
+          && String.for_all word_char field)
+      then
+        refuse pointer
+          "is %S: it is a payload field the bus writes, so a name that begins \
+           with \"_\" and a letter"
+          field)
+    [
+      ("/trace/field", reg.trace.field);
+      ("/stamps/emitter", reg.stamps.emitter);
+      ("/stamps/roles", reg.stamps.roles);
+    ];
   List.rev !problems
 
 let markup =

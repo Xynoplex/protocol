@@ -97,6 +97,13 @@ let base : Yojson.Safe.t =
             ("meaning", `String "Where a relayed frame carries its trace.");
             ("field", `String "_carried");
           ] );
+      ( "stamps",
+        `Assoc
+          [
+            ("meaning", `String "Who emitted a payload.");
+            ("emitter", `String "_emitter");
+            ("roles", `String "_held");
+          ] );
     ]
 
 (* [json] with the value at [path] replaced, or added as an object's last
@@ -399,6 +406,11 @@ let trace =
          (set [ "trace"; "field" ] (`String "carried") base)
          "/trace/field: is \"carried\": it is a payload field the bus writes, \
           so a name that begins with \"_\" and a letter");
+    case "a stamp whose name does not begin with _"
+      (refuses
+         (set [ "stamps"; "roles" ] (`String "held") base)
+         "/stamps/roles: is \"held\": it is a payload field the bus writes, so \
+          a name that begins with \"_\" and a letter");
   ]
 
 let lead blocks = set [ "operations"; "0"; "docs"; "lead" ] (`List blocks) base
