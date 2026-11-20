@@ -183,15 +183,15 @@ let count = function
   | Openapi.Count n -> n
   | _ -> failwith "a limit that is not a count"
 
-(* The most pendingReplies one subscription may name: BusSubscribeRequest's
+(* The most items BusSubscribeRequest's array member [name] may hold: its
    maxItems. *)
-let pending_replies_max () =
+let subscribe_max_items name =
   match component Gateway "BusSubscribeRequest" with
   | Xynolog_protocol_schema.Schema.Schema { properties = Some properties; _ }
     -> (
-      match List.assoc_opt "pendingReplies" properties with
+      match List.assoc_opt name properties with
       | Some (Schema { max_items = Some n; _ }) -> n
-      | _ -> failwith "BusSubscribeRequest's pendingReplies states no maxItems")
+      | _ -> failwith ("BusSubscribeRequest's " ^ name ^ " states no maxItems"))
   | _ -> failwith "BusSubscribeRequest states no properties"
 
 (* One of a document's own x-xynolog-limits that is a count. *)

@@ -5,8 +5,6 @@
 open Xynolog_conformance
 open Support
 
-let header name (reply : Call.reply) = Http.Header.get reply.headers name
-
 (* How [headers] are not what every response carries: each header of
    [every] with its value, the request id, and none of [absent]. *)
 let edge_problems label headers =

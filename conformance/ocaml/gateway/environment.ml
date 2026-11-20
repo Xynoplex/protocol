@@ -11,7 +11,6 @@ open Support
 let dispatch () =
   Protocol.span_name "bus.dispatch:{channel}" [ ("channel", "beckon:focus") ]
 
-let log_lines () = (Protocol.tables ()).service_telemetry_log_lines
 let contains text needle = Re.execp (Re.compile (Re.str needle)) text
 
 (* What [template] holds before its [{placeholder}]. *)
@@ -175,12 +174,13 @@ let schedule_delay implementations () =
 (* The bus log's line for [op] on [channel]; and what every line of it
    starts with. *)
 let bus_line op channel =
-  let bus = (log_lines ()).bus in
+  let bus = (Protocol.tables ()).service_telemetry_log_lines.bus in
   if not (List.mem op bus.ops) then
     failwith ("service-telemetry/log-lines.json lists no bus op " ^ op);
   Protocol.fill_template bus.line [ ("op", op); ("channel", channel) ]
 
-let bus_line_start () = before "{op}" (log_lines ()).bus.line
+let bus_line_start () =
+  before "{op}" (Protocol.tables ()).service_telemetry_log_lines.bus.line
 
 let bus_log implementations () =
   List.iter
@@ -212,7 +212,8 @@ let supervised implementations () =
       (Printf.sprintf "gateway-conformance-supervisor-%s.log" (Fresh.uuid ()))
   in
   let life n =
-    Protocol.fill_template (log_lines ()).supervisor.line
+    Protocol.fill_template
+      (Protocol.tables ()).service_telemetry_log_lines.supervisor.line
       [
         ("time", Printf.sprintf "2026-09-27T00:00:0%dZ" n);
         ("name", "gateway");
@@ -262,7 +263,7 @@ let text_member json name =
   | _ -> None
 
 let json_format implementations () =
-  let json = (log_lines ()).logger.json in
+  let json = (Protocol.tables ()).service_telemetry_log_lines.logger.json in
   let trace_key, span_key =
     match json.trace with
     | [ trace_key; span_key ] -> (trace_key, span_key)
@@ -338,7 +339,9 @@ let simple_start () =
                         ("the simple format's {" ^ other ^ "} is unknown here")))
             (Re.split_full
                (Re.compile (Re.Perl.re "\\{([A-Za-z]+)\\}"))
-               (before "{message}" (log_lines ()).logger.simple))))
+               (before "{message}"
+                  (Protocol.tables ()).service_telemetry_log_lines.logger.simple))
+       ))
 
 let simple_format implementations () =
   with_gateway implementations

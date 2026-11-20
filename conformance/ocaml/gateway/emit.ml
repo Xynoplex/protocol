@@ -332,7 +332,7 @@ let unanswered_requests (w : World.t) =
          ~correlation_id ~client_id)
   in
   let cids =
-    List.init (Protocol.pending_replies_max ()) (fun i ->
+    List.init (Protocol.subscribe_max_items "pendingReplies") (fun i ->
         let correlation_id = Fresh.uuid () in
         status
           (Printf.sprintf "request %d" i)

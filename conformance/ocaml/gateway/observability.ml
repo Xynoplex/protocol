@@ -119,30 +119,12 @@ let traced_emit { world = w; otlp } =
        | _ :: trace :: _ -> trace
        | _ -> ""))
 
-let described =
-  `Assoc
-    [
-      ( "response",
-        `Assoc
-          [
-            ( "resource",
-              `Assoc
-                [
-                  ("@context", `String "https://schema.org/");
-                  ("@id", `String "x");
-                  ("name", `String "x");
-                  ("representations", `List []);
-                ] );
-            ("lastSequence", `Int 1);
-          ] );
-    ]
-
 let request = "browse:resource-requested"
 
 let reply_delivered { world = w; otlp } =
   let result = (Protocol.operation_for request).result in
   ignore
-    (World.responder w [ request ] (fun _ -> Some (result, described))
+    (World.responder w [ request ] (fun _ -> Some (result, described ()))
       : World.responder);
   let alice = World.person w "alice" in
   let client_id = Fresh.uuid () in
@@ -350,7 +332,7 @@ let metrics_exported { world = w; otlp } =
        (`Assoc
           [
             ("channel", `String result);
-            ("payload", described);
+            ("payload", described ());
             ("correlationId", `String correlation_id);
           ])
       : Call.reply);

@@ -148,7 +148,7 @@ let pipe_verbatim { world = w; _ } =
             c.path = Printf.sprintf "/resources/%s/content" id))
     = Some World.gateway_client)
 
-let header name (reply : Call.reply) =
+let required_header name (reply : Call.reply) =
   match Http.Header.get reply.headers name with
   | Some value -> value
   | None ->
@@ -280,7 +280,7 @@ let pipe_for_a_worker { world = w; _ } =
   conforms "GET" "/resources/{id}" reply;
   Check.that "the pipe serves the bytes verbatim" (reply.text = every_byte);
   Check.equal "its content type" (`String "text/markdown")
-    (`String (header "content-type" reply));
+    (`String (required_header "content-type" reply));
   (* The Archivist is asked by the gateway, as itself: the worker shows the
      Archivist nothing, and needs no address for it. *)
   Check.that "the gateway read the bytes as itself"
@@ -312,7 +312,7 @@ let media_alias { world = w; _ } =
       conforms "GET" "/api/resources/{id}" reply;
       Check.that "the alias serves the bytes verbatim" (reply.text = every_byte);
       Check.equal "its content type" (`String "application/pdf")
-        (`String (header "content-type" reply)))
+        (`String (required_header "content-type" reply)))
     [ by_bearer; by_media ]
 
 let pipe_not_found { world = w; _ } =
@@ -500,7 +500,8 @@ let description_whole { world = w; _ } =
   status "the description" 200 reply;
   conforms "GET" "/resources/{id}/jsonld" reply;
   Check.that "its content type is JSON-LD"
-    (matches_re {|^application\/ld\+json|} (header "content-type" reply));
+    (matches_re {|^application\/ld\+json|}
+       (required_header "content-type" reply));
   Check.equal "the description" description (Option.get reply.json)
 
 let annotations_passed_through { world = w; _ } =
@@ -512,9 +513,9 @@ let annotations_passed_through { world = w; _ } =
   status "the annotations" 200 reply;
   conforms "GET" "/resources/{id}/annotations" reply;
   Check.equal "its content type" (`String "application/json")
-    (`String (header "content-type" reply));
+    (`String (required_header "content-type" reply));
   Check.equal "its cache-control" (`String "no-cache")
-    (`String (header "cache-control" reply));
+    (`String (required_header "cache-control" reply));
   Check.equal "the annotations" held (Option.get reply.json);
   let unknown =
     get ~token w "/resources/{id}/annotations" ("res-" ^ Fresh.uuid ())
@@ -569,9 +570,9 @@ let anchored_verbatim { world = w; _ } =
   Check.that "the answer is the Archivist's, byte for byte"
     (reply.text = Yojson.Safe.to_string answer);
   Check.equal "its content type" (`String "application/json")
-    (`String (header "content-type" reply));
+    (`String (required_header "content-type" reply));
   Check.equal "its cache-control" (`String "no-cache")
-    (`String (header "cache-control" reply));
+    (`String (required_header "cache-control" reply));
   Check.that "the gateway read it as itself"
     (azp
        (last_call w (fun c ->

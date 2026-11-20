@@ -67,8 +67,6 @@ let no_problems problems =
   Check.equal "the problems found" (`List [])
     (`List (List.map (fun p -> `String p) problems))
 
-let header name (reply : Call.reply) = Http.Header.get reply.headers name
-
 let hint (reply : Call.reply) =
   match Option.bind reply.json (fun json -> Protocol.at json [ "hint" ]) with
   | Some (`String hint) -> Some hint
@@ -394,18 +392,10 @@ let undeclared_path (w : World.t) =
         (is_error_response reply))
     [ "/no/such/path"; "/api/no-such-route" ]
 
-let max_items name =
-  match Protocol.component Gateway "BusSubscribeRequest" with
-  | Schema.Schema { properties = Some properties; _ } -> (
-      match List.assoc_opt name properties with
-      | Some (Schema.Schema { max_items = Some n; _ }) -> n
-      | _ -> failwith ("BusSubscribeRequest's " ^ name ^ " states no maxItems"))
-  | _ -> failwith "BusSubscribeRequest states no properties"
-
 let request_limits (w : World.t) =
   let token = World.person w "limits" in
-  let pending_max = max_items "pendingReplies"
-  and scoped_max = max_items "scoped" in
+  let pending_max = Protocol.subscribe_max_items "pendingReplies"
+  and scoped_max = Protocol.subscribe_max_items "scoped" in
   let body pending scoped =
     Bus_stream.subscribe_body ~client_id:(Fresh.uuid ())
       ~global:[ "beckon:focus" ]

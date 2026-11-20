@@ -307,7 +307,7 @@ let outstanding_claim_answered_live (shared : shared) =
       : Bus_stream.frame)
 
 let ask_again_anywhere { world = w; b; _ } =
-  let max = Protocol.pending_replies_max () in
+  let max = Protocol.subscribe_max_items "pendingReplies" in
   let result = result () in
   let alice = World.person w "alice" in
   let client_id = Fresh.uuid () in
@@ -425,7 +425,7 @@ let request_again_through_other (shared : shared) =
     = 1)
 
 let unanswered_count_everywhere { world = w; b; _ } =
-  let max = Protocol.pending_replies_max () in
+  let max = Protocol.subscribe_max_items "pendingReplies" in
   let alice = World.person w "alice" in
   let client_id = Fresh.uuid () in
   (* Heard on one replica and answered by nobody, so every request stays

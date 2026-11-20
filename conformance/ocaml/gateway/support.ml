@@ -92,6 +92,9 @@ let status what expected (reply : Call.reply) =
       (Printf.sprintf "%s: expected %d, received %d: %s" what expected
          reply.status (Call.shown reply.text))
 
+(* A reply's header [name], when it carries one. *)
+let header name (reply : Call.reply) = Http.Header.get reply.headers name
+
 (* A reply's body member [name], which must be a string. *)
 let text_member name (reply : Call.reply) =
   match Option.bind reply.json (fun json -> Protocol.at json [ name ]) with
