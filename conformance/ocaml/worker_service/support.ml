@@ -321,15 +321,24 @@ let message ?(facts = W.anthropic_model) ?stream model name =
         ]
     | _ -> [])
 
+(* What the worker asked the stand-in Anthropic to generate, request by
+   request. *)
+let generation_bodies (anthropic : Anthropic.t) =
+  List.map
+    (fun (r : Anthropic.request) ->
+      match r.body with
+      | Some body -> body
+      | None ->
+          failwith
+            (Printf.sprintf "it asked its model to generate with no body: %s %s"
+               r.meth r.path))
+    (Dynarray.to_list anthropic.generations)
+
 (* Hold what Anthropic was asked to [expected], request by request. What was
    said to the model is compared first and apart, so a difference reads as
    text. *)
 let expect_messages (anthropic : Anthropic.t) expected =
-  let asked =
-    List.map
-      (fun (r : Anthropic.request) -> Option.value r.body ~default:`Null)
-      (Dynarray.to_list anthropic.generations)
-  in
+  let asked = generation_bodies anthropic in
   Check.equal "what was said to its model"
     (`List (List.map (fun e -> member "messages" e) expected))
     (`List (List.map (fun g -> member "messages" g) asked));
@@ -1194,11 +1203,8 @@ let error name fill =
 
 (* ── Who it is, and who said what ────────────────────────────────────── *)
 
-(* The grants [kb]'s issuer has answered the worker's account there. An
-   issuer holds a count for an account only once it has granted it one, so
-   no count is none. *)
-let grants (kb : W.kb) =
-  Option.value ~default:0 (Hashtbl.find_opt kb.world.issuer.grants kb.client)
+(* The grants [kb]'s issuer has answered the worker's account there. *)
+let grants (kb : W.kb) = Issuer.granted kb.world.issuer.grants kb.client
 
 (* Who the gateway named the party that did a thing, or null for none. *)
 let by_of = function Some did -> str did | None -> `Null

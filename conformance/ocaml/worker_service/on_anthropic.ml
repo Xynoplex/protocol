@@ -299,11 +299,7 @@ let linking_four_at_once (w : W.t) =
          (fun a b -> compare (json_text (said_in a)) (json_text (said_in b)))
          bodies)
   in
-  let asked () =
-    List.map
-      (fun (r : Anthropic.request) -> Option.value r.body ~default:`Null)
-      (Dynarray.to_list w.anthropic.generations)
-  in
+  let asked () = generation_bodies w.anthropic in
   (* Each extraction is held until the case lets it go; each count is
      answered as it is asked, with what its extraction is to find. *)
   let found =

@@ -217,6 +217,11 @@ let asserted ~token_endpoint ~seen accounts assertion =
       | _ -> None)
   | _ -> None
 
+(* The grants answered [client]: an issuer holds a count for a client only
+   once it has granted it one. *)
+let granted grants client =
+  Option.value ~default:0 (Hashtbl.find_opt grants client)
+
 let start audience accounts =
   let grants = Hashtbl.create 8 in
   let failing = Queue.create () and met = Dynarray.create () in
@@ -280,8 +285,7 @@ let start audience accounts =
                 proven
             with
             | Some (client, account) ->
-                Hashtbl.replace grants client
-                  (1 + Option.value ~default:0 (Hashtbl.find_opt grants client));
+                Hashtbl.replace grants client (1 + granted grants client);
                 json 200
                   (`Assoc
                      [
