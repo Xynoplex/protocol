@@ -4,14 +4,13 @@ Black-box suites exercise implementations through the protocol surfaces they exp
 
 | Suite | Checks | Command |
 | --- | --- | --- |
-| `archivist` | HTTP and bus behavior, persisted events, and stored resources | `test:archivist` |
 | `sdk` | SDK drivers as clients of a running gateway | `test:sdk` |
 | `worker` | SDK worker drivers as clients of a dispatcher and gateway | `test:worker` |
 | `worker-service` | Worker services, provider interactions, and health | `test:worker-service` |
 | `weaver` | Graph indexing, bus behavior, health, and telemetry | `test:weaver` |
 | `smelter` | Vector indexing, anchored text, provider interactions, and telemetry | `test:smelter` |
 
-Three suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); and `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)).
+Four suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); and `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)).
 
 ## Implementation manifest
 
@@ -21,7 +20,7 @@ Example from this repository's root:
 
 ```sh
 npm ci --prefix conformance
-npm run --prefix conformance test:archivist -- -- --implementations /path/to/archivist.implementations.json
+npm run --prefix conformance test:sdk -- -- --implementations /path/to/sdk.implementations.json
 ```
 
 The manifest can name several implementations in one run. A suite refuses to start if the manifest is missing or malformed. It does not infer a current/default configuration.

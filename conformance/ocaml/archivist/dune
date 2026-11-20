@@ -1,4 +1,8 @@
-; The archivist suite's cases, on the OCaml harness.
+; The archivist suite's cases, on the OCaml harness. fixtures/ is a tree the
+; cases read, not source.
+
+(data_only_dirs fixtures)
+
 (library
  (name archivist_suite)
  (package xynolog-conformance)

@@ -18,34 +18,6 @@ VERSION,Repository governance and documentation,xynolog/protocol,"Standalone rep
 advisories.toml,Repository build tooling,xynolog/protocol,"Published advisories for the dependencies, each ignored with why; build-tools/advisories.py holds the lockfiles to it."
 build-tools,Repository build tooling,xynolog/build-tools,"The shared build scripts: the container runtime, make help and its test."
 conformance/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/anchored-text.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/annotations.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/boot.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/browse.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/clone.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/environment.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/events.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixture.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/kb/.xynolog/config.yaml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/kb/.xynolog/events/66/9b/75cac8fed07641da9a9423a65108a2ce/events-000001.jsonl,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/kb/.xynolog/events/9f/17/84660af034bb49b781d3904fde93f562/events-000001.jsonl,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/kb/.xynolog/events/__system__/events-000001.jsonl,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/kb/shared/copy.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/kb/shared/résumé 📚.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/projections/__system__/entitytypes.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/projections/__system__/profiles.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/projections/__system__/tagschemas.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/projections/storage-uri/5f/b7/2cc071ced506dfaf9ac6d58834a0f28174072f107a836d438d6aeaf531ccf0df.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/projections/storage-uri/b4/dc/6f3de55f1c1f7db3cc72321132619c2959b3b74252ad5eba7a74541e811aaefb.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/resources/66/9b/75cac8fed07641da9a9423a65108a2ce.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/fixtures/typescript-tree/state/resources/9f/17/84660af034bb49b781d3904fde93f562.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/idempotency.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/jobs.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/observability.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/record.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/resources.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/archivist/staging.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/example.implementations.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/anthropic.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/archivist-process.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -55,8 +27,6 @@ conformance/harness/archivist.ts,Portable conformance,xynolog/protocol,Protocol-
 conformance/harness/client-proxy.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/client-proxy.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/gateway.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/git.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/harness/git.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/global-setup.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/graph-codec.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/harness/graph-codec.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -111,6 +81,19 @@ conformance/ocaml/archivist/dune,Portable conformance,xynolog/protocol,Protocol-
 conformance/ocaml/archivist/environment.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/events.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/fixture.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/kb/.xynolog/config.yaml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/kb/.xynolog/events/66/9b/75cac8fed07641da9a9423a65108a2ce/events-000001.jsonl,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/kb/.xynolog/events/9f/17/84660af034bb49b781d3904fde93f562/events-000001.jsonl,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/kb/.xynolog/events/__system__/events-000001.jsonl,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/kb/shared/copy.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/kb/shared/résumé 📚.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/projections/__system__/entitytypes.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/projections/__system__/profiles.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/projections/__system__/tagschemas.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/projections/storage-uri/5f/b7/2cc071ced506dfaf9ac6d58834a0f28174072f107a836d438d6aeaf531ccf0df.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/projections/storage-uri/b4/dc/6f3de55f1c1f7db3cc72321132619c2959b3b74252ad5eba7a74541e811aaefb.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/resources/66/9b/75cac8fed07641da9a9423a65108a2ce.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
+conformance/ocaml/archivist/fixtures/typescript-tree/state/resources/9f/17/84660af034bb49b781d3904fde93f562.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/idempotency.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/jobs.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/ocaml/archivist/observability.ml,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.

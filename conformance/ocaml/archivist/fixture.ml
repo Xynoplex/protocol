@@ -12,7 +12,7 @@ open Case
 let ( // ) = Filename.concat
 
 (* From the repository's root, where the harness runs. *)
-let fixture = "conformance/archivist/fixtures/typescript-tree"
+let fixture = "conformance/ocaml/archivist/fixtures/typescript-tree"
 
 (* Every file under [dir], by its path from there, with its bytes. *)
 let rec files ?(from = "") dir =

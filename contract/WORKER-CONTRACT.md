@@ -151,7 +151,7 @@ matches one of them, or with `none-pending`.
   verb's: a `mark` job's counts or a decline, a `yield` job's resource or a
   decline. The gateway refuses any other, and the record passes over a
   completion of another verb than the job's.
-  *Held by `worker/lifecycle`, `dispatcher/conclude`, `conformance/archivist/jobs.test.ts`, the reader's `Jobs_rules`.*
+  *Held by `worker/lifecycle`, `dispatcher/conclude`, `archivist/jobs`, the reader's `Jobs_rules`.*
 - **L8.** A worker that stops while it holds a job fails the job first:
   `job:fail`, with an error saying that the worker stopped, no failure class,
   and `willRetry` as [L4](#the-lifecycle) states it. The queue then retries
@@ -168,7 +168,7 @@ has the call, and what follows is what that call does.
 
 - **A1.** A commit by a worker cites the job it fulfils, in `jobId`. One
   that cites none is refused.
-  *Held by `worker/commit-acknowledged`, `conformance/archivist/jobs.test.ts`.*
+  *Held by `worker/commit-acknowledged`, `archivist/jobs`.*
 - **A2.** A worker supplies the `id` of every annotation it commits. An
   annotation is recorded once, by its `id`: one whose `id` the resource
   already holds is not recorded again. So a worker derives each `id` from
@@ -176,7 +176,7 @@ has the call, and what follows is what that call does.
   anchored, its body) and from nothing about the attempt, and a job that is
   retried or resumed commits the same annotations under the same ids. An
   `id` made afresh on each attempt records every annotation again.
-  *Held by `conformance/archivist/annotations.test.ts`, `sdk/typescript/core/src/__tests__/annotation-of-span.test.ts`.*
+  *Held by `archivist/annotations`, `sdk/typescript/core/src/__tests__/annotation-of-span.test.ts`.*
 - **A3.** An annotation committed with no `id` is not recorded.
   *Held by no case.*
 - **A4.** A commit is established when the record acknowledges it
