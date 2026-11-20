@@ -558,7 +558,7 @@ let from_store (w : A.t) =
      Plane: every word after the first is at another place in a count of
      code points than in one of UTF-16 code units or of bytes. *)
   let text = "😀 alpha 𝒜eta gamma" in
-  A.smelt w ~entry:(anchored_entry text) id (sha256 content);
+  A.smelt w ~entry:(anchored_entry text) id (A.sha256 content);
 
   (* Each word's offsets are the entry's own, in code points, as stored. *)
   let answer = A.anchored_text w id in
@@ -586,13 +586,13 @@ let from_store (w : A.t) =
      longer taken. *)
   A.state_stamp w "a-newer-smelter";
   let other = scan w "Scanned again" "file://scans/again.pdf" content in
-  A.smelt w ~outcome:Indexed other (sha256 content);
+  A.smelt w ~outcome:Indexed other (A.sha256 content);
   Check.equal "another resource of the same bytes" not_yet
     (A.anchored_text w other)
 
 let other_version (w : A.t) =
   let content = "%PDF-1.4 an entry of another version\n" in
-  let checksum = sha256 content in
+  let checksum = A.sha256 content in
   let id = scan w "Read before" "file://scans/before.pdf" content in
   A.smelt w ~entry:(anchored_entry "alpha beta") id checksum;
 
@@ -615,7 +615,9 @@ let other_version (w : A.t) =
 let declined (w : A.t) =
   let locked = "%PDF-1.4 locked\n" in
   let id = scan w "Locked" "file://scans/locked.pdf" locked in
-  A.smelt w ~entry:(`Assoc [ ("declined", str "encrypted") ]) id (sha256 locked);
+  A.smelt w
+    ~entry:(`Assoc [ ("declined", str "encrypted") ])
+    id (A.sha256 locked);
   Check.equal "the decline"
     (`Assoc [ ("kind", str "declined"); ("declined", str "encrypted") ])
     (A.anchored_text w id);
@@ -669,7 +671,7 @@ let no_map_beside_entry (w : A.t) =
       ]
       content
   in
-  A.smelt w ~entry:(anchored_entry "alpha beta") pdf (sha256 content);
+  A.smelt w ~entry:(anchored_entry "alpha beta") pdf (A.sha256 content);
 
   Check.matching "the PDF"
     [ ("kind", str "extracted"); ("text", str "alpha beta") ]
@@ -683,7 +685,7 @@ let skipped (w : A.t) =
   (* The Smelter stores what deriving a PDF's text came to, a decline too.
      One it settled with no entry has lost its entry, and is to be asked for
      again. *)
-  A.smelt w ~outcome:Skipped id (sha256 content);
+  A.smelt w ~outcome:Skipped id (A.sha256 content);
   Check.equal "the answer" not_yet (A.anchored_text w id)
 
 let held (w : A.t) =
@@ -697,7 +699,7 @@ let held (w : A.t) =
       (fun () -> A.anchored_text w id)
       (fun () ->
         Run.sleep 0.25;
-        A.smelt w ~entry:(anchored_entry "alpha beta") id (sha256 content))
+        A.smelt w ~entry:(anchored_entry "alpha beta") id (A.sha256 content))
   in
   Check.matching "the answer"
     [
@@ -735,7 +737,7 @@ let whole (w : A.t) =
   (* Each word's item is more than sixty bytes of the answer. *)
   let words = List.init ((limit + 59) / 60) (Printf.sprintf "word%d") in
   let text = String.concat " " words in
-  A.smelt w ~entry:(anchored_entry text) id (sha256 content);
+  A.smelt w ~entry:(anchored_entry text) id (A.sha256 content);
 
   let reply =
     A.http w ~route:"/resources/{id}/anchored-text" "GET"

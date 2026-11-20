@@ -95,7 +95,7 @@ let uploaded w =
        [
          ("name", str "Overview");
          ("format", str "text/markdown");
-         ("contentChecksum", str (sha256 content));
+         ("contentChecksum", str (A.sha256 content));
          ("contentByteSize", `Int (String.length content));
          ("storageUri", str uri);
          ("entityTypes", typed);
@@ -137,7 +137,7 @@ let uploaded w =
                `Assoc
                  [
                    ("mediaType", str "text/markdown");
-                   ("checksum", str (sha256 content));
+                   ("checksum", str (A.sha256 content));
                    ("byteSize", `Int (String.length content));
                    ("rel", str "original");
                    ("language", str "en");
@@ -401,7 +401,7 @@ let updated w =
           [
             ("resourceId", str id);
             ("storageUri", str uri);
-            ("contentChecksum", str (sha256 next));
+            ("contentChecksum", str (A.sha256 next));
             ("byteSize", `Int (String.length next));
           ]));
   let update =
@@ -419,7 +419,7 @@ let updated w =
          ( "payload",
            `Assoc
              [
-               ("contentChecksum", str (sha256 next));
+               ("contentChecksum", str (A.sha256 next));
                ("contentByteSize", `Int (String.length next));
              ] );
          ("metadata", `Assoc [ ("sequenceNumber", `Int 2) ]);
@@ -431,7 +431,7 @@ let updated w =
        [
          `Assoc
            [
-             ("checksum", str (sha256 next));
+             ("checksum", str (A.sha256 next));
              ("byteSize", `Int (String.length next));
              ("storageUri", str uri);
            ];
@@ -453,7 +453,7 @@ let mismatched w =
   in
   let on_disk = "changed on disk\n" in
   A.write w uri on_disk;
-  let first8 text = String.sub (sha256 text) 0 8 in
+  let first8 text = String.sub (A.sha256 text) 0 8 in
   Check.equal "the refusal"
     (str
        (refusal "checksum-mismatch"
@@ -468,7 +468,7 @@ let mismatched w =
              [
                ("resourceId", str id);
                ("storageUri", str uri);
-               ("contentChecksum", str (sha256 "something else"));
+               ("contentChecksum", str (A.sha256 "something else"));
                ("byteSize", `Int 1);
              ])));
   Check.equal "the stream's events" (`Int 1)
@@ -482,7 +482,7 @@ let mismatched w =
              [
                ("resourceId", str id);
                ("storageUri", str not_a_file);
-               ("contentChecksum", str (sha256 "x"));
+               ("contentChecksum", str (A.sha256 "x"));
                ("byteSize", `Int 1);
              ])))
 
@@ -498,7 +498,7 @@ let already_there w =
             [
               ("name", str "Already here");
               ("storageUri", str uri);
-              ("contentChecksum", str (sha256 content));
+              ("contentChecksum", str (A.sha256 content));
               ("byteSize", `Int (String.length content));
               ("format", str "text/markdown");
             ]))

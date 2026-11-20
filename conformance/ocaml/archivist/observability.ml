@@ -133,7 +133,7 @@ let staging_failures { aw = w; otlp } =
   Check.that
     (Printf.sprintf "the table lists %s as a reason of %s" reason failures)
     (List.mem reason (listed_values failures "reason"));
-  let release = A.hold_git_index w in
+  let release = A.hold_git_index w.dirs.root in
   Fun.protect ~finally:release (fun () ->
       ignore
         (A.created w owner.did

@@ -356,7 +356,7 @@ let generated_attributed w =
          ("userId", str worker.did);
          ( "payload",
            `Assoc
-             (("contentChecksum", str (sha256 content))
+             (("contentChecksum", str (A.sha256 content))
              :: attributed requester worker) );
        ])
     created;

@@ -61,7 +61,7 @@ let made_with_a_token w =
               ("token", str token);
               ("name", str "Copy");
               ("storageUri", str uri);
-              ("contentChecksum", str (sha256 copy));
+              ("contentChecksum", str (A.sha256 copy));
               ("byteSize", `Int (String.length copy));
               ("format", str "text/markdown");
             ]))
@@ -76,7 +76,7 @@ let made_with_a_token w =
              [
                ("name", str "Copy");
                ("storageUri", str uri);
-               ("contentChecksum", str (sha256 copy));
+               ("contentChecksum", str (A.sha256 copy));
                ("parentResourceId", str source);
                ("entityTypes", types);
                ("creator", named cloner.did);
@@ -95,7 +95,7 @@ let made_with_a_token w =
            `List
              [
                `Assoc
-                 [ ("storageUri", str uri); ("checksum", str (sha256 copy)) ];
+                 [ ("storageUri", str uri); ("checksum", str (A.sha256 copy)) ];
              ] );
        ])
     (Check.at (view w clone) [ "resource" ]);
@@ -170,7 +170,7 @@ let refused_without_a_source w =
                ("token", str unissued);
                ("name", str "x");
                ("storageUri", str "file://clones/x.md");
-               ("contentChecksum", str (sha256 "x"));
+               ("contentChecksum", str (A.sha256 "x"));
                ("byteSize", `Int 1);
                ("format", str "text/markdown");
              ])));

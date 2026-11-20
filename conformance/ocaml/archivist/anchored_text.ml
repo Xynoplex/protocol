@@ -28,7 +28,7 @@ let same_bytes w =
   A.state_stamp w stamp;
   stored "the write"
     (A.store_anchored_text w first
-       (A.entry_write (sha256 content) (entry_of "alpha beta")));
+       (A.entry_write (A.sha256 content) (entry_of "alpha beta")));
   List.iter
     (fun id ->
       like "the anchored text"
@@ -43,7 +43,7 @@ let same_bytes w =
   (* A second write for the same bytes replaces the first. *)
   stored "the second write"
     (A.store_anchored_text w second
-       (A.entry_write (sha256 content) (entry_of "gamma delta")));
+       (A.entry_write (A.sha256 content) (entry_of "gamma delta")));
   extracted w first "gamma delta"
 
 let read_back w =
@@ -52,8 +52,8 @@ let read_back w =
   A.state_stamp w stamp;
   let entry = entry_of "read back" in
   stored "the write"
-    (A.store_anchored_text w id (A.entry_write (sha256 content) entry));
-  let held = A.stored_anchored_text w id (Some (sha256 content)) in
+    (A.store_anchored_text w id (A.entry_write (A.sha256 content) entry));
+  let held = A.stored_anchored_text w id (Some (A.sha256 content)) in
   status "the entry read back" 200 held;
   Check.equal "the entry read back" entry (Option.get held.json);
   (* Bytes with no entry, of a resource nothing has settled: answered at
@@ -63,14 +63,14 @@ let read_back w =
   let asked = Run.now () in
   status "the entry of bytes never derived"
     (http_status "anchored-text-no-entry")
-    (A.stored_anchored_text w never (Some (sha256 unread)));
+    (A.stored_anchored_text w never (Some (A.sha256 unread)));
   Check.that "the entry of bytes never derived is answered within 5 s"
     (Run.now () -. asked < 5.0);
   (* Read with a checksum the resource's content does not have: refused,
      naming the one it has. *)
-  let stale = A.stored_anchored_text w id (Some (sha256 unread)) in
+  let stale = A.stored_anchored_text w id (Some (A.sha256 unread)) in
   status "a read with another checksum" 409 stale;
-  Check.contains_text "a read with another checksum's error" (sha256 content)
+  Check.contains_text "a read with another checksum's error" (A.sha256 content)
     (A.string_member "error" (Option.get stale.json));
   (* Read with no checksum, or one that is none. *)
   status "a read with no checksum" 400 (A.stored_anchored_text w id None);
@@ -93,7 +93,7 @@ let listed w =
       bytes
   in
   let a, b, c =
-    match List.map sha256 bytes with
+    match List.map A.sha256 bytes with
     | [ a; b; c ] -> (a, b, c)
     | _ -> assert false
   in
@@ -104,7 +104,7 @@ let listed w =
       let content = List.nth bytes i in
       stored "a write under the stamp before"
         (A.store_anchored_text w (id i)
-           (A.entry_write (sha256 content)
+           (A.entry_write (A.sha256 content)
               (entry_of ~stamp:"stamp-before" (Printf.sprintf "before %d" i)))))
     [ 0; 1 ];
   let keys = A.anchored_text_keys w in
@@ -141,27 +141,27 @@ let kept w =
   A.state_stamp w "stamp-kept";
   stored "the write"
     (A.store_anchored_text w id
-       (A.entry_write (sha256 content) (entry_of ~stamp:"stamp-kept" "kept")));
+       (A.entry_write (A.sha256 content) (entry_of ~stamp:"stamp-kept" "kept")));
   A.restart w;
   status "the entry after a restart" 200
-    (A.stored_anchored_text w id (Some (sha256 content)));
+    (A.stored_anchored_text w id (Some (A.sha256 content)));
   extracted w id "kept"
 
 let refused_writes w =
   let content = "%PDF-1.4 the bytes the resource has\n" in
   let id = scan w "Changed" "file://scans/changed.pdf" content in
   A.state_stamp w stamp;
-  let other = sha256 "%PDF-1.4 bytes it does not have\n" in
+  let other = A.sha256 "%PDF-1.4 bytes it does not have\n" in
   let stale =
     A.store_anchored_text w id (A.entry_write other (entry_of "stale"))
   in
   status "a write for other bytes" 409 stale;
-  Check.contains_text "a write for other bytes' error" (sha256 content)
+  Check.contains_text "a write for other bytes' error" (A.sha256 content)
     (A.string_member "error" (Option.get stale.json));
   status "a write for a resource the record does not hold"
     (http_status "anchored-text-write-not-found")
     (A.store_anchored_text w (String.make 32 'c')
-       (A.entry_write (sha256 content) (entry_of "nowhere")));
+       (A.entry_write (A.sha256 content) (entry_of "nowhere")));
   let with_member name value = function
     | `Assoc members ->
         `Assoc (List.remove_assoc name members @ [ (name, value) ])
@@ -175,16 +175,16 @@ let refused_writes w =
         (http_status "anchored-text-not-a-write")
         (A.store_anchored_text w id body))
     [
-      `Assoc [ ("contentChecksum", str (sha256 content)) ];
+      `Assoc [ ("contentChecksum", str (A.sha256 content)) ];
       A.entry_write "not-a-checksum" (entry_of "bad key");
-      A.entry_write (sha256 content)
+      A.entry_write (A.sha256 content)
         (with_member "v" (`Int (A.entry_format () - 1)) (entry_of "old form"));
       with_member "extra" (`Bool true)
-        (A.entry_write (sha256 content) (entry_of "extra"));
+        (A.entry_write (A.sha256 content) (entry_of "extra"));
     ];
   status "the entry after the refused writes"
     (http_status "anchored-text-no-entry")
-    (A.stored_anchored_text w id (Some (sha256 content)));
+    (A.stored_anchored_text w id (Some (A.sha256 content)));
   let route = "/anchored-text/stamp" in
   status "a stamp of two words" 400
     (A.http w ~route
@@ -214,10 +214,11 @@ let service_only w =
       ( "a write",
         fun () ->
           A.store_anchored_text ~token:roleless w id
-            (A.entry_write (sha256 content) (entry_of "refused")) );
+            (A.entry_write (A.sha256 content) (entry_of "refused")) );
       ( "a read",
         fun () ->
-          A.stored_anchored_text ~token:roleless w id (Some (sha256 content)) );
+          A.stored_anchored_text ~token:roleless w id (Some (A.sha256 content))
+      );
       ( "the keys",
         fun () ->
           A.http w ~route:"/anchored-text/entries" ~token:roleless "GET"

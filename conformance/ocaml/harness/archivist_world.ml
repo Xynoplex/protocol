@@ -269,10 +269,6 @@ let anchored_text_entry_path t checksum =
   placed t entry.tree entry.path ~key:checksum
     [ ("{contentChecksum}", checksum) ]
 
-let stamp_path t =
-  let stamp = (layout ()).anchored_text_stamp in
-  placed t stamp.tree stamp.path []
-
 (* Every file under [dir], by its path from there, with its bytes: none
    while [dir] is absent. *)
 let files_under dir =
@@ -388,14 +384,14 @@ let person_running_git =
     "commit.gpgsign=false";
   ]
 
-(* git, run by hand in the working tree, beside an Archivist that stages
+(* git, run by hand in the working tree [root], beside an Archivist that stages
    into the same index: what it printed. While the Archivist stages a batch
    it holds git's lock on the index, and a command that finds the index
    locked is run again once the lock is gone, as the Archivist runs its own
    (ARCHIVIST.md § Staging). Any other failure fails at once. *)
-let git_by_hand t args =
+let git_by_hand root args =
   Run.eventually "git to find the index unlocked" index_held_at_most (fun () ->
-      match git_in t.dirs.root (person_running_git @ args) with
+      match git_in root (person_running_git @ args) with
       | Ok out -> Some out
       | Error err
         when Re.execp (Re.compile (Re.str "index.lock': File exists")) err ->
@@ -404,10 +400,10 @@ let git_by_hand t args =
           failwith
             (Printf.sprintf "git %s failed: %s" (String.concat " " args) err))
 
-(* Hold the index as a writer would, after any current writer has released
-   it: the release. *)
-let hold_git_index t =
-  let lock = t.dirs.root // ".git" // "index.lock" in
+(* Hold the index of the working tree [root] as a writer would, after any
+   current writer has released it: the release. *)
+let hold_git_index root =
+  let lock = root // ".git" // "index.lock" in
   let fd =
     Run.eventually "the git index lock to be available" index_held_at_most
       (fun () ->

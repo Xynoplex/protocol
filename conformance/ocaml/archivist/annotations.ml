@@ -454,7 +454,7 @@ let generated_on_create w =
             [
               ("name", str "About the dog");
               ("storageUri", str uri);
-              ("contentChecksum", str (sha256 content));
+              ("contentChecksum", str (A.sha256 content));
               ("byteSize", `Int (String.length content));
               ("format", str "text/markdown");
               ( "generatedFrom",

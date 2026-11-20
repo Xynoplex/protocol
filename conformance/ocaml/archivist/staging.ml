@@ -67,7 +67,7 @@ let updated w =
           [
             ("resourceId", str id);
             ("storageUri", str uri);
-            ("contentChecksum", str (sha256 second));
+            ("contentChecksum", str (A.sha256 second));
             ("byteSize", `Int (String.length second));
           ])
       : Yojson.Safe.t);
@@ -114,7 +114,7 @@ let archived w =
 
 let branch w =
   let reader = A.person w "reader" in
-  let git args = ignore (A.git_by_hand w args : string) in
+  let git args = ignore (A.git_by_hand w.dirs.root args : string) in
   let named () =
     Check.at (A.ask reader "browse:kb-requested" (`Assoc [])) [ "gitBranch" ]
   in
@@ -127,7 +127,7 @@ let branch w =
 let degraded (w : A.t) =
   let editor = A.person w "editor" in
   let uri = "file://staged/degraded.md" in
-  let release = A.hold_git_index w in
+  let release = A.hold_git_index w.dirs.root in
   Fun.protect ~finally:release (fun () ->
       let id = A.created w editor.did (fields "Degraded" uri) "degraded\n" in
       ignore (A.ask editor "mark:archive" (on id) : Yojson.Safe.t);
@@ -151,7 +151,7 @@ let unsynced (w : A.t) =
           [
             ("resourceId", str id);
             ("storageUri", str uri);
-            ("contentChecksum", str (sha256 edited));
+            ("contentChecksum", str (A.sha256 edited));
             ("byteSize", `Int (String.length edited));
           ])
       : Yojson.Safe.t);

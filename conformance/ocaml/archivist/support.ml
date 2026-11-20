@@ -45,8 +45,7 @@ let str s = `String s
 let strs items = `List (List.map str items)
 let ints numbers = `List (List.map (fun n -> `Int n) numbers)
 let sorted items = List.sort compare items
-let sha256 = A.sha256
-let ( // ) = A.( // )
+let ( // ) = Filename.concat
 
 (* The span kinds the cases name, as OTLP numbers them. *)
 let producer = Protocol.otlp_kind Producer
