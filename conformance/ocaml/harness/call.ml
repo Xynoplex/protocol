@@ -23,9 +23,14 @@ let parsed text =
    body, a chunk at a time, as cohttp's reader decodes it. *)
 let exchange ~sw ?(headers = []) ?body meth url =
   let uri = Uri.of_string url in
+  (* An IPv6 host, bare: getaddrinfo takes it so, and a Host header in
+     brackets. *)
   let host =
     match Uri.host uri with
-    | Some host -> host
+    | Some host ->
+        if String.starts_with ~prefix:"[" host then
+          String.sub host 1 (String.length host - 2)
+        else host
     | None -> failwith (url ^ " names no host")
   in
   let port =
@@ -42,7 +47,12 @@ let exchange ~sw ?(headers = []) ?body meth url =
   in
   let socket = Eio.Net.connect ~sw (Run.net ()) address in
   let headers =
-    [ ("host", Printf.sprintf "%s:%d" host port); ("connection", "close") ]
+    [
+      ( "host",
+        if String.contains host ':' then Printf.sprintf "[%s]:%d" host port
+        else Printf.sprintf "%s:%d" host port );
+      ("connection", "close");
+    ]
     @ (match body with
       | Some text -> [ ("content-length", string_of_int (String.length text)) ]
       | None -> [])
@@ -205,3 +215,93 @@ let non_conformance which meth template reply =
           (Option.value ~default:[] declared.headers)
       in
       content @ headers
+
+(* A multipart/form-data body, as a browser or an SDK writes one: each part a
+   text field, or a file with its name and media type. Its content type, with
+   the boundary, and the body. *)
+type part =
+  | Field of string * string
+  | File of { name : string; filename : string; media : string; bytes : string }
+
+let multipart parts =
+  let boundary = "conformance-" ^ Fresh.hex 12 in
+  let body = Buffer.create 1024 in
+  List.iter
+    (fun part ->
+      Buffer.add_string body ("--" ^ boundary ^ "\r\n");
+      (match part with
+      | Field (name, value) ->
+          Printf.bprintf body
+            "Content-Disposition: form-data; name=\"%s\"\r\n\r\n%s" name value
+      | File { name; filename; media; bytes } ->
+          Printf.bprintf body
+            "Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\n\
+             Content-Type: %s\r\n\
+             \r\n\
+             %s"
+            name filename media bytes);
+      Buffer.add_string body "\r\n")
+    parts;
+  Buffer.add_string body ("--" ^ boundary ^ "--\r\n");
+  ("multipart/form-data; boundary=" ^ boundary, Buffer.contents body)
+
+(* The parts of a multipart/form-data body whose content type is
+   [content_type], each its name, its filename when it is a file, and its
+   bytes: None when it is not one. *)
+let parts content_type body =
+  let parameter name header =
+    List.find_map
+      (fun piece ->
+        match String.index_opt piece '=' with
+        | Some eq when String.trim (String.sub piece 0 eq) = name ->
+            let value =
+              String.trim
+                (String.sub piece (eq + 1) (String.length piece - eq - 1))
+            in
+            Some
+              (if String.length value >= 2 && value.[0] = '"' then
+                 String.sub value 1 (String.length value - 2)
+               else value)
+        | _ -> None)
+      (String.split_on_char ';' header)
+  in
+  match
+    ( String.trim (List.hd (String.split_on_char ';' content_type)),
+      parameter "boundary" content_type )
+  with
+  | "multipart/form-data", Some boundary ->
+      let delimiter = Re.compile (Re.str ("\r\n--" ^ boundary)) in
+      let sections = Re.split_delim delimiter ("\r\n" ^ body) in
+      Some
+        (List.filter_map
+           (fun section ->
+             match Re.exec_opt (Re.compile (Re.str "\r\n\r\n")) section with
+             | None -> None
+             | Some found ->
+                 let head = String.sub section 0 (Re.Group.start found 0)
+                 and bytes =
+                   String.sub section (Re.Group.stop found 0)
+                     (String.length section - Re.Group.stop found 0)
+                 in
+                 let header name =
+                   List.find_map
+                     (fun line ->
+                       match String.index_opt line ':' with
+                       | Some colon
+                         when String.lowercase_ascii
+                                (String.trim (String.sub line 0 colon))
+                              = name ->
+                           Some
+                             (String.trim
+                                (String.sub line (colon + 1)
+                                   (String.length line - colon - 1)))
+                       | _ -> None)
+                     (String.split_on_char '\n' head)
+                 in
+                 Option.bind (header "content-disposition") (fun disposition ->
+                     Option.map
+                       (fun name ->
+                         (name, parameter "filename" disposition, bytes))
+                       (parameter "name" disposition)))
+           (List.tl sections))
+  | _ -> None

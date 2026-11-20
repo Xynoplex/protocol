@@ -248,9 +248,10 @@ let kb_key = "xynolog.kb"
    attribute or value outside its row; or exported under a resource that
    carries other keys than the table's resource rows list for it, or names
    another knowledge base than [kb]'s DID. [kb] is None where the case's
-   document names none; which it is must be what the table says. Judged on
+   document names none; which it is must be what the table says. [plane] is
+   the plane a gateway runs on, whose rows it must export. Judged on
    everything the receiver got, so run it after the traffic. *)
-let outside_the_table (otlp : Otlp.t) service (kb : string option) =
+let outside_the_table ?plane (otlp : Otlp.t) service (kb : string option) =
   let service_word = Protocol.Service_rows.services_item_value service in
   let keys = Protocol.resource_keys service in
   (match (List.mem kb_key keys, kb) with
@@ -268,7 +269,7 @@ let outside_the_table (otlp : Otlp.t) service (kb : string option) =
            service_word did)
   | _ -> ());
   let unlisted =
-    held_to otlp (Protocol.telemetry service) ("the " ^ service_word)
+    held_to otlp (Protocol.telemetry ?plane service) ("the " ^ service_word)
   in
   let resources = Dynarray.create () in
   let under resource =

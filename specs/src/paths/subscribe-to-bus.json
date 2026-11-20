@@ -70,7 +70,8 @@
           "xynolog-service": "unlimited",
           "xynolog-worker": "unlimited"
         }
-      }
+      },
+      "streamLeaseSeconds": 30
     }
   }
 }

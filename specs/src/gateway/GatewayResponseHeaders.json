@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatewayResponseHeaders.json",
+  "description": "gateway/response-headers.json: the headers on every response the gateway sends.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "every": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each header every response carries, and its value.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A header's name, as HTTP spells it; a receiver reads it in any case.",
+            "pattern": "^[A-Za-z][A-Za-z0-9-]*$"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its value, exactly."
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The header that names the request.",
+      "pattern": "^[A-Za-z][A-Za-z0-9-]*$"
+    },
+    "absent": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each header no response carries.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "A header's name, as HTTP spells it; a receiver reads it in any case.",
+        "pattern": "^[A-Za-z][A-Za-z0-9-]*$"
+      }
+    },
+    "preflight": {
+      "type": "object",
+      "description": "How the gateway answers an `OPTIONS` request.",
+      "properties": {
+        "status": {
+          "$ref": "https://xynolog.org/protocol/HttpStatus.json"
+        },
+        "headers": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Each header it carries beside those of `every`, and its value.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A header's name, as HTTP spells it; a receiver reads it in any case.",
+                "pattern": "^[A-Za-z][A-Za-z0-9-]*$"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Its value, exactly."
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "echoes": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Each header it carries when the request carries the header it echoes, with that header's value.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A header's name, as HTTP spells it; a receiver reads it in any case.",
+                "pattern": "^[A-Za-z][A-Za-z0-9-]*$"
+              },
+              "of": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The request's header whose value it carries.",
+                "pattern": "^[A-Za-z][A-Za-z0-9-]*$"
+              }
+            },
+            "required": [
+              "name",
+              "of"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "vary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The value of the `Vary` it carries when it echoes a header: the request headers it echoes."
+        }
+      },
+      "required": [
+        "status",
+        "headers",
+        "echoes",
+        "vary"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "every",
+    "requestId",
+    "absent",
+    "preflight"
+  ],
+  "additionalProperties": false
+}

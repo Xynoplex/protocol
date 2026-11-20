@@ -14,7 +14,12 @@ type frame = {
   scope : string option;
 }
 
-type message = { event : string; id : string option; frame : frame option }
+type message = {
+  event : string;
+  id : string option;
+  frame : frame option;
+  at : float;  (** When it arrived. *)
+}
 
 type t = {
   messages : message Dynarray.t;
@@ -41,6 +46,53 @@ let frame_of json =
   | _ -> None
 
 let violation t text = Dynarray.add_last t.violations text
+
+(* The id the gateway gives [frame] (contract/TRANSPORT-HTTP.md § Event id
+   and resumption): its position when it is scoped and its payload carries
+   a sequence number, else its reply's when it carries a correlationId, else
+   an ephemeral one, whose form EphemeralEventId states. *)
+type expected_id = Persisted of string | Reply of string | Ephemeral
+
+let expected_id frame =
+  match
+    ( frame.scope,
+      Protocol.at frame.payload [ "metadata"; "sequenceNumber" ],
+      frame.correlation_id )
+  with
+  | Some scope, Some (`Int sequence), _ ->
+      Persisted (Printf.sprintf "p-%s-%d" scope sequence)
+  | _, _, Some correlation ->
+      Reply (Printf.sprintf "e-%s:%s" frame.channel correlation)
+  | _ -> Ephemeral
+
+(* bus/event-id-cases.json's every case, given the id the rule gives it. *)
+let ids_checked =
+  lazy
+    (List.iter
+       (fun (c : Xynolog_protocol.Tables.Bus_event_id_cases.cases_item) ->
+         let given =
+           expected_id
+             {
+               channel = c.frame.channel;
+               correlation_id = c.frame.correlation_id;
+               payload = c.frame.payload;
+               scope = c.frame.scope;
+             }
+         in
+         let agrees =
+           match (given, c.id) with
+           | Persisted id, Persisted { persisted } -> id = persisted
+           | Reply id, Reply { reply } -> id = reply
+           | Ephemeral, Ephemeral { ephemeral } -> ephemeral
+           | _ -> false
+         in
+         if not agrees then
+           failwith
+             (Printf.sprintf
+                "bus/event-id-cases.json: %S: the harness gives the frame \
+                 another id"
+                c.why))
+       (Protocol.tables ()).bus_event_id_cases.cases)
 
 let accept t event id data =
   let frame, parsed =
@@ -69,30 +121,25 @@ let accept t event id data =
            (Call.shown (Yojson.Safe.to_string message))));
   (match (frame, id) with
   | Some frame, Some id -> (
-      let sequence =
-        Protocol.at frame.payload [ "metadata"; "sequenceNumber" ]
-      in
-      match (frame.scope, sequence, frame.correlation_id) with
-      | Some scope, Some (`Int sequence), _ ->
-          if id <> Printf.sprintf "p-%s-%d" scope sequence then
+      match expected_id frame with
+      | Persisted expected ->
+          if id <> expected then
             violation t
-              (Printf.sprintf
-                 "a persisted frame (scope %s, sequence %d) carried id %s" scope
-                 sequence id)
-      | _, _, Some correlation ->
-          let expected = Printf.sprintf "e-%s:%s" frame.channel correlation in
+              (Printf.sprintf "a persisted frame on %s carried id %s, not %s"
+                 frame.channel id expected)
+      | Reply expected ->
           if id <> expected then
             violation t
               (Printf.sprintf "a reply on %s carried id %s, not %s"
                  frame.channel id expected)
-      | _, _, None ->
+      | Ephemeral ->
           if Protocol.against "EphemeralEventId" (`String id) <> [] then
             violation t
               (Printf.sprintf
                  "a frame on %s with no correlationId carried id %s"
                  frame.channel id))
   | _ -> ());
-  let received = { event; id; frame } in
+  let received = { event; id; frame; at = Run.now () } in
   Dynarray.add_last t.messages received;
   List.iter (fun listener -> listener received) t.listeners;
   Eio.Condition.broadcast t.changed
@@ -221,14 +268,46 @@ let frame ?timeout ?(matches = fun _ -> true) t channel =
   | Some f -> f
   | None -> assert false
 
+(* Return once the connection has ended, or fail after [timeout] s. *)
+let ends ?(timeout = 10.0) t =
+  let deadline = Run.now () +. timeout in
+  let rec wait () =
+    if not t.ended then (
+      let remaining = deadline -. Run.now () in
+      if remaining <= 0.0 then
+        raise
+          (Run.Timed_out
+             (Printf.sprintf "the stream was still open after %g s" timeout));
+      ignore
+        (Eio.Time.with_timeout (Run.clock ()) remaining (fun () ->
+             Ok (Eio.Condition.await_no_mutex t.changed)));
+      wait ())
+  in
+  wait ()
+
+(* Nothing [matches] ever arrives on [channel]: after waiting [wait] s for
+   anything still in flight, no frame the stream has carried since it
+   opened matches. *)
+let quiet ?(matches = fun _ -> true) t channel wait =
+  Run.sleep wait;
+  match List.filter matches (frames ~channel t) with
+  | [] -> ()
+  | arrived ->
+      failwith
+        (Printf.sprintf "expected nothing on %s, got %s" channel
+           (Yojson.Safe.to_string
+              (`List (List.map (fun (f : frame) -> f.payload) arrived))))
+
 type subscribed = Stream of t | Refused of Call.reply
 
+(* Open a stream. A connection the gateway closes before it answers raises
+   here, in the caller: End_of_file or Eio.Io. *)
 let subscribe origin token body =
   let opened, open_ = Eio.Promise.create () in
   let closing, closing_u = Eio.Promise.create () in
   Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
       Eio.Switch.run @@ fun sw ->
-      let response, next =
+      match
         Call.exchange ~sw
           ~headers:
             ([
@@ -242,40 +321,114 @@ let subscribe origin token body =
           ~body:(Yojson.Safe.to_string body)
           "POST"
           (origin ^ Protocol.path Gateway "POST" "/bus/subscribe")
-      in
-      let status = Http.Status.to_int (Http.Response.status response) in
-      let headers = Http.Response.headers response in
-      if status <> 200 then
-        let text = Call.body_of next in
-        Eio.Promise.resolve open_
-          (Refused { Call.status; headers; text; json = Call.parsed text })
-      else
-        let stream =
-          {
-            messages = Dynarray.create ();
-            violations = Dynarray.create ();
-            listeners = [];
-            changed = Eio.Condition.create ();
-            ended = false;
-            closing = closing_u;
-          }
-        in
-        (match Http.Header.get headers "content-type" with
-        | Some kind
-          when String.trim (List.hd (String.split_on_char ';' kind))
-               = "text/event-stream" ->
-            ()
-        | kind ->
-            violation stream
-              (Printf.sprintf "a stream that came as %S, not text/event-stream"
-                 (Option.value ~default:"" kind)));
-        Eio.Promise.resolve open_ (Stream stream);
-        Eio.Fiber.first
-          (fun () -> Eio.Promise.await closing)
-          (fun () -> read stream next);
-        stream.ended <- true;
-        Eio.Condition.broadcast stream.changed);
-  Eio.Promise.await opened
+      with
+      | exception ((End_of_file | Eio.Io _) as failure) ->
+          Eio.Promise.resolve open_ (Error failure)
+      | response, next ->
+          let status = Http.Status.to_int (Http.Response.status response) in
+          let headers = Http.Response.headers response in
+          if status <> 200 then
+            let text = Call.body_of next in
+            Eio.Promise.resolve open_
+              (Ok
+                 (Refused
+                    { Call.status; headers; text; json = Call.parsed text }))
+          else
+            let stream =
+              {
+                messages = Dynarray.create ();
+                violations = Dynarray.create ();
+                listeners = [];
+                changed = Eio.Condition.create ();
+                ended = false;
+                closing = closing_u;
+              }
+            in
+            (match Http.Header.get headers "content-type" with
+            | Some kind
+              when String.trim (List.hd (String.split_on_char ';' kind))
+                   = "text/event-stream" ->
+                ()
+            | kind ->
+                violation stream
+                  (Printf.sprintf
+                     "a stream that came as %S, not text/event-stream"
+                     (Option.value ~default:"" kind)));
+            Eio.Promise.resolve open_ (Ok (Stream stream));
+            Eio.Fiber.first
+              (fun () -> Eio.Promise.await closing)
+              (fun () -> read stream next);
+            stream.ended <- true;
+            Eio.Condition.broadcast stream.changed);
+  match Eio.Promise.await opened with
+  | Ok subscribed -> subscribed
+  | Error failure -> raise failure
+
+(* A subscriber that opens the stream and stops reading once its head has
+   come. [resume] starts reading again; [drain] does, and returns once the
+   stream has ended — a socket that is not being read cannot see its peer
+   close it; [close] ends it from this side. *)
+type stalled = {
+  resume : unit -> unit;
+  drain : unit -> unit;
+  close : unit -> unit;
+}
+
+let stalled_subscriber origin token body =
+  let reading, read = Eio.Promise.create () in
+  let closing, close = Eio.Promise.create () in
+  let ended, ends = Eio.Promise.create () in
+  Eio.Fiber.fork ~sw:(Run.sw ()) (fun () ->
+      (try
+         Eio.Fiber.first
+           (fun () -> Eio.Promise.await closing)
+           (fun () ->
+             Eio.Switch.run @@ fun sw ->
+             let _response, next =
+               Call.exchange ~sw
+                 ~headers:
+                   [
+                     ("authorization", "Bearer " ^ token);
+                     ("content-type", "application/json");
+                   ]
+                 ~body:(Yojson.Safe.to_string body)
+                 "POST"
+                 (origin ^ Protocol.path Gateway "POST" "/bus/subscribe")
+             in
+             Eio.Promise.await reading;
+             let rec chunks () =
+               match next () with
+               | Cohttp.Transfer.Chunk _ -> chunks ()
+               | Final_chunk _ | Done -> ()
+             in
+             chunks ())
+       with End_of_file | Eio.Io _ -> ());
+      Eio.Promise.resolve ends ());
+  let once promise resolver =
+    if not (Eio.Promise.is_resolved promise) then
+      Eio.Promise.resolve resolver ()
+  in
+  {
+    resume = (fun () -> once reading read);
+    drain =
+      (fun () ->
+        once reading read;
+        Eio.Promise.await ended);
+    close = (fun () -> once closing close);
+  }
+
+(* A scoped entry of a subscription: [scope]'s [channels], resumed after
+   [last_event_id] when it is given. *)
+let scope ?last_event_id scope channels =
+  `Assoc
+    ([
+       ("scope", `String scope);
+       ("channels", `List (List.map (fun c -> `String c) channels));
+     ]
+    @
+    match last_event_id with
+    | Some id -> [ ("lastEventId", `String id) ]
+    | None -> [])
 
 let subscribe_body ~client_id ?(global = []) ?(scoped = [])
     ?(pending_replies = []) () =
@@ -283,21 +436,7 @@ let subscribe_body ~client_id ?(global = []) ?(scoped = [])
     ([ ("clientId", `String client_id) ]
     @ (if global = [] then []
        else [ ("global", `List (List.map (fun c -> `String c) global)) ])
-    @ (if scoped = [] then []
-       else
-         [
-           ( "scoped",
-             `List
-               (List.map
-                  (fun (scope, channels) ->
-                    `Assoc
-                      [
-                        ("scope", `String scope);
-                        ( "channels",
-                          `List (List.map (fun c -> `String c) channels) );
-                      ])
-                  scoped) );
-         ])
+    @ (if scoped = [] then [] else [ ("scoped", `List scoped) ])
     @
     if pending_replies = [] then []
     else

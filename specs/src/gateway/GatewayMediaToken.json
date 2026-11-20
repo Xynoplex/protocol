@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatewayMediaToken.json",
+  "description": "gateway/media-token.json: what a media token is.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "header": {
+      "type": "object",
+      "description": "Its JOSE header, exactly.",
+      "properties": {
+        "alg": {
+          "type": "string",
+          "enum": [
+            "HS256"
+          ]
+        },
+        "typ": {
+          "type": "string",
+          "enum": [
+            "JWT"
+          ]
+        }
+      },
+      "required": [
+        "alg",
+        "typ"
+      ],
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "object",
+      "description": "Its claims beside `iat` and `exp`, each filled as the table says.",
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "media"
+          ]
+        },
+        "iss": {
+          "type": "string",
+          "enum": [
+            "{domain}"
+          ]
+        },
+        "sub": {
+          "type": "string",
+          "enum": [
+            "{resourceId}"
+          ]
+        }
+      },
+      "required": [
+        "purpose",
+        "iss",
+        "sub"
+      ],
+      "additionalProperties": false
+    },
+    "lifetimeSeconds": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "`exp` less `iat`."
+    }
+  },
+  "required": [
+    "$comment",
+    "header",
+    "claims",
+    "lifetimeSeconds"
+  ],
+  "additionalProperties": false
+}

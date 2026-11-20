@@ -11,7 +11,6 @@
     "typecheck:smelter": "tsc --noEmit -p tsconfig.smelter.json",
     "pretest": "npm run typecheck && npm run typecheck:smelter",
     "test": "vitest run",
-    "test:gateway": "npm run typecheck && vitest run --project gateway",
     "test:dispatcher": "npm run typecheck && vitest run --project dispatcher",
     "test:archivist": "npm run typecheck && vitest run --project archivist",
     "test:sdk": "npm run typecheck && vitest run --project sdk",

@@ -1,0 +1,57 @@
+{
+  "$comment": "AUTHORITY for the headers the gateway puts on every response it sends (TRANSPORT-HTTP.md § Every response): on every route, whatever its status, a success, an error, bytes and a stream alike. `every` is each header every response carries, with its value, exactly: the security headers, and CORS that is open to every origin. `requestId` is the header that names the request: a new UUID for each request, in lower case with hyphens, which each line the gateway logs while it answers the request carries as its `requestId` (service-telemetry/log-lines.json). `absent` is each header no response carries: the API is bearer-only, so no origin can ride a browser's ambient credentials. `preflight` is how the gateway answers an `OPTIONS` request, before it routes it and whatever its path: with its `status` and no body, every header of `every` and `requestId`, each of its `headers`, and, when the request carries the header an `echoes` entry names, that entry's header with the request header's value, and then a `Vary` of `vary`.",
+  "every": [
+    {
+      "name": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "name": "X-Frame-Options",
+      "value": "DENY"
+    },
+    {
+      "name": "X-Content-Type-Options",
+      "value": "nosniff"
+    },
+    {
+      "name": "Strict-Transport-Security",
+      "value": "max-age=31536000; includeSubDomains"
+    },
+    {
+      "name": "Content-Security-Policy",
+      "value": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+    },
+    {
+      "name": "X-XSS-Protection",
+      "value": "1; mode=block"
+    },
+    {
+      "name": "Referrer-Policy",
+      "value": "no-referrer"
+    },
+    {
+      "name": "Permissions-Policy",
+      "value": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), interest-cohort=()"
+    }
+  ],
+  "requestId": "X-Request-ID",
+  "absent": [
+    "Access-Control-Allow-Credentials"
+  ],
+  "preflight": {
+    "status": 204,
+    "headers": [
+      {
+        "name": "Access-Control-Allow-Methods",
+        "value": "GET,HEAD,PUT,POST,DELETE,PATCH"
+      }
+    ],
+    "echoes": [
+      {
+        "name": "Access-Control-Allow-Headers",
+        "of": "Access-Control-Request-Headers"
+      }
+    ],
+    "vary": "Access-Control-Request-Headers"
+  }
+}

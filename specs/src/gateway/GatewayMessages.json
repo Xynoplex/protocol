@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/GatewayMessages.json",
+  "description": "gateway/messages.json: the words of the gateway's own refusals.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "messages": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each refusal the gateway makes itself.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "status": {
+            "$ref": "https://xynolog.org/protocol/HttpStatus.json"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its `code`, where it carries one: a LimitRefusal's, or the transport code errors/codes.json names for its status."
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When the gateway answers it, and what fills each `{name}` of its texts."
+          },
+          "error": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its text. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          },
+          "hint": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its `hint`, where it carries one."
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "situation",
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "failures": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each failure frame the gateway delivers itself, on the stream of the client whose request it answers.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its `code`."
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When the gateway answers it, and what fills each `{name}` of its texts."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its text. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "code",
+          "situation",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "challenges": {
+      "type": "object",
+      "description": "The `WWW-Authenticate` of a 401.",
+      "properties": {
+        "noCredential": {
+          "type": "string",
+          "minLength": 1,
+          "description": "For a request that presents no credential. The challenge. `{origin}` is the origin the Unauthorized response names: `http://` and the request's `Host`, or, for a request that names none, the gateway's `publicUrl`."
+        },
+        "refused": {
+          "type": "string",
+          "minLength": 1,
+          "description": "For a request whose credential, a bearer token or a media token, is refused. The challenge. `{origin}` is the origin the Unauthorized response names: `http://` and the request's `Host`, or, for a request that names none, the gateway's `publicUrl`."
+        }
+      },
+      "required": [
+        "noCredential",
+        "refused"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$comment",
+    "messages",
+    "failures",
+    "challenges"
+  ],
+  "additionalProperties": false
+}

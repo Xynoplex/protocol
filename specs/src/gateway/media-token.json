@@ -1,0 +1,13 @@
+{
+  "$comment": "AUTHORITY for the media token (the `mediaToken` scheme of the gateway's document): what `POST /api/tokens/media` answers, and the one credential `GET /api/resources/{id}` takes in its `token` query parameter. It is a JSON Web Token with `header`, signed by HS256 with the first key of the gateway's `JWT_SECRET` ring, which signs nothing else; it is accepted under any key of the ring. Its claims are `claims`, with `{domain}` the domain the gateway's document names and `{resourceId}` the resource it was asked for, and `iat`, the second it was minted, and `exp`, `lifetimeSeconds` later. The gateway accepts one with no leeway on `exp`, whose `purpose`, `iss` and `sub` are these, and `sub` the resource the path names; anything else is refused (gateway/messages.json, `refused-media-token`), and anywhere else a media token is no credential.",
+  "header": {
+    "alg": "HS256",
+    "typ": "JWT"
+  },
+  "claims": {
+    "purpose": "media",
+    "iss": "{domain}",
+    "sub": "{resourceId}"
+  },
+  "lifetimeSeconds": 300
+}

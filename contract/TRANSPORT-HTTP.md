@@ -20,7 +20,7 @@ its own initiative.
 
 **How this document is held.** As in the contract, each rule ends with
 *Held by* and what fails when it is broken: a file of the gateway suite
-([`conformance/gateway`](../conformance/gateway/README.md)),
+([`conformance/ocaml/gateway`](../conformance/ocaml/gateway/README.md)),
 which checks a running gateway against this document and the spec; a case
 of the SDK suite ([`conformance/sdk`](../conformance/sdk/README.md)),
 which checks every SDK; or a test of the reference client. "Held by no
@@ -82,19 +82,24 @@ its description (`GET /resources/{id}/jsonld`), of its annotations
 - **Errors are JSON.** Every non-2xx response, on every route, is
   `application/json` with an `ErrorResponse` body (`{error, code?, hint?}`)
   — including a path the gateway does not serve, which answers 404.
-- **CORS is open and credential-less.** `Access-Control-Allow-Origin: *`
-  and no `Access-Control-Allow-Credentials`: the API is bearer-only, so no
-  origin can ride a browser's ambient credentials.
-- **Security headers.** `X-Content-Type-Options: nosniff`,
-  `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`,
-  `Strict-Transport-Security: max-age=31536000; includeSubDomains` (a
-  browser honours it only over HTTPS), `X-XSS-Protection: 1; mode=block`, a
-  `Content-Security-Policy` of `default-src 'none'; frame-ancestors 'none';
-  base-uri 'none'; form-action 'none'`, and a `Permissions-Policy` that
-  disables every browser feature.
-- **`X-Request-ID`** names the request in the gateway's logs.
+- **The same headers on every one.**
+  [`gateway/response-headers.json`](../specs/src/gateway/response-headers.json)
+  states each, with its value, and how an `OPTIONS` preflight is answered:
+  - CORS is open and credential-less. `Access-Control-Allow-Origin: *` and
+    no `Access-Control-Allow-Credentials`, since the API is bearer-only and
+    no origin can ride a browser's ambient credentials.
+  - Security headers: a `Content-Security-Policy` that allows nothing, a
+    `Permissions-Policy` that turns off the six features the table names,
+    `nosniff`, `DENY`, `no-referrer`, and a `Strict-Transport-Security` that
+    a browser honours only over HTTPS.
+  - `X-Request-ID` names the request in the gateway's logs.
+- **The gateway's own words.** The `error` and `hint` of each refusal the
+  gateway makes itself are those
+  [`gateway/messages.json`](../specs/src/gateway/messages.json) states for
+  its situation. A refusal it relays from the Archivist carries the
+  Archivist's words.
 
-*Held by `gateway/edge.test.ts`, `gateway/spec-derived.test.ts`.*
+*Held by `gateway/edge`, `gateway/spec_derived`.*
 
 ## Limits
 
@@ -107,6 +112,7 @@ The numbers live in the spec, not here:
 | Pending replies named on subscribe | `BusSubscribeRequest.pendingReplies.maxItems` | 400 |
 | Unanswered requests per client | the same `maxItems` | 429 `unanswered-requests` on the next emit; `Retry-After` is when the oldest expires |
 | Streams one principal holds, across replicas | `/bus/subscribe` `x-xynolog-limits.streamsPerPrincipal` | 429 `streams` |
+| How long a stream is counted against its principal without word from its replica: each replica renews the count of each stream it holds every `heartbeatSeconds` | `/bus/subscribe` `x-xynolog-limits.streamLeaseSeconds` | the stream is no longer counted, so a replica that stopped frees its streams' counts |
 | Emits one principal makes, per gateway process | `/bus/emit` `x-xynolog-limits.emitsPerPrincipal` (a rate and a burst) | 429 `emit-rate` |
 | Bytes queued for all of one gateway's streams | GatewayConfig `capacity.queuedBytes` | 503 `capacity` on the next `/bus/subscribe` |
 | Connections one gateway holds open | GatewayConfig `capacity.connections` | the connection is closed unanswered |
@@ -136,7 +142,7 @@ has already been refused, and a client that can renew its token renews it
 and sends the request again at once
 ([TRANSPORT-CONTRACT.md § A refused credential](./TRANSPORT-CONTRACT.md#a-refused-credential)).
 
-*Held by `gateway/spec-derived.test.ts`, `gateway/emit.test.ts`, `gateway/principal-limits.test.ts`, `gateway/refusals.test.ts`, `gateway/capacity.test.ts`, `gateway/bounds.test.ts`, `gateway/replicas.test.ts`, `sdk/wire/emit-rate-limited`, `sdk/wire/stream-rate-limited`.*
+*Held by `gateway/spec_derived`, `gateway/emit`, `gateway/principal_limits`, `gateway/refusals`, `gateway/capacity`, `gateway/bounds`, `gateway/replicas`, `sdk/wire/emit-rate-limited`, `sdk/wire/stream-rate-limited`.*
 
 ## Authentication and authorization
 
@@ -145,21 +151,24 @@ Both routes require a valid JWT (`Authorization: Bearer …`); the
 
 - 401: token missing, malformed, expired, or signed with a key the
   gateway does not recognise. The `WWW-Authenticate` challenge names the
-  resource metadata (`resource_metadata="<origin>/.well-known/oauth-protected-resource"`),
-  with `error="invalid_token"` when a token was presented and refused.
-  With no token, the body's `hint` names the header to send. A refused
-  token is told only that (`Invalid token`): why it did not verify is in
-  the gateway's log, not the reply. A verified token that lacks the role
-  an operation requires is told which role.
+  resource metadata, with `error="invalid_token"` when a token was
+  presented and refused (`challenges` in
+  [`gateway/messages.json`](../specs/src/gateway/messages.json)). With no
+  token, the body's `hint` names the header to send. A refused token is
+  told only that it was refused (`refused-token`, and `refused-media-token`
+  for a media token): why it did not verify is in the gateway's log, not
+  the reply. A verified token that lacks the role an operation requires is
+  told which role.
 - 403: not used. Every authenticated principal may subscribe to every
   broadcast channel. See "Known gaps".
 
 The gateway stamps `_userId` (the verified principal's DID) and `_roles`
-(the token's capabilities) onto every emitted payload, clearing anything
-the caller wrote there. This is the contract's identity rule; the gateway
+(the token's capabilities, when it holds any) onto every emitted payload,
+clearing anything the caller wrote there: the `stamps` of
+[`bus/registry.json`](../specs/src/bus/registry.json). This is the contract's identity rule; the gateway
 is its mechanism over HTTP.
 
-*Held by `gateway/tokens.test.ts`, `gateway/edge.test.ts`, `gateway/emit.test.ts`.*
+*Held by `gateway/tokens`, `gateway/edge`, `gateway/emit`.*
 
 ## The gateway
 
@@ -185,12 +194,12 @@ is its mechanism over HTTP.
   property named for an id that refers to no kind, and a case the rule
   does not agree with, fail it. The gateway is held to it by its suite,
   which sends every string the table says a kind accepts and every one it
-  refuses: in a payload and as a `scope` (`gateway/emit.test.ts`), in a
-  subscription's `scoped` entry (`gateway/stream.test.ts`), to
-  `POST /api/tokens/media` (`gateway/tokens.test.ts`), and in the path of
+  refuses: in a payload and as a `scope` (`gateway/emit`), in a
+  subscription's `scoped` entry (`gateway/stream`), to
+  `POST /api/tokens/media` (`gateway/tokens`), and in the path of
   a resource's routes, where
   what is not an id names no resource and is a 404
-  (`gateway/content.test.ts`).
+  (`gateway/content`).
 - **Claims.** A registry operation's request carrying a `correlationId`
   claims that id for its `clientId` and the verified principal before it
   is published — `clientId` is required then (400 without it). The claim
@@ -221,7 +230,7 @@ is its mechanism over HTTP.
 - **A broker that is down refuses.** While the signal plane's broker is
   not connected an emit is refused 503, never accepted and lost.
 
-*Held by `gateway/emit.test.ts`, `gateway/replicas.test.ts`, `gateway/outage.test.ts`, `sdk/wire/request-unanswerable`.*
+*Held by `gateway/emit`, `gateway/replicas`, `gateway/outage`, `sdk/wire/request-unanswerable`.*
 
 ### POST /bus/subscribe
 
@@ -244,7 +253,7 @@ is its mechanism over HTTP.
   frame published after a stream's first message is carried by it,
   through whichever replica it was emitted.
 
-*Held by `gateway/stream.test.ts`, `gateway/replicas.test.ts`.*
+*Held by `gateway/stream`, `gateway/replicas`.*
 
 #### Event id and resumption
 
@@ -259,7 +268,9 @@ the format is the frame's delivery class
 | `e-<publishId>` | `EphemeralEventId` | passing | Any other frame. Given once, when the frame is published: the same on every connection that carries it, through every replica. |
 
 The persisted format is used exactly when the frame carries a `scope` and
-its payload a `metadata.sequenceNumber`.
+its payload a `metadata.sequenceNumber`, as
+[`bus/event-id-cases.json`](../specs/src/bus/event-id-cases.json) states
+case by case.
 
 Resumption is **per scope**. A client tracks the last `p-*` id it
 delivered on each scope and sends each as `lastEventId` on that scope's
@@ -285,7 +296,7 @@ live frames that arrived while the replay ran, less any event the replay
 already delivered; then the live tail. The first `ping` follows the
 catch-up.
 
-*Held by `gateway/stream.test.ts`, `gateway/bounds.test.ts`, `sdk/wire/resumption`.*
+*Held by `gateway/stream`, `gateway/bounds`, `sdk/wire/resumption`.*
 
 ### Correlated-reply retention
 
@@ -304,7 +315,7 @@ Under the in-process plane they live in the one gateway process, and a
 restart loses them. A reply older than the retention window is not
 recovered; its request has timed out long before.
 
-*Held by `gateway/stream.test.ts`, `gateway/replicas.test.ts`, `sdk/wire/pending-replies`.*
+*Held by `gateway/stream`, `gateway/replicas`, `sdk/wire/pending-replies`.*
 
 ## The client
 
