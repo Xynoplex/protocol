@@ -9,5 +9,19 @@ let suite : Xynolog_conformance.Suite.t =
       (fun implementations ->
         List.concat_map
           (fun tests -> tests implementations)
-          [ Lifecycle.tests; Boot.tests; Clocks.tests ]);
+          [
+            Announce.tests;
+            Boot.tests;
+            Cancel.tests;
+            Claim.tests;
+            Clocks.tests;
+            Conclude.tests;
+            Create.tests;
+            Environment.tests;
+            Lifecycle.tests;
+            Observability.tests;
+            Progress.tests;
+            Restart.tests;
+            Status.tests;
+          ]);
   }
