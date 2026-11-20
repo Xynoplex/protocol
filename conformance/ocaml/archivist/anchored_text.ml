@@ -17,7 +17,7 @@ let status what expected (reply : Call.reply) =
 let stored what reply = status what 204 reply
 
 let extracted w id text =
-  like "the anchored text"
+  Check.like "the anchored text"
     (`Assoc [ ("kind", str "extracted"); ("text", str text) ])
     (A.anchored_text w id)
 
@@ -31,7 +31,7 @@ let same_bytes w =
        (A.entry_write (A.sha256 content) (entry_of "alpha beta")));
   List.iter
     (fun id ->
-      like "the anchored text"
+      Check.like "the anchored text"
         (`Assoc
            [
              ("kind", str "extracted");

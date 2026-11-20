@@ -99,10 +99,10 @@ let another_principal w =
       (A.upload w ~key bea (fields "Bea's" "file://keyed/beas.md") content)
   in
   Check.that "the two principals' resources are two" (beas <> adas);
-  like "Ada's resource's events"
+  Check.like "Ada's resource's events"
     (`List [ `Assoc [ ("type", str "yield:created"); ("userId", str ada) ] ])
     (`List (A.stored w adas));
-  like "Bea's resource's events"
+  Check.like "Bea's resource's events"
     (`List [ `Assoc [ ("type", str "yield:created"); ("userId", str bea) ] ])
     (`List (A.stored w beas))
 
@@ -129,7 +129,7 @@ let with_a_clone_token w =
   let again = A.upload w ~key owner.did sent content in
   answered_with "the upload sent again" clone again;
   Check.equal "the streams" (strs before) (strs (streams w));
-  like "the clone's events"
+  Check.like "the clone's events"
     (`List
        [
          `Assoc
