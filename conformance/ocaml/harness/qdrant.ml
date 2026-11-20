@@ -9,7 +9,9 @@
    tokens each service is handed are the claims specs/src/vectors/token-cases.json
    states for the knowledge base, signed HS256 with the Qdrant's API key.
 
-   Partly ported: the reads and the clearing the ported cases use. *)
+   A point's id is the MD5 of its key, laid out as a UUID, as the table's
+   qdrantId rows state it: a chunk's key is its resource's id, a hyphen and
+   its index; an annotation's, its id; a decline's, its resource's id. *)
 
 let port = 6333
 let token_variable = "QDRANT_TOKEN"
@@ -67,6 +69,16 @@ let payload_member word name =
           (Printf.sprintf
              "specs/src/%s does not state %s in every point of the %s"
              payload_table name word)
+
+(* A payload member the table states for some point of a collection: one a
+   point may be without. *)
+let payload_member_of_some word name =
+  if List.exists (fun p -> member name p <> `Null) (stated_payloads word) then
+    name
+  else
+    failwith
+      (Printf.sprintf "specs/src/%s states %s in no point of the %s"
+         payload_table name word)
 
 (* The claims token-cases.json states for the knowledge base [did], by the
    service: each case's collection names held to the naming arithmetic. *)
@@ -129,6 +141,19 @@ let collections_at database =
           (answered "list its collections"
              (ask database "GET" "/collections" None))))
 
+(* Fail unless the Qdrant of [database] is there, answers its key, and
+   refuses a request that presents nothing. One started without a key
+   answers every token as it answers the key, and so holds no refusal. *)
+let guarded database =
+  ignore (collections_at database : string list);
+  let bare : Call.reply = Call.call (origin database) "GET" "/collections" in
+  if bare.status <> 401 then
+    failwith
+      (Printf.sprintf
+         "Qdrant answered %d to GET %s/collections, which presented no key: it \
+          is to be started with an API key and its JWT access control on"
+         bare.status (origin database))
+
 type index = { database : database; names : (string * string) list }
 
 let index database did = { database; names = collection_names did }
@@ -141,9 +166,9 @@ let named index word =
         (Printf.sprintf "specs/src/%s states no collection of %s" payload_table
            word)
 
-(* Every point of a collection that a filter takes, a page at a time; none
-   of a collection that is not there. *)
-let scroll index word filter =
+(* Every point of a collection that a filter takes, a page at a time, with
+   its vector when [vectors]; none of a collection that is not there. *)
+let scroll ?(vectors = false) index word filter =
   let name = named index word in
   let rec page offset acc =
     let reply =
@@ -154,7 +179,7 @@ let scroll index word filter =
               ([
                  ("limit", `Int 256);
                  ("with_payload", `Bool true);
-                 ("with_vector", `Bool false);
+                 ("with_vector", `Bool vectors);
                ]
               @ (match filter with Some f -> [ ("filter", f) ] | None -> [])
               @ match offset with Some o -> [ ("offset", o) ] | None -> [])))
@@ -184,13 +209,13 @@ let where key value =
     ]
 
 let payload point = member "payload" point
-let points index word = scroll index word None
+let points ?vectors index word = scroll ?vectors index word None
 
 (* The points of one resource: of the resources, its chunks in order; of
-   the annotations, the annotations on it. *)
-let points_of index word resource_id =
+   the annotations, the annotations on it; of the declined, its decline. *)
+let points_of ?vectors index word resource_id =
   let found =
-    scroll index word
+    scroll ?vectors index word
       (Some (where (payload_member word "resourceId") resource_id))
   in
   if word = "resources" then
@@ -201,9 +226,9 @@ let points_of index word resource_id =
   else found
 
 (* The point of one annotation: None while the index holds none. *)
-let annotation_point index annotation_id =
+let annotation_point ?vectors index annotation_id =
   match
-    scroll index "annotations"
+    scroll ?vectors index "annotations"
       (Some (where (payload_member "annotations" "annotationId") annotation_id))
   with
   | [] -> None
@@ -212,6 +237,130 @@ let annotation_point index annotation_id =
       failwith
         (Printf.sprintf "the index holds %d points of the annotation %s"
            (List.length points) annotation_id)
+
+(* How many points a collection holds; none while it is not there. *)
+let count index word =
+  let name = named index word in
+  let reply =
+    ask index.database "POST"
+      ("/collections/" ^ name ^ "/points/count")
+      (Some (`Assoc [ ("exact", `Bool true) ]))
+  in
+  if reply.status = 404 then 0
+  else
+    Yojson.Safe.Util.to_int
+      (member "count" (answered ("count the points of " ^ name) reply))
+
+(* Take a resource's points out of a collection. *)
+let delete_points_of index word resource_id =
+  let name = named index word in
+  ignore
+    (answered
+       (Printf.sprintf "take the points of %s out of %s" resource_id name)
+       (ask index.database "POST"
+          ("/collections/" ^ name ^ "/points/delete?wait=true")
+          (Some
+             (`Assoc
+                [
+                  ( "filter",
+                    where (payload_member word "resourceId") resource_id );
+                ]))))
+
+(* What a collection's vectors are compared by, in Qdrant's word, as the
+   table states it. *)
+let distance word =
+  let c = (Protocol.tables ()).vectors_payload_cases.collections in
+  match word with
+  | "resources" -> c.resources.distance
+  | "annotations" -> c.annotations.distance
+  | "declined" -> c.declined.distance
+  | other -> failwith ("the harness reads no collection " ^ other)
+
+(* Make a collection that is not there, [size] numbers wide and compared as
+   the table states, as a store makes one. *)
+let make index word size =
+  let name = named index word in
+  match
+    answered
+      ("make the collection " ^ name)
+      (ask index.database "PUT" ("/collections/" ^ name)
+         (Some
+            (`Assoc
+               [
+                 ( "vectors",
+                   `Assoc
+                     [
+                       ("size", `Int size); ("distance", `String (distance word));
+                     ] );
+               ])))
+  with
+  | `Bool true -> ()
+  | other ->
+      failwith
+        (Printf.sprintf "Qdrant did not make the collection %s: it answered %s"
+           name
+           (Yojson.Safe.to_string other))
+
+(* Put points into a collection, each an id, a payload and a vector. *)
+let put index word points =
+  let name = named index word in
+  ignore
+    (answered
+       (Printf.sprintf "put %d point(s) into %s" (List.length points) name)
+       (ask index.database "PUT"
+          ("/collections/" ^ name ^ "/points?wait=true")
+          (Some (`Assoc [ ("points", `List points) ]))))
+
+(* The id Qdrant keys a point by: the MD5 of its key's UTF-8 bytes, its 32
+   hexadecimal digits in a UUID's groups, with no bit changed. *)
+let id_arithmetic key =
+  let hex = Digestif.MD5.(to_hex (digest_string key)) in
+  String.concat "-"
+    [
+      String.sub hex 0 8;
+      String.sub hex 8 4;
+      String.sub hex 12 4;
+      String.sub hex 16 4;
+      String.sub hex 20 12;
+    ]
+
+module Payload_cases = Xynolog_protocol.Tables.Vectors_payload_cases
+
+(* Each point the table states, by its key: a chunk's, an annotation's and
+   a decline's. *)
+let stated_ids () =
+  List.concat_map
+    (function
+      | Payload_cases.Resource_stored { why; resource_stored = r } ->
+          List.map
+            (fun (point : Payload_cases.points_item) ->
+              ( why,
+                Printf.sprintf "%s-%d" point.payload.resource_id
+                  point.payload.chunk_index,
+                point.qdrant_id ))
+            r.points
+      | Annotation_stored { why; annotation_stored = a } ->
+          [ (why, a.annotation_id, a.point.qdrant_id) ]
+      | Decline_stored { why; decline_stored = d } ->
+          [ (why, d.resource_id, d.point.qdrant_id) ]
+      | _ -> [])
+    (Protocol.tables ()).vectors_payload_cases.cases
+
+let ids_checked =
+  lazy
+    (List.iter
+       (fun (why, key, stated) ->
+         if id_arithmetic key <> stated then
+           failwith
+             (Printf.sprintf
+                "vectors/payload-cases.json: \"%s\": the arithmetic gives %s \
+                 for %s, the case says %s"
+                why (id_arithmetic key) key stated))
+       (stated_ids ()))
+
+let qdrant_id key =
+  Lazy.force ids_checked;
+  id_arithmetic key
 
 (* Clear the database: every collection of every knowledge base gone, as a
    wiped volume leaves it. *)

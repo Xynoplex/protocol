@@ -74,7 +74,7 @@ let uploaded w =
   Check.equal "the line, as compact JSON"
     (str (Yojson.Safe.to_string event))
     (str line);
-  like "the event"
+  Check.like "the event"
     (`Assoc
        [
          ("type", str "yield:created");
@@ -90,7 +90,7 @@ let uploaded w =
   Check.that ("the event's timestamp: " ^ at) (Check.matches_re timestamp at);
   let payload = Check.at event [ "payload" ] in
   let ada_as_person = `Assoc [ ("@type", str "Person"); ("@id", str ada) ] in
-  like "the event's payload"
+  Check.like "the event's payload"
     (`Assoc
        [
          ("name", str "Overview");
@@ -122,7 +122,7 @@ let uploaded w =
          ("updatedAt", str at);
        ])
     (Check.at view [ "annotations" ]);
-  like "the view's resource"
+  Check.like "the view's resource"
     (`Assoc
        [
          ("@id", str id);
@@ -177,7 +177,7 @@ let scoped w =
   Check.equal "the scoped fact's id"
     (str (persisted_id (scoped_at "mark:archived" id 2)))
     (match message.id with Some i -> str i | None -> `Null);
-  like "the scoped fact"
+  Check.like "the scoped fact"
     (`Assoc
        [
          ("type", str "mark:archived");
@@ -240,7 +240,7 @@ let described w =
     (str "application/ld+json; charset=utf-8")
     (header reply "content-type");
   let browsed = A.ask reader "browse:resource-requested" (on id) in
-  like "the descriptor browse answers"
+  Check.like "the descriptor browse answers"
     (`Assoc
        [
          ("resource", `Assoc [ ("@id", str id); ("name", str "Described") ]);
@@ -411,7 +411,7 @@ let updated w =
         failwith
           (Printf.sprintf "the stream holds %d events" (List.length events))
   in
-  like "the update"
+  Check.like "the update"
     (`Assoc
        [
          ("type", str "yield:updated");
@@ -426,7 +426,7 @@ let updated w =
        ])
     update;
   let view = view w id in
-  like "the representations"
+  Check.like "the representations"
     (`List
        [
          `Assoc
@@ -505,7 +505,7 @@ let already_there w =
   in
   Check.that ("the id's form: " ^ id) (Check.matches_re minted id);
   let created = List.hd (A.stored w id) in
-  like "the creation"
+  Check.like "the creation"
     (`Assoc
        [
          ("type", str "yield:created");
@@ -541,7 +541,7 @@ let archived w =
     (A.ask owner "mark:archive" (command [ ("keepFile", `Bool true) ]));
   Check.that "the file is kept" (Sys.file_exists (A.content_path w uri));
   Check.equal "archived" (`Bool true) (is_archived ());
-  like "the archive"
+  Check.like "the archive"
     (`Assoc [ ("type", str "mark:archived"); ("payload", `Assoc []) ])
     (List.nth (A.stored w id) 1);
   (* An archived resource is still found by its URI. *)

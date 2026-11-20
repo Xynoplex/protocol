@@ -17,9 +17,9 @@ deviates from it, the code is wrong, or this document is wrong and is
 corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
-when a Smelter breaks it. `smelter/<case>` is the file `<case>.test.ts` of the
+when a Smelter breaks it. `smelter/<case>` is the file `<case>.ml` of the
 smelter conformance suite
-([`conformance/smelter`](../conformance/smelter/README.md)),
+([`conformance/ocaml/smelter`](../conformance/ocaml/smelter/README.md)),
 which starts a Smelter as a process behind a real gateway and a real
 Archivist, records through the Archivist, plays its embedding provider, and
 reads the index back from a real database: the same cases judge every
@@ -313,11 +313,13 @@ and says so.
   not remembered: the catalog says as much of the resource.
   *Held by `images/shared/python/vectors/tests/store_contract.py`, `smelter/tests/test_smelter.py` and `smelter/tests/test_properties.py`.*
 - **Every skip is logged as a warning, with the resource, the reason, the
-  media type and the checksum.** A resource is never left out of the index
+  media type and the checksum,** in the words of `not-indexed` in
+  [`messages.json`](../specs/src/smelter/messages.json). A resource is never left out of the index
   without a line that says so.
   *Held by `smelter/tests/test_smelter.py` and `smelter/index`.*
 - **Bytes it could not read are not a decision.** Nothing is signalled, the
-  resource's points are not changed, and the failure is logged. Whoever
+  resource's points are not changed, and the failure is logged, as
+  `content-unread` in [`messages.json`](../specs/src/smelter/messages.json). Whoever
   waits is left to the end of its own wait.
   *Held by `smelter/tests/test_smelter.py`, `smelter/tests/test_properties.py` and `smelter/index`.*
 - **A signal that cannot be sent does not undo what was indexed.**
@@ -405,7 +407,7 @@ states what each kind of document becomes.
   knowledge bases share one Qdrant, and none reads, purges or empties
   another's: a reconcile reads its own collections alone, and so purges
   nothing of another's, and an index made again is its own.
-  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant, and `smelter/kb-index`.*
+  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant, and `smelter/kb_index`.*
 - **It presents its token on every request to the index,** in Qdrant's
   `api-key` header: the value of the variable its document's
   `vectors.tokenEnv` names. The token may do anything with any collection of
@@ -415,7 +417,7 @@ states what each kind of document becomes.
   knowledge base's collections, and makes them again whenever it makes its
   index anew. So it is not Qdrant that keeps a Smelter to its own knowledge
   base's collections: the rule above does.
-  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant that asks for a token, and `smelter/kb-index`, for the token the suite hands the Smelter it starts.*
+  *Held by `images/shared/python/vectors/tests/qdrant_live.py`, against a Qdrant that asks for a token, and `smelter/kb_index`, for the token the suite hands the Smelter it starts.*
 - **A collection that is searched is as wide as the embedding model's
   vectors,** which the Smelter learns by asking the provider to embed once,
   each time it makes the collections: where there are none when it connects,
@@ -436,6 +438,10 @@ states what each kind of document becomes.
 A Smelter asks one provider for its vectors: an Ollama
 (`POST <address>/api/embed`, with the model and a list of texts), or Voyage
 (`POST https://api.voyageai.com/v1/embeddings`, with a bearer key).
+[`requests.json`](../specs/src/embedding/requests.json) states the numbers
+below: how many texts a request carries and how many requests are made at
+once, of each kind of provider; each request's time; when a busy provider is
+asked again; and how many times a start asks again.
 
 - **Every text a Smelter has embedded is a text that is searched, and it
   says so where the provider asks.** Voyage is told `input_type: document`;
@@ -460,7 +466,9 @@ A Smelter asks one provider for its vectors: an Ollama
   waiting.
   *Held by `images/shared/python/vectors/tests/test_slices.py` and `smelter/provider`.*
 - **A request that fails fails its whole batch, and says which provider,
-  which model, what status and which slice.** The resource it was for gets no
+  which model, what status and which slice,** as `event-failed` in
+  [`messages.json`](../specs/src/smelter/messages.json) where it was an
+  event's. The resource it was for gets no
   points from that attempt.
   *Held by `images/shared/python/vectors/tests/test_slices.py` and `smelter/provider`.*
 - **A provider that answers 404 when the Smelter starts is taken to be still
@@ -500,7 +508,7 @@ started by a reconcile.
   ([The index](#the-index)), and the collections it would reach are those of
   the knowledge base its settings name. Told to stop while it asks, it exits
   with status 0.
-  *Held by `images/shared/python/service/tests/test_knowledge_base.py`, `smelter/tests/test_service.py`, for the stream it asks on, the order and its being told to stop while it asks, and `smelter/kb-index`.*
+  *Held by `images/shared/python/service/tests/test_knowledge_base.py`, `smelter/tests/test_service.py`, for the stream it asks on, the order and its being told to stop while it asks, and `smelter/kb_index`.*
 - **It gives up when the embedding provider or the vector database does not
   answer within a minute,** and exits with a status other than 0.
   *Held by `images/shared/python/service/tests/test_connect.py`.*
@@ -638,7 +646,8 @@ in prose.
   *Held by `smelter/tests/test_smelter.py`.*
 - **It answers `smelt:rebuild-anchors-ok` when every resource was done, and
   `smelt:rebuild-anchors-failed`, saying how many of how many were not,
-  otherwise.** The ones that could be done are done.
+  otherwise,** in the words of `rebuild-incomplete` in
+  [`messages.json`](../specs/src/smelter/messages.json). The ones that could be done are done.
   *Held by `smelter/tests/test_smelter.py` and `smelter/pdf`.*
 
 ## Health
@@ -698,7 +707,7 @@ every resource had a cursor at its start.
   *Held by `smelter/tests/test_smelter.py`, `smelter/boot` and `smelter/reconcile`.*
 - **`reconcile` is how far the latest reconcile has got:** a `phase`
   (`pending`, `running`, `done` or `failed`), with the pass's `summary` when
-  it is done, or its `error` when it failed.
+  it is done (a [`SmelterReconcileSummary`](../specs/src/smelter/SmelterReconcileSummary.json)), or its `error` when it failed.
   *Held by `smelter/tests/test_smelter.py`, `smelter/boot` and `smelter/reconcile`.*
 - **`index` is what the Smelter holds its index to, and what this start did
   for that:** `stamp`, the model and the cut it makes an index by

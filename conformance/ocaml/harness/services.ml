@@ -139,28 +139,48 @@ type smelter = {
   smelter_home : string;
 }
 
-(* Start a Smelter and wait until its first sweep of the record is done, or
-   due again. *)
-let start_smelter s =
+let spawn_smelter s ~named document =
   refuse_if_answered "Smelter" smelter_origin;
-  let document =
-    s.smelter_document (`String (s.smelter_home // "cursors.json"))
-  in
+  launch "Smelter" ~service:Smelter ~command:s.smelter_command
+    ~home:s.smelter_home ~file:"smelter.json"
+    ~own:[ ("HOME", s.smelter_home) ]
+    ~named document s.smelter_env
+
+let smelter_cursors s = `String (s.smelter_home // "cursors.json")
+
+(* Start a Smelter and wait until its health answers and, unless [until] is
+   [`Serving], its start has ended: its first sweep of the record is done,
+   or due again. *)
+let start_smelter ?(until = `Started) s =
+  let document = s.smelter_document (smelter_cursors s) in
   Gateway.held_to "SmelterConfig" document;
-  let process =
-    launch "Smelter" ~service:Smelter ~command:s.smelter_command
-      ~home:s.smelter_home ~file:"smelter.json"
-      ~own:[ ("HOME", s.smelter_home) ]
-      ~named:(named_variables document) document s.smelter_env
-  in
+  let process = spawn_smelter s ~named:(named_variables document) document in
   Process.until_ready process ~timeout:120.0 "finish starting" (fun () ->
       match health "SmelterHealth" smelter_origin with
-      | Some h ->
-          List.mem
-            (member "sweep" (member "following" h))
-            [ `String "done"; `String "due" ]
+      | Some h -> (
+          match until with
+          | `Serving -> true
+          | `Started ->
+              List.mem
+                (member "sweep" (member "following" h))
+                [ `String "done"; `String "due" ])
       | None -> false);
   process
+
+(* Start a Smelter that must refuse to start: it exits without its health
+   ever answering. Its exit code (None when a signal ended it) and its
+   output. Its document is not held to the schema, since a document it must
+   refuse may be no SmelterConfig; [named] is what the document it was
+   changed from names for its secrets. *)
+let refused_smelter s ~named ~timeout =
+  let process =
+    spawn_smelter s ~named (s.smelter_document (smelter_cursors s))
+  in
+  let code =
+    Process.refused process ~timeout (fun () ->
+        Call.reach smelter_origin "GET" "/health" <> None)
+  in
+  (code, Process.output process)
 
 (* ── The Librarian ──────────────────────────────────────────────────── *)
 

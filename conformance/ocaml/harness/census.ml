@@ -11,6 +11,8 @@ let gates =
     ("graph/database-cases.json", fun () -> Lazy.force Neo4j.databases_checked);
     ("graph/codec-cases.json", fun () -> Lazy.force Graph_codec.cases_checked);
     ("bus/event-id-cases.json", fun () -> Lazy.force Bus_stream.ids_checked);
+    ( "vectors/payload-cases.json's qdrantId",
+      fun () -> Lazy.force Qdrant.ids_checked );
     ( "principals/cases.json",
       fun () -> ignore (Lazy.force Protocol.principals_checked) );
     ( "kb-identity/cases.json",
