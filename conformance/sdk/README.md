@@ -11,21 +11,25 @@ The suite imports nothing from an SDK. What names one is its entry in `sdks`
 in the run's [implementations file](../README.md#implementation-manifest):
 how each of the SDK's drivers is started.
 
-| Layer | Holds an SDK to | Cases | Entry |
-|---|---|---|---|
-| wire | the transport: the stream, emits, requests, content, the gateway's own operations | [wire/](wire/) | [wire.test.ts](wire.test.ts) |
-| live | the client's live queries and their cache: what an observer is given, and what each observation costs on the wire ([CACHE-SEMANTICS](../../contract/CACHE-SEMANTICS.md)) | [live/](live/) | [live.test.ts](live.test.ts) |
+| Layer | Holds an SDK to | Cases |
+|---|---|---|
+| wire | the transport: the stream, emits, requests, content, the gateway's own operations | [wire/](wire/) |
+| live | the client's live queries and their cache: what an observer is given, and what each observation costs on the wire ([CACHE-SEMANTICS](../../contract/CACHE-SEMANTICS.md)) | [live/](live/) |
+
+The suite runs on the OCaml harness: [ocaml/sdk](../ocaml/sdk/sdk_suite.ml)
+puts every SDK through both layers.
 
 An SDK has a driver per layer it implements. The live layer has two tiers,
 and an SDK's line says which it is held to: `fleet`, the cases every SDK with
 a live layer passes, or `parity`, those and the rest of the contract. Each
-case states its tier, and `live.test.ts` runs an SDK through the cases of the
+case states its tier, and the suite runs an SDK through the cases of the
 tier it is held to.
 
 ## What every case holds a client to
 
-A case states a scenario. Whatever the scenario, [case.ts](case.ts) also
-fails a client that:
+A case states a scenario. Whatever the scenario, the runner
+([harness/sdk_case.ml](../ocaml/harness/sdk_case.ml)) also fails a client
+that:
 
 - sends a request the spec does not declare, a JSON body the declared
   operation does not accept, or without a header the operation requires, or
@@ -61,7 +65,7 @@ stand-in Archivist and broker around it (the same world the
 [gateway suite](../ocaml/gateway/README.md) runs). Two things stand between it and
 the client:
 
-- the **client proxy** ([harness/client-proxy.ts](../harness/client-proxy.ts)):
+- the **client proxy** ([harness/client_proxy.ml](../ocaml/harness/client_proxy.ml)):
   the client is pointed at it instead of the gateway. It records every
   request and every event each stream carried, and can end the client's
   connections, refuse new ones, keep a request waiting, answer one itself
@@ -79,7 +83,9 @@ before it says it.
 
 A driver is a process. The suite writes one JSON object per line to its
 stdin and reads one per line from its stdout; stderr is free, and is shown
-when a case fails. The driver writes `{"ready": true}` once it can take
+when a case fails. Every line a driver writes is what
+[`specs/src/conformance/ConformanceDriverLine.json`](../../specs/src/conformance/ConformanceDriverLine.json)
+says, a worker driver's too, and the suite refuses any other. The driver writes `{"ready": true}` once it can take
 operations. When its stdin ends it disposes of its client and exits 0.
 
 **An operation** is `{"id": 7, "op": "emit", ...arguments}`. Operations run
@@ -223,8 +229,14 @@ exited holds what it exported to
 [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json):
 every row arrived, of its kind, with every attribute not marked `only`, and
 whatever arrived under a row's name carries only that row's attributes. What
-no row names is the driver's process, not the SDK, and is not judged. [case.schema.json](case.schema.json) is the format, and every
-case is checked against it when the suite loads. A case's name is its file's.
+no row names is the driver's process, not the SDK, and is not judged.
+[`specs/src/conformance/ConformanceCase.json`](../../specs/src/conformance/ConformanceCase.json)
+is the format, and its steps are
+[`ConformanceStep.json`](../../specs/src/conformance/ConformanceStep.json)'s.
+The reader reads every case of the corpus through it (`make reader`), and
+holds what a case names to the spec: each operation of the gateway's API to
+the gateway's document, and each channel and request on the bus to the
+registry. A case's name is its file's.
 
 Steps run in order, each waiting for what it states:
 
@@ -328,9 +340,9 @@ no other.
 
 [`specs/src/client/refresh.json`](../../specs/src/client/refresh.json)
 says what each event on the bus, and the reopening of a dropped stream, does
-to a client's cache. [refresh-cases.ts](refresh-cases.ts) builds a live case
-from each row, named `refresh-<trigger>`, and `live.test.ts` runs them beside
-the cases in `live/`. Each has a client observe every live query the table
+to a client's cache. [refresh_cases.ml](../ocaml/sdk/refresh_cases.ml)
+builds a live case from each row, named `refresh-<trigger>`, and the suite
+runs them beside the cases in `live/`. Each has a client observe every live query the table
 names, on two resources; causes the row's trigger; and expects exactly what
 the row says: a request for each query it refetches, of the keys it reaches,
 the written value where it writes, `bus.not-found` where it removes, and
@@ -352,7 +364,7 @@ A clause of CACHE-SEMANTICS that no case holds, and why:
 
 An SDK's line may name wire cases its driver cannot run, each with why
 (`exempt` in its entry in `sdks`). An exemption is held as a case is:
-`wire.test.ts` runs the case and requires the driver to answer `unsupported`
+the suite runs the case and requires the driver to answer `unsupported`
 to what it asks, so an exemption that has stopped being true fails, and a
 driver that answers `unsupported` to a case it is not exempt from fails that
 case.
@@ -362,8 +374,8 @@ exemptions and the reason for each. The C# driver runs every wire case.
 
 ## Cases that restate a table
 
-Where a case states what a spec table already states, `wire.test.ts` holds
-the case to the table, so a table that changes fails the case rather than
+Where a case states what a spec table already states,
+[restated.ml](../ocaml/sdk/restated.ml) holds the case to the table, so a table that changes fails the case rather than
 leaving it to agree with a client about the old value: `failure-codes`
 against the wire codes and their client codes, `emit-budget-spent` against
 the emit budget, `dedup-window` against the number of event ids a client
@@ -375,13 +387,16 @@ Implement the wire, live, and (where supported) worker driver in the SDK's own r
 
 ## Running it
 
-The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
+The implementation and its drivers are built in their owning repository and
+named in an implementation manifest. This suite does not build consumer
+code. `nats-server` must be on `PATH`. From the repository's root:
 
-Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
-
-```sh
-npm ci --prefix conformance
-npm run --prefix conformance test:sdk -- -- --implementations /absolute/path/to/implementations.json
+```bash
+dune build --root conformance/ocaml
 ```
 
-Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.
+```bash
+./conformance/ocaml/_build/default/bin/main.exe sdk --implementations /absolute/path/to/implementations.json
+```
+
+The suite runs four workers unless `-j` says otherwise.

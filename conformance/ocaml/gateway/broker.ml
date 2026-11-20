@@ -106,7 +106,7 @@ let holds_no_stream { world; nc } =
 
 let tests implementations =
   Support.(
-    each_plane ~planes:[ Nats ] ~make:(make implementations)
+    World.each_plane ~planes:[ Nats ] ~make:(make implementations)
       ~world:(fun { world; _ } -> world)
       ~close "the broker"
       [

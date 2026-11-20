@@ -1,5 +1,6 @@
 (* derive.exe SPECS: every table's model, derived from its schema, as OCaml
-   source on standard output. SPECS is specs/src. derive.exe typescript
+   source on standard output, and the conformance corpus's models
+   (Places.corpus_models). SPECS is specs/src. derive.exe typescript
    SPECS: the same models as TypeScript, for the conformance harness, with
    every service's schema and every table's value.
 
@@ -24,7 +25,8 @@
      or a boolean is OCaml's; one [enum] value or a [const] is that value's
      type, holding the value, which the decoder checks; a string [enum] is a
      variant, with its values ([_value]) and its constructors in order
-     ([_all]). An object with
+     ([_all]). An object's [not], the members it refuses together, is
+     its validation's, which the decoder leaves to it. An object with
      [properties] is closed, a record; one without is a map, in its file's
      order, of its [additionalProperties], keyed by its [propertyNames]
      when it states them. An array states its [items].
@@ -81,8 +83,11 @@ let ids =
       List.iter (fun e -> prerr_endline (Decode.error_to_string e)) errors;
       exit 1
 
-(* Every table's schema, from specs/src: each in the table dialect. *)
-let table_schemas = List.map Places.schema_of (Places.tables root)
+(* Every schema read in the table dialect, from specs/src: each table's, and
+   the conformance corpus's (Places.corpus_schemas). *)
+let table_schemas =
+  List.map Places.schema_of (Places.tables root) @ Places.corpus_schemas
+
 let refusals = ref []
 
 (* Whether the node being derived is in the service dialect: a service's
@@ -405,6 +410,7 @@ let takes = function
         "propertyNames";
         "minProperties";
         "maxProperties";
+        "not";
       ]
   | Array -> [ "items"; "minItems"; "maxItems"; "uniqueItems" ]
   | Null -> []
@@ -1289,6 +1295,20 @@ let ocaml () =
         | exception Stop -> None)
       tables
   in
+  (* Each model of the conformance corpus: a module of the types its schema
+     gives, its own [t] and [decode] last, though it is no table's. *)
+  List.iter
+    (fun file ->
+      reset ();
+      match derive ~strict:true ~own:true file "" (schema_at file "") with
+      | _ ->
+          Printf.bprintf buffer "module %s = struct\n"
+            (String.capitalize_ascii (Places.corpus_model_of file));
+          Printf.bprintf buffer "  (* %s, the conformance corpus's *)\n\n" file;
+          List.iter (print_decl buffer) (List.rev !decls);
+          Buffer.add_string buffer "end\n\n"
+      | exception Stop -> ())
+    Places.corpus_models;
   stop_on_refusals ();
   Buffer.add_string buffer "type t = {\n";
   List.iter

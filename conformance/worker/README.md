@@ -13,12 +13,14 @@ The suite imports nothing from an SDK. What names one is the `worker` of its
 entry in `sdks`, in the run's [implementations file](../README.md#implementation-manifest).
 An SDK with no worker surface has no entry, and the suite does not run it.
 
-Its one entry is `worker.test.ts`: every case in [cases/](cases/), for every
-SDK that has a worker driver, on each signal plane.
+The suite runs on the OCaml harness
+([ocaml/worker](../ocaml/worker/worker_suite.ml)): every case in
+[cases/](cases/), for every SDK that has a worker driver, on each signal
+plane.
 
 The case format, the steps, the values and the backend directives are the
 SDK suite's ([sdk/README.md § A case](../sdk/README.md#a-case)), and so is
-the runner ([sdk/case.ts](../sdk/case.ts)). This document states only what
+the runner ([harness/sdk_case.ml](../ocaml/harness/sdk_case.ml)). This document states only what
 the worker suite adds.
 
 ## What every case holds a worker to
@@ -187,13 +189,16 @@ Implement the wire, live, and (where supported) worker driver in the SDK's own r
 
 ## Running it
 
-The implementation and its drivers are built in their owning repository and named in an implementation manifest. This suite does not build consumer code. See the root [conformance guide](../README.md) and [`harness/implementations.ts`](../harness/implementations.ts) for the manifest shape.
+The implementation and its drivers are built in their owning repository and
+named in an implementation manifest. This suite does not build consumer
+code. `nats-server` must be on `PATH`. From the repository's root:
 
-Install this repository's conformance dependencies once, then run the applicable suite from the repository root:
-
-```sh
-npm ci --prefix conformance
-npm run --prefix conformance test:worker -- -- --implementations /absolute/path/to/implementations.json
+```bash
+dune build --root conformance/ocaml
 ```
 
-Review the setup requirements described above before running: some suites clear the Neo4j or Qdrant instance they are given, and service suites require the external stores, brokers, and tools they exercise. Use dedicated test instances.
+```bash
+./conformance/ocaml/_build/default/bin/main.exe worker --implementations /absolute/path/to/implementations.json
+```
+
+The suite runs four workers unless `-j` says otherwise.

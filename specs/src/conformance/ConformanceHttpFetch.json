@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceHttpFetch.json",
+  "description": "A read over HTTP a live case expects the client to make: an operation of the gateway's API by its method and path, with the values its path carries. The stand-in Archivist answers it from what the case seeded.",
+  "title": "HttpFetch",
+  "type": "object",
+  "properties": {
+    "fetch": {
+      "type": "string",
+      "pattern": "^GET /",
+      "description": "The operation, by its method and path."
+    },
+    "params": {
+      "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature. The values its path carried."
+    }
+  },
+  "required": [
+    "fetch"
+  ],
+  "additionalProperties": false
+}

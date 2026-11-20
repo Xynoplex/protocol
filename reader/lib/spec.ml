@@ -317,13 +317,33 @@ let load root =
     |> List.map (named Schema_file Schema.decode)
     |> all
   in
+  (* D5: every directory is named in kebab case. *)
+  let directory_names =
+    let rec parents file =
+      match Filename.dirname file with
+      | "." -> []
+      | parent -> parent :: parents parent
+    in
+    List.sort_uniq compare (List.concat_map parents files)
+    |> List.filter_map (fun directory ->
+        let name = Filename.basename directory in
+        if Places.is_kebab name then None
+        else
+          Some
+            (refusal directory ""
+               (Printf.sprintf
+                  "is a directory named %s, and a directory's name is in kebab \
+                   case"
+                  name)))
+  in
   let census =
-    List.filter_map
-      (fun file ->
-        if Hashtbl.mem decoded file || is_readme file || is_fixture file then
-          None
-        else Some (refusal file "" "a file the model does not know"))
-      files
+    directory_names
+    @ List.filter_map
+        (fun file ->
+          if Hashtbl.mem decoded file || is_readme file || is_fixture file then
+            None
+          else Some (refusal file "" "a file the model does not know"))
+        files
     @ List.filter_map
         (fun fixture ->
           if List.mem fixture files then None
@@ -757,6 +777,23 @@ let load root =
       decoded []
     |> List.sort compare
   in
+  (* D5: every other file is named in kebab case, but a README.md, D5's one
+     exception. *)
+  let kebab_files =
+    List.filter_map
+      (fun file ->
+        match Hashtbl.find_opt decoded file with
+        | Some ((Schema_file | Response), _) -> None
+        | _ when is_readme file || Places.is_kebab (stem file) -> None
+        | _ ->
+            Some
+              (refusal file ""
+                 (Printf.sprintf
+                    "is named %s, and a file that names no component is named \
+                     in kebab case"
+                    (stem file))))
+      files
+  in
   let listed_names =
     List.concat_map
       (fun (document : Openapi.document) ->
@@ -816,11 +853,11 @@ let load root =
   in
   let census =
     census @ stray_case_tables @ orphan_schemas @ path_item_names
-    @ component_files @ listed_names @ shared_responses @ empty_services
-    @ validation @ public_api @ client_surface @ reply_bounds @ offset_units
-    @ registry_rules @ jobs_rules @ archivist_rules @ smelter_rules
-    @ identifiers_rules @ client_types_rules @ protocol_rules @ control_rules
-    @ retry_rules @ worker_rules @ graph_rules
+    @ component_files @ kebab_files @ listed_names @ shared_responses
+    @ empty_services @ validation @ public_api @ client_surface @ reply_bounds
+    @ offset_units @ registry_rules @ jobs_rules @ archivist_rules
+    @ smelter_rules @ identifiers_rules @ client_types_rules @ protocol_rules
+    @ control_rules @ retry_rules @ worker_rules @ graph_rules
   in
   match (schemas, census) with
   | Ok schemas, [] ->

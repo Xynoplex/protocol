@@ -206,8 +206,8 @@ let status_route (w : World.t) =
     (Dynarray.length w.archivist.calls = before)
 
 let tests implementations =
-  each_plane ~make:(plain implementations) ~world:Fun.id ~close:World.close
-    "every response"
+  World.each_plane ~make:(plain implementations) ~world:Fun.id
+    ~close:World.close "every response"
     [
       case
         "carries the security headers and a request id — success, error, bytes \

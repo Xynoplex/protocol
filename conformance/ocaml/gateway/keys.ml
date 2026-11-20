@@ -392,7 +392,8 @@ let held_repeat (w : World.t) =
 
 let tests implementations =
   let make = plain implementations in
-  each_plane ~make ~world:Fun.id ~close:World.close "sending again under a key"
+  World.each_plane ~make ~world:Fun.id ~close:World.close
+    "sending again under a key"
     [
       case
         "an emit with no key, or one that is not 1 to 255 characters, is \
@@ -433,7 +434,7 @@ let tests implementations =
          refused 422 unprocessable, and nothing more is recorded"
         upload_other_body;
     ]
-  @ each_plane ~planes:[ Nats ] ~make ~world:Fun.id ~close:World.close
+  @ World.each_plane ~planes:[ Nats ] ~make ~world:Fun.id ~close:World.close
       "a repeat that arrives while the first is in hand"
       [
         case ~timeout:30.0

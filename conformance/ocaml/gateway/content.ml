@@ -716,7 +716,7 @@ let no_bus_request { world = w; requests } =
           (Bus_stream.frames requests)))
 
 let tests implementations =
-  each_plane ~make:(make implementations)
+  World.each_plane ~make:(make implementations)
     ~world:(fun { world; _ } -> world)
     ~close:(fun { world; _ } -> World.close world)
     "content"

@@ -2,12 +2,7 @@
 
 Black-box suites exercise implementations through the protocol surfaces they expose. The suites do not build or import implementations; each consumer repository supplies launch commands and SDK drivers in its own manifest.
 
-| Suite | Checks | Command |
-| --- | --- | --- |
-| `sdk` | SDK drivers as clients of a running gateway | `test:sdk` |
-| `worker` | SDK worker drivers as clients of a dispatcher and gateway | `test:worker` |
-
-Seven suites run on the OCaml harness, from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)); `smelter`, vector indexing, anchored text, provider interactions, and telemetry ([`ocaml/smelter`](ocaml/smelter/README.md)); `weaver`, graph indexing, bus behavior, health, and telemetry ([`ocaml/weaver`](ocaml/weaver/README.md)); and `worker-service`, Worker services, the jobs they run, provider interactions, health, and telemetry ([`ocaml/worker_service`](ocaml/worker_service/README.md)).
+Every suite runs on the OCaml harness ([`ocaml`](ocaml/README.md)), from the same manifest: `gateway`, the HTTP API, bus streams, authorization and limits ([`ocaml/gateway`](ocaml/gateway/README.md)); `dispatcher`, job admission and claims, the durable queue, its clocks, and health ([`ocaml/dispatcher`](ocaml/dispatcher/README.md)); `archivist`, HTTP and bus behavior, persisted events, and stored resources ([`ocaml/archivist`](ocaml/archivist/README.md)); `librarian`, search and gathering across a running record and index ([`ocaml/librarian`](ocaml/librarian/README.md)); `smelter`, vector indexing, anchored text, provider interactions, and telemetry ([`ocaml/smelter`](ocaml/smelter/README.md)); `weaver`, graph indexing, bus behavior, health, and telemetry ([`ocaml/weaver`](ocaml/weaver/README.md)); `worker-service`, Worker services, the jobs they run, provider interactions, health, and telemetry ([`ocaml/worker_service`](ocaml/worker_service/README.md)); `sdk`, SDK drivers as clients of a running gateway ([`sdk`](sdk/README.md)); and `worker`, SDK worker drivers as clients of a dispatcher and gateway ([`worker`](worker/README.md)).
 
 ## Implementation manifest
 
@@ -16,8 +11,8 @@ Every run names one JSON manifest with `--implementations`; there is no default 
 Example from this repository's root:
 
 ```sh
-npm ci --prefix conformance
-npm run --prefix conformance test:sdk -- -- --implementations /path/to/sdk.implementations.json
+dune build --root conformance/ocaml
+./conformance/ocaml/_build/default/bin/main.exe worker-service --implementations /path/to/worker-service.implementations.json
 ```
 
 The manifest can name several implementations in one run. A suite refuses to start if the manifest is missing or malformed. It does not infer a current/default configuration.

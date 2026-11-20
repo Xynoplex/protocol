@@ -287,8 +287,8 @@ let stops_answering (w : World.t) =
     ]
 
 let tests implementations =
-  each_plane ~planes:[ In_process ] ~make:(plain implementations) ~world:Fun.id
-    ~close:World.close "an Archivist that stops answering"
+  World.each_plane ~planes:[ In_process ] ~make:(plain implementations)
+    ~world:Fun.id ~close:World.close "an Archivist that stops answering"
     [
       case
         ~timeout:((answer_begins () *. 2.0) +. sending +. 30.0)

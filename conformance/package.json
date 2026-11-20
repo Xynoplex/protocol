@@ -7,11 +7,7 @@
   "scripts": {
     "generate:types": "openapi-typescript ../specs/openapi.json -o harness/generated/openapi-types.ts",
     "typecheck": "npm run generate:types && tsc --noEmit",
-    "test:fixtures": "vitest run --config vitest.fixtures.config.ts",
-    "pretest": "npm run typecheck",
-    "test": "vitest run",
-    "test:sdk": "npm run typecheck && vitest run --project sdk",
-    "test:worker": "npm run typecheck && vitest run --project worker"
+    "test:fixtures": "vitest run --config vitest.fixtures.config.ts"
   },
   "devDependencies": {
     "@nats-io/jetstream": "^3.4.0",

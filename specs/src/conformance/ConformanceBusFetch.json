@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceBusFetch.json",
+  "description": "A request on the bus a live case expects the client to make, on this channel; `as` names its correlation id, for the backend to answer.",
+  "title": "BusFetch",
+  "type": "object",
+  "properties": {
+    "fetch": {
+      "type": "string",
+      "pattern": "^[a-z]+:[a-z-]+$",
+      "description": "The request's channel, a request of specs/src/bus/registry.json."
+    },
+    "payload": {
+      "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature. The request's payload."
+    },
+    "as": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+      "description": "The request's correlation id, for the backend's answer."
+    }
+  },
+  "required": [
+    "fetch",
+    "as"
+  ],
+  "additionalProperties": false
+}

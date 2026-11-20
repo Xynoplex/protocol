@@ -41,10 +41,13 @@ let is_table name =
 let sorted_entries directory =
   Sys.readdir directory |> Array.to_list |> List.sort compare
 
+(* The areas of specs/src at [root]: each directory at its top named in kebab
+   case (D5), but components/ and paths/. Spec refuses a directory otherwise
+   named. *)
 let areas root =
   sorted_entries root
   |> List.filter (fun area ->
-      area <> "components" && area <> "paths"
+      area <> "components" && area <> "paths" && is_kebab area
       && Sys.is_directory (Filename.concat root area))
 
 (* Every table of specs/src at [root], as a path from it, in order. *)
@@ -105,6 +108,42 @@ let service_schemas root =
         |> List.map (fun name -> area ^ "/" ^ name)
         |> List.filter (fun file -> not (List.mem file tables_schemas)))
     services
+
+(* The conformance corpus (conformance/sdk/README.md, "A case"): each
+   directory of case files, as a path from the repository's root, every JSON
+   file in it one case, named by its file's stem. A case is what
+   [corpus_case] says, and a line a driver writes what [driver_line] says;
+   each schema, from specs/src, is read in the table dialect and has a model,
+   named as its file's stem in snake case (Conformance_case), though neither
+   is a table's. *)
+let corpus =
+  [ "conformance/sdk/wire"; "conformance/sdk/live"; "conformance/worker/cases" ]
+
+let corpus_case = "conformance/ConformanceCase.json"
+let driver_line = "conformance/ConformanceDriverLine.json"
+let corpus_models = [ corpus_case; driver_line ]
+
+(* The schemas a corpus model reads in the table dialect through a [$ref]:
+   its own, and the steps', fetches' and failures' it names. *)
+let corpus_schemas =
+  corpus_models
+  @ [
+      "conformance/ConformanceStep.json";
+      "conformance/ConformanceBusFetch.json";
+      "conformance/ConformanceHttpFetch.json";
+      "conformance/ConformanceFailure.json";
+    ]
+
+(* The name of the corpus model [file] holds, as a value: conformance_case. *)
+let corpus_model_of file =
+  let stem = stem (Filename.basename file) in
+  let spelled = Buffer.create (String.length stem + 4) in
+  String.iteri
+    (fun i c ->
+      if i > 0 && c >= 'A' && c <= 'Z' then Buffer.add_char spelled '_';
+      Buffer.add_char spelled (Char.lowercase_ascii c))
+    stem;
+  Buffer.contents spelled
 
 (* The name of [table]'s model, as a value: jobs_retry_cases. Its module is
    that name capitalized. *)

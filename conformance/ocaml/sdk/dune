@@ -1,0 +1,15 @@
+; The SDK suite: every SDK, through its drivers, put through the wire and
+; live corpus, and the client proxy it leans on held against a real gateway.
+(library
+ (name sdk_suite)
+ (package xynolog-conformance)
+ (flags
+  (:standard -open Xynolog_protocol_schema))
+ (libraries
+  xynolog_conformance
+  xynolog-protocol
+  xynolog-protocol.schema
+  eio
+  http
+  yojson
+  testo))

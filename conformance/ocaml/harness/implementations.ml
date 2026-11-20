@@ -11,10 +11,32 @@
 
 type weaver = { command : string list; health_port : int }
 
+(* How an SDK's live driver is started, and the tier of the live corpus the
+   SDK is held to: fleet, what every live layer does, or parity, all of
+   CACHE-SEMANTICS. *)
+type live = {
+  live_command : string list;
+  tier : Xynolog_protocol.Tables.Conformance_case.tier;
+}
+
+(* An SDK's drivers, the programs the SDK and worker suites talk to in its
+   place (conformance/sdk/README.md, "The driver protocol"): how its wire
+   driver is started, its live driver, its worker driver when it has a
+   worker's surface, and the wire cases its driver cannot be put through,
+   each with why. The suite holds an exemption as it holds a case: the
+   driver must answer unsupported to what the case asks. *)
+type sdk = {
+  wire : string list option;
+  live : live option;
+  worker : string list option;
+  exempt : (string * string) list option;
+}
+
 type t = {
   gateway : string list;
   dispatcher : string list;
   archivist : string list;
+  sdks : (string * sdk) list;
   weavers : (string * weaver) list;
   workers : (string * string list) list;
   smelters : (string * string list) list;
@@ -35,7 +57,27 @@ let decode base =
       let gateway = Decode.required o "gateway" command in
       let dispatcher = Decode.required o "dispatcher" command in
       let archivist = Decode.required o "archivist" command in
-      let _sdks = Decode.required o "sdks" Decode.json in
+      let sdks =
+        Decode.required o "sdks"
+          (Decode.map
+             (Decode.obj (fun d ->
+                  {
+                    wire = Decode.optional d "wire" command;
+                    live =
+                      Decode.optional d "live"
+                        (Decode.obj (fun l ->
+                             {
+                               live_command =
+                                 Decode.required l "command" command;
+                               tier =
+                                 Decode.required l "tier"
+                                   Xynolog_protocol.Tables.Conformance_case.tier;
+                             }));
+                    worker = Decode.optional d "worker" command;
+                    exempt =
+                      Decode.optional d "exempt" (Decode.map Decode.string);
+                  })))
+      in
       let workers = Decode.required o "workerServices" (Decode.map command) in
       let weavers =
         Decode.required o "weaverServices"
@@ -58,6 +100,7 @@ let decode base =
         gateway;
         dispatcher;
         archivist;
+        sdks;
         weavers;
         workers;
         smelters;
