@@ -24,5 +24,7 @@ let suite : Xynolog_conformance.Suite.t =
             Edge.tests;
             Tokens.tests;
             Principal_limits.tests;
+            Keys.tests;
+            Archivist_waits.tests;
           ]);
   }
