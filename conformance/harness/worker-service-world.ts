@@ -22,7 +22,7 @@ import { afterAll, afterEach, beforeAll, describe, inject } from 'vitest';
 import type { components, ServiceSchemas } from './protocol-core';
 import { startAnthropic, type ModelFacts, type StandInAnthropic } from './anthropic';
 import { startClientProxy, type ClientProxy, type ProxiedRequest } from './client-proxy';
-import { everyJob } from './dispatcher-world';
+import { everyJob } from './job-filters';
 import { freePort } from './net';
 import { startOllama, type StandInOllama } from './ollama';
 import { MODEL_CATALOGUE } from './paths';

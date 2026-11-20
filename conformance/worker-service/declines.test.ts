@@ -5,7 +5,7 @@
  * deterministic.
  */
 import { expect, it } from 'vitest';
-import { marks } from '../harness/dispatcher-world';
+import { marks } from '../harness/job-filters';
 import { eachWorkerService, type RunningJob, type Served, type WorkerServiceWorld } from '../harness/worker-service-world';
 import { identity, markJob, settled } from './support';
 

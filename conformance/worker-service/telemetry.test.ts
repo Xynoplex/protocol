@@ -9,7 +9,7 @@
 import { randomUUID } from 'node:crypto';
 import { kbDid } from '../harness/protocol-core';
 import { afterAll, beforeAll, expect, it } from 'vitest';
-import { marks } from '../harness/dispatcher-world';
+import { marks } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import { startOtlp, type OtlpReceiver } from '../harness/otlp';
 import { metricName, spanName, spec, telemetry, type TelemetryAttribute, type TelemetryRow } from '../harness/spec';

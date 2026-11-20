@@ -6,7 +6,7 @@
  */
 import { randomUUID } from 'node:crypto';
 import { expect, it } from 'vitest';
-import { marks, YIELDS } from '../harness/dispatcher-world';
+import { marks, YIELDS } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import { ANTHROPIC_MODEL, eachWorkerService, type Engine, type Served, type StandInKnowledgeBase, type WorkerServiceWorld } from '../harness/worker-service-world';
 import { CONTEXT_LENGTH } from './support';

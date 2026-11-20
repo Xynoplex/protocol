@@ -8,7 +8,7 @@
  * answers.
  */
 import { expect, it } from 'vitest';
-import { marks, YIELDS } from '../harness/dispatcher-world';
+import { marks, YIELDS } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import { operationFor } from '../harness/spec';
 import { eachWorkerService, WORKER_CLIENT, WORKER_ROLES, type Engine, type JobFilter, type Served, type WorkerServiceWorld } from '../harness/worker-service-world';

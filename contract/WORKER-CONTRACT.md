@@ -14,7 +14,7 @@ document is wrong and is corrected deliberately. There is no third option.
 when a worker breaks it: a case of the worker conformance suite
 ([`conformance/worker`](../conformance/worker/README.md),
 which every SDK with a worker's surface runs), a file of the dispatcher suite
-([`conformance/dispatcher`](../conformance/dispatcher/README.md)),
+([`conformance/ocaml/dispatcher`](../conformance/ocaml/dispatcher/README.md)),
 or another test in the repository. A rule marked "Held by no case" is one
 nothing checks. `npm run lint:transport-contract` fails when something named
 here does not exist, and when a case of the worker suite is named by no rule.
@@ -113,7 +113,7 @@ matches one of them, or with `none-pending`.
   reads them as the dispatcher states them and repairs nothing; what the
   dispatcher keeps of a checkpoint is
   [JOBS.md § Checkpoints](./JOBS.md#checkpoints).
-  *Held by `worker/checkpoint-read`, `dispatcher/progress.test.ts`.*
+  *Held by `worker/checkpoint-read`, `dispatcher/progress`.*
 
 ## The lifecycle
 
@@ -151,7 +151,7 @@ matches one of them, or with `none-pending`.
   verb's: a `mark` job's counts or a decline, a `yield` job's resource or a
   decline. The gateway refuses any other, and the record passes over a
   completion of another verb than the job's.
-  *Held by `worker/lifecycle`, `dispatcher/conclude.test.ts`, `conformance/archivist/jobs.test.ts`, the reader's `Jobs_rules`.*
+  *Held by `worker/lifecycle`, `dispatcher/conclude`, `conformance/archivist/jobs.test.ts`, the reader's `Jobs_rules`.*
 - **L8.** A worker that stops while it holds a job fails the job first:
   `job:fail`, with an error saying that the worker stopped, no failure class,
   and `willRetry` as [L4](#the-lifecycle) states it. The queue then retries
@@ -240,7 +240,7 @@ A worker that exports telemetry sends each message in the trace of the work
 that sent it, and receives each frame in the trace it was sent under
 ([`specs/src/sdk-telemetry/telemetry.json`](../specs/src/sdk-telemetry/telemetry.json)).
 A dispatcher that exports answers a claim in the trace of the claim
-([`dispatcher/environment.test.ts`](../conformance/dispatcher/environment.test.ts)).
+([`dispatcher/environment`](../conformance/ocaml/dispatcher/environment.ml)).
 
 - **T1.** A claim begins a trace of its own: it is in the trace of no job
   the worker held before it. Whatever a worker's code was doing when it

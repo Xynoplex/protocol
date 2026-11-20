@@ -15,7 +15,7 @@ import { readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { marks } from '../harness/dispatcher-world';
+import { marks } from '../harness/job-filters';
 import { eventually } from '../harness/net';
 import { startOtlp, type OtlpReceiver, type ReceivedSpan } from '../harness/otlp';
 import { REPO_ROOT } from '../harness/paths';
