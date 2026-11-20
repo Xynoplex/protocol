@@ -1,0 +1,26 @@
+{
+  "$comment": "AUTHORITY for how a service asks its embedding provider for vectors (SMELTER.md § The embedding provider), as `xynolog-vectors` asks for every service that embeds. `providers` states, for each kind of provider, how many texts a request carries and how many requests are made of it at once. `requestSeconds` is each request's own time. `busy` is which statuses say a provider is busy, and how long a request for documents waits before each asking again. `startAgain` is how many times a starting service asks again a provider that is still fetching its model, or still starting.",
+  "providers": {
+    "ollama": {
+      "textsPerRequest": 128,
+      "atOnce": 1
+    },
+    "voyage": {
+      "textsPerRequest": 128,
+      "atOnce": 4
+    }
+  },
+  "requestSeconds": 15,
+  "busy": {
+    "statuses": [
+      429,
+      503
+    ],
+    "againAfterSeconds": [
+      1,
+      2,
+      4
+    ]
+  },
+  "startAgain": 12
+}

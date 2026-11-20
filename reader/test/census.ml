@@ -767,6 +767,21 @@ let () =
     "archivist/messages.json" "http/0/method"
     (fun _ -> `String "PUT")
     "/http/0/route: PUT /events is no operation of the Archivist's API";
+  changed specs ~why:"has the Smelter refuse an operation it does not answer"
+    "smelter/messages.json" "refusals/0/operation"
+    (fun _ -> `String "job:create")
+    "/refusals/0/operation: job:create is no operation the registry says the \
+     Smelter answers";
+  changed specs ~why:"states how a provider EmbeddingConfig lacks is asked"
+    "embedding/requests.json" "providers"
+    (members (fun providers ->
+         providers
+         @ [
+             ( "cohere",
+               `Assoc [ ("textsPerRequest", `Int 96); ("atOnce", `Int 1) ] );
+           ]))
+    "/providers: the providers are [cohere,ollama,voyage], and \
+     EmbeddingConfig's are [ollama,voyage]";
   refused specs
     ~why:"words the dispatcher's entity-type refusal unlike the Archivist's"
     (fun copied ->

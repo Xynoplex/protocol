@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SmelterMessages.json",
+  "description": "smelter/messages.json: the words of the Smelter's refusals, and of the messages it logs that a reader relies on.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "$ref": "https://xynolog.org/protocol/CaseTable.json#/properties/$comment"
+    },
+    "refusals": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each refusal of an operation, on the operation's failure channel.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "operation": {
+            "type": "string",
+            "description": "The operation it refuses: a request of bus/registry.json's operations that the Smelter answers.",
+            "pattern": "^[a-z]+:[a-z][a-z-]*[a-z]$"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, and what fills each `{name}` of its text."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The failure's `message`. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+          }
+        },
+        "required": [
+          "name",
+          "operation",
+          "situation",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "logged": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each message the Smelter logs that a reader of its output relies on.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The situation's name.",
+            "pattern": "^[a-z][a-z-]*[a-z]$"
+          },
+          "level": {
+            "$ref": "https://xynolog.org/protocol/LogLevel.json"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When it is written, what fills each `{name}` of its fields, and what each fact it carries says."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The line's message, word for word."
+          },
+          "fields": {
+            "type": "object",
+            "description": "The facts the line is logged with whose form is stated, by name: each a text whose `{name}` is filled as the row's `situation` says. A fact that is a number is its decimal digits.",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The fact's value. A `{name}` in it is filled with what the row's `situation` names, and nothing else in it varies."
+            }
+          },
+          "carries": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "The facts the line is logged with beside `fields`, whose value the row's `situation` says and whose form is not stated. The line may carry others.",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][A-Za-z]*$"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "level",
+          "situation",
+          "message",
+          "fields",
+          "carries"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$comment",
+    "refusals",
+    "logged"
+  ],
+  "additionalProperties": false
+}
