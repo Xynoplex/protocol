@@ -47,6 +47,53 @@ let frame_of json =
 
 let violation t text = Dynarray.add_last t.violations text
 
+(* The id the gateway gives [frame] (contract/TRANSPORT-HTTP.md § Event id
+   and resumption): its position when it is scoped and its payload carries
+   a sequence number, else its reply's when it carries a correlationId, else
+   an ephemeral one, whose form EphemeralEventId states. *)
+type expected_id = Persisted of string | Reply of string | Ephemeral
+
+let expected_id frame =
+  match
+    ( frame.scope,
+      Protocol.at frame.payload [ "metadata"; "sequenceNumber" ],
+      frame.correlation_id )
+  with
+  | Some scope, Some (`Int sequence), _ ->
+      Persisted (Printf.sprintf "p-%s-%d" scope sequence)
+  | _, _, Some correlation ->
+      Reply (Printf.sprintf "e-%s:%s" frame.channel correlation)
+  | _ -> Ephemeral
+
+(* bus/event-id-cases.json's every case, given the id the rule gives it. *)
+let ids_checked =
+  lazy
+    (List.iter
+       (fun (c : Xynolog_protocol.Tables.Bus_event_id_cases.cases_item) ->
+         let given =
+           expected_id
+             {
+               channel = c.frame.channel;
+               correlation_id = c.frame.correlation_id;
+               payload = c.frame.payload;
+               scope = c.frame.scope;
+             }
+         in
+         let agrees =
+           match (given, c.id) with
+           | Persisted id, Persisted { persisted } -> id = persisted
+           | Reply id, Reply { reply } -> id = reply
+           | Ephemeral, Ephemeral { ephemeral } -> ephemeral
+           | _ -> false
+         in
+         if not agrees then
+           failwith
+             (Printf.sprintf
+                "bus/event-id-cases.json: %S: the harness gives the frame \
+                 another id"
+                c.why))
+       (Protocol.tables ()).bus_event_id_cases.cases)
+
 let accept t event id data =
   let frame, parsed =
     if event = "bus-event" then (
@@ -74,23 +121,18 @@ let accept t event id data =
            (Call.shown (Yojson.Safe.to_string message))));
   (match (frame, id) with
   | Some frame, Some id -> (
-      let sequence =
-        Protocol.at frame.payload [ "metadata"; "sequenceNumber" ]
-      in
-      match (frame.scope, sequence, frame.correlation_id) with
-      | Some scope, Some (`Int sequence), _ ->
-          if id <> Printf.sprintf "p-%s-%d" scope sequence then
+      match expected_id frame with
+      | Persisted expected ->
+          if id <> expected then
             violation t
-              (Printf.sprintf
-                 "a persisted frame (scope %s, sequence %d) carried id %s" scope
-                 sequence id)
-      | _, _, Some correlation ->
-          let expected = Printf.sprintf "e-%s:%s" frame.channel correlation in
+              (Printf.sprintf "a persisted frame on %s carried id %s, not %s"
+                 frame.channel id expected)
+      | Reply expected ->
           if id <> expected then
             violation t
               (Printf.sprintf "a reply on %s carried id %s, not %s"
                  frame.channel id expected)
-      | _, _, None ->
+      | Ephemeral ->
           if Protocol.against "EphemeralEventId" (`String id) <> [] then
             violation t
               (Printf.sprintf

@@ -9,6 +9,7 @@ let gates =
     ( "archivist/shard-cases.json",
       fun () -> Lazy.force Archivist_world.shards_checked );
     ("graph/database-cases.json", fun () -> Lazy.force Neo4j.databases_checked);
+    ("bus/event-id-cases.json", fun () -> Lazy.force Bus_stream.ids_checked);
     ( "principals/cases.json",
       fun () -> ignore (Lazy.force Protocol.principals_checked) );
     ( "kb-identity/cases.json",
