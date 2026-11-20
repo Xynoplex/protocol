@@ -767,23 +767,12 @@ let streamed (w : W.t) =
     second;
   expect_sequence served (all_but_last yielded @ yielded)
 
-let otlp_value_json = function
-  | Otlp.Text s -> str s
-  | Flag b -> `Bool b
-  | Number n -> `Float n
-  | Unreadable -> str "(unreadable)"
-
-let values_of (metric : Otlp.metric) key =
-  Option.map
-    (fun (_, values) -> Dynarray.to_list values)
-    (Dynarray.find_opt (fun (k, _) -> k = key) metric.attributes)
-
 (* Each attribute a metric carried, with every value it carried. *)
 let carried (metric : Otlp.metric) =
   `Assoc
     (List.map
        (fun (key, values) ->
-         (key, `List (List.map otlp_value_json (Dynarray.to_list values))))
+         (key, `List (List.map otlp_json (Dynarray.to_list values))))
        (Dynarray.to_list metric.attributes))
 
 let counted otlp (w : W.t) =
@@ -800,16 +789,7 @@ let counted otlp (w : W.t) =
           stop_reason = None;
         };
     ];
-  let served =
-    started
-      ~env:
-        [
-          ("OTEL_EXPORTER_OTLP_ENDPOINT", Some otlp.Otlp.endpoint);
-          ("OTEL_METRIC_EXPORT_INTERVAL", Some "500");
-          ("OTEL_BSP_SCHEDULE_DELAY", Some "100");
-        ]
-      w
-  in
+  let served = started ~env:(exporting otlp) w in
   ignore (settled served job : Yojson.Safe.t);
   (* The generation's span names who was asked, and for how much, at which
      knowledge base. *)
@@ -826,7 +806,7 @@ let counted otlp (w : W.t) =
          ("inference.max_tokens", `Float (float_of_int (anthropic_output ())));
          ("xynolog.kb", str w.own.world.kb.did);
        ])
-    (`Assoc (List.map (fun (k, v) -> (k, otlp_value_json v)) span.attributes));
+    (`Assoc (List.map (fun (k, v) -> (k, otlp_json v)) span.attributes));
   (* The two counts the provider stated, and no other. *)
   let tokens =
     Run.eventually "the tokens of the generation, read and written" 15.0
@@ -835,7 +815,7 @@ let counted otlp (w : W.t) =
           Otlp.metric otlp (Protocol.metric_name "xynolog.inference.tokens")
         with
         | Some metric -> (
-            match values_of metric "inference.direction" with
+            match carried_under metric "inference.direction" with
             | Some directions
               when List.length (List.sort_uniq compare directions) = 2 ->
                 Some metric
@@ -843,10 +823,7 @@ let counted otlp (w : W.t) =
         | None -> None)
   in
   let distinct key =
-    `List
-      (List.map otlp_value_json
-         (List.sort_uniq compare
-            (Option.value ~default:[] (values_of tokens key))))
+    `List (List.map otlp_json (List.sort_uniq compare (values_of tokens key)))
   in
   Check.equal "the providers its tokens are counted under"
     (strs [ "anthropic" ])

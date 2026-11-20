@@ -12,55 +12,7 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* A schema of two categories, as the dispatcher adds it to a tagging job. *)
-let schema =
-  `Assoc
-    [
-      ("id", str "argument");
-      ("name", str "Argument");
-      ("description", str "What a text claims and what it offers in support");
-      ("domain", str "rhetoric");
-      ( "tags",
-        `List
-          [
-            `Assoc
-              [
-                ("name", str "Claim");
-                ("description", str "What the text asserts");
-                ("examples", strs [ "What is being asserted?" ]);
-              ];
-            `Assoc
-              [
-                ("name", str "Evidence");
-                ("description", str "What supports the assertion");
-                ("examples", strs [ "What supports it?"; "Is a source given?" ]);
-              ];
-          ] );
-    ]
-
 let source = "res-ws-cancel-source"
-
-(* A yield job focused on [source], queued. *)
-let yield_job (kb : W.kb) name =
-  yield_job ~stored_as:name kb ~source
-    (`Assoc
-       [
-         ("title", str "The Analytical Engine");
-         ( "context",
-           `Assoc
-             [
-               ( "focus",
-                 `Assoc
-                   [
-                     ("kind", str "resource");
-                     ("resource", source_descriptor source);
-                     ( "content",
-                       `Assoc [ ("main", str text); ("related", `Assoc []) ] );
-                   ] );
-               ("graph", `Assoc [ ("nodes", `List []); ("edges", `List []) ]);
-               ("metadata", `Assoc []);
-             ] );
-       ])
 
 (* What a mark job that stopped after one piece asked of the gateway, in
    order: its one batch, its checkpoints, and its cancel. [held] is a case
@@ -266,13 +218,7 @@ let commenting_partway (w : W.t) =
 let tagging_partway (w : W.t) =
   let job =
     mark_job w.own "cancel-tagging"
-      (`Assoc
-         [
-           ("motivation", str "tagging");
-           ("schemaId", str "argument");
-           ("categories", strs [ "Claim"; "Evidence" ]);
-           ("schema", schema);
-         ])
+      (tagging (argument ()) [ "Claim"; "Evidence" ])
   in
   let resource_id = job.resource_id in
   (* The text is one piece for each category. The first category's is held
@@ -704,7 +650,7 @@ let before_first_piece (w : W.t) =
 let generated_text = "The engine was designed in London and never built."
 
 let yield_before_upload (w : W.t) =
-  let job = yield_job w.own "cancel-yield" in
+  let job = titled_yield w.own ~source "cancel-yield" in
   Ollama.script w.ollama [ Hold ];
   let served = cancelled_while_held w job in
   first_not_abandoned w;
@@ -732,7 +678,7 @@ let yield_before_upload (w : W.t) =
   said_nothing served [ "job:complete"; "job:fail" ]
 
 let yield_after_upload (w : W.t) =
-  let job = yield_job w.own "cancel-yield-late" in
+  let job = titled_yield w.own ~source "cancel-yield-late" in
   Ollama.script w.ollama [ answer generated_text ];
   (* The cancellation is asked for while the link from the source is being
      committed: the upload has been sent. *)

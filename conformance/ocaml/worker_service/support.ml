@@ -522,14 +522,10 @@ let settled ?(channel = "job:complete") served job =
       else None);
   settle.payload
 
-(* Ask for [job] to be cancelled, as the gateway relays a cancellation to
-   every worker, and wait until the worker has had it. Its one stream
-   carries frames in the order they were sent, so the worker's answer to a
-   request sent after the cancellation (its limits) says the cancellation
-   has arrived. *)
-let cancel_requested kb (job : W.job) =
+(* Ask for the limits on [kb]'s bus as a client does, and wait for the one
+   reply. *)
+let limits_asked kb =
   let listener = W.listen kb [ "job:limits-result"; "job:limits-failed" ] in
-  W.emit kb "job:cancel-requested" (`Assoc [ ("jobId", str job.id) ]);
   let correlation_id = Fresh.uuid () in
   let reply =
     World.emit kb.W.world listener.token
@@ -543,13 +539,19 @@ let cancel_requested kb (job : W.job) =
   in
   Check.equal "the gateway's answer to the suite's limits request" (`Int 202)
     (`Int reply.status);
-  ignore
-    (Bus_stream.next ~timeout:15.0 listener.stream
-       "the answer that follows the cancellation" (fun m ->
-         match m.frame with
-         | Some f -> f.correlation_id = Some correlation_id
-         | None -> false)
-      : Bus_stream.message)
+  Bus_stream.next ~timeout:15.0 listener.stream "the limits" (fun m ->
+      match m.frame with
+      | Some f -> f.correlation_id = Some correlation_id
+      | None -> false)
+
+(* Ask for [job] to be cancelled, as the gateway relays a cancellation to
+   every worker, and wait until the worker has had it. Its one stream
+   carries frames in the order they were sent, so the worker's answer to a
+   request sent after the cancellation (its limits) says the cancellation
+   has arrived. *)
+let cancel_requested kb (job : W.job) =
+  W.emit kb "job:cancel-requested" (`Assoc [ ("jobId", str job.id) ]);
+  ignore (limits_asked kb : Bus_stream.message)
 
 (* A text resource about [text], and a mark job on it, queued for the
    worker's next claim that takes it. *)
@@ -565,6 +567,36 @@ let mark_job ?metadata ?(about = text) kb name params =
 (* The case [name] of worker/prompt-cases.json as a mark job, queued. *)
 let case_job ?metadata ?about kb name =
   mark_job ?metadata ?about kb name (params name)
+
+(* The schema worker/prompt-cases.json's tagging cases are asked with, as
+   the dispatcher adds it to the job it hands over: two categories. *)
+let argument () = Check.at (params "tagging-claim") [ "schema" ]
+
+(* That schema with its first category, Claim, alone. *)
+let argument_of_claims () =
+  match argument () with
+  | `Assoc members ->
+      `Assoc
+        (List.map
+           (fun (key, value) ->
+             match (key, value) with
+             | "tags", `List (claim :: _) -> (key, `List [ claim ])
+             | "tags", _ ->
+                 failwith
+                   "worker/prompt-cases.json's tagging schema has no tags"
+             | _ -> (key, value))
+           members)
+  | other -> failwith ("a tagging schema is an object: " ^ Check.shown other)
+
+(* A tagging job's parameters, asking for [categories] of [schema]. *)
+let tagging schema categories =
+  `Assoc
+    [
+      ("motivation", str "tagging");
+      ("schemaId", Check.at schema [ "id" ]);
+      ("categories", strs categories);
+      ("schema", schema);
+    ]
 
 (* The description of a text resource [id] a yield job is focused on. *)
 let source_descriptor id =
@@ -615,6 +647,29 @@ let yield_job ?stored_as kb ~source params =
         ("the case's yield job is no GenerationJobParams: "
         ^ String.concat "; " refusals));
   W.queued kb "yield" params
+
+(* A yield job focused on the resource [source] of the short text, asking
+   for a title only, and stored as [name]; queued. *)
+let titled_yield kb ~source name =
+  yield_job ~stored_as:name kb ~source
+    (`Assoc
+       [
+         ("title", str "The Analytical Engine");
+         ( "context",
+           `Assoc
+             [
+               ( "focus",
+                 `Assoc
+                   [
+                     ("kind", str "resource");
+                     ("resource", source_descriptor source);
+                     ( "content",
+                       `Assoc [ ("main", str text); ("related", `Assoc []) ] );
+                   ] );
+               ("graph", `Assoc [ ("nodes", `List []); ("edges", `List []) ]);
+               ("metadata", `Assoc []);
+             ] );
+       ])
 
 (* ── What a job asked, made and said ────────────────────────────────── *)
 
@@ -817,3 +872,40 @@ let error name fill =
   with
   | Some row -> Protocol.fill_template row.error fill
   | None -> failwith ("worker/messages.json states no error " ^ name)
+
+(* ── What a worker exports ──────────────────────────────────────────── *)
+
+(* Where a worker exports, and how soon it does. *)
+let exporting (otlp : Otlp.t) =
+  [
+    ("OTEL_EXPORTER_OTLP_ENDPOINT", Some otlp.endpoint);
+    ("OTEL_METRIC_EXPORT_INTERVAL", Some "500");
+    ("OTEL_BSP_SCHEDULE_DELAY", Some "100");
+  ]
+
+let otlp_json = function
+  | Otlp.Text s -> str s
+  | Flag b -> `Bool b
+  | Number n -> `Float n
+  | Unreadable -> str "(unreadable)"
+
+(* Every value [metric] carried under [key], if it carried [key]. *)
+let carried_under (metric : Otlp.metric) key =
+  Option.map
+    (fun (_, values) -> Dynarray.to_list values)
+    (Dynarray.find_opt (fun (k, _) -> k = key) metric.attributes)
+
+(* Every value [metric] carried under [key], which it must have carried. *)
+let values_of metric key =
+  match carried_under metric key with
+  | Some values -> values
+  | None -> failwith ("the metric carried no " ^ key)
+
+(* The span a worker exported under [name] for [job]. *)
+let span_of (otlp : Otlp.t) name (job : W.job) =
+  Run.eventually ("the span of " ^ job.id) 15.0 (fun () ->
+      Dynarray.find_opt
+        (fun (s : Otlp.span) ->
+          s.name = name
+          && List.assoc_opt "job.id" s.attributes = Some (Text job.id))
+        otlp.spans)

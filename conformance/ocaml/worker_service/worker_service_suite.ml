@@ -17,5 +17,24 @@ let suite : Xynolog_conformance.Suite.t =
             Knowledge_bases.tests;
             Cancel.tests;
             On_anthropic.tests;
+            Stop.tests;
+            Yield.tests;
+            Environment.tests;
+            On_pdf.tests;
+            Exported.tests;
+            Linking.tests;
+            Anchoring.tests;
+            Tagging.tests;
+            Resume.tests;
+            Halved.tests;
+            Chunks.tests;
+            Code_points.tests;
+            Started.tests;
+            Failures.tests;
+            Limits.tests;
+            Declines.tests;
+            Commenting.tests;
+            Assessing.tests;
+            Output.tests;
           ]);
   }
