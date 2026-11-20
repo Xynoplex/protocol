@@ -14,10 +14,6 @@ open Case
 let request = "browse:kb-requested"
 let result () = (Protocol.operation_for request).result
 
-(* The span kinds the cases name, as OTLP numbers them. *)
-let producer = Protocol.otlp_kind Producer
-let consumer = Protocol.otlp_kind Consumer
-
 (* An Archivist world with [env] (a variable with a value is set, one with
    none left unset), exporting to its own receiver. *)
 let with_env implementations env run =

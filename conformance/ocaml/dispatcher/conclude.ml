@@ -160,7 +160,7 @@ let not_running_complete w =
   D.complete ~result:highlights worker
     { job_id; job_type = "mark"; resource_id };
   D.complete ~result:highlights worker
-    { job_id = D.unknown_job_id (); job_type = "mark"; resource_id };
+    { job_id = Fresh.job_id (); job_type = "mark"; resource_id };
   D.settle ();
   status_is "the job's status" "pending" (D.status_of creator job_id);
   Check.equal "the job claimed" (str job_id)

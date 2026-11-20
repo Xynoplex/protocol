@@ -9,16 +9,12 @@ open Case
 
 let text = "A worker reads this and marks it up.\n"
 let whole ?extra = whole ?extra text
-let type_of event = Check.at event [ "type" ]
-let payload_of event = Check.at event [ "payload" ]
 
 (* Wait for the first event of [id]'s stream that [matches] accepts. *)
 let recorded w id what matches =
   ignore
     (Run.eventually what 10.0 (fun () -> List.find_opt matches (A.stored w id))
       : Yojson.Safe.t)
-
-let of_type type_ event = type_of event = str type_
 
 let completed_as verb event =
   of_type "job:completed" event
@@ -35,7 +31,7 @@ let assigned ?(job_type = "mark") w (worker : A.client) (requester : A.client) =
       ]
       text
   in
-  let job_id = minted_job_id () in
+  let job_id = Fresh.job_id () in
   A.emit (A.sidecar w "dispatcher") "job:assign"
     (`Assoc
        [
@@ -48,15 +44,9 @@ let assigned ?(job_type = "mark") w (worker : A.client) (requester : A.client) =
   recorded w id "the assignment to be recorded" (of_type "job:assigned");
   (id, job_id)
 
-let worker_roles () = [ Protocol.service_role (); Protocol.worker_role () ]
-
 (* An upload as [worker], holding its roles, as the gateway sends one on. *)
 let upload w (worker : A.client) fields content =
-  A.upload w ~roles:(worker_roles ()) worker.did fields content
-
-let made_resource (reply : Call.reply) =
-  Check.equal "the upload's status" (`Int 200) (`Int reply.status);
-  A.string_member "resourceId" (Option.get reply.json)
+  A.upload w ~roles:(A.worker_roles ()) worker.did fields content
 
 let job_frame id job_id job_type members =
   `Assoc
@@ -64,15 +54,6 @@ let job_frame id job_id job_type members =
        ("resourceId", str id); ("jobId", str job_id); ("jobType", str job_type);
      ]
     @ members)
-
-let commit ?job_id id annotations =
-  `Assoc
-    ([ ("resourceId", str id) ]
-    @ (match job_id with Some j -> [ ("jobId", str j) ] | None -> [])
-    @ [ ("annotations", `List annotations) ])
-
-let ids annotations = `List (List.map (fun a -> str (id_of a)) annotations)
-let named did = `Assoc [ ("@id", str did) ]
 
 (* Who a worker's write on a job for [requester] is attributed to. *)
 let attributed (requester : A.client) (worker : A.client) =
@@ -110,22 +91,16 @@ let lifecycle w =
   recorded w id "the completion" (of_type "job:completed");
   let events = List.tl (A.stored w id) in
   Check.equal "the events"
-    (`List
-       (List.map
-          (fun (t, n) -> `List [ str t; `Int n ])
-          [
-            ("job:assigned", 2);
-            ("job:started", 3);
-            ("job:failed", 4);
-            ("job:completed", 5);
-          ]))
-    (`List
-       (List.map
-          (fun e ->
-            `List [ type_of e; Check.at e [ "metadata"; "sequenceNumber" ] ])
-          events));
+    (numbered_as
+       [
+         ("job:assigned", 2);
+         ("job:started", 3);
+         ("job:failed", 4);
+         ("job:completed", 5);
+       ])
+    (numbered_events events);
   let event n = List.nth events n in
-  matching "the assignment"
+  like "the assignment"
     (`Assoc
        [
          ( "payload",
@@ -142,10 +117,10 @@ let lifecycle w =
   let by_worker payload =
     `Assoc [ ("userId", str worker.did); ("payload", `Assoc payload) ]
   in
-  matching "the start"
+  like "the start"
     (by_worker [ ("jobId", str job_id); ("jobType", str "mark") ])
     (event 1);
-  matching "the failure"
+  like "the failure"
     (by_worker
        [
          ("jobId", str job_id);
@@ -155,30 +130,21 @@ let lifecycle w =
          ("willRetry", `Bool true);
        ])
     (event 2);
-  matching "the completion"
+  like "the completion"
     (by_worker
        [ ("jobId", str job_id); ("attempt", `Int 2); ("result", result) ])
     (event 3);
   (* Each is published to the resource's scope. *)
-  let completed =
-    Bus_stream.next follower.stream "the scoped completion" (fun m ->
-        match m.frame with
-        | Some f -> f.channel = "job:completed" && f.scope = Some id
-        | None -> false)
+  let completed, frame =
+    scoped_fact follower "the scoped completion" "job:completed" id
   in
-  (match completed.frame with
-  | Some frame -> (
-      Check.equal "the scoped completion's sequence number" (`Int 5)
-        (Check.at frame.payload [ "metadata"; "sequenceNumber" ]);
-      match Bus_stream.expected_id frame with
-      | Persisted expected ->
-          Check.equal "the scoped completion's id" (str expected)
-            (match completed.id with Some i -> str i | None -> `Null)
-      | Reply _ | Ephemeral ->
-          failwith "the scoped completion is given no persisted id")
-  | None -> failwith "the scoped completion carried no frame");
+  Check.equal "the scoped completion's sequence number" (`Int 5)
+    (Check.at frame.payload [ "metadata"; "sequenceNumber" ]);
+  Check.equal "the scoped completion's id"
+    (str (persisted_id frame))
+    (match completed.id with Some i -> str i | None -> `Null);
   (* The view counts them and is otherwise unchanged. *)
-  matching "the view"
+  like "the view"
     (`Assoc
        [
          ("lastSequence", `Int 5);
@@ -186,7 +152,7 @@ let lifecycle w =
            `Assoc [ ("version", `Int 5); ("annotations", `List []) ] );
          ("resource", `Assoc [ ("archived", `Bool false) ]);
        ])
-    (Option.get (A.view w id))
+    (view w id)
 
 let counts = `Assoc [ ("found", `Int 2); ("persisted", `Int 2) ]
 
@@ -204,7 +170,8 @@ let completion job_id verb result =
 
 let completions w id =
   `List
-    (List.map payload_of
+    (List.map
+       (fun e -> Check.at e [ "payload" ])
        (List.filter (of_type "job:completed") (A.stored w id)))
 
 (* Frames of one channel are recorded in the order they arrive, so once the
@@ -247,7 +214,7 @@ let unassigned_start w =
       ]
       text
   in
-  let job_id = minted_job_id () in
+  let job_id = Fresh.job_id () in
   A.emit worker "job:start" (job_frame id job_id "mark" []);
   recorded w id "the start" (of_type "job:started");
   A.emit worker "job:complete"
@@ -268,7 +235,7 @@ let unheard_of w =
   (* Another job of the other verb is recorded on the same resource: it says
      nothing of this one. *)
   let id, _ = assigned ~job_type:"mark" w worker requester in
-  let job_id = minted_job_id () in
+  let job_id = Fresh.job_id () in
   A.emit worker "job:complete"
     (job_frame id job_id "yield" [ ("result", made) ]);
   recorded w id "the completion" (of_type "job:completed");
@@ -291,9 +258,7 @@ let annotations_attributed w =
       Check.equal "the event's userId" (str worker.did)
         (Check.at event [ "userId" ]);
       let annotation = Check.at event [ "payload"; "annotation" ] in
-      matching "the annotation"
-        (`Assoc (attributed requester worker))
-        annotation;
+      like "the annotation" (`Assoc (attributed requester worker)) annotation;
       (* The worker supplied no generator, and its DID says who it is and
          nothing it runs. *)
       List.iter
@@ -311,7 +276,7 @@ let refused_writes w =
   Check.equal "the refusal of a write citing no job"
     (str (refusal "uncited-worker" []))
     (str (A.refused worker "mark:commit" (commit id [ whole id "worker" ])));
-  let unassigned = minted_job_id () in
+  let unassigned = Fresh.job_id () in
   Check.equal "the refusal of a write citing a job never assigned"
     (str
        (refusal "unassigned-job" [ ("jobId", unassigned); ("resourceId", id) ]))
@@ -365,23 +330,13 @@ let generators w =
     (str (refusal "multi-agent-annotation" [ ("annotationId", id_of many) ]))
     (str (A.refused worker "mark:commit" (commit ~job_id id [ many ])))
 
-(* An upload a worker's job must cite, refused with [refusal]'s words. *)
-let upload_refused what refusal (reply : Call.reply) =
-  let fill = [ ("refusal", refusal) ] in
-  Check.equal (what ^ ": its status")
-    (`Int (http_status "upload-refused"))
-    (`Int reply.status);
-  Check.equal (what ^ ": its body")
-    (error_body "upload-refused" fill)
-    (Option.get reply.json)
-
 let generated_attributed w =
   let worker = A.worker w "writer" in
   let requester = A.person w "requester" in
   let id, job_id = assigned ~job_type:"yield" w worker requester in
   let content = "Generated prose.\n" in
   let generated =
-    made_resource
+    A.recorded_id
       (upload w worker
          [
            ("name", "Generated");
@@ -394,7 +349,7 @@ let generated_attributed w =
          content)
   in
   let created = List.hd (A.stored w generated) in
-  matching "the generated resource's record"
+  like "the generated resource's record"
     (`Assoc
        [
          ("type", str "yield:created");
@@ -405,8 +360,8 @@ let generated_attributed w =
              :: attributed requester worker) );
        ])
     created;
-  let resource = Check.at (Option.get (A.view w generated)) [ "resource" ] in
-  matching "the generated resource"
+  let resource = Check.at (view w generated) [ "resource" ] in
+  like "the generated resource"
     (`Assoc
        [
          ("generator", named worker.did);
@@ -420,14 +375,12 @@ let generated_attributed w =
   Check.equal "the record's source"
     (`Assoc [ ("resourceId", str id) ])
     (Check.at created [ "payload"; "generatedFrom" ]);
-  matching "the generated resource"
-    (`Assoc [ ("wasDerivedFrom", str id) ])
-    resource;
+  like "the generated resource" (`Assoc [ ("wasDerivedFrom", str id) ]) resource;
   (* Without the job, or without the resource the job was assigned on, a
      worker's upload is not recorded. *)
   let refusal = refusal ~channel:"yield:create" in
-  upload_refused "an upload citing no job"
-    (refusal "uncited-worker" [])
+  holds_http_error "an upload citing no job" "upload-refused"
+    [ ("refusal", refusal "uncited-worker" []) ]
     (upload w worker
        [
          ("name", "Uncited");
@@ -435,8 +388,8 @@ let generated_attributed w =
            Printf.sprintf "file://jobs/uncited-%s.md" (Fresh.uuid ()) );
        ]
        content);
-  upload_refused "an upload naming no source"
-    (refusal "sourceless-create" [])
+  holds_http_error "an upload naming no source" "upload-refused"
+    [ ("refusal", refusal "sourceless-create" []) ]
     (upload w worker
        [
          ("name", "Sourceless");
@@ -449,7 +402,7 @@ let generated_attributed w =
 (* What [worker] makes under [job_id], generated from [id]: the new
    resource. *)
 let made_under w worker ~name ~prefix id job_id =
-  made_resource
+  A.recorded_id
     (upload w worker
        [
          ("name", name);
@@ -475,7 +428,7 @@ let annotations_on_made w =
     (fun event ->
       Check.equal "the event's userId" (str worker.did)
         (Check.at event [ "userId" ]);
-      matching "the annotation"
+      like "the annotation"
         (`Assoc (attributed requester worker))
         (Check.at event [ "payload"; "annotation" ]))
     recorded

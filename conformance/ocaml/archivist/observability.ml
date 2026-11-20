@@ -8,10 +8,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* The span kinds the cases name, as OTLP numbers them. *)
-let producer = Protocol.otlp_kind Producer
-let consumer = Protocol.otlp_kind Consumer
-
 let in_order =
   "the file's last case is judged on everything its cases made the Archivist \
    export"

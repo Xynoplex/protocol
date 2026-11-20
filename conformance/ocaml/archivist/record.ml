@@ -7,11 +7,6 @@ open Support
 open Case
 
 let text = "The record survives the process that keeps it.\n"
-let first_file () = A.event_file_name (A.layout ()).event_file.first
-
-let present what = function
-  | Some json -> json
-  | None -> failwith (what ^ " is absent")
 
 (* A resource ada uploaded as [name], and the annotation grace made on it. *)
 let annotated (w : A.t) name =
@@ -26,27 +21,7 @@ let annotated (w : A.t) name =
       ]
       text
   in
-  let grace = A.person w "grace" in
-  let made =
-    A.ask grace "mark:create-request"
-      (`Assoc [ ("resourceId", str id); ("request", highlight id "record" 4) ])
-  in
-  (id, A.string_member "annotationId" made)
-
-let on id = `Assoc [ ("resourceId", str id) ]
-
-let numbered_events events =
-  `List
-    (List.map
-       (fun e ->
-         `List
-           [
-             Check.at e [ "type" ]; Check.at e [ "metadata"; "sequenceNumber" ];
-           ])
-       events)
-
-let numbered_as pairs =
-  `List (List.map (fun (type_, n) -> `List [ str type_; `Int n ]) pairs)
+  (id, marked (A.person w "grace") id (highlight id "record" 4))
 
 let shard_table _ =
   List.iter
@@ -71,9 +46,9 @@ let numbered w =
        ])
     (numbered_events (A.stored w id));
   Check.equal "the stream's files"
-    (`List [ str (first_file ()) ])
-    (`List (List.map str (A.stream_files w id)));
-  let view = present "the view" (A.view w id) in
+    (strs [ A.first_event_file () ])
+    (strs (A.stream_files w id));
+  let view = view w id in
   Check.equal "the view's last sequence" (`Int 4)
     (Check.at view [ "lastSequence" ]);
   Check.equal "whether the view's resource is archived" (`Bool false)
@@ -86,11 +61,9 @@ let numbered w =
     (A.ask curator "frame:add-entity-type" (`Assoc [ ("tag", str "Restarted") ])
       : Yojson.Safe.t);
   let added =
-    List.filter
-      (fun e -> Protocol.at e [ "type" ] = Some (str "frame:entity-type-added"))
-      (A.stored w A.system)
+    List.filter (of_type "frame:entity-type-added") (A.stored w A.system)
   in
-  let of_type e = Protocol.at e [ "payload"; "entityType" ] in
+  let entity_type_of e = Protocol.at e [ "payload"; "entityType" ] in
   List.iter
     (fun entity_type ->
       Check.equal
@@ -98,11 +71,13 @@ let numbered w =
         (`Int 1)
         (`Int
            (List.length
-              (List.filter (fun e -> of_type e = Some (str entity_type)) added))))
+              (List.filter
+                 (fun e -> entity_type_of e = Some (str entity_type))
+                 added))))
     (Protocol.tables ()).archivist_default_entity_types.entity_types;
   Check.equal "the entity type added last" (str "Restarted")
     (present "an added entity type"
-       (of_type (List.nth added (List.length added - 1))))
+       (entity_type_of (last "the entity types added" added)))
 
 let projections w =
   List.map
@@ -134,18 +109,16 @@ let rebuilt (w : A.t) =
          Protocol.at e [ "payload"; "name" ] = Some (str "The Curator"))
       : Yojson.Safe.t);
   let uri = "file://survives/rebuilt.md" in
-  let view = present "the view" (A.view w id) in
+  let view_before = view w id in
   let before = projections w in
   let entry = present "the storage-uri entry" (A.storage_uri_entry w uri) in
-  Check.equal "the storage-uri entry"
-    (`Assoc [ ("uri", str uri); ("resourceId", str id) ])
-    entry;
+  Check.equal "the storage-uri entry" (uri_entry uri id) entry;
   ignore (Archivist.stop w.archivist : int option);
   Array.iter
-    (fun entry -> Gateway.remove (Filename.concat w.dirs.state_home entry))
+    (fun entry -> Gateway.remove (w.dirs.state_home // entry))
     (Sys.readdir w.dirs.state_home);
   A.restart w;
-  Check.equal "the view, rebuilt" view (present "the view" (A.view w id));
+  Check.equal "the view, rebuilt" view_before (view w id);
   List.iter2
     (fun (name, was) (_, is) -> Check.equal (name ^ ", rebuilt") was is)
     before (projections w);
@@ -173,21 +146,16 @@ let tampered (w : A.t) id ~name ~orphan_id =
   let good = A.read_file (A.view_path w id) in
   let orphan = A.view_path w orphan_id in
   ignore (Archivist.stop w.archivist : int option);
-  Out_channel.with_open_bin (A.view_path w id) (fun out ->
-      output_string out
-        (Yojson.Safe.pretty_to_string
-           (Edit.set_at [ "resource"; "name" ] (str name)
-              (Yojson.Safe.from_string good))));
-  A.make_dirs (Filename.dirname orphan);
-  Out_channel.with_open_bin orphan (fun out ->
-      output_string out
-        (Re.replace_string (Re.compile (Re.str id)) ~by:orphan_id good));
+  A.write_file (A.view_path w id)
+    (Yojson.Safe.pretty_to_string
+       (Edit.set_at [ "resource"; "name" ] (str name)
+          (Yojson.Safe.from_string good)));
+  A.write_file orphan
+    (Re.replace_string (Re.compile (Re.str id)) ~by:orphan_id good);
   orphan
 
 let repeated pair = String.concat "" (List.init 16 (fun _ -> pair))
-
-let view_name w id =
-  Check.at (present "the view" (A.view w id)) [ "resource"; "name" ]
+let view_name w id = Check.at (view w id) [ "resource"; "name" ]
 
 let corrected w =
   let id, _ = annotated w "corrected" in
@@ -235,7 +203,7 @@ let logged_lines (w : A.t) (row : M.logged_item) =
 
 let as_found (w : A.t) =
   let id, _ = annotated w "as found" in
-  let file = Filename.concat (A.stream_dir w id) (first_file ()) in
+  let file = A.stream_dir w id // A.first_event_file () in
   (* JSON, and no event: it states no `type` of its own, and what it holds
      under `event` is not read. *)
   let untyped =
@@ -260,7 +228,7 @@ let as_found (w : A.t) =
       output_string out
         ("\nthis line is not JSON\n" ^ Yojson.Safe.to_string untyped ^ "\n"));
   A.restart w;
-  let view = present "the view" (A.view w id) in
+  let view = view w id in
   Check.equal "the view's last sequence" (`Int 2)
     (Check.at view [ "lastSequence" ]);
   Check.equal "whether the view's resource is archived" (`Bool false)
@@ -301,7 +269,7 @@ let as_found (w : A.t) =
   Check.equal "the event appended next"
     (numbered_as [ ("mark:archived", 3) ])
     (numbered_events
-       [ Yojson.Safe.from_string (List.nth lines (List.length lines - 1)) ])
+       [ Yojson.Safe.from_string (last "the stream's lines" lines) ])
 
 let tokened w =
   let id, _ = annotated w "tokened" in

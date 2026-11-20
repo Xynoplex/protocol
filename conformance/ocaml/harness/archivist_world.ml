@@ -146,6 +146,9 @@ let event_file_name number =
     ~by:(Printf.sprintf "%0*d" file.digits number)
     file.name
 
+(* The name of a stream's first event file. *)
+let first_event_file () = event_file_name (layout ()).event_file.first
+
 (* A stream's files, in order: the layout's, numbered from the first with
    none missing. *)
 let stream_files t resource_id =
@@ -270,9 +273,9 @@ let stamp_path t =
   let stamp = (layout ()).anchored_text_stamp in
   placed t stamp.tree stamp.path []
 
-(* Every file in the state volume, by its path from its top, with its
-   bytes. *)
-let state_files t =
+(* Every file under [dir], by its path from there, with its bytes: none
+   while [dir] is absent. *)
+let files_under dir =
   let rec walk dir from =
     if not (Sys.file_exists dir) then []
     else
@@ -284,7 +287,7 @@ let state_files t =
           else [ (name, read_file path) ])
         (List.sort compare (Array.to_list (Sys.readdir dir)))
   in
-  walk t.dirs.state_home ""
+  walk dir ""
 
 (* The file a storage URI names in the working tree. *)
 let content_path t storage_uri =
@@ -295,16 +298,27 @@ let content_path t storage_uri =
   // String.sub storage_uri (String.length scheme)
        (String.length storage_uri - String.length scheme)
 
+(* A path of the working tree, as git names it: from the root. *)
+let in_tree t path =
+  let root = t.dirs.root ^ "/" in
+  if not (String.starts_with ~prefix:root path) then
+    failwith (path ^ " is not in the working tree");
+  String.sub path (String.length root) (String.length path - String.length root)
+
 let rec make_dirs dir =
   if not (Sys.file_exists dir) then (
     make_dirs (Filename.dirname dir);
     Sys.mkdir dir 0o755)
 
-(* Put a file in the working tree, as a person editing the tree would. *)
-let write t storage_uri content =
-  let path = content_path t storage_uri in
+(* Write [content] to the file at [path], making the directories it is
+   in. *)
+let write_file path content =
   make_dirs (Filename.dirname path);
   Out_channel.with_open_bin path (fun out -> output_string out content)
+
+(* Put a file in the working tree, as a person editing the tree would. *)
+let write t storage_uri content =
+  write_file (content_path t storage_uri) content
 
 (* ── git ────────────────────────────────────────────────────────────── *)
 
@@ -443,13 +457,12 @@ let person ?(channels = []) ?(scopes = []) t sub =
     (World.person_did t.world sub)
     ~channels ~scopes
 
+(* The roles a worker holds. *)
+let worker_roles () = [ Protocol.service_role (); Protocol.worker_role () ]
+
 (* A worker: a software agent holding the worker role. *)
 let worker ?(channels = []) ?(scopes = []) t model =
-  let token, did =
-    World.agent t.world
-      ~roles:[ Protocol.service_role (); Protocol.worker_role () ]
-      model
-  in
+  let token, did = World.agent t.world ~roles:(worker_roles ()) model in
   client t token did ~channels ~scopes
 
 (* A sidecar: a software agent holding the service role and not the worker
@@ -618,16 +631,40 @@ let string_member name json =
       failwith
         (Printf.sprintf "%s holds no %s" (Yojson.Safe.to_string json) name)
 
+(* The id of the resource an upload was answered with; the Archivist must
+   have recorded it. *)
+let recorded_id (reply : Call.reply) =
+  match (reply.status, reply.json) with
+  | 200, Some json -> string_member "resourceId" json
+  | _ ->
+      failwith
+        (Printf.sprintf "the upload was not recorded: %d %s" reply.status
+           reply.text)
+
 (* Upload content the Archivist must record: the new resource's id. *)
 let created t principal fields content =
-  let reply = upload t principal fields content in
-  if reply.status <> 200 then
-    failwith
-      (Printf.sprintf "the upload was not recorded: %d %s" reply.status
-         reply.text);
-  string_member "resourceId" (Option.get reply.json)
+  recorded_id (upload t principal fields content)
 
 let resource_path id suffix = "/resources/" ^ Protocol.uri_component id ^ suffix
+
+(* Every stream the log holds, as the Archivist lists them: each id, with
+   the sequence number of its last event. *)
+let streams t =
+  let listed = http t ~route:"/events" "GET" "/events" in
+  match (listed.status, listed.json) with
+  | 200, Some json ->
+      List.map
+        (fun stream ->
+          match Protocol.at stream [ "lastSequence" ] with
+          | Some (`Int last) -> (string_member "resourceId" stream, last)
+          | _ -> failwith (Yojson.Safe.to_string stream ^ " is no listed stream"))
+        (match Protocol.at json [ "streams" ] with
+        | Some (`List streams) -> streams
+        | _ -> failwith (Yojson.Safe.to_string json ^ " lists no streams"))
+  | _ ->
+      failwith
+        (Printf.sprintf "the streams were not listed: %d %s" listed.status
+           listed.text)
 
 (* A resource's anchored text, read as the gateway reads it; the Archivist
    must answer it. *)
@@ -703,6 +740,39 @@ let anchored_text_keys t =
         (List.map (function `String k -> k | _ -> failwith "a key") keys)
   | _ -> failwith "the listing holds no checksums"
 
+(* The entry format AnchoredTextExtractedEntry states. *)
+let entry_format () =
+  match
+    Option.bind (Protocol.json_of "archivist/AnchoredTextExtractedEntry.json")
+      (fun schema -> Protocol.at schema [ "properties"; "v"; "enum" ])
+  with
+  | Some (`List [ `Int v ]) -> v
+  | _ -> failwith "AnchoredTextExtractedEntry states no one entry format"
+
+(* [entry], an entry's own members, as the store takes it: in the entry
+   format, under [stamp], and held to AnchoredTextEntry. *)
+let stamped stamp entry =
+  let document =
+    match entry with
+    | `Assoc members ->
+        `Assoc
+          (("v", `Int (entry_format ())) :: ("stamp", `String stamp) :: members)
+    | _ -> failwith "an entry is an object"
+  in
+  match
+    Protocol.refusals (Protocol.service_schema "AnchoredTextEntry") document
+  with
+  | [] -> document
+  | refusals ->
+      failwith
+        (Printf.sprintf
+           "the suite's anchored-text entry is not an AnchoredTextEntry (%s)"
+           (String.concat "; " refusals))
+
+(* A write of [document] to the store, for content of [checksum]. *)
+let entry_write checksum document =
+  `Assoc [ ("contentChecksum", `String checksum); ("entry", document) ]
+
 type outcome = Indexed | Skipped
 
 (* The Smelter, as far as the Archivist meets it: state a stamp, store
@@ -714,27 +784,9 @@ let smelt t ?entry ?(outcome = Indexed) ?(stamp = "conformance-smelter")
   Option.iter
     (fun entry ->
       state_stamp t stamp;
-      let document =
-        match entry with
-        | `Assoc members ->
-            `Assoc (("v", `Int 3) :: ("stamp", `String stamp) :: members)
-        | _ -> failwith "an entry is an object"
-      in
-      (match
-         Protocol.refusals
-           (Protocol.service_schema "AnchoredTextEntry")
-           document
-       with
-      | [] -> ()
-      | refusals ->
-          failwith
-            (Printf.sprintf
-               "the suite's anchored-text entry is not an AnchoredTextEntry \
-                (%s)"
-               (String.concat "; " refusals)));
       let stored =
         store_anchored_text t resource_id
-          (`Assoc [ ("contentChecksum", `String checksum); ("entry", document) ])
+          (entry_write checksum (stamped stamp entry))
       in
       if stored.status <> 204 then
         failwith
@@ -835,9 +887,9 @@ let create ?(git_sync = true) ?(engines = no_engines) ?(staging = [])
       dirs.state_home;
       dirs.anchored_text_dir;
     ];
-  Out_channel.with_open_bin
+  write_file
     (dirs.root // ".xynolog" // "config.yaml")
-    (fun out -> output_string out (project_file world.kb ~git_sync));
+    (project_file world.kb ~git_sync);
   if git_sync then
     Result.iter_error
       (fun err -> failwith ("git init failed: " ^ err))

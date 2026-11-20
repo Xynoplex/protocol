@@ -9,30 +9,15 @@ open Xynolog_conformance
 open Support
 open Case
 
-let ( // ) = Filename.concat
-
 (* From the repository's root, where the harness runs. *)
 let fixture = "conformance/ocaml/archivist/fixtures/typescript-tree"
-
-(* Every file under [dir], by its path from there, with its bytes. *)
-let rec files ?(from = "") dir =
-  List.concat_map
-    (fun entry ->
-      let path = dir // entry in
-      let name = if from = "" then entry else from ^ "/" ^ entry in
-      if Sys.is_directory path then files ~from:name path
-      else [ (name, A.read_file path) ])
-    (List.sort compare (Array.to_list (Sys.readdir dir)))
 
 (* The fixture's knowledge base, copied over the world's tree before the
    Archivist first boots. *)
 let copied (dirs : A.dirs) =
   List.iter
-    (fun (name, bytes) ->
-      let path = dirs.root // name in
-      A.make_dirs (Filename.dirname path);
-      Out_channel.with_open_bin path (fun out -> output_string out bytes))
-    (files (fixture // "kb"))
+    (fun (name, bytes) -> A.write_file (dirs.root // name) bytes)
+    (A.files_under (fixture // "kb"))
 
 let shared = "75cac8fed07641da9a9423a65108a2ce"
 let copy = "84660af034bb49b781d3904fde93f562"
@@ -40,28 +25,22 @@ let copy = "84660af034bb49b781d3904fde93f562"
 (* The lines of the stream of [id] as the fixture left them: its first
    file, where the world's tree keeps it. *)
 let left_lines (w : A.t) id =
-  let root = w.dirs.root ^ "/" in
-  let dir = A.stream_dir w id in
-  let from_root =
-    String.sub dir (String.length root) (String.length dir - String.length root)
-  in
   List.filter
     (fun line -> line <> "")
     (String.split_on_char '\n'
        (A.read_file
-          (fixture // "kb" // from_root
-          // A.event_file_name (A.layout ()).event_file.first)))
+          (fixture // "kb"
+          // A.in_tree w (A.stream_dir w id)
+          // A.first_event_file ())))
 
 let in_order =
   "the tree is judged as it was left before the last case goes on from it"
 
 let rebuilt (w : A.t) =
-  let left = files (fixture // "state") in
+  let left = A.files_under (fixture // "state") in
   Check.equal "the files left" (`Int 7) (`Int (List.length left));
-  let rebuilt = A.state_files w in
-  let names files =
-    `List (List.sort compare (List.map (fun (name, _) -> str name) files))
-  in
+  let rebuilt = A.files_under w.dirs.state_home in
+  let names files = strs (sorted (List.map fst files)) in
   Check.equal "the files rebuilt" (names left) (names rebuilt);
   List.iter
     (fun (name, bytes) ->
@@ -75,7 +54,6 @@ let served (w : A.t) =
       (A.ask reader "browse:resources-requested" (`Assoc []))
       [ "resources" ]
   in
-  let sorted items = List.sort compare items in
   Check.equal "the resources"
     (`List
        (sorted
@@ -95,10 +73,7 @@ let served (w : A.t) =
                  ])
              listed)));
 
-  let described =
-    A.ask reader "browse:resource-requested"
-      (`Assoc [ ("resourceId", str shared) ])
-  in
+  let described = A.ask reader "browse:resource-requested" (on shared) in
   Check.equal "its entity types"
     (`List [ str "Event" ])
     (Check.at described [ "resource"; "entityTypes" ]);
@@ -107,7 +82,7 @@ let served (w : A.t) =
     | `String _ -> true
     | _ -> false);
   Check.equal "its lastSequence"
-    (Check.at (Option.get (A.view w shared)) [ "lastSequence" ])
+    (Check.at (view w shared) [ "lastSequence" ])
     (Check.at described [ "lastSequence" ]);
   Check.equal "its annotations" (`Int 1)
     (Check.at (Option.get (A.annotations w shared)) [ "total" ]);
@@ -140,22 +115,21 @@ let gone_on_from (w : A.t) =
        (List.length
           (List.filter
              (fun e ->
-               Check.at e [ "type" ] = str "frame:entity-type-added"
+               of_type "frame:entity-type-added" e
                && Check.at e [ "payload"; "entityType" ] = str "Person")
              (A.stored w A.system))));
 
   let editor = A.person w "editor" in
-  ignore
-    (A.ask editor "mark:archive" (`Assoc [ ("resourceId", str shared) ])
-      : Yojson.Safe.t);
+  ignore (A.ask editor "mark:archive" (on shared) : Yojson.Safe.t);
   let events = A.stored w shared in
   Check.equal "its events" (`Int (before + 1)) (`Int (List.length events));
-  let last = List.hd (List.rev events) in
-  Check.equal "the last's type" (str "mark:archived") (Check.at last [ "type" ]);
+  let latest = last "its events" events in
+  Check.equal "the last's type" (str "mark:archived")
+    (Check.at latest [ "type" ]);
   Check.equal "the last's sequence number"
     (`Int (before + 1))
-    (Check.at last [ "metadata"; "sequenceNumber" ]);
-  let view = Option.get (A.view w shared) in
+    (Check.at latest [ "metadata"; "sequenceNumber" ]);
+  let view = view w shared in
   Check.equal "its view's lastSequence"
     (`Int (before + 1))
     (Check.at view [ "lastSequence" ]);
@@ -163,10 +137,8 @@ let gone_on_from (w : A.t) =
     (Check.at view [ "resource"; "archived" ]);
   (* What was there is as it was. *)
   Check.equal "the lines left"
-    (`List (List.map str (left_lines w shared)))
-    (`List
-       (List.map str
-          (List.filteri (fun at _ -> at < before) (A.stream_lines w shared))))
+    (strs (left_lines w shared))
+    (strs (List.filteri (fun at _ -> at < before) (A.stream_lines w shared)))
 
 let tests implementations =
   with_archivist implementations ~git_sync:false ~before:copied

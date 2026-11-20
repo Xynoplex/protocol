@@ -42,7 +42,100 @@ let own_world (implementations : Implementations.t) ?git_sync ?engines ?staging
   ended w (fun () -> run w)
 
 let str s = `String s
+let strs items = `List (List.map str items)
+let ints numbers = `List (List.map (fun n -> `Int n) numbers)
+let sorted items = List.sort compare items
 let sha256 = A.sha256
+let ( // ) = A.( // )
+
+(* The span kinds the cases name, as OTLP numbers them. *)
+let producer = Protocol.otlp_kind Producer
+let consumer = Protocol.otlp_kind Consumer
+
+let present what = function
+  | Some value -> value
+  | None -> failwith (what ^ " is absent")
+
+let last what items =
+  match List.rev items with
+  | item :: _ -> item
+  | [] -> failwith (what ^ " holds nothing")
+
+(* A reply's body, which must be JSON. *)
+let json_of what (reply : Call.reply) =
+  match reply.json with
+  | Some json -> json
+  | None -> failwith (what ^ " is not JSON: " ^ Call.shown reply.text)
+
+(* A reply's header [name], or null where it has none. *)
+let header (reply : Call.reply) name =
+  match Http.Header.get reply.headers name with
+  | Some value -> str value
+  | None -> `Null
+
+(* A resource's view, which the Archivist must keep. *)
+let view w id = present ("the view of " ^ id) (A.view w id)
+
+(* The fields of an upload named [name], at [storage_uri]. *)
+let fields name storage_uri = [ ("name", name); ("storageUri", storage_uri) ]
+
+(* A PDF the reader uploads. *)
+let scan (w : A.t) name storage_uri content =
+  A.created w
+    (World.person_did w.world "reader")
+    [
+      ("name", name); ("storageUri", storage_uri); ("format", "application/pdf");
+    ]
+    content
+
+(* A command's payload naming the resource [id] alone. *)
+let on id = `Assoc [ ("resourceId", str id) ]
+
+(* The storage-uri index's entry for [uri], at which the resource [id] is. *)
+let uri_entry uri id = `Assoc [ ("uri", str uri); ("resourceId", str id) ]
+let of_type type_ event = Check.at event [ "type" ] = str type_
+let types_of events = `List (List.map (fun e -> Check.at e [ "type" ]) events)
+
+let sequence_of event =
+  match Check.at event [ "metadata"; "sequenceNumber" ] with
+  | `Int n -> n
+  | other -> failwith (Check.shown other ^ " is no sequence number")
+
+(* Events, each by its type and its sequence number. *)
+let numbered_events events =
+  `List
+    (List.map
+       (fun e ->
+         `List
+           [
+             Check.at e [ "type" ]; Check.at e [ "metadata"; "sequenceNumber" ];
+           ])
+       events)
+
+let numbered_as pairs =
+  `List (List.map (fun (type_, n) -> `List [ str type_; `Int n ]) pairs)
+
+(* The first fact on [c]'s stream of [channel], scoped to [id]: the
+   message, and its frame. *)
+let scoped_fact (c : A.client) what channel id =
+  let message =
+    Bus_stream.next c.stream what (fun m ->
+        match m.frame with
+        | Some f -> f.channel = channel && f.scope = Some id
+        | None -> false)
+  in
+  match message.frame with
+  | Some frame -> (message, frame)
+  | None -> failwith (what ^ " carried no frame")
+
+(* The id the gateway gives a scoped fact: its place in its stream. *)
+let persisted_id frame =
+  match Bus_stream.expected_id frame with
+  | Persisted id -> id
+  | Reply _ | Ephemeral -> failwith "a scoped fact's id is no persisted id"
+
+(* An agent, named by its DID alone. *)
+let named did = `Assoc [ ("@id", str did) ]
 
 (* Whether [actual] holds what [partial] states, as toMatchObject holds it:
    each member an object states held in turn, a list's items held one for
@@ -185,20 +278,24 @@ let http_row name =
   | Some r -> r
   | None -> failwith ("archivist/messages.json states no route error " ^ name)
 
-(* The error [name] a route answers with, filled, and its code. *)
-let http_error name fill =
-  let r = http_row name in
-  (r.status, filled r.error fill, r.code)
-
 (* The status a route answers the error [name] with. *)
 let http_status name = (http_row name).status
 
-(* The body an error [name] is answered with: its error, and its code. *)
+(* The body an error [name] is answered with: its error, filled, and its
+   code. *)
 let error_body name fill =
-  let _, error, code = http_error name fill in
+  let r = http_row name in
   `Assoc
-    (("error", str error)
-    :: (match code with Some c -> [ ("code", str c) ] | None -> []))
+    (("error", str (filled r.error fill))
+    :: (match r.code with Some c -> [ ("code", str c) ] | None -> []))
+
+(* Fail unless [reply] is the error [name] a route answers with, filled: its
+   status, and its body. *)
+let holds_http_error what name fill (reply : Call.reply) =
+  Check.equal (what ^ ": its status")
+    (`Int (http_status name))
+    (`Int reply.status);
+  Check.equal (what ^ ": its body") (error_body name fill) (json_of what reply)
 
 (* The message [name] archivist/messages.json says the Archivist logs. *)
 let logged name =
@@ -249,45 +346,11 @@ let entity_types n =
          (List.length seeded) n);
   List.filteri (fun at _ -> at < n) seeded
 
-(* Whether [actual] holds what [expected] states, as toMatchObject holds it:
-   an object's members in part and in depth, an array's items one for one,
-   anything else equal. *)
-let rec holds (expected : Yojson.Safe.t) (actual : Yojson.Safe.t) =
-  match (expected, actual) with
-  | `Assoc members, `Assoc _ ->
-      List.for_all
-        (fun (key, value) ->
-          match Protocol.at actual [ key ] with
-          | Some held -> holds value held
-          | None -> false)
-        members
-  | `List items, `List held ->
-      List.length items = List.length held && List.for_all2 holds items held
-  | _ -> Check.canonical expected = Check.canonical actual
-
-let matching what expected actual =
-  if not (holds expected actual) then
-    failwith
-      (Printf.sprintf "%s: %s does not hold %s" what (Check.shown actual)
-         (Check.shown expected))
-
 let lacks what json path =
   Check.that
     (Printf.sprintf "%s: %s holds %s" what (Check.shown json)
        (String.concat "." path))
     (Protocol.at json path = None)
-
-(* A job id as the dispatcher mints one at admission (JOBS.md § The job
-   record), held to JobId: the suite stands in for the admission. *)
-let minted_job_id () =
-  let id = "job-" ^ Fresh.hex 16 in
-  (match Protocol.against "JobId" (`String id) with
-  | [] -> ()
-  | refusals ->
-      failwith
-        (Printf.sprintf "the suite's job id %s is no JobId: %s" id
-           (String.concat "; " refusals)));
-  id
 
 (* The one value Annotation.json allows its [member]. *)
 let annotation_constant member =
@@ -340,3 +403,17 @@ let whole ?(extra = []) text resource_id exact =
     (List.filter (fun (key, _) -> not (List.mem_assoc key extra)) own @ extra)
 
 let id_of annotation = A.string_member "id" annotation
+let ids annotations = `List (List.map (fun a -> str (id_of a)) annotations)
+
+(* A mark:commit of [annotations] on [id], citing [job_id] when given. *)
+let commit ?job_id id annotations =
+  `Assoc
+    ([ ("resourceId", str id) ]
+    @ (match job_id with Some j -> [ ("jobId", str j) ] | None -> [])
+    @ [ ("annotations", `List annotations) ])
+
+(* The id of the annotation [c] asks to be made on [id] by [request]. *)
+let marked (c : A.client) id request =
+  A.string_member "annotationId"
+    (A.ask c "mark:create-request"
+       (`Assoc [ ("resourceId", str id); ("request", request) ]))

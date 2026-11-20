@@ -8,19 +8,11 @@ open Xynolog_conformance
 open Support
 open Case
 
-let ( // ) = Filename.concat
-
 (* The most events one answer holds, as the Archivist's API states it. *)
 let page_size () =
   Protocol.limit Archivist "GET" "/events/{resourceId}" "maxEvents"
 
-let sequence_of event =
-  match Check.at event [ "metadata"; "sequenceNumber" ] with
-  | `Int n -> n
-  | other -> failwith (Check.shown other ^ " is no sequence number")
-
 let from first last = List.init (last - first + 1) (fun at -> first + at)
-let ints numbers = `List (List.map (fun n -> `Int n) numbers)
 
 let events_path stream from_sequence =
   Printf.sprintf "/events/%s?fromSequence=%d"
@@ -73,23 +65,12 @@ let from_a_sequence (w : A.t) =
       "replayed\n"
   in
   let editor = A.person w "editor" in
-  ignore
-    (A.ask editor "mark:archive" (`Assoc [ ("resourceId", str id) ])
-      : Yojson.Safe.t);
-  ignore
-    (A.ask editor "mark:unarchive" (`Assoc [ ("resourceId", str id) ])
-      : Yojson.Safe.t);
+  ignore (A.ask editor "mark:archive" (on id) : Yojson.Safe.t);
+  ignore (A.ask editor "mark:unarchive" (on id) : Yojson.Safe.t);
   Check.equal "the stream"
-    (`List
-       [
-         `List [ str "yield:created"; `Int 1 ];
-         `List [ str "mark:archived"; `Int 2 ];
-         `List [ str "mark:unarchived"; `Int 3 ];
-       ])
-    (`List
-       (List.map
-          (fun e -> `List [ Check.at e [ "type" ]; `Int (sequence_of e) ])
-          (A.stored w id)));
+    (numbered_as
+       [ ("yield:created", 1); ("mark:archived", 2); ("mark:unarchived", 3) ])
+    (numbered_events (A.stored w id));
 
   let answered stream from_sequence =
     let events, last_sequence = page w stream from_sequence in
@@ -111,11 +92,7 @@ let from_a_sequence (w : A.t) =
         A.http w ~route:"/events/{resourceId}" "GET"
           ("/events/" ^ Protocol.uri_component id ^ query)
       in
-      let status, _, _ = http_error "events-bad-request" [] in
-      Check.equal (query ^ ": its status") (`Int status) (`Int refused.status);
-      Check.equal (query ^ ": its body")
-        (error_body "events-bad-request" [])
-        (Option.get refused.json))
+      holds_http_error query "events-bad-request" [] refused)
     [
       "";
       "?fromSequence=0";
@@ -146,13 +123,10 @@ let long_stream (w : A.t) =
            ("metadata", `Assoc [ ("sequenceNumber", `Int sequence_number) ]);
          ])
   in
-  let dir = A.stream_dir w id in
-  A.make_dirs dir;
   let write number sequences =
-    Out_channel.with_open_bin
-      (dir // A.event_file_name number)
-      (fun out ->
-        List.iter (fun n -> output_string out (line n ^ "\n")) sequences)
+    A.write_file
+      (A.stream_dir w id // A.event_file_name number)
+      (String.concat "" (List.map (fun n -> line n ^ "\n") sequences))
   in
   write file.first (from 1 per_file);
   write (file.first + 1) (from (per_file + 1) total);
@@ -190,7 +164,7 @@ let system_stream (w : A.t) =
     match
       List.find_opt
         (fun e ->
-          Check.at e [ "type" ] = str "frame:entity-type-added"
+          of_type "frame:entity-type-added" e
           && Check.at e [ "payload"; "entityType" ] = str "Positioned")
         read
     with
@@ -224,23 +198,9 @@ let every_stream (w : A.t) =
       [ ("name", "Twice"); ("storageUri", "file://docs/twice.md") ]
       "twice\n"
   in
-  ignore
-    (A.ask (A.person w "editor") "mark:archive"
-       (`Assoc [ ("resourceId", str twice) ])
-      : Yojson.Safe.t);
+  ignore (A.ask (A.person w "editor") "mark:archive" (on twice) : Yojson.Safe.t);
 
-  let reply = A.http w ~route:"/events" "GET" "/events" in
-  Check.equal (Call.shown reply.text) (`Int 200) (`Int reply.status);
-  let listed =
-    List.map
-      (fun stream ->
-        match
-          (Check.at stream [ "resourceId" ], Check.at stream [ "lastSequence" ])
-        with
-        | `String id, `Int last -> (id, last)
-        | _ -> failwith (Check.shown stream ^ " is no stream"))
-      (Check.list (Option.get reply.json) [ "streams" ])
-  in
+  let listed = A.streams w in
   let ids = List.map fst listed in
   (* Each stream once. *)
   Check.equal "the streams listed once"
@@ -258,9 +218,7 @@ let every_stream (w : A.t) =
   (* Every stream the log holds on disk, and no other, each where its files
      say it stands. *)
   let on_disk = streams_under (Filename.dirname (A.stream_dir w A.system)) in
-  Check.equal "the streams on disk"
-    (`List (List.map str (List.sort compare on_disk)))
-    (`List (List.map str (List.sort compare ids)));
+  Check.equal "the streams on disk" (strs (sorted on_disk)) (strs (sorted ids));
   (* The knowledge base's own stream goes on beside the case: it stands at
      least where it was listed. *)
   List.iter

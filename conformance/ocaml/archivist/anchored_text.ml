@@ -9,57 +9,29 @@ open Support
 open Case
 
 let stamp = "conformance-reader-1+conformance-engine-1"
-
-(* The entry format AnchoredTextExtractedEntry states. *)
-let version () =
-  match
-    Option.bind (Protocol.json_of "archivist/AnchoredTextExtractedEntry.json")
-      (fun schema -> Protocol.at schema [ "properties"; "v"; "enum" ])
-  with
-  | Some (`List [ `Int v ]) -> v
-  | _ -> failwith "AnchoredTextExtractedEntry states no one entry format"
-
-let entry_of ?(stamp = stamp) text =
-  match anchored_entry text with
-  | `Assoc members ->
-      `Assoc (("v", `Int (version ())) :: ("stamp", str stamp) :: members)
-  | other -> other
-
-let write checksum entry =
-  `Assoc [ ("contentChecksum", str checksum); ("entry", entry) ]
-
-let pdf w name file content =
-  A.created w
-    (World.person_did w.A.world "reader")
-    [
-      ("name", name);
-      ("storageUri", "file://scans/" ^ file);
-      ("format", "application/pdf");
-    ]
-    content
+let entry_of ?(stamp = stamp) text = A.stamped stamp (anchored_entry text)
 
 let status what expected (reply : Call.reply) =
   Check.equal (what ^ ": its status") (`Int expected) (`Int reply.status)
 
 let stored what reply = status what 204 reply
-let keys_of keys = `List (List.map str keys)
 
 let extracted w id text =
-  matching "the anchored text"
+  like "the anchored text"
     (`Assoc [ ("kind", str "extracted"); ("text", str text) ])
     (A.anchored_text w id)
 
 let same_bytes w =
   let content = "%PDF-1.4 stored through the surface\n" in
-  let first = pdf w "First" "first.pdf" content in
-  let second = pdf w "Second" "second.pdf" content in
+  let first = scan w "First" "file://scans/first.pdf" content in
+  let second = scan w "Second" "file://scans/second.pdf" content in
   A.state_stamp w stamp;
   stored "the write"
     (A.store_anchored_text w first
-       (write (sha256 content) (entry_of "alpha beta")));
+       (A.entry_write (sha256 content) (entry_of "alpha beta")));
   List.iter
     (fun id ->
-      matching "the anchored text"
+      like "the anchored text"
         (`Assoc
            [
              ("kind", str "extracted");
@@ -71,22 +43,23 @@ let same_bytes w =
   (* A second write for the same bytes replaces the first. *)
   stored "the second write"
     (A.store_anchored_text w second
-       (write (sha256 content) (entry_of "gamma delta")));
+       (A.entry_write (sha256 content) (entry_of "gamma delta")));
   extracted w first "gamma delta"
 
 let read_back w =
   let content = "%PDF-1.4 read back by checksum\n" in
-  let id = pdf w "Read back" "read-back.pdf" content in
+  let id = scan w "Read back" "file://scans/read-back.pdf" content in
   A.state_stamp w stamp;
   let entry = entry_of "read back" in
-  stored "the write" (A.store_anchored_text w id (write (sha256 content) entry));
+  stored "the write"
+    (A.store_anchored_text w id (A.entry_write (sha256 content) entry));
   let held = A.stored_anchored_text w id (Some (sha256 content)) in
   status "the entry read back" 200 held;
   Check.equal "the entry read back" entry (Option.get held.json);
   (* Bytes with no entry, of a resource nothing has settled: answered at
      once. *)
   let unread = "%PDF-1.4 never derived\n" in
-  let never = pdf w "Never derived" "never.pdf" unread in
+  let never = scan w "Never derived" "file://scans/never.pdf" unread in
   let asked = Run.now () in
   status "the entry of bytes never derived"
     (http_status "anchored-text-no-entry")
@@ -113,9 +86,9 @@ let listed w =
   let ids =
     List.mapi
       (fun i content ->
-        pdf w
+        scan w
           (Printf.sprintf "Listed %d" i)
-          (Printf.sprintf "listed-%d.pdf" i)
+          (Printf.sprintf "file://scans/listed-%d.pdf" i)
           content)
       bytes
   in
@@ -131,7 +104,7 @@ let listed w =
       let content = List.nth bytes i in
       stored "a write under the stamp before"
         (A.store_anchored_text w (id i)
-           (write (sha256 content)
+           (A.entry_write (sha256 content)
               (entry_of ~stamp:"stamp-before" (Printf.sprintf "before %d" i)))))
     [ 0; 1 ];
   let keys = A.anchored_text_keys w in
@@ -145,30 +118,30 @@ let listed w =
      to no one; nothing is deleted. *)
   A.state_stamp w "stamp-after";
   Check.equal "the keys under a new stamp" (`List [])
-    (keys_of (A.anchored_text_keys w));
+    (strs (A.anchored_text_keys w));
   status "an entry stored under the old stamp"
     (http_status "anchored-text-no-entry")
     (A.stored_anchored_text w (id 0) (Some a));
   stored "a write under the new stamp"
     (A.store_anchored_text w (id 2)
-       (write c (entry_of ~stamp:"stamp-after" "after")));
-  Check.equal "the keys under the new stamp" (keys_of [ c ])
-    (keys_of (A.anchored_text_keys w));
+       (A.entry_write c (entry_of ~stamp:"stamp-after" "after")));
+  Check.equal "the keys under the new stamp" (strs [ c ])
+    (strs (A.anchored_text_keys w));
   (* The old stamp stated again: its entries are there. *)
   A.state_stamp w "stamp-before";
   Check.equal "the keys under the old stamp again"
-    (keys_of (List.sort compare [ a; b ]))
-    (keys_of (A.anchored_text_keys w));
+    (strs (sorted [ a; b ]))
+    (strs (A.anchored_text_keys w));
   status "an entry stored under the old stamp, stated again" 200
     (A.stored_anchored_text w (id 0) (Some a))
 
 let kept w =
   let content = "%PDF-1.4 kept across a restart\n" in
-  let id = pdf w "Kept" "kept.pdf" content in
+  let id = scan w "Kept" "file://scans/kept.pdf" content in
   A.state_stamp w "stamp-kept";
   stored "the write"
     (A.store_anchored_text w id
-       (write (sha256 content) (entry_of ~stamp:"stamp-kept" "kept")));
+       (A.entry_write (sha256 content) (entry_of ~stamp:"stamp-kept" "kept")));
   A.restart w;
   status "the entry after a restart" 200
     (A.stored_anchored_text w id (Some (sha256 content)));
@@ -176,17 +149,19 @@ let kept w =
 
 let refused_writes w =
   let content = "%PDF-1.4 the bytes the resource has\n" in
-  let id = pdf w "Changed" "changed.pdf" content in
+  let id = scan w "Changed" "file://scans/changed.pdf" content in
   A.state_stamp w stamp;
   let other = sha256 "%PDF-1.4 bytes it does not have\n" in
-  let stale = A.store_anchored_text w id (write other (entry_of "stale")) in
+  let stale =
+    A.store_anchored_text w id (A.entry_write other (entry_of "stale"))
+  in
   status "a write for other bytes" 409 stale;
   Check.contains_text "a write for other bytes' error" (sha256 content)
     (A.string_member "error" (Option.get stale.json));
   status "a write for a resource the record does not hold"
     (http_status "anchored-text-write-not-found")
     (A.store_anchored_text w (String.make 32 'c')
-       (write (sha256 content) (entry_of "nowhere")));
+       (A.entry_write (sha256 content) (entry_of "nowhere")));
   let with_member name value = function
     | `Assoc members ->
         `Assoc (List.remove_assoc name members @ [ (name, value) ])
@@ -201,11 +176,11 @@ let refused_writes w =
         (A.store_anchored_text w id body))
     [
       `Assoc [ ("contentChecksum", str (sha256 content)) ];
-      write "not-a-checksum" (entry_of "bad key");
-      write (sha256 content)
-        (with_member "v" (`Int (version () - 1)) (entry_of "old form"));
+      A.entry_write "not-a-checksum" (entry_of "bad key");
+      A.entry_write (sha256 content)
+        (with_member "v" (`Int (A.entry_format () - 1)) (entry_of "old form"));
       with_member "extra" (`Bool true)
-        (write (sha256 content) (entry_of "extra"));
+        (A.entry_write (sha256 content) (entry_of "extra"));
     ];
   status "the entry after the refused writes"
     (http_status "anchored-text-no-entry")
@@ -225,7 +200,7 @@ let refused_writes w =
 
 let service_only w =
   let content = "%PDF-1.4 admitted only as a service\n" in
-  let id = pdf w "Admitted" "admitted.pdf" content in
+  let id = scan w "Admitted" "file://scans/admitted.pdf" content in
   let roleless = A.service_token ~roles:[] w in
   let unauthorized = (messages ()).unauthorized.status in
   List.iter
@@ -239,7 +214,7 @@ let service_only w =
       ( "a write",
         fun () ->
           A.store_anchored_text ~token:roleless w id
-            (write (sha256 content) (entry_of "refused")) );
+            (A.entry_write (sha256 content) (entry_of "refused")) );
       ( "a read",
         fun () ->
           A.stored_anchored_text ~token:roleless w id (Some (sha256 content)) );

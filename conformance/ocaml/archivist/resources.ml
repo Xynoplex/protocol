@@ -12,53 +12,23 @@ let uuid =
 let timestamp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
 let minted = "^[0-9a-f]{32}$"
 
-let json_of what (reply : Call.reply) =
-  match reply.json with
-  | Some json -> json
-  | None -> failwith (what ^ " is not JSON: " ^ Call.shown reply.text)
-
-let text_at json path =
-  match Check.at json path with
-  | `String text -> text
-  | other -> failwith (Check.shown other ^ " is not a string")
-
-let sequence_of event =
-  match Check.at event [ "metadata"; "sequenceNumber" ] with
-  | `Int n -> n
-  | other -> failwith (Check.shown other ^ " is no sequence number")
-
-let header (reply : Call.reply) name = Http.Header.get reply.headers name
-
-(* The id the gateway gives the fact [sequence] of the stream of [id], on
-   that resource's scope. *)
-let persisted_id channel id sequence =
-  match
-    Bus_stream.expected_id
-      {
-        Bus_stream.channel;
-        correlation_id = None;
-        scope = Some id;
-        payload =
-          `Assoc [ ("metadata", `Assoc [ ("sequenceNumber", `Int sequence) ]) ];
-      }
-  with
-  | Bus_stream.Persisted persisted -> persisted
-  | Bus_stream.Reply _ | Bus_stream.Ephemeral ->
-      failwith "a scoped fact's id is no persisted id"
-
-let view_of w id =
-  match A.view w id with
-  | Some view -> view
-  | None -> failwith ("the Archivist keeps no view of " ^ id)
-
-let types names = `List (List.map str names)
+(* The fact [sequence] of the stream of [id], on that resource's scope, as
+   far as the id the gateway gives it goes. *)
+let scoped_at channel id sequence : Bus_stream.frame =
+  {
+    channel;
+    correlation_id = None;
+    scope = Some id;
+    payload =
+      `Assoc [ ("metadata", `Assoc [ ("sequenceNumber", `Int sequence) ]) ];
+  }
 
 let uploaded w =
   let ada = World.person_did w.A.world "ada" in
   let watcher = A.sidecar w "watcher" in
   let content = "# Overview\n\nThe record of everything.\n" in
   let uri = "file://docs/overview.md" in
-  let typed = types (entity_types 1) in
+  let typed = strs (entity_types 1) in
   let id =
     A.created w ada
       [
@@ -76,8 +46,8 @@ let uploaded w =
     (str (A.read_file (A.content_path w uri)));
   (* One line, in the stream filed by the shard of the id. *)
   Check.equal "the stream's files"
-    (`List [ str (A.event_file_name (A.layout ()).event_file.first) ])
-    (`List (List.map str (A.stream_files w id)));
+    (strs [ A.first_event_file () ])
+    (strs (A.stream_files w id));
   let line =
     match A.stream_lines w id with
     | [ line ] -> line
@@ -87,7 +57,7 @@ let uploaded w =
   in
   let event = Yojson.Safe.from_string line in
   Check.equal "the event's keys, in order"
-    (types
+    (strs
        [
          "type";
          "resourceId";
@@ -99,7 +69,7 @@ let uploaded w =
          "metadata";
        ])
     (match event with
-    | `Assoc members -> types (List.map fst members)
+    | `Assoc members -> strs (List.map fst members)
     | other -> failwith (Check.shown other ^ " is not an object"));
   Check.equal "the line, as compact JSON"
     (str (Yojson.Safe.to_string event))
@@ -114,9 +84,9 @@ let uploaded w =
          ("metadata", `Assoc [ ("sequenceNumber", `Int 1) ]);
        ])
     event;
-  let event_id = text_at event [ "id" ] in
+  let event_id = A.string_member "id" event in
   Check.that ("the event's id: " ^ event_id) (Check.matches_re uuid event_id);
-  let at = text_at event [ "timestamp" ] in
+  let at = A.string_member "timestamp" event in
   Check.that ("the event's timestamp: " ^ at) (Check.matches_re timestamp at);
   let payload = Check.at event [ "payload" ] in
   let ada_as_person = `Assoc [ ("@type", str "Person"); ("@id", str ada) ] in
@@ -140,7 +110,7 @@ let uploaded w =
   Check.that "the event carries no correlationId"
     (Protocol.at event [ "correlationId" ] = None);
   (* The view, filed by the same shard, is what the event adds up to. *)
-  let view = view_of w id in
+  let view = view w id in
   Check.equal "the view's last sequence" (`Int 1)
     (Check.at view [ "lastSequence" ]);
   Check.equal "the view's annotations"
@@ -177,13 +147,12 @@ let uploaded w =
        ])
     (Check.at view [ "resource" ]);
   (* The index answers which resource is at the URI. *)
-  Check.equal "the storage-uri entry"
-    (`Assoc [ ("uri", str uri); ("resourceId", str id) ])
+  Check.equal "the storage-uri entry" (uri_entry uri id)
     (Option.get (A.storage_uri_entry w uri));
   Check.equal "the storage-uri entry's keys, in order"
-    (types [ "uri"; "resourceId" ])
+    (strs [ "uri"; "resourceId" ])
     (match Yojson.Safe.from_string (A.read_file (A.storage_uri_path w uri)) with
-    | `Assoc members -> types (List.map fst members)
+    | `Assoc members -> strs (List.map fst members)
     | other -> failwith (Check.shown other ^ " is not an object"));
   (* The fact is the stored event, published once with no scope. *)
   let of_it e = Protocol.at e [ "resourceId" ] = Some (str id) in
@@ -201,17 +170,12 @@ let scoped w =
       "scoped\n"
   in
   let follower = A.person w "follower" ~scopes:[ id ] in
-  Check.equal "the answer" (`Assoc [])
-    (A.ask follower "mark:archive" (`Assoc [ ("resourceId", str id) ]));
-  let message =
-    Bus_stream.next follower.stream "the scoped fact" (fun m ->
-        match m.frame with
-        | Some f -> f.channel = "mark:archived" && f.scope = Some id
-        | None -> false)
+  Check.equal "the answer" (`Assoc []) (A.ask follower "mark:archive" (on id));
+  let message, frame =
+    scoped_fact follower "the scoped fact" "mark:archived" id
   in
-  let frame = Option.get message.frame in
   Check.equal "the scoped fact's id"
-    (str (persisted_id "mark:archived" id 2))
+    (str (persisted_id (scoped_at "mark:archived" id 2)))
     (match message.id with Some i -> str i | None -> `Null);
   like "the scoped fact"
     (`Assoc
@@ -246,17 +210,14 @@ let served w =
       (A.resource_path id "/content")
   in
   Check.equal "its status" (`Int 200) (`Int reply.status);
-  Check.equal "its content type" (str "image/png")
-    (match header reply "content-type" with Some t -> str t | None -> `Null);
+  Check.equal "its content type" (str "image/png") (header reply "content-type");
   Check.that "its bytes are those stored" (reply.text = content)
 
 let not_held w =
   let id = "0123456789abcdef0123456789abcdef" in
   let answered name fill route suffix =
-    let status, _, _ = http_error name fill in
-    let reply = A.http w ~route "GET" (A.resource_path id suffix) in
-    Check.equal (route ^ ": its status") (`Int status) (`Int reply.status);
-    Check.equal route (error_body name fill) (json_of route reply)
+    holds_http_error route name fill
+      (A.http w ~route "GET" (A.resource_path id suffix))
   in
   answered "content-no-resource"
     [ ("id", id) ]
@@ -277,10 +238,8 @@ let described w =
   Check.equal "its status" (`Int 200) (`Int reply.status);
   Check.equal "its content type"
     (str "application/ld+json; charset=utf-8")
-    (match header reply "content-type" with Some t -> str t | None -> `Null);
-  let browsed =
-    A.ask reader "browse:resource-requested" (`Assoc [ ("resourceId", str id) ])
-  in
+    (header reply "content-type");
+  let browsed = A.ask reader "browse:resource-requested" (on id) in
   like "the descriptor browse answers"
     (`Assoc
        [
@@ -311,9 +270,7 @@ let guarded w =
       (`Assoc [ ("error", str unauthorized.error) ])
       (json_of what reply);
     Check.equal (what ^ ": its challenge") (str challenge)
-      (match header reply "www-authenticate" with
-      | Some c -> str c
-      | None -> `Null)
+      (header reply "www-authenticate")
   in
   List.iter
     (fun (meth, path, route) ->
@@ -374,20 +331,16 @@ let unrecordable w =
       ~headers:(("content-type", kind) :: headers)
       "POST" "/resources"
   in
-  let answered what name fill (reply : Call.reply) =
-    let status, _, _ = http_error name fill in
-    Check.equal (what ^ ": its status") (`Int status) (`Int reply.status);
-    Check.equal what (error_body name fill) (json_of what reply)
-  in
   let naming what field (reply : Call.reply) =
     Check.equal (what ^ ": its status") (`Int 400) (`Int reply.status);
-    Check.contains_text what field (text_at (json_of what reply) [ "error" ])
+    Check.contains_text what field
+      (A.string_member "error" (json_of what reply))
   in
-  answered "unattributed" "upload-unattributed" []
+  holds_http_error "unattributed" "upload-unattributed" []
     (post ~headers:[ ("Idempotency-Key", Fresh.uuid ()) ] (form good));
   naming "unkeyed" "Idempotency-Key"
     (post ~headers:[ ("Xynolog-Principal", ada) ] (form good));
-  answered "not multipart" "upload-not-multipart" []
+  holds_http_error "not multipart" "upload-not-multipart" []
     (A.http w ~route:"/resources"
        ~json:(`Assoc (List.map (fun (name, value) -> (name, str value)) good))
        ~headers:(keyed ()) "POST" "/resources");
@@ -398,7 +351,7 @@ let unrecordable w =
     [ "name"; "format"; "storageUri" ];
   naming "without a file" "file" (post (form ~file:false good));
   let unknown = "application/x-not-a-thing" in
-  answered "an unknown media type" "upload-unsupported-media"
+  holds_http_error "an unknown media type" "upload-unsupported-media"
     [ ("type", unknown) ]
     (post (form (("format", unknown) :: List.remove_assoc "format" good)));
   List.iter
@@ -472,7 +425,7 @@ let updated w =
          ("metadata", `Assoc [ ("sequenceNumber", `Int 2) ]);
        ])
     update;
-  let view = view_of w id in
+  let view = view w id in
   like "the representations"
     (`List
        [
@@ -569,8 +522,7 @@ let already_there w =
     created;
   Check.that "the creation names no language"
     (Protocol.at created [ "payload"; "language" ] = None);
-  Check.equal "the storage-uri entry"
-    (`Assoc [ ("uri", str uri); ("resourceId", str id) ])
+  Check.equal "the storage-uri entry" (uri_entry uri id)
     (Option.get (A.storage_uri_entry w uri))
 
 let archived w =
@@ -584,7 +536,7 @@ let archived w =
   let command extra =
     `Assoc ([ ("resourceId", str id); ("storageUri", str uri) ] @ extra)
   in
-  let is_archived () = Check.at (view_of w id) [ "resource"; "archived" ] in
+  let is_archived () = Check.at (view w id) [ "resource"; "archived" ] in
   Check.equal "the archive's answer" (`Assoc [])
     (A.ask owner "mark:archive" (command [ ("keepFile", `Bool true) ]));
   Check.that "the file is kept" (Sys.file_exists (A.content_path w uri));
@@ -593,8 +545,7 @@ let archived w =
     (`Assoc [ ("type", str "mark:archived"); ("payload", `Assoc []) ])
     (List.nth (A.stored w id) 1);
   (* An archived resource is still found by its URI. *)
-  Check.equal "the storage-uri entry"
-    (`Assoc [ ("uri", str uri); ("resourceId", str id) ])
+  Check.equal "the storage-uri entry" (uri_entry uri id)
     (Option.get (A.storage_uri_entry w uri));
   Check.equal "the unarchive's answer" (`Assoc [])
     (A.ask owner "mark:unarchive" (command []));
@@ -607,9 +558,9 @@ let archived w =
     (str (refusal "unarchive-without-file" [ ("uri", uri) ]))
     (str (A.refused owner "mark:unarchive" (command [])));
   Check.equal "the stream's events"
-    (types
+    (strs
        [ "yield:created"; "mark:archived"; "mark:unarchived"; "mark:archived" ])
-    (`List (List.map (fun e -> Check.at e [ "type" ]) (A.stored w id)))
+    (types_of (A.stored w id))
 
 let retyped w =
   let curator = A.person w "curator" in
@@ -620,7 +571,7 @@ let retyped w =
       [
         ("name", "Typed");
         ("storageUri", "file://docs/typed.md");
-        ("entityTypes", Yojson.Safe.to_string (types [ kind 0; kind 1 ]));
+        ("entityTypes", Yojson.Safe.to_string (strs [ kind 0; kind 1 ]));
       ]
       "typed\n"
   in
@@ -629,8 +580,8 @@ let retyped w =
        (`Assoc
           [
             ("resourceId", str id);
-            ("currentEntityTypes", types [ kind 0; kind 1 ]);
-            ("updatedEntityTypes", types [ kind 1; kind 2; kind 3 ]);
+            ("currentEntityTypes", strs [ kind 0; kind 1 ]);
+            ("updatedEntityTypes", strs [ kind 1; kind 2; kind 3 ]);
           ]));
   Check.equal "the events after the creation"
     (`List
@@ -646,8 +597,8 @@ let retyped w =
               [ Check.at e [ "type" ]; Check.at e [ "payload"; "entityType" ] ])
           (List.tl (A.stored w id))));
   Check.equal "the view's entity types"
-    (types [ kind 1; kind 2; kind 3 ])
-    (Check.at (view_of w id) [ "resource"; "entityTypes" ]);
+    (strs [ kind 1; kind 2; kind 3 ])
+    (Check.at (view w id) [ "resource"; "entityTypes" ]);
   let unheard = [ "Unheard"; "Of" ] in
   let seeded =
     (Protocol.tables ()).archivist_default_entity_types.entity_types
@@ -663,8 +614,8 @@ let retyped w =
           (`Assoc
              [
                ("resourceId", str id);
-               ("currentEntityTypes", types [ kind 1 ]);
-               ("updatedEntityTypes", types (kind 1 :: unheard));
+               ("currentEntityTypes", strs [ kind 1 ]);
+               ("updatedEntityTypes", strs (kind 1 :: unheard));
              ])));
   Check.equal "the stream's events" (`Int 4)
     (`Int (List.length (A.stored w id)))
@@ -682,8 +633,7 @@ let filed w =
   Check.that "the view is where the layout files it"
     (Sys.file_exists (A.view_path w id));
   Run.eventually "the index entry" 5.0 (fun () -> A.storage_uri_entry w uri)
-  |> Check.equal "the storage-uri entry"
-       (`Assoc [ ("uri", str uri); ("resourceId", str id) ])
+  |> Check.equal "the storage-uri entry" (uri_entry uri id)
 
 let ordered w =
   let owner = A.person w "owner" in
@@ -696,13 +646,10 @@ let ordered w =
   (* Twenty events of one stream, each sent as the last is answered. *)
   for _ = 1 to 10 do
     List.iter
-      (fun operation ->
-        ignore
-          (A.ask owner operation (`Assoc [ ("resourceId", str id) ])
-            : Yojson.Safe.t))
+      (fun operation -> ignore (A.ask owner operation (on id) : Yojson.Safe.t))
       [ "mark:archive"; "mark:unarchive" ]
   done;
-  let last = persisted_id "mark:unarchived" id 21 in
+  let last = persisted_id (scoped_at "mark:unarchived" id 21) in
   ignore
     (Bus_stream.next follower.stream "the last scoped fact" (fun m ->
          match m.frame with
@@ -722,8 +669,7 @@ let ordered w =
     | 1 :: rest -> rest
     | sequences -> sequences
   in
-  let expected = `List (List.init 20 (fun i -> `Int (i + 2))) in
-  let ints sequences = `List (List.map (fun n -> `Int n) sequences) in
+  let expected = ints (List.init 20 (fun i -> i + 2)) in
   Check.equal "the scoped facts' sequence numbers" expected
     (ints
        (without_creation

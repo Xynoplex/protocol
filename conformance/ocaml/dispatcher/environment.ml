@@ -37,7 +37,7 @@ let with_env (implementations : Implementations.t) env run =
 
 (* Make the dispatcher answer one request. *)
 let ask w =
-  let answer = D.status (D.person w "environment") (D.unknown_job_id ()) in
+  let answer = D.status (D.person w "environment") (Fresh.job_id ()) in
   Check.equal "the reply's channel" (str (failure ())) (str answer.channel)
 
 let about channel kind (s : Otlp.span) =

@@ -7,8 +7,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let ( // ) = Filename.concat
-
 (* Well short of how long a read of anchored text is held for the Smelter:
    a read answered within it was not held. *)
 let unheld () =
@@ -49,8 +47,6 @@ let engines =
     ]
 
 let empty = `Assoc []
-let strs items = `List (List.map str items)
-let sorted items = List.sort compare items
 
 let members = function
   | `Assoc members -> members
@@ -61,18 +57,6 @@ let strings json path =
     (function
       | `String s -> s | other -> failwith (Check.shown other ^ " is no string"))
     (Check.list json path)
-
-let present what = function
-  | Some value -> value
-  | None -> failwith (what ^ " is absent")
-
-let last items = List.hd (List.rev items)
-
-let of_type type_ events =
-  List.filter (fun e -> Check.at e [ "type" ] = str type_) events
-
-let write_file path content =
-  Out_channel.with_open_bin path (fun out -> output_string out content)
 
 let unscoped what event =
   Check.that
@@ -105,7 +89,9 @@ let vocabulary (w : A.t) =
   Check.equal "the entity types"
     (strs (sorted defaults))
     (strs (sorted (entity_types ())));
-  let added () = of_type "frame:entity-type-added" (A.stored w A.system) in
+  let added () =
+    List.filter (of_type "frame:entity-type-added") (A.stored w A.system)
+  in
   let seeded = added () in
   Check.equal "the entity types seeded" (strs defaults)
     (`List (List.map (fun e -> Check.at e [ "payload"; "entityType" ]) seeded));
@@ -122,7 +108,7 @@ let vocabulary (w : A.t) =
   Check.equal "the add's response" empty
     (A.ask curator "frame:add-entity-type"
        (`Assoc [ ("tag", str "Zeitgeist") ]));
-  let latest = last (added ()) in
+  let latest = last "the entity types added" (added ()) in
   Check.equal "the last added's sender" (str curator.did)
     (Check.at latest [ "userId" ]);
   Check.equal "the last added" (str "Zeitgeist")
@@ -193,7 +179,9 @@ let tag_schemas (w : A.t) =
     (`Assoc [ ("tagSchemas", `List answered) ])
     (present "tagschemas.json" (A.projection w "tagschemas.json"));
   Check.equal "the tag schemas added" (`Int 3)
-    (`Int (List.length (of_type "frame:tag-schema-added" (A.stored w A.system))))
+    (`Int
+       (List.length
+          (List.filter (of_type "frame:tag-schema-added") (A.stored w A.system))))
 
 let lists_resources (w : A.t) =
   let ada = World.person_did w.world "ada" in
@@ -219,19 +207,13 @@ let lists_resources (w : A.t) =
       ]
   in
   let id at = List.nth ids at in
-  ignore
-    (A.ask reader "mark:archive" (`Assoc [ ("resourceId", str (id 1)) ])
-      : Yojson.Safe.t);
+  ignore (A.ask reader "mark:archive" (on (id 1)) : Yojson.Safe.t);
 
   let mine response =
     strs
       (List.filter
          (fun id -> List.mem id ids)
-         (List.map
-            (fun r ->
-              match Check.at r [ "@id" ] with
-              | `String id -> id
-              | other -> failwith (Check.shown other ^ " is no id"))
+         (List.map (A.string_member "@id")
             (Check.list response [ "resources" ])))
   in
   let browse filters =
@@ -263,8 +245,6 @@ let lists_resources (w : A.t) =
     page;
   Check.equal "the page's resources" (strs [ id 0 ]) (mine page)
 
-let types_of events = `List (List.map (fun e -> Check.at e [ "type" ]) events)
-
 let resource_events (w : A.t) =
   let reader = A.person w "reader" in
   let editor = A.person w "editor" in
@@ -273,12 +253,8 @@ let resource_events (w : A.t) =
       [ ("name", "Eventful"); ("storageUri", "file://listed/eventful.md") ]
       "eventful\n"
   in
-  ignore
-    (A.ask editor "mark:archive" (`Assoc [ ("resourceId", str id) ])
-      : Yojson.Safe.t);
-  ignore
-    (A.ask reader "mark:unarchive" (`Assoc [ ("resourceId", str id) ])
-      : Yojson.Safe.t);
+  ignore (A.ask editor "mark:archive" (on id) : Yojson.Safe.t);
+  ignore (A.ask reader "mark:unarchive" (on id) : Yojson.Safe.t);
 
   let events filters =
     A.ask reader "browse:events-requested"
@@ -287,21 +263,9 @@ let resource_events (w : A.t) =
   let all = events [] in
   let listed = Check.list all [ "events" ] in
   Check.equal "the events"
-    (`List
-       [
-         `List [ str "yield:created"; `Int 1 ];
-         `List [ str "mark:archived"; `Int 2 ];
-         `List [ str "mark:unarchived"; `Int 3 ];
-       ])
-    (`List
-       (List.map
-          (fun e ->
-            `List
-              [
-                Check.at e [ "type" ];
-                Check.at e [ "metadata"; "sequenceNumber" ];
-              ])
-          listed));
+    (numbered_as
+       [ ("yield:created", 1); ("mark:archived", 2); ("mark:unarchived", 3) ])
+    (numbered_events listed);
   Check.equal "their agents"
     (strs [ reader.did; editor.did; reader.did ])
     (`List (List.map (fun e -> Check.at e [ "agent"; "@id" ]) listed));
@@ -319,17 +283,13 @@ let resource_events (w : A.t) =
     (types_of (Check.list (events [ ("limit", `Int 2) ]) [ "events" ]));
   Check.equal "those of a resource with none" (`List [])
     (Check.at
-       (A.ask reader "browse:events-requested"
-          (`Assoc [ ("resourceId", str (String.make 32 'a')) ]))
+       (A.ask reader "browse:events-requested" (on (String.make 32 'a')))
        [ "events" ])
 
 let not_found (w : A.t) =
   let reader = A.person w "reader" in
   let channel = "browse:resource-requested" in
-  let answer =
-    A.request reader channel
-      (`Assoc [ ("resourceId", str (String.make 32 'b')) ])
-  in
+  let answer = A.request reader channel (on (String.make 32 'b')) in
   Check.that "it is refused" (not answer.ok);
   Check.equal "the refusal"
     (refusal_body ~channel "resource-not-found" [])
@@ -341,8 +301,7 @@ let first_agent (reader : A.client) id =
   Check.at
     (List.hd
        (Check.list
-          (A.ask reader "browse:events-requested"
-             (`Assoc [ ("resourceId", str id) ]))
+          (A.ask reader "browse:events-requested" (on id))
           [ "events" ]))
     [ "agent" ]
 
@@ -395,9 +354,7 @@ let names_person (w : A.t) =
       [ ("@type", str "Person"); ("@id", str lovelace.did); ("name", name) ]
   in
   Check.equal "the resource's attribution" (`List [ named ])
-    (attributed
-       (A.ask reader "browse:resource-requested"
-          (`Assoc [ ("resourceId", str id) ])));
+    (attributed (A.ask reader "browse:resource-requested" (on id)));
   Check.equal "the first event's agent" named (first_agent reader id);
   (* The log holds the event as recorded: no name in it. *)
   Check.equal "the attribution recorded"
@@ -434,9 +391,7 @@ let names_agent (w : A.t) =
       ]
   in
   Check.equal "the resource's attribution" (`List [ named ])
-    (attributed
-       (A.ask reader "browse:resource-requested"
-          (`Assoc [ ("resourceId", str id) ])));
+    (attributed (A.ask reader "browse:resource-requested" (on id)));
   Check.equal "the first event's agent" named (first_agent reader id);
   (* The log holds the event as recorded: no name in it. *)
   Check.equal "the attribution recorded"
@@ -468,7 +423,7 @@ let records_profile (w : A.t) =
         if Check.at e [ "userId" ] = str namer.did then
           Some (Check.at e [ "payload"; "name" ])
         else None)
-      (of_type "principal:profiled" (A.stored w A.system))
+      (List.filter (of_type "principal:profiled") (A.stored w A.system))
   in
   let profile name =
     A.emit namer "principal:profile" (`Assoc [ ("name", str name) ])
@@ -497,9 +452,9 @@ let lists_directory (w : A.t) =
   let reader = A.person w "reader" in
   let tree = w.dirs.root // "tree" in
   A.make_dirs (tree // "inner");
-  write_file (tree // "b.md") "bb";
-  write_file (tree // "a.md") "a";
-  write_file (tree // ".hidden") "h";
+  A.write_file (tree // "b.md") "bb";
+  A.write_file (tree // "a.md") "a";
+  A.write_file (tree // ".hidden") "h";
 
   let listing =
     A.ask reader "browse:directory-requested" (`Assoc [ ("path", str "tree") ])
@@ -562,7 +517,7 @@ let answer_too_large (w : A.t) =
   let wide = w.dirs.root // "wide" in
   Sys.mkdir wide 0o755;
   for n = 0 to 23_999 do
-    write_file (wide // Printf.sprintf "%05d%s.md" n (String.make 195 'w')) ""
+    A.write_file (wide // Printf.sprintf "%05d%s.md" n (String.make 195 'w')) ""
   done;
 
   (* Well inside the 30 s a requester waits: the failure is the answer, not
@@ -574,11 +529,7 @@ let answer_too_large (w : A.t) =
   Check.that "it is refused" (not answer.ok);
   Check.equal "the path" (str "wide") (Check.at answer.payload [ "path" ]);
   let limit = bus_message_bytes () in
-  let message =
-    match Check.at answer.payload [ "message" ] with
-    | `String m -> m
-    | other -> failwith (Check.shown other ^ " is no message")
-  in
+  let message = A.string_member "message" answer.payload in
   let said =
     Re.exec_opt
       (Re.compile
@@ -597,13 +548,6 @@ let answer_too_large (w : A.t) =
   | None ->
       failwith
         (Printf.sprintf "%S is not archivist/messages.json's too-large" message)
-
-(* A PDF the reader uploads. *)
-let scan (w : A.t) name uri content =
-  A.created w
-    (World.person_did w.world "reader")
-    [ ("name", name); ("storageUri", uri); ("format", "application/pdf") ]
-    content
 
 let not_yet = `Assoc [ ("kind", str "not-yet") ]
 
@@ -646,15 +590,6 @@ let from_store (w : A.t) =
   Check.equal "another resource of the same bytes" not_yet
     (A.anchored_text w other)
 
-(* The entry format AnchoredTextEntry states. *)
-let entry_format () =
-  match
-    Option.bind (Protocol.json_of "archivist/AnchoredTextExtractedEntry.json")
-      (fun schema -> Protocol.at schema [ "properties"; "v"; "enum" ])
-  with
-  | Some (`List [ `Int v ]) -> v
-  | _ -> failwith "AnchoredTextExtractedEntry states no one entry format"
-
 let other_version (w : A.t) =
   let content = "%PDF-1.4 an entry of another version\n" in
   let checksum = sha256 content in
@@ -663,7 +598,7 @@ let other_version (w : A.t) =
 
   (* The same entry, under the stamp its writer states, as another version. *)
   let entry = A.anchored_text_entry_path w checksum in
-  let v = entry_format () in
+  let v = A.entry_format () in
   let rest =
     match Yojson.Safe.from_file entry with
     | `Assoc members ->
@@ -672,7 +607,7 @@ let other_version (w : A.t) =
         List.remove_assoc "v" members
     | other -> failwith (Check.shown other ^ " is no entry")
   in
-  write_file entry
+  A.write_file entry
     (Yojson.Safe.to_string (`Assoc (("v", `Int (v - 1)) :: rest)));
 
   Check.equal "the answer" not_yet (A.anchored_text w id)

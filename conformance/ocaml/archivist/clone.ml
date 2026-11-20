@@ -5,11 +5,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let token_of issued =
-  match Protocol.at issued [ "token" ] with
-  | Some (`String token) -> token
-  | _ -> failwith ("no token was issued: " ^ Check.shown issued)
-
 let seconds_from_now moment =
   match Ptime.of_rfc3339 moment with
   | Ok (at, _, _) -> Ptime.to_float_s at -. Unix.gettimeofday ()
@@ -18,7 +13,7 @@ let seconds_from_now moment =
 let made_with_a_token w =
   let owner = A.person w "owner" in
   let cloner = A.person w "cloner" in
-  let types = `List (List.map str (entity_types 1)) in
+  let types = strs (entity_types 1) in
   let source =
     A.created w owner.did
       [
@@ -28,11 +23,8 @@ let made_with_a_token w =
       ]
       "original\n"
   in
-  let issued =
-    A.ask cloner "yield:clone-token-requested"
-      (`Assoc [ ("resourceId", str source) ])
-  in
-  let token = token_of issued in
+  let issued = A.ask cloner "yield:clone-token-requested" (on source) in
+  let token = A.string_member "token" issued in
   Check.that
     ("the token's form: " ^ token)
     (Check.matches_re "^clone_[0-9a-f]{32}$" token);
@@ -40,12 +32,7 @@ let made_with_a_token w =
     (`Assoc [ ("@id", str source); ("name", str "Original") ])
     (Check.at issued [ "resource" ]);
   let expires_at = Check.at issued [ "expiresAt" ] in
-  let lifetime =
-    seconds_from_now
-      (match expires_at with
-      | `String at -> at
-      | other -> failwith (Check.shown other ^ " is no moment"))
-  in
+  let lifetime = seconds_from_now (A.string_member "expiresAt" issued) in
   Check.that
     (Printf.sprintf "the token lives more than 14 minutes: %g s" lifetime)
     (lifetime > 14.0 *. 60.0);
@@ -92,8 +79,8 @@ let made_with_a_token w =
                ("contentChecksum", str (sha256 copy));
                ("parentResourceId", str source);
                ("entityTypes", types);
-               ("creator", `Assoc [ ("@id", str cloner.did) ]);
-               ("wasAttributedTo", `List [ `Assoc [ ("@id", str cloner.did) ] ]);
+               ("creator", named cloner.did);
+               ("wasAttributedTo", `List [ named cloner.did ]);
              ] );
          ("metadata", `Assoc [ ("sequenceNumber", `Int 1) ]);
        ])
@@ -111,13 +98,12 @@ let made_with_a_token w =
                  [ ("storageUri", str uri); ("checksum", str (sha256 copy)) ];
              ] );
        ])
-    (Check.at (Option.get (A.view w clone)) [ "resource" ]);
-  Check.equal "the copy's storage-uri entry"
-    (`Assoc [ ("uri", str uri); ("resourceId", str clone) ])
+    (Check.at (view w clone) [ "resource" ]);
+  Check.equal "the copy's storage-uri entry" (uri_entry uri clone)
     (Option.get (A.storage_uri_entry w uri));
   (* The source is as it was. *)
   Check.equal "the source's archived" (`Bool false)
-    (Check.at (Option.get (A.view w source)) [ "resource"; "archived" ]);
+    (Check.at (view w source) [ "resource"; "archived" ]);
   (* The token is spent. *)
   Check.equal "the spent token looked up"
     (str (refusal "invalid-token" []))
@@ -133,9 +119,8 @@ let made_by_an_upload w =
       "old\n"
   in
   let token =
-    token_of
-      (A.ask owner "yield:clone-token-requested"
-         (`Assoc [ ("resourceId", str source) ]))
+    A.string_member "token"
+      (A.ask owner "yield:clone-token-requested" (on source))
   in
   let clone =
     A.created w owner.did
@@ -156,14 +141,12 @@ let made_by_an_upload w =
        ])
     (List.hd (A.stored w clone));
   Run.eventually "the source to be archived" 5.0 (fun () ->
-      match
-        Protocol.at (Option.get (A.view w source)) [ "resource"; "archived" ]
-      with
+      match Protocol.at (view w source) [ "resource"; "archived" ] with
       | Some (`Bool true) -> Some ()
       | _ -> None);
   like "the source's last event"
     (`Assoc [ ("type", str "mark:archived"); ("userId", str owner.did) ])
-    (List.hd (List.rev (A.stored w source)))
+    (last "the source's stream" (A.stored w source))
 
 let refused_without_a_source w =
   let cloner = A.person w "cloner" in
@@ -172,7 +155,7 @@ let refused_without_a_source w =
     (str (refusal "clone-source-not-found" []))
     (str
        (A.refused cloner "yield:clone-token-requested"
-          (`Assoc [ ("resourceId", str (String.make 32 'd')) ])));
+          (on (String.make 32 'd'))));
   Check.equal "a token it did not issue, looked up"
     (str (refusal "invalid-token" []))
     (str
@@ -201,9 +184,7 @@ let refused_without_a_source w =
       : Yojson.Safe.t);
   Check.equal "a token for a resource whose content is gone"
     (str (refusal "clone-content-not-found" []))
-    (str
-       (A.refused cloner "yield:clone-token-requested"
-          (`Assoc [ ("resourceId", str gone) ])))
+    (str (A.refused cloner "yield:clone-token-requested" (on gone)))
 
 let tests implementations =
   with_archivist implementations "a clone"

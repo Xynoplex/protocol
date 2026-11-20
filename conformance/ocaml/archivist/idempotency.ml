@@ -10,38 +10,11 @@ open Case
 
 (* The id of every stream the log holds, as the Archivist lists them,
    sorted. *)
-let streams w =
-  let listed = A.http w ~route:"/events" "GET" "/events" in
-  if listed.status <> 200 then
-    failwith
-      (Printf.sprintf "the streams were not listed: %d %s" listed.status
-         listed.text);
-  List.sort compare
-    (List.map
-       (fun stream -> A.string_member "resourceId" stream)
-       (Check.list (Option.get listed.json) [ "streams" ]))
-
-let shown ids = `List (List.map str ids)
-
-(* The id of the resource an upload was answered with; the Archivist must
-   have recorded it. *)
-let id_of (reply : Call.reply) =
-  if reply.status <> 200 then
-    failwith
-      (Printf.sprintf "the upload was not recorded: %d %s" reply.status
-         reply.text);
-  A.string_member "resourceId" (Option.get reply.json)
-
-let types w id =
-  `List (List.map (fun event -> Check.at event [ "type" ]) (A.stored w id))
+let streams w = sorted (List.map fst (A.streams w))
 
 let answered_with what id (reply : Call.reply) =
   Check.equal (what ^ ": its status") (`Int 200) (`Int reply.status);
-  match reply.json with
-  | Some json -> Check.equal what (`Assoc [ ("resourceId", str id) ]) json
-  | None -> failwith (what ^ " is not JSON: " ^ Call.shown reply.text)
-
-let fields name storage_uri = [ ("name", name); ("storageUri", storage_uri) ]
+  Check.equal what (`Assoc [ ("resourceId", str id) ]) (json_of what reply)
 
 let recorded_once w =
   let ada = World.person_did w.A.world "ada" in
@@ -49,18 +22,17 @@ let recorded_once w =
   let content = "sent twice, recorded once\n" in
   let uri = "file://keyed/sent-twice.md" in
   let sent = fields "Sent twice" uri in
-  let id = id_of (A.upload w ~key ada sent content) in
+  let id = A.recorded_id (A.upload w ~key ada sent content) in
   let before = streams w in
   let again = A.upload w ~key ada sent content in
   answered_with "the upload sent again" id again;
-  Check.equal "the streams" (shown before) (shown (streams w));
+  Check.equal "the streams" (strs before) (strs (streams w));
   Check.equal "the resource's events"
     (`List [ str "yield:created" ])
-    (types w id);
+    (types_of (A.stored w id));
   Check.equal "the bytes in the working tree" (str content)
     (str (A.read_file (A.content_path w uri)));
-  Check.equal "the storage-uri entry"
-    (`Assoc [ ("uri", str uri); ("resourceId", str id) ])
+  Check.equal "the storage-uri entry" (uri_entry uri id)
     (Option.get (A.storage_uri_entry w uri))
 
 let at_once w =
@@ -74,14 +46,14 @@ let at_once w =
       (fun () -> A.upload w ~key ada sent content)
       (fun () -> A.upload w ~key ada sent content)
   in
-  let id = id_of one in
+  let id = A.recorded_id one in
   answered_with "the second upload" id two;
   Check.equal "the streams"
-    (shown (List.sort compare (id :: before)))
-    (shown (streams w));
+    (strs (List.sort compare (id :: before)))
+    (strs (streams w));
   Check.equal "the resource's events"
     (`List [ str "yield:created" ])
-    (types w id)
+    (types_of (A.stored w id))
 
 let other_fields_refused w =
   let ada = World.person_did w.A.world "ada" in
@@ -90,9 +62,9 @@ let other_fields_refused w =
   let uri = "file://keyed/first-of-its-key.md" in
   let first = fields "First of its key" uri in
   let elsewhere = "file://keyed/elsewhere.md" in
-  let id = id_of (A.upload w ~key ada first content) in
+  let id = A.recorded_id (A.upload w ~key ada first content) in
   let before = streams w in
-  let status, _, _ = http_error "upload-key-reused" [] in
+  let status = http_status "upload-key-reused" in
   List.iter
     (fun (why, sent, content) ->
       Check.equal why (`Int status)
@@ -102,10 +74,10 @@ let other_fields_refused w =
       ("another name", fields "Another name" uri, content);
       ("another storage URI", fields "First of its key" elsewhere, content);
     ];
-  Check.equal "the streams" (shown before) (shown (streams w));
+  Check.equal "the streams" (strs before) (strs (streams w));
   Check.equal "the resource's events"
     (`List [ str "yield:created" ])
-    (types w id);
+    (types_of (A.stored w id));
   Check.equal "the bytes in the working tree" (str content)
     (str (A.read_file (A.content_path w uri)));
   Check.that "nothing is stored elsewhere"
@@ -119,10 +91,12 @@ let another_principal w =
   let key = Fresh.uuid () in
   let content = "one key text, two principals\n" in
   let adas =
-    id_of (A.upload w ~key ada (fields "Ada's" "file://keyed/adas.md") content)
+    A.recorded_id
+      (A.upload w ~key ada (fields "Ada's" "file://keyed/adas.md") content)
   in
   let beas =
-    id_of (A.upload w ~key bea (fields "Bea's" "file://keyed/beas.md") content)
+    A.recorded_id
+      (A.upload w ~key bea (fields "Bea's" "file://keyed/beas.md") content)
   in
   Check.that "the two principals' resources are two" (beas <> adas);
   like "Ada's resource's events"
@@ -150,11 +124,11 @@ let with_a_clone_token w =
     @ [ ("cloneToken", token) ]
   in
   let content = "the clone\n" in
-  let clone = id_of (A.upload w ~key owner.did sent content) in
+  let clone = A.recorded_id (A.upload w ~key owner.did sent content) in
   let before = streams w in
   let again = A.upload w ~key owner.did sent content in
   answered_with "the upload sent again" clone again;
-  Check.equal "the streams" (shown before) (shown (streams w));
+  Check.equal "the streams" (strs before) (strs (streams w));
   like "the clone's events"
     (`List
        [
@@ -172,15 +146,15 @@ let across_a_restart w =
   let key = Fresh.uuid () in
   let sent = fields "Across a restart" "file://keyed/across-a-restart.md" in
   let content = "sent before a restart and after it\n" in
-  let id = id_of (A.upload w ~key ada sent content) in
+  let id = A.recorded_id (A.upload w ~key ada sent content) in
   A.restart w;
   let before = streams w in
   let again = A.upload w ~key ada sent content in
   answered_with "the upload sent again" id again;
-  Check.equal "the streams" (shown before) (shown (streams w));
+  Check.equal "the streams" (strs before) (strs (streams w));
   Check.equal "the resource's events"
     (`List [ str "yield:created" ])
-    (types w id)
+    (types_of (A.stored w id))
 
 let tests implementations =
   with_archivist implementations "an upload sent again with its key"
