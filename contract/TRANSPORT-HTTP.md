@@ -20,7 +20,7 @@ its own initiative.
 
 **How this document is held.** As in the contract, each rule ends with
 *Held by* and what fails when it is broken: a file of the gateway suite
-([`conformance/gateway`](../conformance/gateway/README.md)),
+([`conformance/ocaml/gateway`](../conformance/ocaml/gateway/README.md)),
 which checks a running gateway against this document and the spec; a case
 of the SDK suite ([`conformance/sdk`](../conformance/sdk/README.md)),
 which checks every SDK; or a test of the reference client. "Held by no
@@ -99,7 +99,7 @@ its description (`GET /resources/{id}/jsonld`), of its annotations
   its situation. A refusal it relays from the Archivist carries the
   Archivist's words.
 
-*Held by `gateway/edge.test.ts`, `gateway/spec-derived.test.ts`.*
+*Held by `gateway/edge`, `gateway/spec_derived`.*
 
 ## Limits
 
@@ -142,7 +142,7 @@ has already been refused, and a client that can renew its token renews it
 and sends the request again at once
 ([TRANSPORT-CONTRACT.md § A refused credential](./TRANSPORT-CONTRACT.md#a-refused-credential)).
 
-*Held by `gateway/spec-derived.test.ts`, `gateway/emit.test.ts`, `gateway/principal-limits.test.ts`, `gateway/refusals.test.ts`, `gateway/capacity.test.ts`, `gateway/bounds.test.ts`, `gateway/replicas.test.ts`, `sdk/wire/emit-rate-limited`, `sdk/wire/stream-rate-limited`.*
+*Held by `gateway/spec_derived`, `gateway/emit`, `gateway/principal_limits`, `gateway/refusals`, `gateway/capacity`, `gateway/bounds`, `gateway/replicas`, `sdk/wire/emit-rate-limited`, `sdk/wire/stream-rate-limited`.*
 
 ## Authentication and authorization
 
@@ -168,7 +168,7 @@ clearing anything the caller wrote there: the `stamps` of
 [`bus/registry.json`](../specs/src/bus/registry.json). This is the contract's identity rule; the gateway
 is its mechanism over HTTP.
 
-*Held by `gateway/tokens.test.ts`, `gateway/edge.test.ts`, `gateway/emit.test.ts`.*
+*Held by `gateway/tokens`, `gateway/edge`, `gateway/emit`.*
 
 ## The gateway
 
@@ -194,12 +194,12 @@ is its mechanism over HTTP.
   property named for an id that refers to no kind, and a case the rule
   does not agree with, fail it. The gateway is held to it by its suite,
   which sends every string the table says a kind accepts and every one it
-  refuses: in a payload and as a `scope` (`gateway/emit.test.ts`), in a
-  subscription's `scoped` entry (`gateway/stream.test.ts`), to
-  `POST /api/tokens/media` (`gateway/tokens.test.ts`), and in the path of
+  refuses: in a payload and as a `scope` (`gateway/emit`), in a
+  subscription's `scoped` entry (`gateway/stream`), to
+  `POST /api/tokens/media` (`gateway/tokens`), and in the path of
   a resource's routes, where
   what is not an id names no resource and is a 404
-  (`gateway/content.test.ts`).
+  (`gateway/content`).
 - **Claims.** A registry operation's request carrying a `correlationId`
   claims that id for its `clientId` and the verified principal before it
   is published — `clientId` is required then (400 without it). The claim
@@ -230,7 +230,7 @@ is its mechanism over HTTP.
 - **A broker that is down refuses.** While the signal plane's broker is
   not connected an emit is refused 503, never accepted and lost.
 
-*Held by `gateway/emit.test.ts`, `gateway/replicas.test.ts`, `gateway/outage.test.ts`, `sdk/wire/request-unanswerable`.*
+*Held by `gateway/emit`, `gateway/replicas`, `gateway/outage`, `sdk/wire/request-unanswerable`.*
 
 ### POST /bus/subscribe
 
@@ -253,7 +253,7 @@ is its mechanism over HTTP.
   frame published after a stream's first message is carried by it,
   through whichever replica it was emitted.
 
-*Held by `gateway/stream.test.ts`, `gateway/replicas.test.ts`.*
+*Held by `gateway/stream`, `gateway/replicas`.*
 
 #### Event id and resumption
 
@@ -296,7 +296,7 @@ live frames that arrived while the replay ran, less any event the replay
 already delivered; then the live tail. The first `ping` follows the
 catch-up.
 
-*Held by `gateway/stream.test.ts`, `gateway/bounds.test.ts`, `sdk/wire/resumption`.*
+*Held by `gateway/stream`, `gateway/bounds`, `sdk/wire/resumption`.*
 
 ### Correlated-reply retention
 
@@ -315,7 +315,7 @@ Under the in-process plane they live in the one gateway process, and a
 restart loses them. A reply older than the retention window is not
 recovered; its request has timed out long before.
 
-*Held by `gateway/stream.test.ts`, `gateway/replicas.test.ts`, `sdk/wire/pending-replies`.*
+*Held by `gateway/stream`, `gateway/replicas`, `sdk/wire/pending-replies`.*
 
 ## The client
 

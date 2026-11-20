@@ -269,7 +269,7 @@ rule; this section says it in prose.
   a gateway refuses a request outside them before a Librarian is asked. A
   Librarian asked by another way fails a `limit` less than 1, in the words
   `limit must be at least 1`, and asks no source.
-  *Held by `librarian/tests/test_reference_search.py`, and by `gateway/emit.test.ts`, for the bounds of a text search's.*
+  *Held by `librarian/tests/test_reference_search.py`, and by `gateway/emit`, for the bounds of a text search's.*
 
 ### The score
 
@@ -366,7 +366,7 @@ search as what each store answers and the page that follows, and is the rule.
   request states the bounds, so a gateway refuses a request outside them
   before a Librarian is asked. A Librarian asked by another way fails a
   `limit` less than 1, in the words `limit must be at least 1`, and asks no
-  store. *Held by `librarian/tests/test_search_cases.py` and `gateway/emit.test.ts`.*
+  store. *Held by `librarian/tests/test_search_cases.py` and `gateway/emit`.*
 - **Otherwise the graph's listing is asked,** with the text, with `archived`
   and the entity type where they are given, with the offset, which is 0 where
   none is given, and with the limit, which is 50 where none is given. The
@@ -584,7 +584,7 @@ order of the rules below.
 - **A `contextWindow` less than 100 or more than 5,000 fails the gather,**
   and nothing is read. The schema of the request states the same bounds, so
   a gateway refuses such a request before a Librarian is asked.
-  *Held by `librarian/tests/test_window_cases.py` and `librarian/tests/test_annotation_gather.py`, by `gateway/emit.test.ts`, and by `librarian/gather`, for a window of 99 and one of 5,001, and no model asked.*
+  *Held by `librarian/tests/test_window_cases.py` and `librarian/tests/test_annotation_gather.py`, by `gateway/emit`, and by `librarian/gather`, for a window of 99 and one of 5,001, and no model asked.*
 - **The resource's view is read, and the annotation is found in it by its
   id.** A resource with no view, an annotation the view does not hold, and an
   annotation whose target names another resource each fail the gather.
@@ -768,7 +768,7 @@ among them.
 - **The graph database is asked for the annotations that refer to the
   resource,** of that motivation where one is named, and all of them where
   none is named. A graph that fails fails the request.
-  *Held by `librarian/tests/test_referenced_by.py`, and by `librarian/search`, for the annotations and the motivation, and `gateway/emit.test.ts`, for a word that is no motivation.*
+  *Held by `librarian/tests/test_referenced_by.py`, and by `librarian/search`, for the annotations and the motivation, and `gateway/emit`, for a word that is no motivation.*
 - **Each resource those annotations are on is read once, from the graph, and
   from the views where the graph has none or its read fails.** A resource
   whose view cannot be read is one nobody holds.

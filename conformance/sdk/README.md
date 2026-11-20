@@ -58,7 +58,7 @@ lands inside the case; a `quiet` step gives it the time to land.
 
 The gateway is the real one, on each signal plane, with the suite's issuer,
 stand-in Archivist and broker around it (the same world the
-[gateway suite](../gateway/README.md) runs). Two things stand between it and
+[gateway suite](../ocaml/gateway/README.md) runs). Two things stand between it and
 the client:
 
 - the **client proxy** ([harness/client-proxy.ts](../harness/client-proxy.ts)):

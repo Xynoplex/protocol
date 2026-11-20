@@ -19,15 +19,6 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'gateway',
-          include: ['gateway/**/*.test.ts', 'harness/**/*.test.ts'],
-          provide: { gatewayCommand: implementations.gateway },
-          globalSetup: ['harness/global-setup.ts'],
-        },
-      },
-      {
-        extends: true,
-        test: {
           name: 'dispatcher',
           include: ['dispatcher/**/*.test.ts'],
           provide: { gatewayCommand: implementations.gateway, dispatcherCommand: implementations.dispatcher },
@@ -47,7 +38,8 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'sdk',
-          include: ['sdk/**/*.test.ts'],
+          // The client proxy is the SDK suite's, and is held against a real gateway.
+          include: ['sdk/**/*.test.ts', 'harness/client-proxy.test.ts'],
           provide: { gatewayCommand: implementations.gateway, sdkDrivers: implementations.sdks },
           globalSetup: ['harness/global-setup.ts'],
         },

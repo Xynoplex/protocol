@@ -13,7 +13,7 @@ document is wrong and is corrected deliberately. There is no third option.
 that fail when a client or a gateway breaks it: a case of the SDK
 conformance suite ([`conformance/sdk`](../conformance/sdk/README.md),
 which every SDK runs), a file of the gateway suite
-([`conformance/gateway`](../conformance/gateway/README.md)), or
+([`conformance/ocaml/gateway`](../conformance/ocaml/gateway/README.md)), or
 a test of the reference implementation. A rule marked "Held by no case" is
 one nothing checks. `npm run lint:transport-contract` fails when a
 case named here does not exist, and when a wire case of the SDK suite is
@@ -173,22 +173,22 @@ is passing.
 
 - **Positioned.** A client that reopens its stream is sent each scope's
   events after the last one it delivered, once and in order.
-  *Held by `sdk/wire/resumption`, `sdk/wire/dedup-window`, `gateway/stream.test.ts`.*
+  *Held by `sdk/wire/resumption`, `sdk/wire/dedup-window`, `gateway/stream`.*
 - **Positioned, past the bound.** When the gateway cannot replay what a
   scope missed it says so, on that scope, and delivers what it still can.
   The client then asks again for what it holds of that scope.
-  *Held by `gateway/stream.test.ts`, `sdk/live/refresh-bus-resume-gap`.*
+  *Held by `gateway/stream`, `sdk/live/refresh-bus-resume-gap`.*
 - **Correlated.** A reply reaches only the client and principal that made
   the request. One published while the requester's stream was down is sent
   again when the stream reopens, and one carried by both connections of a
   handover is delivered once.
-  *Held by `sdk/wire/pending-replies`, `sdk/wire/overlap-dedup`, `gateway/stream.test.ts`, `gateway/replicas.test.ts`.*
+  *Held by `sdk/wire/pending-replies`, `sdk/wire/overlap-dedup`, `gateway/stream`, `gateway/replicas`.*
 - **Passing, across a drop.** A frame published while the stream is down is
   not carried by the stream that reopens.
   *Held by `sdk/wire/passing-across-drop`.*
 - **Passing, across a handover.** A frame published while both connections
   are open is carried by both under one id, and the client delivers it once.
-  *Held by `sdk/wire/passing-across-handoff`, `gateway/stream.test.ts`, `gateway/replicas.test.ts`.*
+  *Held by `sdk/wire/passing-across-handoff`, `gateway/stream`, `gateway/replicas`.*
 
 Six channels carry events that are in the record and are passing all the
 same: `yield:created`, `yield:updated`, `yield:cloned`, `yield:moved`,
@@ -252,10 +252,10 @@ refuses anything else.
 
 - Frames on one channel reach a subscriber in the order they were emitted.
   Across channels there is no order.
-  *Held by `gateway/stream.test.ts`.*
+  *Held by `gateway/stream`.*
 - A subscriber receives what is published while it is subscribed, and what
   its class replays. Nothing else.
-  *Held by `gateway/stream.test.ts`.*
+  *Held by `gateway/stream`.*
 
 ## The connection
 
@@ -368,7 +368,7 @@ returns what lets it go.
   *Held by `sdk/wire/subscribe-matrix`.*
 - Distinct resources compose: one stream carries any number of scopes, each
   held and released on its own.
-  *Held by `sdk/wire/subscribe-matrix`, `gateway/stream.test.ts`.*
+  *Held by `sdk/wire/subscribe-matrix`, `gateway/stream`.*
 - A scope keeps its position after it is let go: taken again, it resumes
   from there.
   *Held by `sdk/live/refresh-bus-resume-gap`.*
@@ -407,7 +407,7 @@ resource's scope while it is observed: freshness follows observation.
   *Held by `sdk/wire/emit-refused`.*
 - **`scope`**, when set, makes the emit a broadcast on that resource's
   scope: only subscribers holding the scope receive it.
-  *Held by `sdk/wire/emit-counted`, `gateway/stream.test.ts`.*
+  *Held by `sdk/wire/emit-counted`, `gateway/stream`.*
 
 ## Requests
 
@@ -450,7 +450,7 @@ result and failure channels are the registry's.
   *Held by `specs/src/bus/frame-cases.json`, `sdk/wire/failure-codes`, `sdk/typescript/core/src/__tests__/bus-request.test.ts`, `sdk/go/replies_test.go`, `sdk/rust/sdk/tests/bus.rs`, `sdk/python/sdk/tests/test_transport.py`, `sdk/kotlin/sdk/src/test/kotlin/xynolog/bus/BusTest.kt`, `sdk/swift/sdk/Tests/XynologTests/HTTPTests.swift`, `sdk/csharp/sdk/tests/Xynolog.Tests/TransportTests.cs`, `sdk/haskell/sdk/test/BusCases.hs`.*
 - **A request nobody is there to answer** fails as `peer-unavailable` when
   the gateway can tell, and as a timeout when it cannot.
-  *Held by `sdk/wire/request-unanswerable`, `gateway/emit.test.ts`.*
+  *Held by `sdk/wire/request-unanswerable`, `gateway/emit`.*
 - **A request whose replies the stream does not carry** fails at once as
   `unsubscribed`, and nothing is sent.
   *Held by `sdk/wire/request-unsubscribed`.*
@@ -475,7 +475,7 @@ this emit, never provenance.
 
 - A gateway verifies the caller's token and stamps both, clearing whatever
   the caller wrote there.
-  *Held by `gateway/emit.test.ts`.*
+  *Held by `gateway/emit`.*
 - A transport in the same process as the services stamps the identity of
   the process it runs as.
   *Held by no case.*
