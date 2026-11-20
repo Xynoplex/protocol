@@ -1,0 +1,481 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceDriverLine.json",
+  "description": "A line a conformance driver writes on its standard output, one JSON object each (conformance/sdk/README.md, \"The driver protocol\"; conformance/worker/README.md, \"The worker driver\"): that it is ready, an operation's outcome, or what its client observed as it happened. The suite refuses any other line.",
+  "oneOf": [
+    {
+      "title": "Ready",
+      "description": "The driver can take operations.",
+      "type": "object",
+      "properties": {
+        "ready": {
+          "type": "boolean",
+          "const": true,
+          "description": "Written once."
+        }
+      },
+      "required": [
+        "ready"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Ok",
+      "description": "The operation succeeded.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The operation's id."
+        },
+        "ok": {
+          "$comment": "What it returned, `null` when there is nothing to return: JSON by nature."
+        }
+      },
+      "required": [
+        "id",
+        "ok"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Failed",
+      "description": "The SDK failed the operation.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The operation's id."
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "The SDK's code for it, from specs/src/errors/codes.json."
+            },
+            "status": {
+              "type": "integer",
+              "description": "The HTTP status, when a server stated one."
+            },
+            "failureClass": {
+              "$ref": "https://xynolog.org/protocol/FailureClass.json",
+              "description": "A job failure's class, when it has one."
+            },
+            "detail": {
+              "type": "string",
+              "description": "The SDK's words, for a person; nothing compares it."
+            }
+          },
+          "required": [
+            "detail"
+          ],
+          "additionalProperties": false,
+          "description": "The failure."
+        }
+      },
+      "required": [
+        "id",
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Abandoned",
+      "description": "The suite abandoned the operation, and the SDK reported nothing else.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The operation's id."
+        },
+        "abandoned": {
+          "type": "boolean",
+          "const": true,
+          "description": "It was abandoned."
+        }
+      },
+      "required": [
+        "id",
+        "abandoned"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Unsupported",
+      "description": "The driver has no such operation. It says so at once, before it reads its next operation.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The operation's id."
+        },
+        "unsupported": {
+          "type": "boolean",
+          "const": true,
+          "description": "It has none."
+        }
+      },
+      "required": [
+        "id",
+        "unsupported"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Misuse",
+      "description": "The suite's arguments made no sense: the suite's mistake, never the SDK's.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The operation's id."
+        },
+        "misuse": {
+          "type": "string",
+          "description": "What made no sense."
+        }
+      },
+      "required": [
+        "id",
+        "misuse"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "State",
+      "description": "The transport's connection state changed.",
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "The state it is in now: one a case's `state` step names (ConformanceStep.json), or another the case never waits for."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Frame",
+      "description": "A frame was delivered on a channel the driver listens to.",
+      "type": "object",
+      "properties": {
+        "frame": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "description": "The channel."
+            },
+            "payload": {
+              "$comment": "The frame's payload: JSON by nature."
+            },
+            "correlationId": {
+              "type": "string",
+              "description": "The frame's correlation id, when it has one."
+            },
+            "scope": {
+              "$ref": "https://xynolog.org/protocol/ResourceId.json",
+              "description": "The frame's scope, when it has one."
+            }
+          },
+          "required": [
+            "channel"
+          ],
+          "additionalProperties": false,
+          "description": "The frame."
+        }
+      },
+      "required": [
+        "frame"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "ErrorStream",
+      "description": "The error stream carried a failure.",
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "The SDK's code for it, from specs/src/errors/codes.json."
+            },
+            "status": {
+              "type": "integer",
+              "description": "The HTTP status, when a server stated one."
+            },
+            "failureClass": {
+              "$ref": "https://xynolog.org/protocol/FailureClass.json",
+              "description": "A job failure's class, when it has one."
+            },
+            "detail": {
+              "type": "string",
+              "description": "The SDK's words, for a person; nothing compares it."
+            }
+          },
+          "required": [
+            "detail"
+          ],
+          "additionalProperties": false,
+          "description": "The failure."
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Progress",
+      "description": "An upload reported how much of it has been sent.",
+      "type": "object",
+      "properties": {
+        "progress": {
+          "type": "object",
+          "properties": {
+            "upload": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "The `upload` operation's id."
+            },
+            "bytesUploaded": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many bytes it has sent."
+            },
+            "totalBytes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many it will send."
+            }
+          },
+          "required": [
+            "upload",
+            "bytesUploaded",
+            "totalBytes"
+          ],
+          "additionalProperties": false,
+          "description": "The report."
+        }
+      },
+      "required": [
+        "progress"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Emission",
+      "description": "The live driver: an observer was given a state.",
+      "type": "object",
+      "properties": {
+        "emission": {
+          "type": "object",
+          "properties": {
+            "observer": {
+              "type": "string",
+              "description": "The observer."
+            },
+            "state": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "pending",
+                      "description": "Nothing to show yet."
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "ready",
+                      "description": "A value to show."
+                    },
+                    "value": {
+                      "$comment": "The value: JSON by nature."
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "failed",
+                      "description": "The query failed."
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "The SDK's code for it, from specs/src/errors/codes.json."
+                        },
+                        "status": {
+                          "type": "integer",
+                          "description": "The HTTP status, when a server stated one."
+                        },
+                        "failureClass": {
+                          "$ref": "https://xynolog.org/protocol/FailureClass.json",
+                          "description": "A job failure's class, when it has one."
+                        },
+                        "detail": {
+                          "type": "string",
+                          "description": "The SDK's words, for a person; nothing compares it."
+                        }
+                      },
+                      "required": [
+                        "detail"
+                      ],
+                      "additionalProperties": false,
+                      "description": "The failure."
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "The state."
+            }
+          },
+          "required": [
+            "observer",
+            "state"
+          ],
+          "additionalProperties": false,
+          "description": "The emission."
+        }
+      },
+      "required": [
+        "emission"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Completed",
+      "description": "The live driver: the observer's live query completed.",
+      "type": "object",
+      "properties": {
+        "completed": {
+          "type": "string",
+          "description": "The observer."
+        }
+      },
+      "required": [
+        "completed"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Claimed",
+      "description": "A worker driver: its worker claimed a job.",
+      "type": "object",
+      "properties": {
+        "claimed": {
+          "type": "object",
+          "additionalProperties": {
+            "$comment": "A member of the job's record, as the worker read it: JSON by nature."
+          },
+          "description": "The job, as the worker read the record."
+        }
+      },
+      "required": [
+        "claimed"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Refused",
+      "description": "A worker driver: a claim was refused.",
+      "type": "object",
+      "properties": {
+        "refused": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "The SDK's code for it, from specs/src/errors/codes.json."
+            },
+            "status": {
+              "type": "integer",
+              "description": "The HTTP status, when a server stated one."
+            },
+            "failureClass": {
+              "$ref": "https://xynolog.org/protocol/FailureClass.json",
+              "description": "A job failure's class, when it has one."
+            },
+            "detail": {
+              "type": "string",
+              "description": "The SDK's words, for a person; nothing compares it."
+            }
+          },
+          "required": [
+            "detail"
+          ],
+          "additionalProperties": false,
+          "description": "The refusal: with a code when the bus refused it, with none when the worker did."
+        }
+      },
+      "required": [
+        "refused"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Signalled",
+      "description": "A worker driver: a held job's cancellation was signalled.",
+      "type": "object",
+      "properties": {
+        "signalled": {
+          "type": "string",
+          "description": "The job's id."
+        }
+      },
+      "required": [
+        "signalled"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Stalled",
+      "description": "A worker driver: a held job stalled.",
+      "type": "object",
+      "properties": {
+        "stalled": {
+          "type": "string",
+          "description": "The job's id."
+        }
+      },
+      "required": [
+        "stalled"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

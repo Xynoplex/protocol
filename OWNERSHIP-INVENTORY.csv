@@ -319,7 +319,6 @@ conformance/package-lock.json,Portable conformance,xynolog/protocol,Protocol-own
 conformance/package.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/scripts/check-conformance-readmes.mjs,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/README.md,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
-conformance/sdk/case.schema.json,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/case.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/driver.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
 conformance/sdk/live.test.ts,Portable conformance,xynolog/protocol,Protocol-owned fixtures and harness; implementation launches remain consumer-owned.
@@ -621,6 +620,7 @@ reader/lib/bundle.ml,Protocol validation tooling,xynolog/protocol,"The reader: P
 reader/lib/client_surface.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/client_types_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/control_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/lib/corpus.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/identifiers_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/lib/jobs_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -642,6 +642,7 @@ reader/schema/validate.ml,Protocol validation tooling,xynolog/protocol,"The read
 reader/test/archivist_contract.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/bundle.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/census.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
+reader/test/corpus.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/dune,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/pattern.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
 reader/test/registry_rules.ml,Protocol validation tooling,xynolog/protocol,"The reader: Protocol's one model of itself, which its consumers read it through."
@@ -1072,6 +1073,11 @@ specs/src/components/schemas/YieldJobResult.json,Normative protocol source,xynol
 specs/src/components/schemas/YieldUpdateCommand.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/YieldUpdateOk.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/components/schemas/YieldedResource.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/conformance/ConformanceBusFetch.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/conformance/ConformanceCase.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/conformance/ConformanceDriverLine.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/conformance/ConformanceHttpFetch.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/conformance/ConformanceStep.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/AboutParams.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/AboutResult.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/ApiVersion.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

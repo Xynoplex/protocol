@@ -1,0 +1,633 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/ConformanceStep.json",
+  "description": "One step of a case of the conformance corpus (ConformanceCase.json): each is told apart by the member only it requires. conformance/sdk/README.md, \"A case\", says what each does.",
+  "oneOf": [
+    {
+      "title": "Let",
+      "description": "Name values for later steps.",
+      "type": "object",
+      "properties": {
+        "let": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature."
+          },
+          "description": "Each name, and the value it takes."
+        }
+      },
+      "required": [
+        "let"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Driver",
+      "description": "Ask the driver for an operation. It must succeed, with `returns` when given, or fail with `fails`. With `as`, the step does not wait: a later `settles` step does.",
+      "type": "object",
+      "properties": {
+        "driver": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The operation (conformance/sdk/README.md, \"Operations\")."
+        },
+        "with": {
+          "type": "object",
+          "additionalProperties": {
+            "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature."
+          },
+          "description": "The operation's arguments."
+        },
+        "returns": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        },
+        "fails": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        },
+        "as": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The operation's name, for the `settles` or `abandon` step that ends it."
+        }
+      },
+      "required": [
+        "driver"
+      ],
+      "additionalProperties": false,
+      "not": {
+        "required": [
+          "returns",
+          "fails"
+        ]
+      }
+    },
+    {
+      "title": "Abandon",
+      "description": "Abandon an operation started with `as`, as its caller would.",
+      "type": "object",
+      "properties": {
+        "abandon": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The operation."
+        }
+      },
+      "required": [
+        "abandon"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Settles",
+      "description": "An operation started with `as` settles: it succeeded, with `returns` when given; or failed with `fails`; or, `abandoned`, it ended because the case abandoned it and reported nothing.",
+      "type": "object",
+      "properties": {
+        "settles": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The operation."
+        },
+        "returns": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        },
+        "fails": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        },
+        "abandoned": {
+          "type": "boolean",
+          "const": true,
+          "description": "It ended because the case abandoned it."
+        }
+      },
+      "required": [
+        "settles"
+      ],
+      "additionalProperties": false,
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "returns",
+              "fails"
+            ]
+          },
+          {
+            "required": [
+              "returns",
+              "abandoned"
+            ]
+          },
+          {
+            "required": [
+              "fails",
+              "abandoned"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Wire",
+      "description": "The next request the client put on the wire is this operation, with each field given.",
+      "type": "object",
+      "properties": {
+        "wire": {
+          "type": "string",
+          "pattern": "^(GET|POST|PUT|DELETE|PATCH) /",
+          "description": "The operation of the gateway's API, by its method and path."
+        },
+        "at": {
+          "type": "string",
+          "enum": [
+            "arrival",
+            "answer",
+            "live"
+          ],
+          "description": "When it is read: on arrival, once answered (the default), or once its stream has caught up."
+        },
+        "status": {
+          "type": "integer",
+          "description": "The status it was answered with."
+        },
+        "params": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature. The values its path carried."
+        },
+        "body": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature. Its body."
+        },
+        "token": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature. The bearer token it carried."
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+          },
+          "description": "The request's headers named here, each as a pattern; headers not named are not compared."
+        },
+        "answer": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature. The body it was answered with."
+        },
+        "as": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The request's name, for a later step."
+        },
+        "follows": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "A request named earlier, which was answered before this one arrived."
+        },
+        "waited": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "A request named earlier, answered with a Retry-After, which this one waited out."
+        }
+      },
+      "required": [
+        "wire"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Carried",
+      "description": "The stream a wire step named has carried this frame to the client.",
+      "type": "object",
+      "properties": {
+        "carried": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The stream."
+        },
+        "is": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "carried",
+        "is"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Closed",
+      "description": "The request a `wire` step named has ended with no answer reaching the client: the client closed it, or the proxy kept the gateway's answer from it (`answer-lost`).",
+      "type": "object",
+      "properties": {
+        "closed": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The request."
+        }
+      },
+      "required": [
+        "closed"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Progress",
+      "description": "An upload started with `as`, and not yet settled, has reported all of it sent: every report states the same total, none states less than the one before, and the last states the total.",
+      "type": "object",
+      "properties": {
+        "progress": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The upload."
+        }
+      },
+      "required": [
+        "progress"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "State",
+      "description": "The transport comes to report this state.",
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "initial",
+            "connecting",
+            "open",
+            "reconnecting",
+            "degraded",
+            "unauthenticated",
+            "closed"
+          ],
+          "description": "The state."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Stays",
+      "description": "The transport is in this state and has reported no other since the case last read its state.",
+      "type": "object",
+      "properties": {
+        "stays": {
+          "type": "string",
+          "enum": [
+            "initial",
+            "connecting",
+            "open",
+            "reconnecting",
+            "degraded",
+            "unauthenticated",
+            "closed"
+          ],
+          "description": "The state."
+        }
+      },
+      "required": [
+        "stays"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Frame",
+      "description": "The next frame the client delivers on this channel is this one.",
+      "type": "object",
+      "properties": {
+        "frame": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The channel."
+        },
+        "is": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "frame",
+        "is"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Frames",
+      "description": "The client delivers this many more frames on this channel. What they are is held, as every frame is, to what the gateway sent.",
+      "type": "object",
+      "properties": {
+        "frames": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The channel."
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many more."
+        }
+      },
+      "required": [
+        "frames",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Error",
+      "description": "The next failure on the client's error stream is this one.",
+      "type": "object",
+      "properties": {
+        "error": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Backend",
+      "description": "The backend does something (conformance/sdk/README.md, \"Backend directives\").",
+      "type": "object",
+      "properties": {
+        "backend": {
+          "type": "string",
+          "enum": [
+            "listen",
+            "emit",
+            "record",
+            "content",
+            "description",
+            "annotations",
+            "anchored-text",
+            "uploaded",
+            "refuse",
+            "unanswered",
+            "answer-lost",
+            "hold",
+            "release",
+            "rechunk",
+            "carry",
+            "cut",
+            "down",
+            "up",
+            "archivist"
+          ],
+          "description": "The directive."
+        },
+        "with": {
+          "type": "object",
+          "additionalProperties": {
+            "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature."
+          },
+          "description": "The directive's arguments."
+        }
+      },
+      "required": [
+        "backend"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Quiet",
+      "description": "The client puts nothing more on the wire for this many milliseconds.",
+      "type": "object",
+      "properties": {
+        "quiet": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How long, in milliseconds."
+        }
+      },
+      "required": [
+        "quiet"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Observe",
+      "description": "Live: an observer, named by `as`, begins observing a live query.",
+      "type": "object",
+      "properties": {
+        "observe": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The live query, by its name in specs/src/client/refresh.json."
+            },
+            "resource": {
+              "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature. The resource a query kept per resource or per annotation is of."
+            },
+            "annotation": {
+              "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature. The annotation a query kept per annotation is of."
+            },
+            "search": {
+              "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature. What `matchedResources` searches for."
+            },
+            "filters": {
+              "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature. The filters of a query kept per set of filters."
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "description": "The live query."
+        },
+        "as": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The observer."
+        }
+      },
+      "required": [
+        "observe",
+        "as"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Leave",
+      "description": "Live: the observer stops observing.",
+      "type": "object",
+      "properties": {
+        "leave": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The observer."
+        }
+      },
+      "required": [
+        "leave"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Reaches",
+      "description": "Live: the observer comes to hold this state.",
+      "type": "object",
+      "properties": {
+        "reaches": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The observer."
+        },
+        "state": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "reaches",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Holds",
+      "description": "Live: the state the observer holds now is this one.",
+      "type": "object",
+      "properties": {
+        "holds": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The observer."
+        },
+        "state": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "holds",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Completes",
+      "description": "Live: the observer's live query completes.",
+      "type": "object",
+      "properties": {
+        "completes": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+          "description": "The observer."
+        }
+      },
+      "required": [
+        "completes"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "$ref": "https://xynolog.org/protocol/ConformanceBusFetch.json",
+      "description": "Live: the next request the client makes of a service is this request on the bus."
+    },
+    {
+      "$ref": "https://xynolog.org/protocol/ConformanceHttpFetch.json",
+      "description": "Live: the next request the client makes of a service is this read over HTTP."
+    },
+    {
+      "title": "Fetches",
+      "description": "Live: the next requests the client makes of a service are these, in whatever order it makes them.",
+      "type": "object",
+      "properties": {
+        "fetches": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "https://xynolog.org/protocol/ConformanceBusFetch.json"
+              },
+              {
+                "$ref": "https://xynolog.org/protocol/ConformanceHttpFetch.json"
+              }
+            ]
+          },
+          "description": "The requests."
+        }
+      },
+      "required": [
+        "fetches"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Scopes",
+      "description": "Live: the client's stream comes to name exactly these scopes.",
+      "type": "object",
+      "properties": {
+        "scopes": {
+          "type": "array",
+          "items": {
+            "$comment": "An argument's value, or a pattern that resolves to one (conformance/sdk/README.md, \"Values\"): JSON by nature."
+          },
+          "description": "The scopes."
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Claimed",
+      "description": "A worker case: the next job the worker reports as claimed, as it read the record.",
+      "type": "object",
+      "properties": {
+        "claimed": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "claimed"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Refused",
+      "description": "A worker case: the next refusal of a claim the worker reports.",
+      "type": "object",
+      "properties": {
+        "refused": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "refused"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Signalled",
+      "description": "A worker case: the next held job whose cancellation the worker says was signalled.",
+      "type": "object",
+      "properties": {
+        "signalled": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "signalled"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Stalled",
+      "description": "A worker case: the next held job the worker says has stalled.",
+      "type": "object",
+      "properties": {
+        "stalled": {
+          "$comment": "A value the case expects, as a pattern (conformance/sdk/README.md, \"Values\"): JSON by nature."
+        }
+      },
+      "required": [
+        "stalled"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

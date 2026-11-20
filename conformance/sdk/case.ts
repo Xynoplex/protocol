@@ -22,7 +22,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
-import { Ajv } from 'ajv';
+import { Ajv2020 } from 'ajv/dist/2020.js';
 import { storedEvent } from '../harness/archivist';
 import { startClientProxy, type ClientProxy, type ProxiedRequest } from '../harness/client-proxy';
 import type { Plane } from '../harness/gateway';
@@ -31,6 +31,7 @@ import { startOtlp, type OtlpReceiver } from '../harness/otlp';
 import { SERVICE_ROLE, WORKER_ROLE } from '../harness/roles';
 import { errorsOf, spec, type Method } from '../harness/spec';
 import { busRegistry, errorsCodes } from '../harness/generated/protocol/protocol';
+import { SPEC_SOURCE } from '../harness/paths';
 import { outsideTheSdkTable } from '../harness/telemetry';
 import type { World } from '../harness/world';
 import { Driver, type DeliveredFrame, type ObservedState, type Outcome, type ReportedFailure } from './driver';
@@ -114,28 +115,38 @@ export interface Case extends CaseDocument {
   name: string;
 }
 
-const validate = new Ajv({ allErrors: true }).compile<CaseDocument>(JSON.parse(readFileSync(join(HERE, 'case.schema.json'), 'utf8')) as object);
+const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-/** `document`, named, once case.schema.json accepts it. */
+/** Every JSON Schema of specs/src, by its `$id`, and the case's: specs/src/conformance/ConformanceCase.json. */
+const validate = (() => {
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  const walk = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => (entry.isDirectory() ? walk(join(dir, entry.name)) : entry.name.endsWith('.json') ? [join(dir, entry.name)] : []));
+  for (const file of walk(SPEC_SOURCE)) {
+    const schema: unknown = JSON.parse(readFileSync(file, 'utf8'));
+    if (isObject(schema) && typeof schema['$id'] === 'string') ajv.addSchema(schema);
+  }
+  return ajv.getSchema<CaseDocument>('https://xynolog.org/protocol/ConformanceCase.json')!;
+})();
+
+/** `document`, named, once ConformanceCase.json accepts it. */
 export function caseOf(name: string, document: unknown): Case {
   if (!validate(document)) throw new Error(`${name} is not a case: ${errorsOf(validate)}`);
   return { name, ...document };
 }
 
-/** Every case in `sdk/<layer>/`, each checked against case.schema.json. */
+/** Every case in `sdk/<layer>/`, each checked against ConformanceCase.json. */
 export function cases(layer: string): Case[] {
   return casesIn(join(HERE, layer));
 }
 
-/** Every case in the directory `dir`, each checked against case.schema.json. */
+/** Every case in the directory `dir`, each checked against ConformanceCase.json. */
 export function casesIn(dir: string): Case[] {
   return readdirSync(dir)
     .filter((file) => file.endsWith('.json'))
     .sort()
     .map((file) => caseOf(file.slice(0, -'.json'.length), JSON.parse(readFileSync(join(dir, file), 'utf8'))));
 }
-
-const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
 /** The error codes a client may report, from the table every SDK generates its own from: every section's. */
 function vocabulary(): Set<string> {

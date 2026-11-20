@@ -79,7 +79,9 @@ before it says it.
 
 A driver is a process. The suite writes one JSON object per line to its
 stdin and reads one per line from its stdout; stderr is free, and is shown
-when a case fails. The driver writes `{"ready": true}` once it can take
+when a case fails. Every line a driver writes is what
+[`specs/src/conformance/ConformanceDriverLine.json`](../../specs/src/conformance/ConformanceDriverLine.json)
+says, a worker driver's too, and the suite refuses any other. The driver writes `{"ready": true}` once it can take
 operations. When its stdin ends it disposes of its client and exits 0.
 
 **An operation** is `{"id": 7, "op": "emit", ...arguments}`. Operations run
@@ -223,8 +225,14 @@ exited holds what it exported to
 [`specs/src/sdk-telemetry/telemetry.json`](../../specs/src/sdk-telemetry/telemetry.json):
 every row arrived, of its kind, with every attribute not marked `only`, and
 whatever arrived under a row's name carries only that row's attributes. What
-no row names is the driver's process, not the SDK, and is not judged. [case.schema.json](case.schema.json) is the format, and every
-case is checked against it when the suite loads. A case's name is its file's.
+no row names is the driver's process, not the SDK, and is not judged.
+[`specs/src/conformance/ConformanceCase.json`](../../specs/src/conformance/ConformanceCase.json)
+is the format, and its steps are
+[`ConformanceStep.json`](../../specs/src/conformance/ConformanceStep.json)'s.
+The reader reads every case of the corpus through it (`make reader`), and
+holds what a case names to the spec: each operation of the gateway's API to
+the gateway's document, and each channel and request on the bus to the
+registry. A case's name is its file's.
 
 Steps run in order, each waiting for what it states:
 
