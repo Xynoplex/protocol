@@ -5,8 +5,6 @@ export default defineConfig({
   test: {
     pool: 'forks',
     include: [
-      'harness/graph-codec.test.ts',
-      'harness/graph-database.test.ts',
       'harness/implementations.test.ts',
       'harness/issuer.test.ts',
       'harness/net.test.ts',

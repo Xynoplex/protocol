@@ -695,6 +695,8 @@ let load root =
   let registry_rules = Registry_rules.refusals ~read_json tables.bus_registry in
   let jobs_rules = Jobs_rules.refusals ~ids ~read_json in
   let archivist_rules = Archivist_rules.refusals ~ids ~read_json in
+  let smelter_rules = Smelter_rules.refusals ~read_json in
+  let graph_rules = Graph_rules.refusals ~read_json in
   let identifiers_rules =
     Identifiers_rules.refusals ~ids ~read_json files tables.identifiers_kinds
   in
@@ -815,8 +817,9 @@ let load root =
     census @ stray_case_tables @ orphan_schemas @ path_item_names
     @ component_files @ listed_names @ shared_responses @ empty_services
     @ validation @ public_api @ client_surface @ reply_bounds @ offset_units
-    @ registry_rules @ jobs_rules @ archivist_rules @ identifiers_rules
-    @ client_types_rules @ protocol_rules @ control_rules @ retry_rules
+    @ registry_rules @ jobs_rules @ archivist_rules @ smelter_rules
+    @ identifiers_rules @ client_types_rules @ protocol_rules @ control_rules
+    @ retry_rules @ graph_rules
   in
   match (schemas, census) with
   | Ok schemas, [] ->

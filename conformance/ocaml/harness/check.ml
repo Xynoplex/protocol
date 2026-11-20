@@ -24,6 +24,28 @@ let equal what (expected : Yojson.Safe.t) (actual : Yojson.Safe.t) =
       (Printf.sprintf "%s:\nexpected %s\nreceived %s" what (shown expected)
          (shown actual))
 
+(* Whether [actual] holds what [partial] states, as toMatchObject holds it:
+   each member an object states held in turn, a list's items held one for
+   one, as many as it has, and anything else equal. *)
+let rec alike (partial : Yojson.Safe.t) (actual : Yojson.Safe.t) =
+  match (partial, actual) with
+  | `Assoc members, `Assoc _ ->
+      List.for_all
+        (fun (key, value) ->
+          match Protocol.at actual [ key ] with
+          | Some held -> alike value held
+          | None -> false)
+        members
+  | `List items, `List held ->
+      List.length items = List.length held && List.for_all2 alike items held
+  | _ -> canonical partial = canonical actual
+
+let like what partial actual =
+  if not (alike partial actual) then
+    failwith
+      (Printf.sprintf "%s: %s does not hold %s" what (shown actual)
+         (shown partial))
+
 (* Whether [actual] holds every member [partial] states, each equal: what
    toMatchObject and objectContaining hold. *)
 let matches (partial : (string * Yojson.Safe.t) list) (actual : Yojson.Safe.t) =

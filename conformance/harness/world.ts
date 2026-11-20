@@ -21,8 +21,6 @@ import { subscribe, type BusFrame, type BusStream, type SubscribeBody } from './
 
 /** The service account the gateway reaches the Archivist with. */
 export const GATEWAY_CLIENT = 'xynolog-gateway';
-/** A service account for participants the suite plays — the Archivist's bus half, a worker. */
-export const PARTICIPANT_CLIENT = 'conformance-participant';
 
 export interface WorldOptions {
   /** Change the gateway's settings before it starts. */

@@ -100,7 +100,7 @@ let lifecycle w =
        ])
     (numbered_events events);
   let event n = List.nth events n in
-  like "the assignment"
+  Check.like "the assignment"
     (`Assoc
        [
          ( "payload",
@@ -117,10 +117,10 @@ let lifecycle w =
   let by_worker payload =
     `Assoc [ ("userId", str worker.did); ("payload", `Assoc payload) ]
   in
-  like "the start"
+  Check.like "the start"
     (by_worker [ ("jobId", str job_id); ("jobType", str "mark") ])
     (event 1);
-  like "the failure"
+  Check.like "the failure"
     (by_worker
        [
          ("jobId", str job_id);
@@ -130,7 +130,7 @@ let lifecycle w =
          ("willRetry", `Bool true);
        ])
     (event 2);
-  like "the completion"
+  Check.like "the completion"
     (by_worker
        [ ("jobId", str job_id); ("attempt", `Int 2); ("result", result) ])
     (event 3);
@@ -144,7 +144,7 @@ let lifecycle w =
     (str (persisted_id frame))
     (match completed.id with Some i -> str i | None -> `Null);
   (* The view counts them and is otherwise unchanged. *)
-  like "the view"
+  Check.like "the view"
     (`Assoc
        [
          ("lastSequence", `Int 5);
@@ -258,7 +258,9 @@ let annotations_attributed w =
       Check.equal "the event's userId" (str worker.did)
         (Check.at event [ "userId" ]);
       let annotation = Check.at event [ "payload"; "annotation" ] in
-      like "the annotation" (`Assoc (attributed requester worker)) annotation;
+      Check.like "the annotation"
+        (`Assoc (attributed requester worker))
+        annotation;
       (* The worker supplied no generator, and its DID says who it is and
          nothing it runs. *)
       List.iter
@@ -349,7 +351,7 @@ let generated_attributed w =
          content)
   in
   let created = List.hd (A.stored w generated) in
-  like "the generated resource's record"
+  Check.like "the generated resource's record"
     (`Assoc
        [
          ("type", str "yield:created");
@@ -361,7 +363,7 @@ let generated_attributed w =
        ])
     created;
   let resource = Check.at (view w generated) [ "resource" ] in
-  like "the generated resource"
+  Check.like "the generated resource"
     (`Assoc
        [
          ("generator", named worker.did);
@@ -375,7 +377,9 @@ let generated_attributed w =
   Check.equal "the record's source"
     (`Assoc [ ("resourceId", str id) ])
     (Check.at created [ "payload"; "generatedFrom" ]);
-  like "the generated resource" (`Assoc [ ("wasDerivedFrom", str id) ]) resource;
+  Check.like "the generated resource"
+    (`Assoc [ ("wasDerivedFrom", str id) ])
+    resource;
   (* Without the job, or without the resource the job was assigned on, a
      worker's upload is not recorded. *)
   let refusal = refusal ~channel:"yield:create" in
@@ -428,7 +432,7 @@ let annotations_on_made w =
     (fun event ->
       Check.equal "the event's userId" (str worker.did)
         (Check.at event [ "userId" ]);
-      like "the annotation"
+      Check.like "the annotation"
         (`Assoc (attributed requester worker))
         (Check.at event [ "payload"; "annotation" ]))
     recorded
