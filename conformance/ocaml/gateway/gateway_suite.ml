@@ -18,5 +18,6 @@ let suite : Xynolog_conformance.Suite.t =
             Stream.tests;
             Boot.tests;
             Bounds.tests;
+            Replicas.tests;
           ]);
   }

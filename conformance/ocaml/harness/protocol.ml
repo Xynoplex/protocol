@@ -160,6 +160,24 @@ let limit which meth path key =
       | _ -> failwith (Printf.sprintf "%s %s states no count %s" meth path key))
   | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
 
+(* The baseline of one of an operation's x-xynolog-limits that is a limit
+   per principal, when the baseline is a count. *)
+let principal_baseline which meth path key =
+  match (operation which meth path).limits with
+  | Some limits -> (
+      match List.assoc_opt key limits with
+      | Some (Openapi.Limits per) -> (
+          match List.assoc_opt "baseline" per with
+          | Some (Openapi.Count n) -> n
+          | _ ->
+              failwith
+                (Printf.sprintf "%s %s's %s has no baseline count" meth path key)
+          )
+      | _ ->
+          failwith
+            (Printf.sprintf "%s %s states no principal limit %s" meth path key))
+  | None -> failwith (Printf.sprintf "%s %s states no limits" meth path)
+
 (* One of a document's own x-xynolog-limits that is a count. *)
 let document_limit which key =
   match List.assoc_opt key (document which).limits with
