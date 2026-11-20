@@ -19,5 +19,8 @@ let suite : Xynolog_conformance.Suite.t =
             Boot.tests;
             Bounds.tests;
             Replicas.tests;
+            Emit.tests;
+            Refusals.tests;
+            Edge.tests;
           ]);
   }
