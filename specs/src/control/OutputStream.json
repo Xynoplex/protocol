@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/OutputStream.json",
+  "title": "OutputStream",
+  "type": "string",
+  "enum": [
+    "stdout",
+    "stderr"
+  ],
+  "description": "Which of a container's streams a line was on."
+}

@@ -7,7 +7,7 @@
   "properties": {
     "delivered": {
       "type": "boolean",
-      "description": "Whether the instance still ran when the signal came. false: it had already exited, and nothing was sent."
+      "description": "Whether the instance still ran when the signal came. false: it has exited, and its run's answer is on its way; nothing was sent."
     }
   },
   "required": [

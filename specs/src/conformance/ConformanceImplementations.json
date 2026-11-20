@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xynolog.org/protocol/ConformanceImplementations.json",
-  "description": "The implementations manifest: the file a run of the conformance harness is given with --implementations, naming what the run holds to Protocol. Every service is run by the xynolog launcher, from the image the knowledge base's stack documents name (contract/LAUNCHER-CONTROL.md, service.run): an implementation is a knowledge base whose documents name its images, and another implementation is another manifest. Each SDK's drivers are programs the harness starts itself, since none is a service. There is no default manifest. The reader reads this schema in the table dialect, and the harness decodes every manifest by the model it gives.",
+  "description": "The implementations manifest: the file a run of the conformance harness is given with --implementations, naming what the run holds to Protocol. Every service is run by the xynolog launcher, from the image the knowledge base's stack documents name (contract/LAUNCHER-CONTROL.md, service.run): an implementation is a knowledge base whose documents name its images, and another implementation is another manifest. Each SDK's drivers are programs the harness starts itself, since none is a service. There is no default manifest. The reader reads this schema in the table dialect and derives its model (Tables.Conformance_implementations), for the harness to decode a manifest by.",
   "type": "object",
   "properties": {
     "launcher": {

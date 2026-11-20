@@ -18,14 +18,11 @@
       "description": "The container runtime to ask, as --runtime names it. Absent: the one the stack's record names, else the first installed one."
     },
     "service": {
-      "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/services/items",
+      "$ref": "https://xynolog.org/protocol/RunService.json",
       "description": "The service whose image runs."
     },
     "instance": {
-      "type": "string",
-      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
-      "maxLength": 40,
-      "description": "The caller's name for the instance, unique among the target's instances that run on this machine: a second dispatcher beside the first is another instance. The launcher names its container from the target's key and this name."
+      "$ref": "https://xynolog.org/protocol/RunInstance.json"
     },
     "document": {
       "type": "string",
@@ -40,17 +37,13 @@
     },
     "environment": {
       "type": "object",
-      "propertyNames": {
-        "$ref": "https://xynolog.org/protocol/ServiceEnvironmentVariables.json#/properties/variables/items/properties/name"
-      },
       "additionalProperties": {
         "type": "string"
       },
-      "description": "Every variable the instance is given beside the image's own, by name: nothing of the launcher's is added (R2). Each value is a secret the launcher holds (R5). Empty: none."
+      "description": "Every variable the instance is given beside the image's own, by name: nothing of the launcher's is added (R2). Empty: none."
     },
     "mounts": {
       "type": "array",
-      "uniqueItems": true,
       "items": {
         "type": "string",
         "pattern": "^/"
@@ -59,21 +52,17 @@
     },
     "pathFirst": {
       "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
       "items": {
         "type": "string",
         "pattern": "^/"
       },
-      "description": "Directories put before the image's PATH, in order, each mounted at its own path. Absent: the image's PATH as it is."
+      "description": "Directories put before the image's PATH, in order, each mounted at its own path. Empty: the image's PATH as it is."
     },
     "ports": {
       "type": "array",
-      "uniqueItems": true,
       "items": {
         "type": "integer",
-        "minimum": 1,
-        "maximum": 65535
+        "minimum": 1
       },
       "description": "The ports the instance listens on, each published at the same number on the host address (R3). Empty: none."
     }
@@ -85,6 +74,7 @@
     "instance",
     "environment",
     "mounts",
+    "pathFirst",
     "ports"
   ],
   "additionalProperties": false

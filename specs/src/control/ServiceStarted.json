@@ -9,7 +9,7 @@
       "$ref": "https://xynolog.org/protocol/RequestId.json"
     },
     "instance": {
-      "$ref": "https://xynolog.org/protocol/ServiceRunParams.json#/properties/instance"
+      "$ref": "https://xynolog.org/protocol/RunInstance.json"
     },
     "container": {
       "type": "string",
@@ -22,7 +22,9 @@
       "description": "Where the instance reads its document: the path the image's own arguments name. Present when the run gave a document."
     },
     "address": {
-      "$ref": "https://xynolog.org/protocol/ServiceHostResult.json#/properties/address"
+      "type": "string",
+      "minLength": 1,
+      "description": "The host address the instance's ports are published on, as service.host names it for the run's runtime."
     }
   },
   "required": [

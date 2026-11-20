@@ -1008,6 +1008,7 @@ specs/src/control/LocalTarget.json,Normative protocol source,xynolog/protocol,Co
 specs/src/control/LogRecord.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/LogsFollowParams.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/LogsFollowResult.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/control/OutputStream.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/Progress.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/RequestId.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/Root.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
@@ -1017,6 +1018,8 @@ specs/src/control/RootsInitParams.json,Normative protocol source,xynolog/protoco
 specs/src/control/RootsInitResult.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/RootsListParams.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/RootsListResult.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/control/RunInstance.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
+specs/src/control/RunService.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/Runtime.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/RuntimeState.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.
 specs/src/control/ServiceGroup.json,Normative protocol source,xynolog/protocol,Compatibility definition; protocol review and versioning apply.

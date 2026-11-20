@@ -368,7 +368,7 @@
     },
     {
       "name": "a run names one of the knowledge base's own services",
-      "line": "{\"jsonrpc\":\"2.0\",\"id\":21,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"neo4j\",\"instance\":\"dispatcher-2\",\"environment\":{},\"mounts\":[],\"ports\":[24105]}}",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":21,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"neo4j\",\"instance\":\"dispatcher-2\",\"environment\":{},\"mounts\":[],\"pathFirst\":[],\"ports\":[24105]}}",
       "answer": {
         "id": 21,
         "error": {
@@ -385,7 +385,7 @@
     },
     {
       "name": "a run's instance is named in lower case, with hyphens",
-      "line": "{\"jsonrpc\":\"2.0\",\"id\":22,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"dispatcher\",\"instance\":\"Dispatcher 2\",\"environment\":{},\"mounts\":[],\"ports\":[24105]}}",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":22,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"dispatcher\",\"instance\":\"Dispatcher 2\",\"environment\":{},\"mounts\":[],\"pathFirst\":[],\"ports\":[24105]}}",
       "answer": {
         "id": 22,
         "error": {
@@ -401,7 +401,7 @@
       }
     },
     {
-      "name": "a run states its environment, mounts and ports, empty when it has none",
+      "name": "a run states its environment, mounts, PATH's front and ports, empty when it has none",
       "line": "{\"jsonrpc\":\"2.0\",\"id\":23,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\",\"root\":\"/kb\"},\"service\":\"dispatcher\",\"instance\":\"dispatcher-2\"}}",
       "answer": {
         "id": 23,
@@ -413,6 +413,7 @@
             "fields": [
               "/environment",
               "/mounts",
+              "/pathFirst",
               "/ports"
             ]
           }
@@ -421,7 +422,7 @@
     },
     {
       "name": "a run names its local root explicitly",
-      "line": "{\"jsonrpc\":\"2.0\",\"id\":24,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\"},\"service\":\"dispatcher\",\"instance\":\"dispatcher-2\",\"environment\":{},\"mounts\":[],\"ports\":[24105]}}",
+      "line": "{\"jsonrpc\":\"2.0\",\"id\":24,\"method\":\"service.run\",\"params\":{\"apiVersion\":\"control.xynolog.org/v1alpha1\",\"target\":{\"kind\":\"local\"},\"service\":\"dispatcher\",\"instance\":\"dispatcher-2\",\"environment\":{},\"mounts\":[],\"pathFirst\":[],\"ports\":[24105]}}",
       "answer": {
         "id": 24,
         "error": {

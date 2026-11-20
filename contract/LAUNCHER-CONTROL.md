@@ -105,9 +105,11 @@ exist.
 
 - **P5.** `service.run` and `service.signal` name one local root explicitly,
   as identity's methods do: a run belongs to that knowledge base's stack, and
-  a codespace's stack runs none. A run states its `environment`, `mounts`
-  and `ports`, each empty when it has none, and names one of the seven
-  Xynolog services.
+  a codespace's stack runs none. A run states its `environment`, `mounts`,
+  `pathFirst` and `ports`, each empty when it has none, and names one of the
+  seven Xynolog services
+  ([`RunService.json`](../specs/src/control/RunService.json), which the
+  reader holds to `service-telemetry/telemetry.json`'s).
   *Held by `specs/src/control/request-cases.json`.*
 
 ## Answers and errors
@@ -254,10 +256,10 @@ address an instance and this machine meet at.
   *Held by no case.*
 - **R5.** Each value of a run's `environment`, and its `document`, enters the
   launcher's list of secret values (Z1) when the request is read, so that
-  neither appears in progress, in a diagnostic or in a line of
-  `notifications/serviceOutput`. A program that holds a value it gave to be
-  in its instance's output does not give it as a secret: it sends one shorter
-  than eight characters, or none.
+  neither appears in progress, in an error's message or in a diagnostic.
+  `notifications/serviceOutput` carries each line as the instance wrote it:
+  the instance holds none of the launcher's secrets (R2), and what it writes
+  of the caller's is the caller's to read.
   *Held by no case.*
 - **R6.** `service.run` is exclusive until its instance's container runs,
   then gives up its turn (C2). It sends `notifications/serviceStarted` once,
@@ -266,8 +268,9 @@ address an instance and this machine meet at.
   after the last of them (O3). An instance's name is unique among the
   target's instances that run on this machine: a run of a name in use is
   refused with `control.instance-in-use`, whichever control server or
-  command runs it. `service.signal` of a name that runs nothing is refused
-  with `control.instance-not-found`.
+  command runs it. `service.signal` of an instance that has exited, whose
+  run is not yet answered, is answered with `delivered: false`; of a name
+  with no run in flight, it is refused with `control.instance-not-found`.
   *Held by no case.*
 - **R7.** A cancelled run's instance is sent SIGTERM, and SIGKILL if it has
   not exited 15 seconds later, and the run is answered with
@@ -305,7 +308,8 @@ address an instance and this machine meet at.
   - a secret in the environment;
   - a password it generated;
   - a sign-in's tokens;
-  - a run's environment values and its document (R5).
+  - a run's environment values and its document, which never reach its
+    instance's output lines (R5).
 
   Each value on the list is replaced wherever it appears, the longest first.
   A value shorter than eight characters is not replaced, since replacing it

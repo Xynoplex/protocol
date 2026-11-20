@@ -13,12 +13,8 @@
       "description": "The role whose container wrote the line, as xynolog status names it."
     },
     "stream": {
-      "type": "string",
-      "description": "Which of the container's streams the line was on.",
-      "enum": [
-        "stdout",
-        "stderr"
-      ]
+      "$ref": "https://xynolog.org/protocol/OutputStream.json",
+      "description": "Which of the container's streams the line was on."
     },
     "line": {
       "type": "string",

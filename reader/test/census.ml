@@ -287,6 +287,13 @@ let () =
     "control/methods.json" "methods/0/result"
     (fun _ -> `String (id "AboutResult.json#/properties/version"))
     ("/methods/0/result: " ^ control_id);
+  changed specs ~why:"has a run run a service telemetry names none of"
+    "control/RunService.json" "enum/0"
+    (fun _ -> `String "browser")
+    "/enum: names \
+     [browser,dispatcher,gateway,librarian,smelter,weaver,worker], where \
+     service-telemetry/ServiceTelemetryTelemetry.json names \
+     [archivist,dispatcher,gateway,librarian,smelter,weaver,worker]";
   changed specs ~why:"has a control method send a notification none states"
     "control/methods.json" "methods/2/sends/0"
     (fun _ -> `String "notifications/nowhere")

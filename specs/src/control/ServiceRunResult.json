@@ -6,12 +6,11 @@
   "description": "A run that ended: its instance exited. Sent once the instance's container has exited, after all of its output.",
   "properties": {
     "instance": {
-      "$ref": "https://xynolog.org/protocol/ServiceRunParams.json#/properties/instance"
+      "$ref": "https://xynolog.org/protocol/RunInstance.json"
     },
     "exitCode": {
       "type": "integer",
       "minimum": 0,
-      "maximum": 255,
       "description": "The instance's exit status: the service's own, since nothing supervises it (R1). An instance a signal ended exits with 128 and the signal's number: 143 for SIGTERM, 137 for SIGKILL."
     },
     "ranMs": {

@@ -18,7 +18,7 @@
       "description": "The container runtime to ask, as --runtime names it. Absent: the one the stack's record names, else the first installed one."
     },
     "instance": {
-      "$ref": "https://xynolog.org/protocol/ServiceRunParams.json#/properties/instance"
+      "$ref": "https://xynolog.org/protocol/RunInstance.json"
     },
     "signal": {
       "type": "string",

@@ -3,16 +3,16 @@
   "$id": "https://xynolog.org/protocol/ServiceOutput.json",
   "title": "ServiceOutput",
   "type": "object",
-  "description": "notifications/serviceOutput: one line a run's instance wrote, from its start, every line, in the order of its stream. The launcher replaces each secret value it holds (Z1, R5); it keeps no copy.",
+  "description": "notifications/serviceOutput: one line a run's instance wrote, from its start, every line, in the order of its stream, as the instance wrote it. The launcher gives an instance none of its own secrets (R2), and keeps no copy.",
   "properties": {
     "requestId": {
       "$ref": "https://xynolog.org/protocol/RequestId.json"
     },
     "instance": {
-      "$ref": "https://xynolog.org/protocol/ServiceRunParams.json#/properties/instance"
+      "$ref": "https://xynolog.org/protocol/RunInstance.json"
     },
     "stream": {
-      "$ref": "https://xynolog.org/protocol/LogRecord.json#/properties/stream"
+      "$ref": "https://xynolog.org/protocol/OutputStream.json"
     },
     "line": {
       "type": "string",

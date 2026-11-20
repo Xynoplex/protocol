@@ -3,13 +3,49 @@
    result, and each notification's params. Each names a schema some file
    states, and that schema is control/'s. A name not under [Decode.base] is
    its table's schema's to refuse, by its pattern. Each notification a method
-   sends is one the table states, from the launcher. *)
+   sends is one the table states, from the launcher.
+
+   control/RunService.json, the services a run runs, names the seven
+   service-telemetry/telemetry.json names, in its order: the control schemas
+   name no schema outside control/, so the list is stated twice and held so. *)
 
 let file = "control/methods.json"
 let area = "control/"
 let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
+let run_service = "control/RunService.json"
+let telemetry = "service-telemetry/ServiceTelemetryTelemetry.json"
 
-let refusals ~ids (table : Tables.Control_methods.t) =
+let telemetry_services =
+  "/properties/spans/items/properties/services/items/enum"
+
+let words = function
+  | Some (`List items) ->
+      Some (List.filter_map (function `String s -> Some s | _ -> None) items)
+  | _ -> None
+
+let shown = function
+  | Some names -> "[" ^ String.concat "," names ^ "]"
+  | None -> "none"
+
+let run_services ~(read_json : string -> Yojson.Safe.t option) =
+  let at file pointer =
+    words (Option.bind (read_json file) (Decode.at_pointer pointer))
+  in
+  let named = at run_service "/enum"
+  and owned = at telemetry telemetry_services in
+  if named <> None && named = owned then []
+  else
+    [
+      {
+        Decode.file = run_service;
+        pointer = "/enum";
+        message =
+          Printf.sprintf "names %s, where %s names %s" (shown named) telemetry
+            (shown owned);
+      };
+    ]
+
+let named_refusals ~ids (table : Tables.Control_methods.t) =
   let named pointer target =
     if not (String.starts_with ~prefix:Decode.base target) then []
     else
@@ -66,3 +102,6 @@ let refusals ~ids (table : Tables.Control_methods.t) =
              ("" / "notifications" / string_of_int n / "params")
              notification.params)
          table.notifications)
+
+let refusals ~ids ~read_json table =
+  run_services ~read_json @ named_refusals ~ids table
