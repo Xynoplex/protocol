@@ -726,3 +726,17 @@ let identifiers kind : Tables.Identifiers_kinds.kinds_item =
   with
   | Some row -> row
   | None -> failwith ("identifiers/kinds.json names no kind " ^ kind)
+
+(* The service.name [service] exports under when OTEL_SERVICE_NAME is unset:
+   the resource row's default, its {service} filled. *)
+let default_service_name service =
+  match
+    List.find_opt
+      (fun (row : Service_rows.resource_item) -> row.key = "service.name")
+      (tables ()).service_telemetry_telemetry.resource
+  with
+  | Some { default = Some form; _ } ->
+      fill_template form
+        [ ("service", Service_rows.services_item_value service) ]
+  | _ ->
+      failwith "service-telemetry/telemetry.json states no default service.name"
