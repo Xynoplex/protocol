@@ -22,5 +22,7 @@ let suite : Xynolog_conformance.Suite.t =
             Emit.tests;
             Refusals.tests;
             Edge.tests;
+            Tokens.tests;
+            Principal_limits.tests;
           ]);
   }
