@@ -1,4 +1,4 @@
-(* telemetry.test.ts: the telemetry a Smelter exports (SMELTER.md
+(* The telemetry a Smelter exports (SMELTER.md
    § Telemetry): everything specs/src/service-telemetry/telemetry.json lists
    for it, and the rows of specs/src/sdk-telemetry/telemetry.json it names
    there, exported over OTLP to the endpoint the standard OpenTelemetry

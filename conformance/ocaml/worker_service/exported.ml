@@ -1,5 +1,4 @@
-(* telemetry.test.ts, named exported beside the harness's Telemetry: the
-   telemetry a worker exports (WORKER-SERVICE.md § Telemetry): everything
+(* The telemetry a worker exports (WORKER-SERVICE.md § Telemetry): everything
    specs/src/service-telemetry/telemetry.json lists for it, and the rows of
    specs/src/sdk-telemetry/telemetry.json it names there, exported over
    OTLP to the endpoint the standard OpenTelemetry environment names; and

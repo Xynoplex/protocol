@@ -1,5 +1,5 @@
-(* What a case expects, said as the TypeScript cases say it with vitest's
-   expect: JSON compared as values, so members are equal in any order. *)
+(* What a case expects: JSON compared as values, so members are equal in any
+   order. *)
 
 let that what condition = if not condition then failwith what
 
@@ -24,7 +24,7 @@ let equal what (expected : Yojson.Safe.t) (actual : Yojson.Safe.t) =
       (Printf.sprintf "%s:\nexpected %s\nreceived %s" what (shown expected)
          (shown actual))
 
-(* Whether [actual] holds what [partial] states, as toMatchObject holds it:
+(* Whether [actual] holds what [partial] states:
    each member an object states held in turn, a list's items held one for
    one, as many as it has, and anything else equal. *)
 let rec alike (partial : Yojson.Safe.t) (actual : Yojson.Safe.t) =
@@ -46,8 +46,8 @@ let like what partial actual =
       (Printf.sprintf "%s: %s does not hold %s" what (shown actual)
          (shown partial))
 
-(* Whether [actual] holds every member [partial] states, each equal: what
-   toMatchObject and objectContaining hold. *)
+(* Whether [actual] holds every member [partial] states, each equal as a
+   whole. *)
 let matches (partial : (string * Yojson.Safe.t) list) (actual : Yojson.Safe.t) =
   List.for_all
     (fun (key, value) ->

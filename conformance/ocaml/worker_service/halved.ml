@@ -1,4 +1,4 @@
-(* halved.test.ts: a piece whose answer is cut off (WORKER-SERVICE.md
+(* A piece whose answer is cut off (WORKER-SERVICE.md
    § Failures): what it carried is not used, the piece is asked again in
    halves, and the pieces after it are cut smaller. *)
 

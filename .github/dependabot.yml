@@ -1,9 +1,8 @@
 version: 2
 
-# One pull request, twice a month at most: the npm updates of both packages
-# are one group, proposed on the 1st and the 15th, with no more than one PR
-# open. A release waits a week before it is proposed, and a major release a
-# month.
+# One pull request, twice a month at most: the npm updates are one group,
+# proposed on the 1st and the 15th, with no more than one PR open. A release
+# waits a week before it is proposed, and a major release a month.
 
 # Security updates are grouped the same way, in a group of each entry's own,
 # and Dependabot raises them when an advisory is published, not on the
@@ -14,7 +13,6 @@ updates:
     labels: ["dependencies"]
     directories:
       - /
-      - /conformance
     schedule:
       interval: cron
       cronjob: "0 6 1,15 * *"
@@ -28,8 +26,3 @@ updates:
         patterns: ["*"]
       npm:
         patterns: ["*"]
-    ignore:
-      # The conformance harness generates its types with openapi-typescript,
-      # which needs TypeScript's JavaScript API, and TypeScript 7 has none.
-      - dependency-name: typescript
-        versions: [">=7"]

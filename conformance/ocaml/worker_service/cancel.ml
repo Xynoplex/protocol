@@ -1,4 +1,4 @@
-(* cancel.test.ts: a cancellation of the job a worker holds (WORKER-SERVICE.md
+(* A cancellation of the job a worker holds (WORKER-SERVICE.md
    § Cancellation): every job stops at its next stopping place, a mark job
    after the piece it is on and a yield job before it uploads; it says
    job:cancel with the units it finished, and reports no completion.

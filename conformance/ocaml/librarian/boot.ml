@@ -1,4 +1,4 @@
-(* boot.test.ts: how a Librarian starts, answers for itself and stops
+(* How a Librarian starts, answers for itself and stops
    (LIBRARIAN.md § Settings, § Boot, § Health, § Stopping): what its health
    reports, that it stops cleanly, every setting it refuses to start without
    or refuses the value of, that it refuses to start where its settings name

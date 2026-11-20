@@ -3,8 +3,7 @@
    says which server it reaches. *)
 
 open Xynolog_conformance
-
-let check what condition = if not condition then failwith what
+open Expect
 
 let raw_get port path =
   (* A client of the harness's own, on a bare socket, so a case sees every
@@ -314,157 +313,6 @@ let cut_is_abrupt () =
     (not (has "\r\n0\r\n\r\n" rest));
   closes proxy stream
 
-(* ── OTLP ───────────────────────────────────────────────────────────── *)
-
-module Proto = Opentelemetry_proto
-
-let gzip plain =
-  let input = De.bigstring_create De.io_buffer_size
-  and output = De.bigstring_create De.io_buffer_size in
-  let compressed = Buffer.create 256 in
-  let read = ref 0 in
-  let refill buffer =
-    let length = min (String.length plain - !read) De.io_buffer_size in
-    for at = 0 to length - 1 do
-      Bigarray.Array1.set buffer at plain.[!read + at]
-    done;
-    read := !read + length;
-    length
-  in
-  let flush buffer length =
-    for at = 0 to length - 1 do
-      Buffer.add_char compressed (Bigarray.Array1.get buffer at)
-    done
-  in
-  Gz.Higher.compress
-    ~w:(De.Lz77.make_window ~bits:15)
-    ~q:(De.Queue.create 0x1000) ~level:4 ~refill ~flush ()
-    (Gz.Higher.configuration Gz.Unix (fun () -> 0l))
-    input output;
-  Buffer.contents compressed
-
-let attribute key value = Proto.Common.make_key_value ~key ~value ()
-
-let service =
-  Proto.Resource.make_resource
-    ~attributes:[ attribute "service.name" (String_value "standin") ]
-    ()
-
-let traces () =
-  let span =
-    Proto.Trace.make_span
-      ~trace_id:(Bytes.of_string "0123456789abcdef")
-      ~span_id:(Bytes.of_string "01234567")
-      ~name:"bus.emit:gather:complete" ~kind:Span_kind_producer
-      ~attributes:
-        [
-          attribute "bus.channel" (String_value "gather:complete");
-          attribute "retry" (Bool_value false);
-        ]
-      ()
-  in
-  let request =
-    Proto.Trace_service.make_export_trace_service_request
-      ~resource_spans:
-        [
-          Proto.Trace.make_resource_spans ~resource:service
-            ~scope_spans:[ Proto.Trace.make_scope_spans ~spans:[ span ] () ]
-            ();
-        ]
-      ()
-  in
-  let encoder = Pbrt.Encoder.create () in
-  Proto.Trace_service.encode_pb_export_trace_service_request request encoder;
-  Pbrt.Encoder.to_string encoder
-
-let metrics () =
-  let point n outcome =
-    Proto.Metrics.make_number_data_point ~value:(As_int n)
-      ~attributes:[ attribute "inference.outcome" (String_value outcome) ]
-      ()
-  in
-  let request =
-    Proto.Metrics_service.make_export_metrics_service_request
-      ~resource_metrics:
-        [
-          Proto.Metrics.make_resource_metrics ~resource:service
-            ~scope_metrics:
-              [
-                Proto.Metrics.make_scope_metrics
-                  ~metrics:
-                    [
-                      Proto.Metrics.make_metric ~name:"xynolog.inference.calls"
-                        ~data:
-                          (Sum
-                             (Proto.Metrics.make_sum ~is_monotonic:true
-                                ~data_points:
-                                  [ point 2L "answered"; point 1L "failed" ]
-                                ()))
-                        ();
-                    ]
-                  ();
-              ]
-            ();
-        ]
-      ()
-  in
-  let encoder = Pbrt.Encoder.create () in
-  Proto.Metrics_service.encode_pb_export_metrics_service_request request encoder;
-  Pbrt.Encoder.to_string encoder
-
-let exported (otlp : Otlp.t) path headers body =
-  let reply = Call.call ~headers ~body otlp.endpoint "POST" path in
-  check (Printf.sprintf "%s is answered 200" path) (reply.status = 200)
-
-let reads_otlp () =
-  let otlp = Otlp.start () in
-  Fun.protect ~finally:(fun () -> Otlp.close otlp) @@ fun () ->
-  let protobuf = ("content-type", "application/x-protobuf") in
-  exported otlp "/v1/traces"
-    [ protobuf; ("content-encoding", "gzip") ]
-    (gzip (traces ()));
-  exported otlp "/v1/metrics" [ protobuf ] (metrics ());
-  exported otlp "/v1/traces"
-    [ ("content-type", "application/json") ]
-    {|{"resourceSpans":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"standin"}}]},
-      "scopeSpans":[{"spans":[{"name":"gather.resource","kind":1,"traceId":"00","attributes":[{"key":"n","value":{"intValue":"7"}}]}]}]}]}|};
-  check
-    ("nothing is unreadable: "
-    ^ String.concat "; " (Dynarray.to_list otlp.unreadable))
-    (Dynarray.length otlp.unreadable = 0);
-  match Dynarray.to_list otlp.spans with
-  | [ gzipped; json ] -> (
-      check "the gzipped protobuf span's name"
-        (gzipped.name = "bus.emit:gather:complete");
-      check "its kind is a producer's" (gzipped.kind = 4);
-      check "its resource"
-        (gzipped.resource = [ ("service.name", Otlp.Text "standin") ]);
-      check "its attributes, each as it was carried"
-        (gzipped.attributes
-        = [
-            ("bus.channel", Otlp.Text "gather:complete");
-            ("retry", Otlp.Flag false);
-          ]);
-      check "its trace id, as hex"
-        (gzipped.trace_id = Ohex.encode "0123456789abcdef");
-      check "the JSON span's int64, carried as a string"
-        (json.attributes = [ ("n", Otlp.Number 7.0) ]);
-      match Otlp.metric otlp "xynolog.inference.calls" with
-      | None -> failwith "the metric did not arrive"
-      | Some metric ->
-          check "a monotonic sum is a counter"
-            (Dynarray.to_list metric.instruments = [ "counter" ]);
-          check "its points' values"
-            (Dynarray.to_list metric.values = [ 2.0; 1.0 ]);
-          check "every outcome it carried"
-            (List.map
-               (fun (k, vs) -> (k, Dynarray.to_list vs))
-               (Dynarray.to_list metric.attributes)
-            = [ ("inference.outcome", [ Otlp.Text "answered"; Text "failed" ]) ]
-            ))
-  | spans ->
-      failwith (Printf.sprintf "%d spans arrived, not 2" (List.length spans))
-
 (* ── Neo4j ──────────────────────────────────────────────────────────── *)
 
 let graph_of_suite () =
@@ -639,12 +487,12 @@ let tests _env =
         ~category:[ "holding the git index" ]
         "fails immediately when the lock cannot be created for another reason"
         fails_without_an_index;
-      Testo.create ~category:[ "otlp" ]
-        "reads an export as protobuf, gzipped or not, and as JSON" reads_otlp;
       Testo.create ~category:[ "neo4j" ] ~tags:[ stores ]
         "reads one graph alike over Bolt and over the Query API (neo4j)"
         reads_neo4j_alike;
     ]
+  @ Otlp_cases.tests @ Implementations_cases.tests @ Issuer_cases.tests
+  @ Net_cases.tests @ Protocol_cases.tests
 
 let () =
   Suite.main ~project:"xynolog-conformance-harness" ~workers:4 ~argv:Sys.argv

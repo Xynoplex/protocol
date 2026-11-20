@@ -1,4 +1,4 @@
-(* gather.test.ts: what a Librarian gathers (LIBRARIAN.md § Gathering
+(* What a Librarian gathers (LIBRARIAN.md § Gathering
    around an annotation, § Gathering around a resource, § An annotation's
    summary, § The knowledge graph, § Order), case for case. *)
 

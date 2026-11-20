@@ -1,4 +1,4 @@
-(* stop.test.ts: stopping (WORKER-SERVICE.md § Stopping): what a worker does
+(* Stopping (WORKER-SERVICE.md § Stopping): what a worker does
    on SIGTERM, idle and while it holds a job; the one refusal of a claim that
    refuses the knowledge base it was made at; and the exit once every
    knowledge base it serves has refused it, one having been confirmed first

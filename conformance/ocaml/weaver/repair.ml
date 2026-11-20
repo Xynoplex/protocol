@@ -1,4 +1,4 @@
-(* repair.test.ts: how a Weaver brings the graph back in line with the
+(* How a Weaver brings the graph back in line with the
    record (WEAVER.md § What it follows, § What it has applied, § Reconcile,
    § Rebuild): what it missed while it was down, what was lost from the
    graph behind its back, and what it is asked to rebuild. *)

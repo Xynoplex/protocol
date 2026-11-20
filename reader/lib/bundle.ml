@@ -15,9 +15,8 @@
    The files are read as JSON, not through the model, so a bundle keeps
    every member Protocol writes.
 
-   The services' bundle, specs/services.json, is of no document: its
-   components are each service's schema (Places.service_schemas), by its
-   stem, which the conformance harness holds a service's values to. *)
+   The services' bundle is of no document: its components are each
+   service's schema (Places.service_schemas), by its stem. *)
 
 exception Refused of Decode.error
 
@@ -279,10 +278,8 @@ let document ~specs ~ids file =
       object_ file "the document" (parse st file))
 
 (* The services' schemas, [Places.service_schemas], as one file: each a
-   component schema named as its file. A service's schema is read by its
-   name there, as the conformance harness reads it. *)
-let services_bundle = "specs/services.json"
-
+   component schema named as its file, by which a service's schema is read
+   there. *)
 let services ~specs ~ids =
   bundle ~specs ~ids "services.json" (fun _ ->
       [
@@ -303,8 +300,7 @@ let services ~specs ~ids =
             ] );
       ])
 
-(* Each document's bundle, and the services', written under the repository's
-   [root]. *)
+(* Each document's bundle, written under the repository's [root]. *)
 let write ~root ~ids =
   let specs = Filename.concat root Repository.specs in
   List.concat_map
@@ -331,5 +327,4 @@ let write ~root ~ids =
               ]))
     (List.map
        (fun (source, bundled) -> (source, bundled, document ~specs ~ids source))
-       documents
-    @ [ ("services.json", services_bundle, services ~specs ~ids) ])
+       documents)

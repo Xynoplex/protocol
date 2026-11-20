@@ -1,9 +1,9 @@
 (* The implementations a run is held to, read from the JSON file it names:
    [--implementations <manifest>] on the program's command line. There is
-   no default. The file is the TypeScript harness's, of the shape
-   harness/implementations.ts gives, and is decoded as strictly as the
-   reader decodes Protocol: an unknown member, a missing one and a wrong type
-   are each refused.
+   no default. Nothing in specs/src states the file's shape: this decoder
+   is its one statement, and decodes it as strictly as the reader decodes
+   Protocol: an unknown member, a missing one and a wrong type are each
+   refused.
 
    Every list of strings in it is the argument list a suite starts a process
    with. An argument that starts with ./ or ../ is a path, resolved against
@@ -125,5 +125,5 @@ let read file =
       | Error error ->
           failwith
             ("The implementations file is not of the shape \
-              harness/implementations.ts gives: "
+              conformance/ocaml/harness/implementations.ml reads: "
             ^ Decode.error_to_string error))

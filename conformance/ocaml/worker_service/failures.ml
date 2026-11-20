@@ -1,4 +1,4 @@
-(* failures.test.ts: how a failure becomes a job:fail (WORKER-SERVICE.md
+(* How a failure becomes a job:fail (WORKER-SERVICE.md
    § Failures): a provider that refuses, a connection that ends, an answer
    that cannot be read, an answer cut off, and a commit the record refuses;
    the class each is given, whether the job says it will be retried, and the

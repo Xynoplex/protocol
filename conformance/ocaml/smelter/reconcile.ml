@@ -1,4 +1,4 @@
-(* reconcile.test.ts: what a Smelter finds and mends when it starts
+(* What a Smelter finds and mends when it starts
    (SMELTER.md § Reconcile). Each case stops the Smelter, changes the index,
    the record or the anchored-text store behind its back, starts it again,
    and reads what the two stores then hold, what its embedding provider was

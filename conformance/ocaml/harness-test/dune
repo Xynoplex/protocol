@@ -3,7 +3,7 @@
  (name main)
  (package xynolog-conformance)
  (public_name xynolog-conformance-harness-test)
- (libraries xynolog_conformance unix eio eio_main cohttp http uri testo opentelemetry.proto pbrt decompress.de decompress.gz ohex))
+ (libraries xynolog_conformance unix eio eio_main cohttp http uri testo opentelemetry.proto pbrt yojson re base64 mirage-crypto-pk decompress.de decompress.gz ohex))
 
 ; make validate's run: every case that needs no store and no manifest, from
 ; Protocol's root, where specs/src is.

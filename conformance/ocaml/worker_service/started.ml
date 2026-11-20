@@ -1,4 +1,4 @@
-(* started.test.ts: a worker that has started at the one knowledge base it
+(* A worker that has started at the one knowledge base it
    serves (WORKER-SERVICE.md § The agent, § Health): the one sign-in it makes
    as its account there, the stream it asks which knowledge base it is on and
    the one stream of its own it opens, what it says it is called once the

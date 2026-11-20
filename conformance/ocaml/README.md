@@ -6,13 +6,13 @@ The conformance harness in OCaml, on Protocol's reader (`xynolog_protocol`). It 
 |---|---|
 | `bin/` | The program, `xynolog-conformance`, which every suite is linked into. |
 | `harness/` | The library: stand-ins, stores, processes, the bus-stream client, the broker and its proxy, OTLP, the census gates and the runner's glue. |
-| `harness-test/` | The harness's own cases: each census gate, stream flushing, abrupt closes, large bodies, OTLP decoding, the two Neo4j reads, the runner's bound, git run by hand beside an Archivist that holds the index. |
+| `harness-test/` | The harness's own cases: each census gate, stream flushing, abrupt closes, large bodies, the client proxy, OTLP decoding in either encoding, the two Neo4j reads, the runner's bound, git run by hand beside an Archivist that holds the index, the implementations manifest and the command line that names it, the issuer's grants, the ports handed out, values held to their schemas and telemetry rows. |
 | `gateway/` | The gateway suite: [its README](gateway/README.md) says what it checks and what it needs. |
 | `dispatcher/` | The dispatcher suite: [its README](dispatcher/README.md) says what it checks and what it needs. |
 | `archivist/` | The archivist suite: [its README](archivist/README.md) says what it checks and what it needs. |
 | `librarian/` | The librarian suite: [its README](librarian/README.md) says what it checks and what it needs. |
 
-Build it, and run a suite against an implementations manifest, the one the TypeScript suites take:
+Build it, and run a suite against an implementations manifest ([the conformance README](../README.md#implementation-manifest) says what it holds):
 
 ```bash
 dune build --root conformance/ocaml

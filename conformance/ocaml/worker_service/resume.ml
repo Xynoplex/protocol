@@ -1,4 +1,4 @@
-(* resume.test.ts: a job resumed from the checkpoint an earlier attempt left
+(* A job resumed from the checkpoint an earlier attempt left
    (WORKER-SERVICE.md § Resuming): a unit partway is taken up at its cursor,
    a finished unit is not done again and is counted by its cursor, and
    nothing is committed twice. *)

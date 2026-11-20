@@ -1,4 +1,4 @@
-(* boot.test.ts: what a Worker service is started with, and every way it
+(* What a Worker service is started with, and every way it
    refuses to start (WORKER-SERVICE.md § Configuration): the one document it
    reads, the key it signs in with, the provider keys the document names,
    and a document that names one knowledge base twice; and how it ends when

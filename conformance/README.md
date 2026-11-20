@@ -6,7 +6,7 @@ Every suite runs on the OCaml harness ([`ocaml`](ocaml/README.md)), from the sam
 
 ## Implementation manifest
 
-Every run names one JSON manifest with `--implementations`; there is no default product manifest. Start from [`example.implementations.json`](example.implementations.json). Its validated shape is [`harness/implementations.ts`](harness/implementations.ts). Commands are argument arrays, not shell strings. Relative command arguments and an optional `modelCatalogue` path resolve from the manifest's directory. Build programs, drivers, wrappers, and their runtime environments in the owning consumer repositories.
+Every run names one JSON manifest with `--implementations`; there is no default product manifest. Start from [`example.implementations.json`](example.implementations.json). Nothing in `../specs/src` states its shape: the harness's decoder, [`ocaml/harness/implementations.ml`](ocaml/harness/implementations.ml), is its one statement, and refuses a member it does not know, a missing one and a wrong type. Commands are argument arrays, not shell strings. Relative command arguments and an optional `modelCatalogue` path resolve from the manifest's directory. Build programs, drivers, wrappers, and their runtime environments in the owning consumer repositories.
 
 Example from this repository's root:
 
@@ -21,4 +21,4 @@ The manifest can name several implementations in one run. A suite refuses to sta
 
 The gateway, dispatcher, and Archivist suites need their corresponding commands and NATS Server 2.10 or newer. SDK and worker suites need the drivers named in `sdks`. Worker, Weaver, Smelter, and Librarian suites need their service commands and the external stores and tools documented by each suite. Weaver and Librarian use Neo4j; Smelter and Librarian use Qdrant. Some suites clear the database instance they receive. Use dedicated test instances.
 
-The suite reads Protocol through what its reader writes from `../specs/src` (`make bundle` at the repository root, which `make conformance-typecheck` and `make conformance-fixtures` run first): the bundles, from which it derives the gateway's types; and, in `harness/generated/protocol`, every table's value and type and every service schema's type (`protocol.ts`), and the reader's own validator compiled to JavaScript (`validate.cjs`). Language-neutral case tables also live in `../specs/src`; implementation repositories should include applicable tables in their own tests.
+The suites read Protocol through its reader (`xynolog_protocol`), from `../specs/src` as they run: every table through the model its schema gives, and every value held to its schema by the reader's own validator. Language-neutral case tables also live in `../specs/src`; implementation repositories should include applicable tables in their own tests.

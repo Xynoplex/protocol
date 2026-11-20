@@ -1,4 +1,4 @@
-(* output.test.ts: what a Worker service writes (WORKER-SERVICE.md
+(* What a Worker service writes (WORKER-SERVICE.md
    § Output): every line a log line, on stdout, in the form its document's
    logFormat names; and nothing on stderr. *)
 

@@ -16,28 +16,30 @@ let first_port = 20_000
 let per_block = 500
 let blocks = 20
 
-let block =
-  lazy
-    (let rec claim slot =
-       if slot = blocks then
-         failwith
-           (Printf.sprintf
-              "every one of the %d blocks of ports is held by another program"
-              blocks)
-       else
-         let path =
-           Filename.concat
-             (Filename.get_temp_dir_name ())
-             (Printf.sprintf "xynolog-conformance-ports-%d.lock" slot)
-         in
-         let fd = Unix.openfile path [ Unix.O_RDWR; Unix.O_CREAT ] 0o644 in
-         match Unix.lockf fd Unix.F_TLOCK 0 with
-         | () -> first_port + (slot * per_block)
-         | exception Unix.Unix_error ((Unix.EAGAIN | Unix.EACCES), _, _) ->
-             Unix.close fd;
-             claim (slot + 1)
-     in
-     claim 0)
+(* The first port of the block this program claims, held until it exits. *)
+let claim_block () =
+  let rec claim slot =
+    if slot = blocks then
+      failwith
+        (Printf.sprintf
+           "every one of the %d blocks of ports is held by another program"
+           blocks)
+    else
+      let path =
+        Filename.concat
+          (Filename.get_temp_dir_name ())
+          (Printf.sprintf "xynolog-conformance-ports-%d.lock" slot)
+      in
+      let fd = Unix.openfile path [ Unix.O_RDWR; Unix.O_CREAT ] 0o644 in
+      match Unix.lockf fd Unix.F_TLOCK 0 with
+      | () -> first_port + (slot * per_block)
+      | exception Unix.Unix_error ((Unix.EAGAIN | Unix.EACCES), _, _) ->
+          Unix.close fd;
+          claim (slot + 1)
+  in
+  claim 0
+
+let block = lazy (claim_block ())
 
 let nothing_listens_on port =
   let socket = Unix.socket Unix.PF_INET Unix.SOCK_STREAM 0 in

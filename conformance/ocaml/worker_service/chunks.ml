@@ -1,4 +1,4 @@
-(* chunks.test.ts: a text too long for one request (WORKER-SERVICE.md
+(* A text too long for one request (WORKER-SERVICE.md
    § Pieces, § Committing, and where a job stands): cut into pieces that
    overlap, each asked for, committed and checkpointed in turn, with a span
    two pieces both see recorded once. *)

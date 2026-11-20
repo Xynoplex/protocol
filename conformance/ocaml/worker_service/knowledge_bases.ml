@@ -1,4 +1,4 @@
-(* knowledge-bases.test.ts: a worker of two knowledge bases (WORKER-SERVICE.md
+(* A worker of two knowledge bases (WORKER-SERVICE.md
    § The agent, § Knowledge bases, § Health). At each it signs in as the
    client its document names there, asks which knowledge base it reached,
    says what it is called, and runs the jobs that knowledge base hands it, as

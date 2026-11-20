@@ -1,11 +1,10 @@
-(* anthropic.test.ts, named on_anthropic beside the harness's Anthropic: a
-   worker whose engine is an Anthropic one (WORKER-SERVICE.md § Limits, § The request, § The five kinds of mark job,
-   § Failures, § Cancellation, § Generation, § Telemetry, § Stopping): what it
-   asks its provider before its first generation, the request each kind of
-   generation is, how many times a request the provider refuses or drops is
-   made, what a job fails as then, the answer it takes as a stream, the
-   tokens it counts, and what a cancellation and a stop do to a request that
-   is under way. *)
+(* A worker whose engine is an Anthropic one (WORKER-SERVICE.md § Limits,
+   § The request, § The five kinds of mark job, § Failures, § Cancellation,
+   § Generation, § Telemetry, § Stopping): what it asks its provider before
+   its first generation, the request each kind of generation is, how many
+   times a request the provider refuses or drops is made, what a job fails as
+   then, the answer it takes as a stream, the tokens it counts, and what a
+   cancellation and a stop do to a request that is under way. *)
 
 open Xynolog_conformance
 open Support

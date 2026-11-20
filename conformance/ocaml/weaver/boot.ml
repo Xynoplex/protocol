@@ -1,4 +1,4 @@
-(* boot.test.ts: how a Weaver starts, answers for itself and stops
+(* How a Weaver starts, answers for itself and stops
    (WEAVER.md § Boot, § Health, § Stopping): what its health reports, what
    it refuses to start without, that it refuses to start where its settings
    name another knowledge base than the one at its gateway, and that a

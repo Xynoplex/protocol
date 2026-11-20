@@ -1,4 +1,4 @@
-(* yield.test.ts: a yield job to a text format, end to end (WORKER-SERVICE.md
+(* A yield job to a text format, end to end (WORKER-SERVICE.md
    § Generation): the one request it makes of its model, the resource it
    uploads, the link it commits from the source to what it made, the
    citations it commits on what it made, and its completion. *)

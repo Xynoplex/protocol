@@ -1,4 +1,4 @@
-(* declines.test.ts: the jobs a worker does not do (WORKER-SERVICE.md
+(* The jobs a worker does not do (WORKER-SERVICE.md
    § Declines): a resource with nothing to read is declined in the job's
    completion; a resource that can never be read, and a job the worker
    cannot run, are failed as deterministic. *)

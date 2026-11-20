@@ -1,4 +1,4 @@
-(* assessing.test.ts: a mark job of motivation assessing, end to end
+(* A mark job of motivation assessing, end to end
    (WORKER-SERVICE.md § Detection, § The five kinds of mark job): asked with
    a tone and no instructions, and answered with the same assessment twice
    and a blank one. *)

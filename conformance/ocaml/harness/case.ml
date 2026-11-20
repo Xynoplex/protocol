@@ -9,7 +9,7 @@ type 'w t = {
   run : 'w -> unit;
 }
 
-(* A case: [timeout] is its own bound, in seconds, as vitest's; its world's
+(* A case: [timeout] is its own bound, in seconds; its world's
    start is given a bound of its own on top. [solo], the reason, runs it in
    order with the run's other solo cases, in one process, before any other:
    for a case judged on what the cases before it did. [known] is why the
