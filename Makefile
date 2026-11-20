@@ -42,6 +42,6 @@ conformance-typecheck:
 conformance-fixtures:
 	bash scripts/make-target.sh conformance-fixtures
 
-## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives, the contract documents that name what they state, the bus registry's spelling and the ownership inventory
+## reader: Build and test the reader, and read every file of the specifications with it, each table through the model its schema gives, the contract documents that name what they state, the bus registry's spelling and the ownership inventory, then build the OCaml conformance harness and run its cases that need no store
 reader:
 	bash scripts/make-target.sh reader
