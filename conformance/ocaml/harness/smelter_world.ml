@@ -557,7 +557,10 @@ let create (implementations : Implementations.t) =
       ~accounts:
         [
           ( smelter_client,
-            { Issuer.secret; roles = [ Protocol.service_role () ] } );
+            {
+              Issuer.proof = Secret secret;
+              roles = [ Protocol.service_role () ];
+            } );
         ]
       ()
   in

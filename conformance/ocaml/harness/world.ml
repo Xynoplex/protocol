@@ -33,7 +33,9 @@ let create ~command ?(accounts = []) ?kb ?(document = Fun.id) ?(env = [])
   let secret = Fresh.hex 24 in
   let issuer =
     Issuer.start kb.resource
-      ((gateway_client, { Issuer.secret; roles = [ Protocol.service_role () ] })
+      (( gateway_client,
+         { Issuer.proof = Secret secret; roles = [ Protocol.service_role () ] }
+       )
       :: accounts)
   in
   let archivist = Archivist_standin.start issuer in

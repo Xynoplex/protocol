@@ -636,9 +636,11 @@ let assemble (implementations : Implementations.t) command =
       ~accounts:
         [
           ( librarian_client,
-            { Issuer.secret = librarian_secret; roles = service } );
-          (weaver_client, { Issuer.secret = weaver_secret; roles = service });
-          (smelter_client, { Issuer.secret = smelter_secret; roles = service });
+            { Issuer.proof = Secret librarian_secret; roles = service } );
+          ( weaver_client,
+            { Issuer.proof = Secret weaver_secret; roles = service } );
+          ( smelter_client,
+            { Issuer.proof = Secret smelter_secret; roles = service } );
         ]
       ()
   in

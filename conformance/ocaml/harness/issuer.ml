@@ -1,11 +1,23 @@
 (* The knowledge base's trusted issuer, served over HTTP: OIDC discovery,
    the key set at the path discovery names, and a token endpoint answering
-   the client-credentials grant for the service accounts it is given, each
-   proving itself by its client secret. Tokens are RS256, signed with the
-   newest key the key set publishes, under its key id. A case can add a key,
-   and can have the key set answered 500, or accepted and never answered. *)
+   the client-credentials grant for the service accounts it is given. An
+   account proves itself by its client secret, or by an assertion signed with
+   the key whose public half it registers (RFC 7523, private_key_jwt;
+   specs/src/session/client-assertion-cases.json), checked as an issuer
+   checks one: signed RS256 by that key, its iss and sub the account, its aud
+   this token endpoint, not expired, and a jti not seen before. Tokens are
+   RS256, signed with the newest key the key set publishes, under its key
+   id. A case can add a key, can have the key set answered 500, or accepted
+   and never answered, and can have the token endpoint fail the grants it
+   is next asked for. *)
 
-type account = { secret : string; roles : string list }
+type proof = Secret of string | Key of Mirage_crypto_pk.Rsa.pub
+type account = { proof : proof; roles : string list }
+
+(* How the token endpoint fails a grant it is told to fail: [Unavailable] is
+   answered 503, as an issuer not ready yet answers; [Unanswered] has its
+   connection ended with no answer. *)
+type grant_failure = Unavailable | Unanswered
 
 (* What a request of the key set is answered. *)
 type keys_answer = Published | Failing | Silent
@@ -18,6 +30,11 @@ type t = {
   mutable keys_answer : keys_answer;
   mutable key_fetches : int;  (** Requests of the key set. *)
   grants : (string, int) Hashtbl.t;  (** Grants answered, per client id. *)
+  failing : grant_failure Queue.t;
+      (** The grants the token endpoint fails before it grants again, in the
+          order they are asked for. *)
+  met : (grant_failure * float) Dynarray.t;
+      (** Each grant it failed, and when, on [Run.now]'s clock. *)
   server : Serve.t;
 }
 
@@ -145,8 +162,65 @@ let verified t token =
       | _ -> None)
     t.keys
 
+let jwt_bearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+
+(* A JWT's part as the JSON object it holds. *)
+let part encoded =
+  match Base64.decode ~pad:false ~alphabet:Base64.uri_safe_alphabet encoded with
+  | Ok text -> (
+      match Yojson.Safe.from_string text with
+      | `Assoc _ as json -> Some (json, text)
+      | _ | (exception Yojson.Json_error _) -> None)
+  | Error _ -> None
+
+(* The client [assertion] proves, or None. *)
+let asserted ~token_endpoint ~seen accounts assertion =
+  let open Yojson.Safe.Util in
+  match String.split_on_char '.' assertion with
+  | [ head; body; signature ] -> (
+      match (part head, part body) with
+      | Some (header, _), Some (claims, _)
+        when member "alg" header = `String "RS256" -> (
+          match (member "sub" claims, member "iss" claims) with
+          | `String client, `String iss when iss = client -> (
+              match List.assoc_opt client accounts with
+              | Some { proof = Key key; _ } ->
+                  let signed =
+                    match
+                      Base64.decode ~pad:false
+                        ~alphabet:Base64.uri_safe_alphabet signature
+                    with
+                    | Ok signature ->
+                        Mirage_crypto_pk.Rsa.PKCS1.verify
+                          ~hashp:(fun hash -> hash = `SHA256)
+                          ~key ~signature
+                          (`Message (head ^ "." ^ body))
+                    | Error _ -> false
+                  in
+                  let fresh =
+                    match (member "exp" claims, member "jti" claims) with
+                    | `Int exp, `String jti ->
+                        float_of_int exp > Unix.time ()
+                        && not (Hashtbl.mem seen jti)
+                    | _ -> false
+                  in
+                  if
+                    signed
+                    && member "aud" claims = `String token_endpoint
+                    && fresh
+                  then (
+                    Hashtbl.replace seen (to_string (member "jti" claims)) ();
+                    Some client)
+                  else None
+              | _ -> None)
+          | _ -> None)
+      | _ -> None)
+  | _ -> None
+
 let start audience accounts =
   let grants = Hashtbl.create 8 in
+  let failing = Queue.create () and met = Dynarray.create () in
+  let seen = Hashtbl.create 16 in
   let self = ref None in
   let issuer () = Option.get !self in
   let handler (request : Serve.request) =
@@ -174,23 +248,52 @@ let start audience accounts =
             | v :: _ -> Some v
             | [] -> None)
         in
-        let client = Option.value ~default:"" (field "client_id") in
-        match List.assoc_opt client accounts with
-        | Some account
-          when field "grant_type" = Some "client_credentials"
-               && field "client_secret" = Some account.secret ->
-            Hashtbl.replace grants client
-              (1 + Option.value ~default:0 (Hashtbl.find_opt grants client));
-            json 200
-              (`Assoc
-                 [
-                   ( "access_token",
-                     `String
-                       (token t (service_claims ~roles:account.roles client)) );
-                   ("token_type", `String "Bearer");
-                   ("expires_in", `Int 300);
-                 ])
-        | _ -> json 401 (`Assoc [ ("error", `String "invalid_client") ]))
+        let proven =
+          if field "grant_type" <> Some "client_credentials" then None
+          else
+            match field "client_assertion" with
+            | Some assertion ->
+                if field "client_assertion_type" = Some jwt_bearer then
+                  asserted ~token_endpoint:(t.origin ^ "/token") ~seen accounts
+                    assertion
+                else None
+            | None -> (
+                let client = Option.value ~default:"" (field "client_id") in
+                match List.assoc_opt client accounts with
+                | Some { proof = Secret secret; _ }
+                  when field "client_secret" = Some secret ->
+                    Some client
+                | _ -> None)
+        in
+        match Queue.take_opt failing with
+        | Some failure -> (
+            Dynarray.add_last met (failure, Run.now ());
+            match failure with
+            | Unanswered -> Serve.Dropped
+            | Unavailable ->
+                json 503
+                  (`Assoc [ ("error", `String "temporarily_unavailable") ]))
+        | None -> (
+            match
+              Option.map
+                (fun client -> (client, List.assoc client accounts))
+                proven
+            with
+            | Some (client, account) ->
+                Hashtbl.replace grants client
+                  (1 + Option.value ~default:0 (Hashtbl.find_opt grants client));
+                json 200
+                  (`Assoc
+                     [
+                       ( "access_token",
+                         `String
+                           (token t
+                              (service_claims ~roles:account.roles client)) );
+                       ("token_type", `String "Bearer");
+                       ("expires_in", `Int 300);
+                     ])
+            | None -> json 401 (`Assoc [ ("error", `String "invalid_client") ]))
+        )
     | _ -> json 404 (`Assoc [ ("error", `String "not found") ])
   in
   let server = Serve.start handler in
@@ -202,6 +305,8 @@ let start audience accounts =
       keys_answer = Published;
       key_fetches = 0;
       grants;
+      failing;
+      met;
       server;
     }
   in

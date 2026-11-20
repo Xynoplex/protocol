@@ -863,7 +863,10 @@ let create ?(git_sync = true) ?(engines = no_engines) ?(staging = [])
     World.create ~command:gateway
       ~accounts:
         (( archivist_client,
-           { Issuer.secret; roles = [ Protocol.service_role () ] } )
+           {
+             Issuer.proof = Secret secret;
+             roles = [ Protocol.service_role () ];
+           } )
         :: accounts)
       In_process
   in

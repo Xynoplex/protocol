@@ -498,7 +498,10 @@ let start ~gateway ~command ?(timing = []) ?(vocabulary = Some vocabulary)
       ~accounts:
         [
           ( dispatcher_client,
-            { Issuer.secret; roles = [ Protocol.service_role () ] } );
+            {
+              Issuer.proof = Secret secret;
+              roles = [ Protocol.service_role () ];
+            } );
         ]
       In_process
   in
