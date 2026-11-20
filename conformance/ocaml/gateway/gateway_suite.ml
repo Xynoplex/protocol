@@ -26,5 +26,8 @@ let suite : Xynolog_conformance.Suite.t =
             Principal_limits.tests;
             Keys.tests;
             Archivist_waits.tests;
+            Spec_derived.tests;
+            Observability.tests;
+            Environment.tests;
           ]);
   }
