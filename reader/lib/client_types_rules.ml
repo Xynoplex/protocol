@@ -23,8 +23,9 @@
    - session/SessionCacheCases.json's loads are, in order, of
      client/refresh.json's persisted queries, each keeping its query's
      value.
-   - A parameter of client/surface.json names, by its [$id], a component or
-     a client type of client/types, and a query's value in
+   - A parameter of client/surface.json, and what a method of it returns,
+     names, by its [$id], a component or a client type of client/types, and
+     a query's value in
      client/refresh.json a component: an [$id] does not say where its
      schema is. *)
 
@@ -396,19 +397,26 @@ let refusals ~ids ~files ~(read_json : string -> Yojson.Safe.t option) =
           (fun n namespace ->
             List.iteri
               (fun m method_ ->
+                let method_at =
+                  "/namespaces" / string_of_int n / "methods" / string_of_int m
+                in
+                let names place target =
+                  names_one_of "client/surface.json" (place / "$ref") target
+                    ~places:[ Places.components; "client/types/" ]
+                    ~what:"a component or a client type"
+                in
                 List.iteri
                   (fun k parameter ->
                     match at "/schema/$ref" parameter with
                     | Some (`String target) ->
-                        names_one_of "client/surface.json"
-                          ("/namespaces" / string_of_int n / "methods"
-                         / string_of_int m / "parameters" / string_of_int k
-                         / "schema" / "$ref")
+                        names
+                          (method_at / "parameters" / string_of_int k / "schema")
                           target
-                          ~places:[ Places.components; "client/types/" ]
-                          ~what:"a component or a client type"
                     | _ -> ())
-                  (items (at "/parameters" method_)))
+                  (items (at "/parameters" method_));
+                match at "/returns/$ref" method_ with
+                | Some (`String target) -> names (method_at / "returns") target
+                | _ -> ())
               (items (at "/methods" namespace)))
           (items (at "/namespaces" surface))
     | _ -> ());

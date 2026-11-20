@@ -223,6 +223,9 @@
       "BrowseAnnotationResult": {
         "$ref": "https://xynolog.org/protocol/BrowseAnnotationResult.json"
       },
+      "AnchorRect": {
+        "$ref": "https://xynolog.org/protocol/AnchorRect.json"
+      },
       "BrowseClickEvent": {
         "$ref": "https://xynolog.org/protocol/BrowseClickEvent.json"
       },

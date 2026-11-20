@@ -1,7 +1,12 @@
 (* client/surface.json's cases against their methods' parameters: a method
    takes each parameter once, and each case gives it nothing it does not take,
    everything it requires, and each argument as its parameter's schema says,
-   with each [{"$fixture": name}] read as the table's fixture of that name. *)
+   with each [{"$fixture": name}] read as the table's fixture of that name.
+
+   And each method's [returns] against its shape: a [signal] or [count]
+   returns null, its shape saying all it gives; a promise may return null,
+   resolving with nothing; any other shape gives a value. An [events] method
+   returns the schema bus/registry.json states for the channel it observes. *)
 
 let file = "client/surface.json"
 let ( / ) pointer token = pointer ^ "/" ^ Decode.escape token
@@ -108,19 +113,80 @@ let method_refusals ~ids ~schema_at ~fixtures ~at ~called
   in
   twice @ List.concat_map case (indexed method_.cases)
 
-let refusals ~ids ~read_json ~schema_at (surface : Tables.Client_surface.t) =
+(* The schema the registry states for [name], by its [$id]. *)
+let channel_schema (registry : Tables.Bus_registry.t) name =
+  List.find_map
+    (fun (c : Tables.Bus_registry.channels_item) ->
+      match c with
+      | Schema { channel; schema; _ } when channel = name ->
+          Some (Decode.base ^ schema ^ ".json")
+      | _ -> None)
+    registry.channels
+
+let returns_refusals ~registry ~at ~called
+    (method_ : Tables.Client_surface.methods_item) =
+  let via_at = at / "via" and at = at / "returns" in
+  let shape = Tables.Client_surface.shape_value method_.shape in
+  match (method_.shape, method_.returns) with
+  | (Signal | Count), Some _ ->
+      [
+        refusal at
+          (Printf.sprintf
+             "is a value, and %s is a %s, whose shape says all it gives: it \
+              returns null"
+             called shape);
+      ]
+  | (Stream | Delegation | Upload | Cache | Events | Claims), None ->
+      [
+        refusal at
+          (Printf.sprintf "is null, and %s is a %s, which gives a value" called
+             shape);
+      ]
+  | Events, Some returned -> (
+      let observed =
+        match method_.via with
+        | Observes { observes } -> Some observes
+        | _ -> None
+      in
+      match (Option.bind observed (channel_schema registry), returned) with
+      | Some stated, Reference { ref = { target; _ } } when target = stated ->
+          []
+      | Some stated, _ ->
+          [
+            refusal at
+              (Printf.sprintf
+                 "is not %s, the schema bus/registry.json states for the \
+                  channel %s observes"
+                 stated called);
+          ]
+      | None, _ ->
+          [
+            refusal via_at
+              (Printf.sprintf
+                 "names no channel bus/registry.json states a schema for, so \
+                  what %s returns is unstated"
+                 called);
+          ])
+  | _ -> []
+
+let refusals ~ids ~read_json ~schema_at ~registry
+    (surface : Tables.Client_surface.t) =
+  let each f =
+    List.concat_map
+      (fun (n, (namespace : Tables.Client_surface.namespaces_item)) ->
+        List.concat_map
+          (fun (m, (method_ : Tables.Client_surface.methods_item)) ->
+            f
+              ~at:
+                ("" / "namespaces" / string_of_int n / "methods"
+               / string_of_int m)
+              ~called:(namespace.namespace ^ "." ^ method_.method_)
+              method_)
+          (indexed namespace.methods))
+      (indexed surface.namespaces)
+  in
+  each (returns_refusals ~registry)
+  @
   match Option.bind (read_json file) (Decode.at_pointer "/fixtures") with
   | None -> [ refusal "" "has no fixtures" ]
-  | Some fixtures ->
-      List.concat_map
-        (fun (n, (namespace : Tables.Client_surface.namespaces_item)) ->
-          List.concat_map
-            (fun (m, (method_ : Tables.Client_surface.methods_item)) ->
-              method_refusals ~ids ~schema_at ~fixtures
-                ~at:
-                  ("" / "namespaces" / string_of_int n / "methods"
-                 / string_of_int m)
-                ~called:(namespace.namespace ^ "." ^ method_.method_)
-                method_)
-            (indexed namespace.methods))
-        (indexed surface.namespaces)
+  | Some fixtures -> each (method_refusals ~ids ~schema_at ~fixtures)
