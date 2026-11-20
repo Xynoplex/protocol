@@ -23,22 +23,18 @@ let unknown w =
   let answer = D.status (D.person w "reader") (D.unknown_job_id ()) in
   Check.equal "the reply's channel" (str "job:status-failed")
     (str answer.channel);
-  Check.equal "the reply's message"
-    (str (D.refusal_text "job-not-found"))
-    (Option.value ~default:`Null (D.message_of answer));
-  Check.equal "the reply's code"
-    (match (D.refusal "job-not-found").code with
-    | Some code -> str (D.code_word code)
-    | None -> `Null)
-    (Option.value ~default:`Null (D.code_of answer))
-
-let commenting (c : D.client) =
-  D.created ~resource_id:(D.resource_id ()) c "mark"
-    (`Assoc [ ("motivation", str "commenting") ])
+  member_is "the reply's message"
+    (Some (str (D.refusal_text "job-not-found")))
+    (D.message_of answer);
+  member_is "the reply's code"
+    (Option.map
+       (fun code -> str (D.code_word code))
+       (D.refusal "job-not-found").code)
+    (D.code_of answer)
 
 let every_state w =
   let creator = D.person w "creator" in
-  let pending_id = commenting creator in
+  let pending_id = mark creator [ motivation "commenting" ] in
   let pending = D.status_of creator pending_id in
   Check.matching "the pending status"
     [
@@ -61,9 +57,7 @@ let every_state w =
     complete.worker complete.ref;
   carried "a complete status"
     [ "startedAt"; "completedAt"; "result" ]
-    (D.until_status creator
-       (D.text complete.job [ "metadata"; "id" ])
-       "completion" "complete");
+    (D.until_status creator complete.ref.job_id "completion" "complete");
   D.fail
     ~extra:[ ("failureClass", str "deterministic") ]
     worker (D.ref_of job) "broken";
@@ -71,7 +65,7 @@ let every_state w =
   carried "a failed status" [ "completedAt"; "error"; "failureClass" ] failed;
   Check.equal "the failed status's class" (str "deterministic")
     (Check.at failed [ "failureClass" ]);
-  let cancelled_id = commenting creator in
+  let cancelled_id = mark creator [ motivation "commenting" ] in
   ignore
     (D.cancel_request creator (`Assoc [ ("jobId", str cancelled_id) ])
       : D.answer);

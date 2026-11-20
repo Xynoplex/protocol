@@ -9,7 +9,7 @@ let end_to_end w =
   let creator = D.person w "alice" in
   let worker = D.worker w "highlighter" in
   let resource_id = D.resource_id () in
-  let params = [ ("motivation", str "highlighting"); ("density", `Int 3) ] in
+  let params = [ motivation "highlighting"; ("density", `Int 3) ] in
   let job_id = D.created ~resource_id creator "mark" (`Assoc params) in
   Check.equal "the job id's refusals as a JobId" (`List [])
     (`List

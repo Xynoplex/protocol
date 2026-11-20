@@ -171,10 +171,13 @@ let ref_members r =
     ("resourceId", `String r.resource_id);
   ]
 
+(* A job's id, as a claim hands it out. *)
+let id_of job = text job [ "metadata"; "id" ]
+
 (* A claimed job, as its worker's signals name it. *)
 let ref_of job =
   {
-    job_id = text job [ "metadata"; "id" ];
+    job_id = id_of job;
     job_type = text job [ "metadata"; "type" ];
     resource_id = text job [ "params"; "resourceId" ];
   }
@@ -340,6 +343,9 @@ let status_of c job_id =
   Check.at answer.payload [ "response" ]
 
 let status_word s = text s [ "status" ]
+
+(* The status word of a job the dispatcher must know, now. *)
+let status_now c job_id = status_word (status_of c job_id)
 
 (* Poll the status until [holds] accepts it. *)
 let until ?(timeout = 10.0) c job_id what holds =
@@ -609,7 +615,7 @@ let running ?(job = highlighting) t =
         created ~resource_id:(resource_id ()) creator "mark" (`Assoc params)
   in
   let claimed = claimed worker [ filter ] in
-  let id = text claimed [ "metadata"; "id" ] in
+  let id = id_of claimed in
   if id <> job_id then
     failwith
       (Printf.sprintf "the claim handed out %s, not the job just created, %s" id

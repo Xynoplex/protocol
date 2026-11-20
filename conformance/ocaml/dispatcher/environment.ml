@@ -15,9 +15,9 @@ open Case
 let request = "job:status-requested"
 let failure () = (Protocol.operation_for request).failure
 
-(* OTLP's span kinds. *)
-let producer = 4
-let consumer = 5
+(* The span kinds the cases name, as OTLP numbers them. *)
+let producer = Protocol.otlp_kind Producer
+let consumer = Protocol.otlp_kind Consumer
 
 (* A dispatcher world with [env] (a variable with a value is set, one with
    none left unset), exporting to its own receiver. *)

@@ -8,9 +8,9 @@ open Xynolog_conformance
 open Support
 open Case
 
-(* OTLP's span kinds. *)
-let producer = 4
-let consumer = 5
+(* The span kinds the cases name, as OTLP numbers them. *)
+let producer = Protocol.otlp_kind Producer
+let consumer = Protocol.otlp_kind Consumer
 
 let in_order =
   "the file's last case is judged on everything its cases made the dispatcher \
@@ -44,13 +44,11 @@ let bus_spans { dw = w; otlp } =
     ~result:(`Assoc [ ("found", `Int 0); ("persisted", `Int 0) ])
     r.worker r.ref;
   ignore
-    (D.until_status r.creator
-       (D.text r.job [ "metadata"; "id" ])
-       "the job to complete" "complete"
+    (D.until_status r.creator r.ref.job_id "the job to complete" "complete"
       : Yojson.Safe.t);
   let cancelled =
     D.created ~resource_id:(D.resource_id ()) r.creator "mark"
-      (`Assoc [ ("motivation", str "highlighting") ])
+      (`Assoc [ motivation "highlighting" ])
   in
   Check.that "the cancellation is answered"
     (D.cancel_request r.creator (`Assoc [ ("jobId", str cancelled) ])).ok;

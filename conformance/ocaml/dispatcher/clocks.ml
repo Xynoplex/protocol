@@ -9,30 +9,18 @@ open Case
 let tick = 300
 let stale = 1_500
 
-let linking =
-  D.Mark
-    [
-      ("motivation", str "linking");
-      ("entityTypes", `List [ str "Person"; str "Place" ]);
-    ]
-
-let id (r : D.running) = D.text r.job [ "metadata"; "id" ]
-
 let tick_announces w =
-  let job_id =
-    D.created ~resource_id:(D.resource_id ()) (D.person w "creator") "mark"
-      (`Assoc [ ("motivation", str "highlighting") ])
-  in
+  let job_id = mark (D.person w "creator") [ motivation "highlighting" ] in
   ignore (D.announced ~n:3 ~timeout:5.0 w job_id : Bus_stream.frame)
 
 let silent_requeued w =
-  let r = D.running ~job:(D.Mark [ ("motivation", str "commenting") ]) w in
-  let announced = List.length (D.announcements w (id r)) in
+  let r = D.running ~job:(D.Mark [ motivation "commenting" ]) w in
+  let announced = List.length (D.announcements w r.ref.job_id) in
   ignore
-    (D.until_status ~timeout:10.0 r.creator (id r)
+    (D.until_status ~timeout:10.0 r.creator r.ref.job_id
        "the sweep to re-queue the job" "pending"
       : Yojson.Safe.t);
-  ignore (D.announced ~n:(announced + 1) w (id r) : Bus_stream.frame);
+  ignore (D.announced ~n:(announced + 1) w r.ref.job_id : Bus_stream.frame);
   let retried = D.claimed r.worker [ D.marks "commenting" ] in
   Check.equal "the retry's count" (`Int 1)
     (Check.at retried [ "metadata"; "retryCount" ]);
@@ -41,8 +29,8 @@ let silent_requeued w =
 let silent_failed w =
   let r = D.running ~job:D.Yield w in
   let status =
-    D.until_status ~timeout:10.0 r.creator (id r) "the sweep to fail the job"
-      "failed"
+    D.until_status ~timeout:10.0 r.creator r.ref.job_id
+      "the sweep to fail the job" "failed"
   in
   let presumed = D.error_row "presumed-dead" in
   Check.equal "the job's error"
@@ -67,7 +55,7 @@ let kept_alive w (r : D.running) signal =
   in
   go 0;
   Check.equal "the job's status" (str "running")
-    (Check.at (D.status_of r.creator (id r)) [ "status" ]);
+    (Check.at (D.status_of r.creator r.ref.job_id) [ "status" ]);
   D.complete r.worker r.ref
 
 let progress_keeps w =
@@ -79,26 +67,16 @@ let progress_keeps w =
 let checkpoints_keep w =
   let r = D.running ~job:linking w in
   kept_alive w r (fun elapsed ->
-      D.checkpoint r.worker (id r) [ Printf.sprintf "unit-%d" elapsed ])
-
-let cursor next size found emitted errors =
-  `Assoc
-    [
-      ("next", `Int next);
-      ("size", `Int size);
-      ("found", `Int found);
-      ("emitted", `Int emitted);
-      ("errors", `Int errors);
-    ]
+      D.checkpoint r.worker r.ref.job_id [ Printf.sprintf "unit-%d" elapsed ])
 
 let requeue_keeps_checkpoint w =
   let r = D.running ~job:linking w in
   let ended = cursor 9 5 4 4 0 and partway = cursor 2 5 3 2 1 in
   D.checkpoint
     ~unit_cursors:[ ("Person", ended); ("Place", partway) ]
-    r.worker (id r) [ "Person" ];
+    r.worker r.ref.job_id [ "Person" ];
   ignore
-    (D.until_status ~timeout:10.0 r.creator (id r)
+    (D.until_status ~timeout:10.0 r.creator r.ref.job_id
        "the sweep to re-queue the job" "pending"
       : Yojson.Safe.t);
   let retried = D.claimed r.worker [ D.marks "linking" ] in
@@ -118,16 +96,12 @@ let retention w =
     completed.worker completed.ref;
   let failed = D.running ~job:D.Yield w in
   D.fail failed.worker failed.ref "broken";
-  let commenting = `Assoc [ ("motivation", str "commenting") ] in
-  let cancelled =
-    D.created ~resource_id:(D.resource_id ()) creator "mark" commenting
-  in
+
+  let cancelled = mark creator [ motivation "commenting" ] in
   ignore
     (D.cancel_request creator (`Assoc [ ("jobId", str cancelled) ]) : D.answer);
-  let running = D.running ~job:(D.Mark [ ("motivation", str "assessing") ]) w in
-  let pending =
-    D.created ~resource_id:(D.resource_id ()) creator "mark" commenting
-  in
+  let running = D.running ~job:(D.Mark [ motivation "assessing" ]) w in
+  let pending = mark creator [ motivation "commenting" ] in
   List.iter
     (fun job_id ->
       Run.eventually (job_id ^ " to be deleted") 10.0 (fun () ->
@@ -136,16 +110,18 @@ let retention w =
             = Some (str (D.refusal_text "job-not-found"))
           then Some ()
           else None))
-    [ id completed; id failed; cancelled ];
+    [ completed.ref.job_id; failed.ref.job_id; cancelled ];
   Check.equal "the running job's status" (str "running")
-    (Check.at (D.status_of creator (id running)) [ "status" ]);
+    (Check.at (D.status_of creator running.ref.job_id) [ "status" ]);
   Check.equal "the pending job's status" (str "pending")
     (Check.at (D.status_of creator pending) [ "status" ])
 
 let throttle w =
   let r = D.running w in
   let percentage () =
-    Protocol.at (D.status_of r.creator (id r)) [ "progress"; "percentage" ]
+    Protocol.at
+      (D.status_of r.creator r.ref.job_id)
+      [ "progress"; "percentage" ]
   in
   let polled n =
     Run.eventually (Printf.sprintf "the progress to show %d" n) 1.0 (fun () ->
@@ -158,8 +134,7 @@ let throttle w =
   polled 10;
   D.report_progress r.worker r.ref (`Int 20);
   D.settle ();
-  Check.equal "the progress written" (`Int 10)
-    (Option.value ~default:`Null (percentage ()));
+  member_is "the progress written" (Some (`Int 10)) (percentage ());
   D.settle ~seconds:(D.timing w "progressWriteIntervalMs") ();
   D.report_progress r.worker r.ref (`Int 30);
   polled 30

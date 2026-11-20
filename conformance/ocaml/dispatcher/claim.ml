@@ -7,10 +7,6 @@ open Xynolog_conformance
 open Support
 open Case
 
-let mark motivation (c : D.client) =
-  D.created ~resource_id:(D.resource_id ()) c "mark"
-    (`Assoc [ ("motivation", str motivation) ])
-
 (* What a refusal dispatcher/messages.json names carries: its code, when it
    has one, and its words. *)
 let refused_as name =
@@ -19,18 +15,13 @@ let refused_as name =
     | None -> [])
   @ [ ("message", str (D.refusal_text name)) ]
 
-let id job = D.text job [ "metadata"; "id" ]
-
-let status_word (c : D.client) job_id =
-  str (D.status_word (D.status_of c job_id))
-
 let whole_record w =
   let creator = D.person w "creator" in
   let worker = D.worker w "claimant" in
   let resource_id = D.resource_id () in
   let params =
     [
-      ("motivation", str "linking");
+      motivation "linking";
       ("entityTypes", `List [ str "Place" ]);
       ("includeDescriptiveReferences", `Bool true);
     ]
@@ -75,18 +66,19 @@ let whole_record w =
 
 let not_a_worker who w =
   let creator = D.person w "creator" in
-  let job_id = mark "highlighting" creator in
+  let job_id = mark creator [ motivation "highlighting" ] in
   let answer = D.claim (who w) (D.every_job ()) in
   Check.equal "the reply's channel" (str "job:claim-failed")
     (str answer.channel);
   Check.matching "the refusal" (refused_as "not-a-worker") answer.payload;
-  Check.equal "the job's status" (str "pending") (status_word creator job_id);
+  Check.equal "the job's status" (str "pending")
+    (str (D.status_now creator job_id));
   Check.equal "the job a worker claims" (str job_id)
-    (str (id (D.claimed (D.worker w "rightful") (D.every_job ()))))
+    (str (D.id_of (D.claimed (D.worker w "rightful") (D.every_job ()))))
 
 let roles_from_token w =
   let person = D.person w "pretender" in
-  ignore (mark "highlighting" (D.person w "creator") : string);
+  ignore (mark (D.person w "creator") [ motivation "highlighting" ] : string);
   let answer =
     D.request person "job:claim"
       (`Assoc
@@ -108,55 +100,51 @@ let declines w =
   Check.matching "the decline" (refused_as "none-pending") answer.payload;
   Check.equal "the assignments recorded" (`Int before) (`Int (assignments w))
 
-let none_pending what answer =
-  Check.equal what
-    (str (D.code_word None_pending))
-    (Option.value ~default:`Null (D.code_of answer))
-
 let one_motivation w =
   let creator = D.person w "creator" in
   let worker = D.worker w "tagger" in
-  let highlighting = mark "highlighting" creator in
+  let highlighting = mark creator [ motivation "highlighting" ] in
   let yielding = D.created creator "yield" (D.generation (D.resource_id ())) in
-  none_pending "the claim's code" (D.claim worker [ D.marks "tagging" ]);
+  declined "the claim's code" (D.claim worker [ D.marks "tagging" ]);
   Check.equal "the highlighting job's status" (str "pending")
-    (status_word creator highlighting);
+    (str (D.status_now creator highlighting));
   Check.equal "the yield job's status" (str "pending")
-    (status_word creator yielding);
+    (str (D.status_now creator yielding));
   let tagging =
     D.created ~resource_id:(D.resource_id ()) creator "mark"
       (`Assoc
          [
-           ("motivation", str "tagging");
+           motivation "tagging";
            ("schemaId", str "irac");
            ("categories", `List [ str "Issue" ]);
          ])
   in
   Check.equal "the job claimed" (str tagging)
-    (str (id (D.claimed worker [ D.marks "tagging" ])));
+    (str (D.id_of (D.claimed worker [ D.marks "tagging" ])));
   Check.equal "the highlighting job's status" (str "pending")
-    (status_word creator highlighting)
+    (str (D.status_now creator highlighting))
 
 let yields_only w =
   let creator = D.person w "creator" in
   let worker = D.worker w "generator" in
-  let commenting = mark "commenting" creator in
-  none_pending "the claim's code" (D.claim worker [ D.yields ]);
+  let commenting = mark creator [ motivation "commenting" ] in
+  declined "the claim's code" (D.claim worker [ D.yields ]);
   let yielding = D.created creator "yield" (D.generation (D.resource_id ())) in
   Check.equal "the job claimed" (str yielding)
-    (str (id (D.claimed worker [ D.yields ])));
+    (str (D.id_of (D.claimed worker [ D.yields ])));
   Check.equal "the commenting job's status" (str "pending")
-    (status_word creator commenting)
+    (str (D.status_now creator commenting))
 
 let any_filter w =
   let creator = D.person w "creator" in
   let worker = D.worker w "picky" in
-  let job_id = mark "commenting" creator in
-  none_pending "the claim's code"
-    (D.claim worker [ D.marks "tagging"; D.yields ]);
-  Check.equal "the job's status" (str "pending") (status_word creator job_id);
+  let job_id = mark creator [ motivation "commenting" ] in
+  declined "the claim's code" (D.claim worker [ D.marks "tagging"; D.yields ]);
+  Check.equal "the job's status" (str "pending")
+    (str (D.status_now creator job_id));
   Check.equal "the job claimed" (str job_id)
-    (str (id (D.claimed worker [ D.marks "tagging"; D.marks "commenting" ])))
+    (str
+       (D.id_of (D.claimed worker [ D.marks "tagging"; D.marks "commenting" ])))
 
 let filter job_type params =
   `Assoc [ ("jobType", str job_type); ("params", `Assoc params) ]
@@ -168,10 +156,7 @@ let at_the_door =
       `Assoc [ ("accepts", `List [ `Assoc [ ("jobType", str "mark") ] ]) ] );
     ( "names a motivation that is none",
       `Assoc
-        [
-          ( "accepts",
-            `List [ filter "mark" [ ("motivation", str "unheard-of") ] ] );
-        ] );
+        [ ("accepts", `List [ filter "mark" [ motivation "unheard-of" ] ]) ] );
     ( "names jobs by a type alone, as claims once did",
       `Assoc [ ("types", `List [ str "mark" ]) ] );
     ( "states a field no filter states",
@@ -183,12 +168,6 @@ let at_the_door =
         ] );
   ]
 
-let refused_at_door claim w =
-  let reply = D.offered (D.worker w "vague") "job:claim" claim in
-  Check.equal
-    (Printf.sprintf "the gateway's status: %s" (Call.shown reply.text))
-    (`Int 400) (`Int reply.status)
-
 let one_of_many w =
   let creator = D.person w "creator" in
   let workers =
@@ -197,7 +176,7 @@ let one_of_many w =
       [ 1; 2; 3; 4; 5 ]
   in
   for _ = 1 to 3 do
-    let job_id = mark "highlighting" creator in
+    let job_id = mark creator [ motivation "highlighting" ] in
     let answers =
       Eio.Fiber.List.map (fun c -> D.claim c [ D.marks "highlighting" ]) workers
     in
@@ -205,25 +184,21 @@ let one_of_many w =
     Check.equal "the claims that won" (`Int 1) (`Int (List.length won));
     Check.equal "the job won" (str job_id)
       (Check.at (List.hd won).payload [ "response"; "metadata"; "id" ]);
-    Check.equal "the codes of the claims that lost"
-      (`List (List.init 4 (fun _ -> str (D.code_word None_pending))))
-      (`List
-         (List.filter_map
-            (fun (a : D.answer) ->
-              if a.ok then None
-              else Some (Option.value ~default:`Null (D.code_of a)))
-            answers))
+    List.iter
+      (fun (a : D.answer) ->
+        if not a.ok then declined "the code of a claim that lost" a)
+      answers
   done
 
 let two_of_two w =
   let creator = D.person w "creator" in
-  let first = mark "assessing" creator in
-  let second = mark "assessing" creator in
+  let first = mark creator [ motivation "assessing" ] in
+  let second = mark creator [ motivation "assessing" ] in
   let left = D.worker w "left" in
   let right = D.worker w "right" in
   let claimed =
     Eio.Fiber.List.map
-      (fun c -> id (D.claimed c [ D.marks "assessing" ]))
+      (fun c -> D.id_of (D.claimed c [ D.marks "assessing" ]))
       [ left; right ]
   in
   Check.equal "the jobs claimed"
@@ -267,9 +242,8 @@ let tests implementations =
       ]
     @ List.map
         (fun (what, claim) ->
-          case
-            (Printf.sprintf "refuses at the door a claim that %s" what)
-            (refused_at_door claim))
+          case (Printf.sprintf "refuses at the door a claim that %s" what)
+            (fun w -> refused_at_door (D.worker w "vague") "job:claim" claim))
         at_the_door
     @ [
         case "gives one pending job to exactly one of many simultaneous claims"

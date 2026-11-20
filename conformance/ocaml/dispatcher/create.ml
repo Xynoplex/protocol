@@ -7,30 +7,8 @@ open Xynolog_conformance
 open Support
 open Case
 
-let mark ?resource_id c params =
-  D.created
-    ~resource_id:(Option.value resource_id ~default:(D.resource_id ()))
-    c "mark" (`Assoc params)
-
 let strings items = `List (List.map str items)
-
-(* Nothing is pending: a claim that takes every job is told so. *)
-let nothing_queued w =
-  Check.equal "the code of a claim for every job"
-    (str (D.code_word None_pending))
-    (Option.value ~default:`Null
-       (D.code_of (D.claim (D.worker w "idle") (D.every_job ()))))
-
-(* The gateway refused [payload] on [channel] at its door. *)
-let refused_at_door c channel payload =
-  let reply = D.offered c channel payload in
-  Check.equal
-    (Printf.sprintf "the gateway's answer to %s: %s" channel
-       (Call.shown reply.text))
-    (`Int 400) (`Int reply.status)
-
 let both_reads w = D.reads w D.tag_schemas_read + D.reads w D.entity_types_read
-let motivation m = ("motivation", str m)
 
 let records_requester w =
   let creator = D.person w "creator" in
@@ -107,7 +85,7 @@ let refuses_not_taken (params, extra) w =
   let job_id = mark ~resource_id creator params in
   let m = D.text (`Assoc params) [ "motivation" ] in
   Check.equal "the job claimed" (str job_id)
-    (Check.at (D.claimed worker [ D.marks m ]) [ "metadata"; "id" ])
+    (str (D.id_of (D.claimed worker [ D.marks m ])))
 
 let not_stated =
   [
@@ -176,7 +154,7 @@ let yield_under_annotation w =
         ("@context", str "http://www.w3.org/ns/anno.jsonld");
         ("type", str "Annotation");
         ("id", str ("ann-" ^ Fresh.uuid ()));
-        ("motivation", str "linking");
+        motivation "linking";
         ("target", str source_resource);
         ("created", str (Ptime.to_rfc3339 ~frac_s:3 (Ptime_clock.now ())));
       ]
@@ -238,11 +216,12 @@ let refuses_yield_parameter extra w =
   in
   Check.equal "the reply's channel" (str "job:create-failed")
     (str answer.channel);
-  Check.equal "the reply's message"
-    (str
-       (D.refusal_text "yield-parameter"
-          ~fill:[ ("params", String.concat ", " (List.map fst extra)) ]))
-    (Option.value ~default:`Null (D.message_of answer));
+  member_is "the reply's message"
+    (Some
+       (str
+          (D.refusal_text "yield-parameter"
+             ~fill:[ ("params", String.concat ", " (List.map fst extra)) ])))
+    (D.message_of answer);
   nothing_queued w
 
 let admits_registered w =
@@ -275,22 +254,24 @@ let refuses_unregistered w =
   in
   Check.equal "the linking job's reply" (str "job:create-failed")
     (str linking.channel);
-  Check.equal "the linking job's message"
-    (str
-       (D.refusal_text "entity-type-not-registered"
-          ~fill:[ ("types", "Unicorn, Dragon") ]))
-    (Option.value ~default:`Null (D.message_of linking));
+  member_is "the linking job's message"
+    (Some
+       (str
+          (D.refusal_text "entity-type-not-registered"
+             ~fill:[ ("types", "Unicorn, Dragon") ])))
+    (D.message_of linking);
   lacks "the linking job's refusal" linking.payload [ "code" ];
   let yielded =
     D.create creator "yield"
       (D.generation (D.resource_id ())
          ~extra:[ ("entityTypes", strings [ "UnknownThing" ]) ])
   in
-  Check.equal "the yield job's message"
-    (str
-       (D.refusal_text "entity-type-not-registered"
-          ~fill:[ ("types", "UnknownThing") ]))
-    (Option.value ~default:`Null (D.message_of yielded));
+  member_is "the yield job's message"
+    (Some
+       (str
+          (D.refusal_text "entity-type-not-registered"
+             ~fill:[ ("types", "UnknownThing") ])))
+    (D.message_of yielded);
   nothing_queued w
 
 let reads_none_unnamed w =
@@ -339,18 +320,17 @@ let refuses_unregistered_schema w =
   in
   Check.equal "the reply's channel" (str "job:create-failed")
     (str unknown.channel);
-  Check.equal "the reply's message"
-    (str
-       (D.refusal_text "tag-schema-not-registered"
-          ~fill:[ ("schemaId", "nope") ]))
-    (Option.value ~default:`Null (D.message_of unknown));
+  member_is "the reply's message"
+    (Some
+       (str
+          (D.refusal_text "tag-schema-not-registered"
+             ~fill:[ ("schemaId", "nope") ])))
+    (D.message_of unknown);
   Check.equal "the tag-schema reads"
     (`Int (before + 1))
     (`Int (D.reads w D.tag_schemas_read));
-  Check.equal "the code of a claim for tagging jobs"
-    (str (D.code_word None_pending))
-    (Option.value ~default:`Null
-       (D.code_of (D.claim (D.worker w "idle") [ D.marks "tagging" ])))
+  declined "the code of a claim for tagging jobs"
+    (D.claim (D.worker w "idle") [ D.marks "tagging" ])
 
 let holds_as_given w =
   let creator = D.person w "creator" in

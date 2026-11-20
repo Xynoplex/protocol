@@ -7,9 +7,8 @@ open Xynolog_conformance
 open Support
 open Case
 
-let id (r : D.running) = D.text r.job [ "metadata"; "id" ]
-
-let cursor ?(size = 10) next =
+(* A cursor [next] units in, of a unit of [size]. *)
+let cursor_at ?(size = 10) next =
   `Assoc
     [
       ("next", `Int next);
@@ -19,20 +18,6 @@ let cursor ?(size = 10) next =
       ("errors", `Int (next mod 2));
     ]
 
-let linking =
-  D.Mark
-    [
-      ("motivation", str "linking");
-      ("entityTypes", `List [ str "Person"; str "Place" ]);
-    ]
-
-let units names = `List (List.map str names)
-
-let sorted json =
-  match json with
-  | `List items -> `List (List.sort compare items)
-  | other -> failwith (Check.shown other ^ " is not a list")
-
 (* End the attempt and claim the next: the claim carries the checkpoint as
    the record holds it. Its metadata. *)
 let retried w (r : D.running) =
@@ -40,7 +25,7 @@ let retried w (r : D.running) =
   D.fail r.worker r.ref "interrupted";
   let creator = D.person w "creator" in
   ignore
-    (D.until_status creator (id r) "the job to be re-queued" "pending"
+    (D.until_status creator r.ref.job_id "the job to be re-queued" "pending"
       : Yojson.Safe.t);
   Check.at (D.claimed r.worker [ D.filter_of r.job ]) [ "metadata" ]
 
@@ -58,7 +43,7 @@ let whole w =
       ~job:
         (D.Mark
            [
-             ("motivation", str "tagging");
+             motivation "tagging";
              ("schemaId", str "irac");
              ("categories", `List [ str "Issue" ]);
            ])
@@ -77,7 +62,7 @@ let whole w =
   D.report_progress ~progress r.worker r.ref (`Int 40);
   Check.equal "the job's progress" progress
     (Check.at
-       (D.until r.creator (id r) "the progress to show" (percentage_is 40))
+       (D.until r.creator r.ref.job_id "the progress to show" (percentage_is 40))
        [ "progress" ])
 
 let bare w =
@@ -86,7 +71,7 @@ let bare w =
   Check.equal "the job's progress"
     (`Assoc [ ("percentage", `Int 70) ])
     (Check.at
-       (D.until r.creator (id r) "the progress to show" (fun s ->
+       (D.until r.creator r.ref.job_id "the progress to show" (fun s ->
             Protocol.at s [ "progress" ] <> Some (`Assoc [])
             && Protocol.at s [ "progress" ] <> None))
        [ "progress" ])
@@ -96,8 +81,7 @@ let not_running_progress w =
   let worker = D.worker w "premature" in
   let resource_id = D.resource_id () in
   let job_id =
-    D.created ~resource_id creator "mark"
-      (`Assoc [ ("motivation", str "commenting") ])
+    D.created ~resource_id creator "mark" (`Assoc [ motivation "commenting" ])
   in
   D.report_progress worker { job_id; job_type = "mark"; resource_id } (`Int 90);
   D.settle ();
@@ -109,7 +93,7 @@ let not_running_progress w =
 
 let finished_units w =
   let r = D.running ~job:linking w in
-  D.checkpoint r.worker (id r) [ "Person" ];
+  D.checkpoint r.worker r.ref.job_id [ "Person" ];
   let metadata = retried w r in
   Check.equal "the retry's finished units" (units [ "Person" ])
     (Check.at metadata [ "completedUnits" ]);
@@ -117,19 +101,21 @@ let finished_units w =
 
 let unions w =
   let r = D.running ~job:linking w in
-  D.checkpoint r.worker (id r) [ "Person" ];
+  D.checkpoint r.worker r.ref.job_id [ "Person" ];
   D.settle ();
-  D.checkpoint r.worker (id r) [ "Place"; "Person" ];
+  D.checkpoint r.worker r.ref.job_id [ "Place"; "Person" ];
   Check.equal "the retry's finished units"
     (units [ "Person"; "Place" ])
     (sorted (Check.at (retried w r) [ "completedUnits" ]))
 
 let cursor_unfinished w =
   let r = D.running ~job:linking w in
-  D.checkpoint ~unit_cursors:[ ("Person", cursor 2) ] r.worker (id r) [];
+  D.checkpoint
+    ~unit_cursors:[ ("Person", cursor_at 2) ]
+    r.worker r.ref.job_id [];
   let metadata = retried w r in
   Check.equal "the retry's cursors"
-    (`Assoc [ ("Person", cursor 2) ])
+    (`Assoc [ ("Person", cursor_at 2) ])
     (Check.at metadata [ "unitCursors" ]);
   Check.equal "the retry's finished units" (`List [])
     (Option.value ~default:(`List [])
@@ -137,75 +123,85 @@ let cursor_unfinished w =
 
 let advances w =
   let r = D.running ~job:linking w in
-  D.checkpoint ~unit_cursors:[ ("Person", cursor 2) ] r.worker (id r) [];
+  D.checkpoint
+    ~unit_cursors:[ ("Person", cursor_at 2) ]
+    r.worker r.ref.job_id [];
   D.settle ();
   D.checkpoint
-    ~unit_cursors:[ ("Person", cursor ~size:12 5) ]
-    r.worker (id r) [];
+    ~unit_cursors:[ ("Person", cursor_at ~size:12 5) ]
+    r.worker r.ref.job_id [];
   D.settle ();
   D.checkpoint
-    ~unit_cursors:[ ("Person", cursor ~size:99 3) ]
-    r.worker (id r) [];
+    ~unit_cursors:[ ("Person", cursor_at ~size:99 3) ]
+    r.worker r.ref.job_id [];
   Check.equal "the retry's cursors"
-    (`Assoc [ ("Person", cursor ~size:12 5) ])
+    (`Assoc [ ("Person", cursor_at ~size:12 5) ])
     (Check.at (retried w r) [ "unitCursors" ])
 
 let per_unit w =
   let r = D.running ~job:linking w in
-  D.checkpoint ~unit_cursors:[ ("Person", cursor 2) ] r.worker (id r) [];
+  D.checkpoint
+    ~unit_cursors:[ ("Person", cursor_at 2) ]
+    r.worker r.ref.job_id [];
   D.settle ();
-  D.checkpoint ~unit_cursors:[ ("Place", cursor 7) ] r.worker (id r) [];
+  D.checkpoint ~unit_cursors:[ ("Place", cursor_at 7) ] r.worker r.ref.job_id [];
   Check.equal "the retry's cursors"
-    (`Assoc [ ("Person", cursor 2); ("Place", cursor 7) ])
+    (`Assoc [ ("Person", cursor_at 2); ("Place", cursor_at 7) ])
     (Check.at (retried w r) [ "unitCursors" ])
 
 let finished_cursor_merged w =
   let r = D.running ~job:linking w in
   D.checkpoint
-    ~unit_cursors:[ ("Person", cursor 2); ("Place", cursor 4) ]
-    r.worker (id r) [];
+    ~unit_cursors:[ ("Person", cursor_at 2); ("Place", cursor_at 4) ]
+    r.worker r.ref.job_id [];
   D.settle ();
-  D.checkpoint r.worker (id r) [ "Person" ];
-  D.settle ();
-  D.checkpoint ~unit_cursors:[ ("Person", cursor 9) ] r.worker (id r) [];
+  D.checkpoint r.worker r.ref.job_id [ "Person" ];
   D.settle ();
   D.checkpoint
-    ~unit_cursors:[ ("Person", cursor ~size:99 5) ]
-    r.worker (id r) [];
+    ~unit_cursors:[ ("Person", cursor_at 9) ]
+    r.worker r.ref.job_id [];
+  D.settle ();
+  D.checkpoint
+    ~unit_cursors:[ ("Person", cursor_at ~size:99 5) ]
+    r.worker r.ref.job_id [];
   let metadata = retried w r in
   Check.equal "the retry's finished units" (units [ "Person" ])
     (Check.at metadata [ "completedUnits" ]);
   Check.equal "the retry's cursors"
-    (`Assoc [ ("Person", cursor 9); ("Place", cursor 4) ])
+    (`Assoc [ ("Person", cursor_at 9); ("Place", cursor_at 4) ])
     (Check.at metadata [ "unitCursors" ])
 
 let only_cursor_kept w =
   let r = D.running ~job:linking w in
-  D.checkpoint ~unit_cursors:[ ("Person", cursor 2) ] r.worker (id r) [];
+  D.checkpoint
+    ~unit_cursors:[ ("Person", cursor_at 2) ]
+    r.worker r.ref.job_id [];
   D.settle ();
-  D.checkpoint r.worker (id r) [ "Person" ];
+  D.checkpoint r.worker r.ref.job_id [ "Person" ];
   let metadata = retried w r in
   Check.equal "the retry's finished units" (units [ "Person" ])
     (Check.at metadata [ "completedUnits" ]);
   Check.equal "the retry's cursors"
-    (`Assoc [ ("Person", cursor 2) ])
+    (`Assoc [ ("Person", cursor_at 2) ])
     (Check.at metadata [ "unitCursors" ])
 
 let next_claimant w =
   let r = D.running ~job:linking w in
-  D.checkpoint ~unit_cursors:[ ("Person", cursor 4) ] r.worker (id r) [];
+  D.checkpoint
+    ~unit_cursors:[ ("Person", cursor_at 4) ]
+    r.worker r.ref.job_id [];
   D.settle ();
   D.checkpoint
-    ~unit_cursors:[ ("Person", cursor 9) ]
-    r.worker (id r) [ "Person" ];
+    ~unit_cursors:[ ("Person", cursor_at 9) ]
+    r.worker r.ref.job_id [ "Person" ];
   D.settle ();
   D.checkpoint
-    ~unit_cursors:[ ("Place", cursor 3) ]
-    r.worker (id r) [ "Person" ];
+    ~unit_cursors:[ ("Place", cursor_at 3) ]
+    r.worker r.ref.job_id [ "Person" ];
   D.settle ();
   D.fail r.worker r.ref "interrupted";
   ignore
-    (D.until_status r.creator (id r) "the job to be re-queued" "pending"
+    (D.until_status r.creator r.ref.job_id "the job to be re-queued" "pending"
       : Yojson.Safe.t);
   let next = D.worker w "next-claimant" in
   let metadata =
@@ -214,7 +210,7 @@ let next_claimant w =
   Check.equal "the retry's finished units" (units [ "Person" ])
     (Check.at metadata [ "completedUnits" ]);
   Check.equal "the retry's cursors"
-    (`Assoc [ ("Person", cursor 9); ("Place", cursor 3) ])
+    (`Assoc [ ("Person", cursor_at 9); ("Place", cursor_at 3) ])
     (Check.at metadata [ "unitCursors" ])
 
 let not_running_checkpoint w =
@@ -224,11 +220,13 @@ let not_running_checkpoint w =
     D.created ~resource_id:(D.resource_id ()) creator "mark"
       (`Assoc
          [
-           ("motivation", str "linking");
+           motivation "linking";
            ("entityTypes", `List [ str "Person"; str "Place" ]);
          ])
   in
-  D.checkpoint ~unit_cursors:[ ("Place", cursor 1) ] worker job_id [ "Person" ];
+  D.checkpoint
+    ~unit_cursors:[ ("Place", cursor_at 1) ]
+    worker job_id [ "Person" ];
   D.settle ();
   let metadata =
     Check.at (D.claimed worker [ D.marks "linking" ]) [ "metadata" ]

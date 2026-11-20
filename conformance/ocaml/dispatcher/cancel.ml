@@ -8,14 +8,6 @@ open Support
 open Case
 
 let named job_id = `Assoc [ ("jobId", str job_id) ]
-let id (r : D.running) = D.text r.job [ "metadata"; "id" ]
-
-let status_word (c : D.client) job_id =
-  str (D.status_word (D.status_of c job_id))
-
-let mark motivation (c : D.client) =
-  D.created ~resource_id:(D.resource_id ()) c "mark"
-    (`Assoc [ ("motivation", str motivation) ])
 
 let unknown w =
   let answer =
@@ -26,24 +18,22 @@ let unknown w =
 
 let pending w =
   let creator = D.person w "creator" in
-  let job_id = mark "highlighting" creator in
+  let job_id = mark creator [ motivation "highlighting" ] in
   Check.that "it answers true"
     (D.cancelled (D.cancel_request creator (named job_id)));
   let status = D.status_of creator job_id in
   Check.equal "the job's status" (str "cancelled") (str (D.status_word status));
   has "the status" status [ "completedAt" ];
   lacks "the status" status [ "startedAt" ];
-  Check.equal "a later claim's code"
-    (str (D.code_word None_pending))
-    (Option.value ~default:`Null
-       (D.code_of (D.claim (D.worker w "late") (D.every_job ()))))
+  declined "a later claim's code" (D.claim (D.worker w "late") (D.every_job ()))
 
 let running w =
-  let r = D.running ~job:(D.Mark [ ("motivation", str "commenting") ]) w in
+  let r = D.running ~job:(D.Mark [ motivation "commenting" ]) w in
   Check.that "it answers true"
-    (D.cancelled (D.cancel_request r.creator (named (id r))));
+    (D.cancelled (D.cancel_request r.creator (named r.ref.job_id)));
   D.settle ();
-  Check.equal "the job's status" (str "running") (status_word r.creator (id r))
+  Check.equal "the job's status" (str "running")
+    (str (D.status_now r.creator r.ref.job_id))
 
 let finished w =
   let r = D.running w in
@@ -51,29 +41,30 @@ let finished w =
     ~result:(`Assoc [ ("found", `Int 0); ("persisted", `Int 0) ])
     r.worker r.ref;
   ignore
-    (D.until_status r.creator (id r) "the job to complete" "complete"
+    (D.until_status r.creator r.ref.job_id "the job to complete" "complete"
       : Yojson.Safe.t);
   Check.that "it answers false"
-    (not (D.cancelled (D.cancel_request r.creator (named (id r)))));
-  Check.equal "the job's status" (str "complete") (status_word r.creator (id r))
+    (not (D.cancelled (D.cancel_request r.creator (named r.ref.job_id))));
+  Check.equal "the job's status" (str "complete")
+    (str (D.status_now r.creator r.ref.job_id))
 
 let only_named w =
   let creator = D.person w "creator" in
-  let target = mark "highlighting" creator in
-  let alike = mark "highlighting" creator in
+  let target = mark creator [ motivation "highlighting" ] in
+  let alike = mark creator [ motivation "highlighting" ] in
   let yielding = D.created creator "yield" (D.generation (D.resource_id ())) in
   Check.that "it answers true"
     (D.cancelled (D.cancel_request creator (named target)));
   Check.equal "the named job's status" (str "cancelled")
-    (status_word creator target);
+    (str (D.status_now creator target));
   Check.equal "the alike job's status" (str "pending")
-    (status_word creator alike);
+    (str (D.status_now creator alike));
   Check.equal "the yield job's status" (str "pending")
-    (status_word creator yielding)
+    (str (D.status_now creator yielding))
 
 let by_id_only w =
   let creator = D.person w "creator" in
-  let pending = mark "highlighting" creator in
+  let pending = mark creator [ motivation "highlighting" ] in
   List.iter
     (fun payload ->
       let reply = D.offered creator "job:cancel-requested" payload in
@@ -83,20 +74,14 @@ let by_id_only w =
         (`Int 400) (`Int reply.status))
     [ `Assoc []; `Assoc [ ("jobType", str "mark") ] ];
   D.settle ();
-  Check.equal "the job's status" (str "pending") (status_word creator pending)
-
-let linking =
-  D.Mark
-    [
-      ("motivation", str "linking");
-      ("entityTypes", `List [ str "Person"; str "Place" ]);
-    ]
+  Check.equal "the job's status" (str "pending")
+    (str (D.status_now creator pending))
 
 let worker_stopped w =
   let r = D.running ~job:linking w in
   D.cancel r.worker r.ref;
   let status =
-    D.until_status r.creator (id r) "the job to be cancelled" "cancelled"
+    D.until_status r.creator r.ref.job_id "the job to be cancelled" "cancelled"
   in
   has "the status" status [ "completedAt" ]
 
@@ -106,10 +91,12 @@ let finished_stays w =
     ~extra:[ ("failureClass", str "deterministic") ]
     r.worker r.ref "broken";
   ignore
-    (D.until_status r.creator (id r) "the job to fail" "failed" : Yojson.Safe.t);
+    (D.until_status r.creator r.ref.job_id "the job to fail" "failed"
+      : Yojson.Safe.t);
   D.cancel r.worker r.ref;
   D.settle ();
-  Check.equal "the job's status" (str "failed") (status_word r.creator (id r))
+  Check.equal "the job's status" (str "failed")
+    (str (D.status_now r.creator r.ref.job_id))
 
 let tests implementations =
   with_dispatcher implementations "job:cancel-requested"

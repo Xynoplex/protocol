@@ -16,7 +16,7 @@ let mark_params w =
   let params =
     `Assoc
       [
-        ("motivation", str "commenting");
+        motivation "commenting";
         ("instructions", str "what a first reader would ask");
         ("tone", str "explanatory");
         ("density", `Int 4);
@@ -42,7 +42,7 @@ let tagging w =
   let params =
     `Assoc
       [
-        ("motivation", str "tagging");
+        motivation "tagging";
         ("schemaId", str "irac");
         ("categories", `List [ str "Issue"; str "Rule" ]);
       ]
@@ -97,13 +97,13 @@ let retried w =
       ~job:
         (D.Mark
            [
-             ("motivation", str "tagging");
+             motivation "tagging";
              ("schemaId", str "irac");
              ("categories", `List [ str "Issue" ]);
            ])
       w
   in
-  let job_id = D.text r.job [ "metadata"; "id" ] in
+  let job_id = r.ref.job_id in
   let first = announced w job_id in
   D.fail r.worker r.ref "the model timed out";
   ignore

@@ -10,8 +10,6 @@ open Case
 let highlights =
   `Assoc [ ("found", `Int 4); ("persisted", `Int 3); ("errors", `Int 1) ]
 
-let id (r : D.running) = D.text r.job [ "metadata"; "id" ]
-
 let status_is what expected s =
   Check.equal what (str expected) (Check.at s [ "status" ])
 
@@ -27,13 +25,8 @@ let moment json path =
 let not_before what later earlier =
   Check.that what (Ptime.compare later earlier >= 0)
 
-let sorted json =
-  match json with
-  | `List items -> `List (List.sort compare items)
-  | other -> failwith (Check.shown other ^ " is not a list")
-
 let completed what (r : D.running) =
-  D.until_status r.creator (id r) what "complete"
+  D.until_status r.creator r.ref.job_id what "complete"
 
 (* ── job:complete ─────────────────────────────────────────────────── *)
 
@@ -51,7 +44,7 @@ let completes w =
 
 (* Offered at the door with [result], the completion is refused, and the
    job stays running. *)
-let refused_at_door ?job result w =
+let completion_refused ?job result w =
   let r = D.running ?job w in
   let reply =
     D.offered r.worker "job:complete"
@@ -59,7 +52,7 @@ let refused_at_door ?job result w =
   in
   Check.equal "the gateway's answer" (`Int 400) (`Int reply.status);
   D.settle ();
-  status_is "the job's status" "running" (D.status_of r.creator (id r))
+  status_is "the job's status" "running" (D.status_of r.creator r.ref.job_id)
 
 let unreported =
   [
@@ -115,7 +108,7 @@ let crossed_completion job completed_as result w =
   let r = D.running ~job w in
   D.complete ~result r.worker { r.ref with job_type = completed_as };
   D.settle ();
-  status_is "the job's status" "running" (D.status_of r.creator (id r));
+  status_is "the job's status" "running" (D.status_of r.creator r.ref.job_id);
   D.complete r.worker r.ref;
   Check.equal "the job's result" (`Assoc [])
     (Check.at (completed "the job to complete" r) [ "result" ])
@@ -152,7 +145,7 @@ let stored_as_sent job result w =
     (Check.at (completed "the job to complete" r) [ "result" ])
 
 let empty_result w =
-  let r = D.running ~job:(D.Mark [ ("motivation", str "commenting") ]) w in
+  let r = D.running ~job:(D.Mark [ motivation "commenting" ]) w in
   D.complete r.worker r.ref;
   Check.equal "the job's result" (`Assoc [])
     (Check.at (completed "the job to complete" r) [ "result" ])
@@ -162,8 +155,7 @@ let not_running_complete w =
   let worker = D.worker w "premature" in
   let resource_id = D.resource_id () in
   let job_id =
-    D.created ~resource_id creator "mark"
-      (`Assoc [ ("motivation", str "highlighting") ])
+    D.created ~resource_id creator "mark" (`Assoc [ motivation "highlighting" ])
   in
   D.complete ~result:highlights worker
     { job_id; job_type = "mark"; resource_id };
@@ -172,9 +164,7 @@ let not_running_complete w =
   D.settle ();
   status_is "the job's status" "pending" (D.status_of creator job_id);
   Check.equal "the job claimed" (str job_id)
-    (Check.at
-       (D.claimed worker [ D.marks "highlighting" ])
-       [ "metadata"; "id" ])
+    (str (D.id_of (D.claimed worker [ D.marks "highlighting" ])))
 
 let absorbing w =
   let r = D.running w in
@@ -185,28 +175,30 @@ let absorbing w =
   D.settle ();
   Check.matching "the status"
     [ ("status", str "complete"); ("result", highlights) ]
-    (D.status_of r.creator (id r))
+    (D.status_of r.creator r.ref.job_id)
 
 (* ── job:fail ─────────────────────────────────────────────────────── *)
 
 let requeued what (r : D.running) =
-  D.until_status r.creator (id r) what "pending"
+  D.until_status r.creator r.ref.job_id what "pending"
 
-let failed what (r : D.running) = D.until_status r.creator (id r) what "failed"
+let failed what (r : D.running) =
+  D.until_status r.creator r.ref.job_id what "failed"
+
 let classed word = [ ("failureClass", str word) ]
 
 let first_failure_retried w =
   let r = D.running w in
-  ignore (D.announced w (id r) : Bus_stream.frame);
+  ignore (D.announced w r.ref.job_id : Bus_stream.frame);
   D.fail r.worker r.ref "the model timed out";
   let status = requeued "the job to be re-queued" r in
   lacks "the status" status [ "startedAt" ];
   lacks "the status" status [ "error" ];
-  ignore (D.announced ~n:2 w (id r) : Bus_stream.frame);
+  ignore (D.announced ~n:2 w r.ref.job_id : Bus_stream.frame);
   let retried = D.claimed r.worker [ D.marks "highlighting" ] in
   Check.matching "the retry's metadata"
     [
-      ("id", str (id r));
+      ("id", str r.ref.job_id);
       ("retryCount", `Int 1);
       ("maxRetries", max_retries "mark");
     ]
@@ -215,7 +207,7 @@ let first_failure_retried w =
     (Check.at retried [ "progress" ])
 
 let transient_retried w =
-  let r = D.running ~job:(D.Mark [ ("motivation", str "commenting") ]) w in
+  let r = D.running ~job:(D.Mark [ motivation "commenting" ]) w in
   D.fail ~extra:(classed "transient") r.worker r.ref "rate limited";
   ignore (requeued "the job to be re-queued" r : Yojson.Safe.t)
 
@@ -249,13 +241,13 @@ let generation_never_retried w =
     (Check.at (failed "the job to fail" r) [ "error" ])
 
 let deterministic w =
-  let r = D.running ~job:(D.Mark [ ("motivation", str "assessing") ]) w in
+  let r = D.running ~job:(D.Mark [ motivation "assessing" ]) w in
   D.fail ~extra:(classed "deterministic") r.worker r.ref "the resource is empty";
   Check.equal "the job's failure class" (str "deterministic")
     (Check.at (failed "the job to fail" r) [ "failureClass" ])
 
 let withheld w =
-  let r = D.running ~job:(D.Mark [ ("motivation", str "commenting") ]) w in
+  let r = D.running ~job:(D.Mark [ motivation "commenting" ]) w in
   Check.matching "the job's metadata"
     [ ("retryCount", `Int 0); ("maxRetries", max_retries "mark") ]
     (Check.at r.job [ "metadata" ]);
@@ -265,18 +257,14 @@ let withheld w =
   Check.equal "the job's error" (str error) (Check.at status [ "error" ]);
   Check.equal "the job's failure class" (str "withheld")
     (Check.at status [ "failureClass" ]);
-  Check.equal "a claim's answer"
-    (str (D.code_word None_pending))
-    (Option.value ~default:`Null
-       (D.code_of (D.claim r.worker [ D.marks "commenting" ])))
+  declined "a claim's answer" (D.claim r.worker [ D.marks "commenting" ])
 
 let not_running_fail w =
   let creator = D.person w "creator" in
   let worker = D.worker w "premature" in
   let resource_id = D.resource_id () in
   let job_id =
-    D.created ~resource_id creator "mark"
-      (`Assoc [ ("motivation", str "commenting") ])
+    D.created ~resource_id creator "mark" (`Assoc [ motivation "commenting" ])
   in
   D.fail ~extra:(classed "deterministic") worker
     { job_id; job_type = "mark"; resource_id }
@@ -288,28 +276,9 @@ let not_running_fail w =
        (D.claimed worker [ D.marks "commenting" ])
        [ "metadata"; "retryCount" ])
 
-let linking =
-  D.Mark
-    [
-      ("motivation", str "linking");
-      ("entityTypes", `List [ str "Person"; str "Place" ]);
-    ]
-
-let units names = `List (List.map str names)
-
-let cursor next size found emitted errors =
-  `Assoc
-    [
-      ("next", `Int next);
-      ("size", `Int size);
-      ("found", `Int found);
-      ("emitted", `Int emitted);
-      ("errors", `Int errors);
-    ]
-
 let units_carried w =
   let r = D.running ~job:linking w in
-  D.checkpoint r.worker (id r) [ "Person" ];
+  D.checkpoint r.worker r.ref.job_id [ "Person" ];
   D.settle ();
   D.fail
     ~extra:[ ("completedUnits", units [ "Place" ]) ]
@@ -336,7 +305,9 @@ let cursors_carried w =
 let finished_cursor_carried w =
   let r = D.running ~job:linking w in
   let person = cursor 9 10 5 4 1 and place = cursor 9 7 2 2 0 in
-  D.checkpoint ~unit_cursors:[ ("Person", person) ] r.worker (id r) [ "Person" ];
+  D.checkpoint
+    ~unit_cursors:[ ("Person", person) ]
+    r.worker r.ref.job_id [ "Person" ];
   D.settle ();
   D.fail
     ~extra:
@@ -368,7 +339,7 @@ let tests implementations =
                "refuses at the door a completion whose result is %s: none of \
                 the three a job reports, and the job stays running"
                what)
-            (refused_at_door result))
+            (completion_refused result))
         unreported
     @ List.map
         (fun (what, job, result) ->
@@ -377,7 +348,7 @@ let tests implementations =
                "refuses at the door a completion that gives %s: a result is \
                 its verb's, and the job stays running"
                what)
-            (refused_at_door ~job result))
+            (completion_refused ~job result))
         of_another_verb
     @ List.map
         (fun (what, job, completed_as, result) ->

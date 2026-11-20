@@ -7,18 +7,14 @@ open Xynolog_conformance
 open Support
 open Case
 
-let mark motivation extra = `Assoc (("motivation", str motivation) :: extra)
-
 (* Admit a job once the queue is reachable again; a request made while it
    reconnects may be refused. *)
 let admitted_again creator params =
   Run.eventually "the queue to admit jobs again" 30.0 (fun () ->
       let answer =
-        D.create ~resource_id:(D.resource_id ()) creator "mark" params
+        D.create ~resource_id:(D.resource_id ()) creator "mark" (`Assoc params)
       in
       if answer.ok then Some (D.job_id_of answer) else None)
-
-let id (r : D.running) = D.text r.job [ "metadata"; "id" ]
 
 let with_timing changes document =
   List.fold_left
@@ -27,10 +23,7 @@ let with_timing changes document =
 
 let announces_at_once w =
   let creator = D.person w "creator" in
-  let job_id =
-    D.created ~resource_id:(D.resource_id ()) creator "mark"
-      (mark "commenting" [])
-  in
+  let job_id = mark creator [ motivation "commenting" ] in
   ignore (D.announced w job_id : Bus_stream.frame);
   ignore (Dispatcher.stop w.dispatcher : int option);
   (* Longer than the acknowledgement window: the broker delivers the job to
@@ -46,19 +39,16 @@ let keeps_every_job w =
     r.worker r.ref;
   let creator = D.person w "creator" in
   ignore
-    (D.until_status creator (id r) "the job to complete" "complete"
+    (D.until_status creator r.ref.job_id "the job to complete" "complete"
       : Yojson.Safe.t);
-  let pending =
-    D.created ~resource_id:(D.resource_id ()) creator "mark"
-      (mark "assessing" [])
-  in
+  let pending = mark creator [ motivation "assessing" ] in
   D.restart_dispatcher w;
   Check.equal "the finished job's status" (str "complete")
-    (Check.at (D.status_of creator (id r)) [ "status" ]);
+    (Check.at (D.status_of creator r.ref.job_id) [ "status" ]);
   Check.equal "the job a claim hands out after the restart" (str pending)
-    (Check.at
-       (D.claimed (D.worker w "after-restart") [ D.marks "assessing" ])
-       [ "metadata"; "id" ])
+    (str
+       (D.id_of
+          (D.claimed (D.worker w "after-restart") [ D.marks "assessing" ])))
 
 let dead_dispatcher_recovered w =
   let r = D.running w in
@@ -66,12 +56,12 @@ let dead_dispatcher_recovered w =
     ~change:(with_timing [ ("tickMs", 300); ("staleRunningMs", 1_000) ])
     w;
   ignore
-    (D.until_status ~timeout:15.0 r.creator (id r)
+    (D.until_status ~timeout:15.0 r.creator r.ref.job_id
        "the sweep to re-queue the job" "pending"
       : Yojson.Safe.t);
   let retried = D.claimed (D.worker w "recovery") [ D.marks "highlighting" ] in
   Check.matching "the retried job's metadata"
-    [ ("id", str (id r)); ("retryCount", `Int 1) ]
+    [ ("id", str r.ref.job_id); ("retryCount", `Int 1) ]
     (Check.at retried [ "metadata" ]);
   D.restart_dispatcher
     ~change:
@@ -89,35 +79,37 @@ let broker_restart w =
   let worker = D.worker w "after-broker" in
   let job_id =
     admitted_again creator
-      (mark "tagging"
-         [ ("schemaId", str "irac"); ("categories", `List [ str "Rule" ]) ])
+      [
+        motivation "tagging";
+        ("schemaId", str "irac");
+        ("categories", `List [ str "Rule" ]);
+      ]
   in
   Check.equal "the job a claim hands out" (str job_id)
-    (Check.at (D.claimed worker [ D.marks "tagging" ]) [ "metadata"; "id" ])
+    (str (D.id_of (D.claimed worker [ D.marks "tagging" ])))
 
 let broker_outage w =
   Nats.down w.D.broker;
   D.settle ~seconds:30.0 ();
   Nats.up w.broker;
   let creator = D.person w "creator" in
-  let job_id = admitted_again creator (mark "commenting" []) in
+  let job_id = admitted_again creator [ motivation "commenting" ] in
   Check.equal "the job a claim hands out" (str job_id)
-    (Check.at
-       (D.claimed (D.worker w "after-outage") [ D.marks "commenting" ])
-       [ "metadata"; "id" ])
+    (str
+       (D.id_of
+          (D.claimed (D.worker w "after-outage") [ D.marks "commenting" ])))
 
 let original = { Nats.user = "dispatcher"; password = "original" }
 
 let other_credentials w =
   let creator = D.person w "creator" in
-  let highlighting = mark "highlighting" [] in
-  ignore
-    (D.created ~resource_id:(D.resource_id ()) creator "mark" highlighting
-      : string);
+  let highlighting = [ motivation "highlighting" ] in
+  ignore (mark creator highlighting : string);
   Nats.restart ~credentials:{ original with password = "rotated" } w.D.broker;
   let refused () =
     let answer =
-      D.create ~resource_id:(D.resource_id ()) creator "mark" highlighting
+      D.create ~resource_id:(D.resource_id ()) creator "mark"
+        (`Assoc highlighting)
     in
     Check.equal "the reply's channel"
       (str (Protocol.operation_for "job:create").failure)
@@ -129,9 +121,7 @@ let other_credentials w =
   (* A dispatcher started with the broker's credentials serves again. *)
   Nats.restart ~credentials:original w.broker;
   D.restart_dispatcher w;
-  ignore
-    (D.created ~resource_id:(D.resource_id ()) creator "mark" highlighting
-      : string)
+  ignore (mark creator highlighting : string)
 
 let tests implementations =
   (* The acknowledgement window is short so the broker hands a stopped
