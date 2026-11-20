@@ -11,7 +11,7 @@
   "properties": {
     "$comment": true,
     "defaults": {
-      "$ref": "https://xynolog.org/protocol/SmelterConfig.json#/properties/chunking"
+      "$ref": "https://xynolog.org/protocol/SmelterChunking.json"
     },
     "cases": {
       "type": "array",
@@ -31,7 +31,7 @@
             "description": "Its length in code points divided by four, rounded up."
           },
           "chunking": {
-            "$ref": "https://xynolog.org/protocol/SmelterConfig.json#/properties/chunking"
+            "$ref": "https://xynolog.org/protocol/SmelterChunking.json"
           },
           "chunks": {
             "type": "array",

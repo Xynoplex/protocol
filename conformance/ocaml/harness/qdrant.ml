@@ -200,6 +200,19 @@ let points_of index word resource_id =
       found
   else found
 
+(* The point of one annotation: None while the index holds none. *)
+let annotation_point index annotation_id =
+  match
+    scroll index "annotations"
+      (Some (where (payload_member "annotations" "annotationId") annotation_id))
+  with
+  | [] -> None
+  | [ point ] -> Some point
+  | points ->
+      failwith
+        (Printf.sprintf "the index holds %d points of the annotation %s"
+           (List.length points) annotation_id)
+
 (* Clear the database: every collection of every knowledge base gone, as a
    wiped volume leaves it. *)
 let clear index =

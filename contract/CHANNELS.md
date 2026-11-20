@@ -73,7 +73,7 @@ A request, answered on its result or its failure channel. The reply reaches only
 | Jobs | `job:status-requested`, `job:limits-requested` | reads |
 | Rebuilds | `weave:rebuild`, `smelt:rebuild-anchors` | writes |
 
-Each request's result and failure channels are named in the registry's `operations`. Most follow one pattern: `-requested` answers on `-result` and `-failed`, and a command answers on `-ok` and `-failed`.
+Each request's result and failure channels are named in the registry's `operations`, and so is the one service that answers it, its `answeredBy`. Most follow one pattern: `-requested` answers on `-result` and `-failed`, and a command answers on `-ok` and `-failed`.
 
 ## In-process channels
 

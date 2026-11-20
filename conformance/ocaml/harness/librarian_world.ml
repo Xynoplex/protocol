@@ -21,11 +21,8 @@
    a case makes, the world has the stand-in answer what the real Archivist
    answers.
 
-   The operations a Librarian answers are the registry's match: and gather:
-   operations, read from it; nothing here restates them.
-
-   Partly ported: no refused boots, entity types, archiving or unannotating,
-   since no case ported here asks for them. *)
+   The operations a Librarian answers are those the registry says it
+   answers (answeredBy); nothing here restates them. *)
 
 let librarian_client = "xynolog-librarian"
 let weaver_client = "xynolog-weaver"
@@ -53,13 +50,14 @@ type stores = {
   vectors : Qdrant.database;
 }
 
-(* What a case may change of how the Librarian is launched. *)
-type launch = { settle_ms : int; env : (string * string) list }
+(* How a Librarian is launched: its configuration document, and its
+   environment. A case changes the world's. *)
+type launch = { document : Yojson.Safe.t; env : (string * string) list }
 
 type t = {
   kb : Archivist_world.t;
+  stores : stores;
   command : string list;
-  document : settle_ms:int -> Yojson.Safe.t;
   base : launch;
   home : string;
   port : int;
@@ -141,6 +139,49 @@ let person t sub =
 let output t =
   match t.librarian with Some p -> Process.output p | None -> t.last_output
 
+(* [document] with the member at [path] set to [value], or taken away when
+   [value] is None. Every member on the way to it is there. *)
+let rec edited document path value =
+  match (path, document) with
+  | [ key ], `Assoc members ->
+      `Assoc
+        (List.remove_assoc key members
+        @ match value with Some v -> [ (key, v) ] | None -> [])
+  | key :: rest, `Assoc members when List.mem_assoc key members ->
+      `Assoc
+        (List.map
+           (fun (k, v) -> if k = key then (k, edited v rest value) else (k, v))
+           members)
+  | _ ->
+      failwith
+        (Printf.sprintf "the document holds no %s to change: %s"
+           (String.concat "." path)
+           (Yojson.Safe.to_string document))
+
+(* The world's launch, with its document's member at [path] set to [value],
+   or taken away when [value] is None. *)
+let changed t path value =
+  { t.base with document = edited t.base.document path value }
+
+(* The world's launch, with its environment's [variable] set to [value], or
+   taken away when [value] is None. *)
+let with_variable t variable value =
+  {
+    t.base with
+    env =
+      (List.remove_assoc variable t.base.env
+      @ match value with Some v -> [ (variable, v) ] | None -> []);
+  }
+
+let services_launch t (launch : launch) ~home : Services.librarian =
+  {
+    librarian_command = t.command;
+    librarian_document = launch.document;
+    librarian_env = launch.env;
+    librarian_home = home;
+    librarian_port = t.port;
+  }
+
 (* Start the Librarian, as this world launches one or as a case changes
    that, and wait until its health answers and it answers on the bus: its
    health says its stream to the gateway is asked for, not that it is open. *)
@@ -149,15 +190,7 @@ let start_librarian ?launch t =
     failwith "a Librarian is already running in this world";
   let launch = match launch with Some changed -> changed | None -> t.base in
   t.librarian <-
-    Some
-      (Services.start_librarian
-         {
-           librarian_command = t.command;
-           librarian_document = t.document ~settle_ms:launch.settle_ms;
-           librarian_env = launch.env;
-           librarian_home = t.home;
-           librarian_port = t.port;
-         });
+    Some (Services.start_librarian (services_launch t launch ~home:t.home));
   let probe = person t person_sub in
   Run.eventually "the Librarian to answer on the bus" 30.0 (fun () ->
       match
@@ -185,6 +218,35 @@ let stop_librarian t =
 let restart_librarian ?launch t =
   ignore (stop_librarian t : int option);
   start_librarian ?launch t
+
+(* A Librarian that must refuse to start, launched as [launch] says: its
+   exit code and its output. The world's own Librarian is stopped first,
+   since both are given the world's one health port, and is left stopped. *)
+let refused ?(timeout = 60.0) t launch =
+  if t.librarian <> None then ignore (stop_librarian t : int option);
+  let home = Filename.temp_dir "conformance-librarian-refused-" "" in
+  Fun.protect
+    ~finally:(fun () -> Gateway.remove home)
+    (fun () ->
+      Services.refused_librarian
+        (services_launch t launch ~home)
+        ~named:(Services.named_variables t.base.document)
+        ~timeout)
+
+(* What the running Librarian's health answers, held to LibrarianHealth. *)
+let health t =
+  match
+    Services.health "LibrarianHealth"
+      (Printf.sprintf "http://127.0.0.1:%d" t.port)
+  with
+  | Some answer -> answer
+  | None ->
+      failwith
+        ("the Librarian's health did not answer:\n"
+        ^ String.concat "\n" (output t))
+
+(* Start the world's Librarian when a case left it stopped. *)
+let running_librarian t = if t.librarian = None then start_librarian t
 
 (* ── The two writers ────────────────────────────────────────────────── *)
 
@@ -239,6 +301,56 @@ let clear_stores t =
 (* ── What a case records, as a person, through the Archivist ────────── *)
 
 let person_did t ?(sub = person_sub) () = World.person_did t.kb.world sub
+
+(* A resource's entity types, as the record holds them now. *)
+let entity_types t resource_id =
+  match Archivist_world.view t.kb resource_id with
+  | Some view -> (
+      match Protocol.at view [ "resource"; "entityTypes" ] with
+      | Some (`List types) -> types
+      | _ -> [])
+  | None -> failwith ("the record holds no resource " ^ resource_id)
+
+(* Give a resource an entity type, having put the type in the knowledge
+   base's vocabulary: once the record holds it. *)
+let tagged t ?(by = person_sub) resource_id entity_type =
+  let current = entity_types t resource_id in
+  if List.mem (`String entity_type) current then
+    failwith
+      (Printf.sprintf
+         "%s already has the entity type %s: nothing would be recorded"
+         resource_id entity_type);
+  (* An entity type joins the vocabulary before a resource is given it: the
+     Archivist refuses one that has not. *)
+  let vocabulary =
+    match Archivist_world.projection t.kb "entitytypes.json" with
+    | Some projection -> (
+        match Protocol.at projection [ "entityTypes" ] with
+        | Some (`List types) -> types
+        | _ -> [])
+    | None -> []
+  in
+  if not (List.mem (`String entity_type) vocabulary) then
+    ignore
+      (Archivist_world.ask (person t by) "frame:add-entity-type"
+         (`Assoc [ ("tag", `String entity_type) ])
+        : Yojson.Safe.t);
+  ignore
+    (Archivist_world.ask (person t by) "mark:update-entity-types"
+       (`Assoc
+          [
+            ("resourceId", `String resource_id);
+            ("currentEntityTypes", `List current);
+            ("updatedEntityTypes", `List (current @ [ `String entity_type ]));
+          ])
+      : Yojson.Safe.t)
+
+(* Archive a resource: once the record holds it. *)
+let archived t ?(by = person_sub) resource_id =
+  ignore
+    (Archivist_world.ask (person t by) "mark:archive"
+       (`Assoc [ ("resourceId", `String resource_id) ])
+      : Yojson.Safe.t)
 
 (* A resource as the Archivist answers browse:resource-requested for it. *)
 let described t resource_id =
@@ -399,6 +511,17 @@ let signalled t channel resource_id =
       else None)
     (Bus_stream.frames ~channel t.signals)
 
+(* Every weave:applied the Weaver has signalled of a resource since the
+   world was made, oldest first. *)
+let applied_signals t resource_id = signalled t "weave:applied" resource_id
+
+(* Every decision the Smelter has signalled of a resource on smelt:settled
+   since the world was made, oldest first, held to the registry. *)
+let settled_signals t resource_id =
+  List.filter
+    (fun payload -> Protocol.against_channel "smelt:settled" payload = None)
+    (signalled t "smelt:settled" resource_id)
+
 (* Wait until the Weaver signals that it has taken everything the record
    holds now for each resource: the graph then holds it as the record does. *)
 let woven t resource_ids =
@@ -419,7 +542,7 @@ let woven t resource_ids =
               match Protocol.at payload [ "sequenceNumber" ] with
               | Some (`Int n) -> n >= last
               | _ -> false)
-            (signalled t "weave:applied" resource_id))
+            (applied_signals t resource_id))
       |> ignore)
     resource_ids
 
@@ -438,9 +561,8 @@ let settled ?(timeout = 20.0) t resource_id =
     (fun () ->
       List.find_opt
         (fun payload ->
-          Protocol.against_channel "smelt:settled" payload = None
-          && Protocol.at payload [ "contentChecksum" ] = Some (`String checksum))
-        (signalled t "smelt:settled" resource_id))
+          Protocol.at payload [ "contentChecksum" ] = Some (`String checksum))
+        (settled_signals t resource_id))
 
 (* Wait until each resource is woven and settled. *)
 let ready t resource_ids =
@@ -454,15 +576,13 @@ type reply = Answered of Yojson.Safe.t | Failed of Yojson.Safe.t
 (* Ask one of the Librarian's operations, as a person who is signed in, and
    read the one reply, held to what the registry says its channel carries. *)
 let ask ?(as_ = person_sub) ?(timeout = 30.0) t operation payload =
-  if
-    not
-      (String.starts_with ~prefix:"match:" operation
-      || String.starts_with ~prefix:"gather:" operation)
-  then
-    failwith
-      (operation
-     ^ " is no operation a Librarian answers: the registry's match: and \
-        gather: operations are");
+  (match (Protocol.operation_for operation).answered_by with
+  | Librarian -> ()
+  | _ ->
+      failwith
+        (operation
+       ^ " is no operation a Librarian answers: the registry's answeredBy \
+          names another service"));
   let answer =
     Archivist_world.request ~timeout (person t as_) operation payload
   in
@@ -591,7 +711,7 @@ let assemble (implementations : Implementations.t) command =
     [ ("logLevel", `String "info"); ("logFormat", `String "simple") ]
   in
   let port = Net.free_port () in
-  let document ~settle_ms =
+  let document =
     `Assoc
       ([
          ("kb", served);
@@ -604,7 +724,7 @@ let assemble (implementations : Implementations.t) command =
          ("matcher", ollama_engine matcher_model matcher.origin);
          ("gatherer", ollama_engine gatherer_model gatherer.origin);
          ("modelCatalogue", `String catalogue);
-         ("gather", `Assoc [ ("settleTimeoutMs", `Int settle_ms) ]);
+         ("gather", `Assoc [ ("settleTimeoutMs", `Int settle_timeout_ms) ]);
          ("search", `Assoc [ ("semanticFloor", `Float semantic_floor) ]);
          ("port", `Int port);
        ]
@@ -617,11 +737,11 @@ let assemble (implementations : Implementations.t) command =
   let t =
     {
       kb;
+      stores;
       command;
-      document;
       base =
         {
-          settle_ms = settle_timeout_ms;
+          document;
           env =
             [
               ("XYNOLOG_OIDC_CLIENT_ID", librarian_client);

@@ -12,7 +12,6 @@ import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import type { CryptoKey, JWK, JWTPayload } from 'jose';
 import { Spec } from './spec';
 import type { components } from './generated/openapi-types';
-import type { BusPayloads } from './generated/protocol/bus';
 import { jobsStorage, type ServiceSchemas } from './generated/protocol/protocol';
 
 export type { components, ServiceSchemas };
@@ -20,9 +19,6 @@ export type Annotation = components['schemas']['Annotation'];
 export type ResourceDescriptor = components['schemas']['ResourceDescriptor'];
 export type ResourceId = string & { readonly __brand: 'ResourceId' };
 export type AnnotationId = string & { readonly __brand: 'AnnotationId' };
-
-/** What each channel carries, as the reader writes it from the bus registry, over the gateway's component schemas. */
-export type EventMap = BusPayloads<components['schemas']>;
 
 export const resourceId = (value: string): ResourceId => value as ResourceId;
 export const annotationId = (value: string): AnnotationId => value as AnnotationId;

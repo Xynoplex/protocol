@@ -79,6 +79,8 @@ Three trees:
 | The state directory | `stateHome` | The views and projections, at its top: an Archivist serves one knowledge base, so the volume is that knowledge base's alone. Rebuilt from the log; never committed |
 | The anchored-text store | `anchoredTextDir` | Text extracted from content, with where each word is. Written by the Archivist, from what the Smelter stores over HTTP |
 
+[`layout.json`](../specs/src/archivist/layout.json) states where the event log, the views and the `__system__` projections are, as this section says, for a reader of the Archivist's files.
+
 ### Identifiers and shards
 
 A resource id is 1 to 128 characters of `A-Z`, `a-z`, `0-9`, `_` and `-`. An id is checked against

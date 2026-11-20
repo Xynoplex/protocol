@@ -297,6 +297,8 @@ holds what the Weaver once applied to it.
 
 ## Health
 
+The answer is a [`WeaverHealth`](../specs/src/weaver/WeaverHealth.json).
+
 - **`GET /health` answers `200` with a JSON object:** `status`; `kb`, the DID
   of the knowledge base it serves; `following`,
   what it says of how it follows the record: `sweep` (`pending`, `running`,
@@ -342,6 +344,8 @@ holds what the Weaver once applied to it.
   *Held by `images/shared/python/service/tests/test_log.py`.*
 
 ## Environment
+
+[`variables.json`](../specs/src/service-environment/variables.json) lists these for the Weaver, but the variables its document names.
 
 A Weaver's own code reads these from its environment, beside its document,
 and no others:

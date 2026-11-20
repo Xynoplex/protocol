@@ -17,9 +17,9 @@ deviates from it, the code is wrong, or this document is wrong and is
 corrected deliberately. There is no third option.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
-when a Librarian breaks it. `librarian/<case>` is the file `<case>.test.ts` of
+when a Librarian breaks it. `librarian/<case>` is the file `<case>.ml` of
 the librarian conformance suite
-([`conformance/librarian`](../conformance/librarian/README.md)),
+([`conformance/ocaml/librarian`](../conformance/ocaml/librarian/README.md)),
 which starts a Librarian as a process behind a real gateway and a real
 Archivist, beside a Weaver and a Smelter that write the graph and the index it
 reads, and plays its models and its embedding provider: the same cases judge
@@ -1008,6 +1008,8 @@ opens its health port.
 
 ## Health
 
+The answer is a [`LibrarianHealth`](../specs/src/librarian/LibrarianHealth.json).
+
 - **`GET /health`, on the port its document states, answers `200` with a
   JSON object:** `status`; `kb`; and `actors`, the two it runs, `matcher`
   and `gatherer`. Any other path answers `404`.
@@ -1068,6 +1070,8 @@ opens its health port.
   *Held by `images/shared/python/service/tests/test_log.py`.*
 
 ## Environment
+
+[`variables.json`](../specs/src/service-environment/variables.json) lists these for the Librarian, but the variables its document names.
 
 A Librarian's own code reads these from its environment, beside its document,
 and no others:

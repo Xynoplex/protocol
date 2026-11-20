@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/SmelterHealth.json",
+  "type": "object",
+  "description": "The Smelter's health answer (SMELTER.md § Health): seven members, each from what the Smelter holds, for it asks nothing of the gateway, its embedding provider or its vector database to answer. `status` is `ok` whenever it answers, and says what else is so in the members beside it.",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok"
+      ]
+    },
+    "kb": {
+      "$ref": "https://xynolog.org/protocol/KbDid.json",
+      "description": "The DID of the knowledge base it serves: the one its settings name, which that knowledge base said it is before the Smelter reached its index."
+    },
+    "stream": {
+      "type": "string",
+      "enum": [
+        "initial",
+        "connecting",
+        "open",
+        "reconnecting",
+        "degraded",
+        "unauthenticated",
+        "closed"
+      ],
+      "description": "The state of its own stream of the record, one of the seven of TRANSPORT-HTTP.md § Connection lifecycle. Events are delivered to it while it is `open`."
+    },
+    "following": {
+      "$ref": "https://xynolog.org/protocol/FollowerFollowing.json",
+      "description": "How far it has followed the record. Its sweep is also `due` where its start's reconcile failed."
+    },
+    "eventsProcessed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many events it has applied since it started: events of the kinds that do something, and not refused. Neither an event taken as nothing nor the work of a reconcile or a rebuild is counted."
+    },
+    "reconcile": {
+      "type": "object",
+      "description": "How far the latest reconcile has got: the pass's `summary` when it is done, or its `error` when it failed.",
+      "properties": {
+        "phase": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "running",
+            "done",
+            "failed"
+          ]
+        },
+        "summary": {
+          "type": "object",
+          "description": "What the pass came to (SMELTER.md § Reconcile). The first four add up to how many resources it set out to index, less any whose indexing was no longer wanted when its turn came.",
+          "properties": {
+            "resourcesEmbedded": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources it set out to index were indexed."
+            },
+            "resourcesSkipped": {
+              "type": "object",
+              "description": "How many were skipped, by the reason each was skipped for: a reason `smelt:settled` carries (SmeltSettled).",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "resourcesUnavailable": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many could not be read."
+            },
+            "resourcesFailed": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many failed."
+            },
+            "resourcesRestamped": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources it planned to rewrite the entity types of."
+            },
+            "resourcesReanchored": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources it planned to derive the anchored text of again."
+            },
+            "resourceVectorsDeleted": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources it planned to take out of the index."
+            },
+            "annotationsEmbedded": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many annotations it planned to index."
+            },
+            "annotationsRestamped": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many annotations it planned to rewrite the entity types of."
+            },
+            "annotationVectorsDeleted": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many annotations it planned to take out of the index."
+            },
+            "resourcesEligible": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources of the catalog have text."
+            },
+            "resourcesIndexed": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "How many resources have points when it ends."
+            }
+          },
+          "required": [
+            "resourcesEmbedded",
+            "resourcesSkipped",
+            "resourcesUnavailable",
+            "resourcesFailed",
+            "resourcesRestamped",
+            "resourcesReanchored",
+            "resourceVectorsDeleted",
+            "annotationsEmbedded",
+            "annotationsRestamped",
+            "annotationVectorsDeleted",
+            "resourcesEligible",
+            "resourcesIndexed"
+          ],
+          "additionalProperties": false
+        },
+        "error": {
+          "type": "string",
+          "description": "Why it failed."
+        }
+      },
+      "required": [
+        "phase"
+      ],
+      "additionalProperties": false
+    },
+    "index": {
+      "type": "object",
+      "description": "What the Smelter holds its index to, and what this start did for that.",
+      "properties": {
+        "stamp": {
+          "type": "object",
+          "description": "The model and the cut it makes an index by.",
+          "properties": {
+            "embedding": {
+              "type": "object",
+              "description": "The embedding provider's kind and model.",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "type",
+                "model"
+              ],
+              "additionalProperties": false
+            },
+            "chunking": {
+              "$ref": "https://xynolog.org/protocol/SmelterChunking.json"
+            }
+          },
+          "required": [
+            "embedding",
+            "chunking"
+          ],
+          "additionalProperties": false
+        },
+        "madeAnew": {
+          "type": "boolean",
+          "description": "Whether this start made the index again, as it does where the index stated another stamp, or none."
+        }
+      },
+      "required": [
+        "stamp",
+        "madeAnew"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "status",
+    "kb",
+    "stream",
+    "following",
+    "eventsProcessed",
+    "reconcile",
+    "index"
+  ],
+  "additionalProperties": false
+}

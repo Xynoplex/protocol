@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xynolog.org/protocol/FollowerFollowing.json",
+  "type": "object",
+  "description": "How far a follower of the record has followed it, as every follower says it at its health port (WEAVER.md § Health, SMELTER.md § Health).",
+  "properties": {
+    "sweep": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "done",
+        "due"
+      ],
+      "description": "The latest sweep's phase: `pending` before its stream first opens, `running`, `done`, or `due` where the record could not be listed and the sweep is tried again."
+    },
+    "stopped": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many resources' logs a failed taking has stopped until the next sweep."
+    },
+    "refused": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many events it refused as recorded since it started."
+    },
+    "streamDrops": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many times its stream has dropped since it started."
+    }
+  },
+  "required": [
+    "sweep",
+    "stopped",
+    "refused",
+    "streamDrops"
+  ],
+  "additionalProperties": false
+}

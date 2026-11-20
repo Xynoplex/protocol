@@ -12,7 +12,8 @@ Black-box suites exercise implementations through the protocol surfaces they exp
 | `worker-service` | Worker services, provider interactions, and health | `test:worker-service` |
 | `weaver` | Graph indexing, bus behavior, health, and telemetry | `test:weaver` |
 | `smelter` | Vector indexing, anchored text, provider interactions, and telemetry | `test:smelter` |
-| `librarian` | Search and gathering across a running record and index | `test:librarian` |
+
+The `librarian` suite, search and gathering across a running record and index, runs on the OCaml harness ([`ocaml/librarian`](ocaml/librarian/README.md)), from the same manifest.
 
 ## Implementation manifest
 
@@ -31,4 +32,4 @@ The manifest can name several implementations in one run. A suite refuses to sta
 
 The gateway, dispatcher, and Archivist suites need their corresponding commands and NATS Server 2.10 or newer. SDK and worker suites need the drivers named in `sdks`. Worker, Weaver, Smelter, and Librarian suites need their service commands and the external stores and tools documented by each suite. Weaver and Librarian use Neo4j; Smelter and Librarian use Qdrant. Some suites clear the database instance they receive. Use dedicated test instances.
 
-The suite reads Protocol through what its reader writes from `../specs/src` (`make bundle` at the repository root, which `make conformance-typecheck` and `make conformance-fixtures` run first): the bundles, from which it derives the gateway's types; and, in `harness/generated/protocol`, every table's value and type and every service schema's type (`protocol.ts`), what each bus channel carries (`bus.ts`), and the reader's own validator compiled to JavaScript (`validate.cjs`), which holds a service's values to the services' bundle (`harness/services.ts`). Language-neutral case tables also live in `../specs/src`; implementation repositories should include applicable tables in their own tests.
+The suite reads Protocol through what its reader writes from `../specs/src` (`make bundle` at the repository root, which `make conformance-typecheck` and `make conformance-fixtures` run first): the bundles, from which it derives the gateway's types; and, in `harness/generated/protocol`, every table's value and type and every service schema's type (`protocol.ts`), and the reader's own validator compiled to JavaScript (`validate.cjs`), which holds a service's values to the services' bundle (`harness/services.ts`). Language-neutral case tables also live in `../specs/src`; implementation repositories should include applicable tables in their own tests.

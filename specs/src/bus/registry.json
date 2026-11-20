@@ -3391,6 +3391,7 @@
       "request": "bind:update-body",
       "result": "bind:body-updated",
       "failure": "bind:body-update-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [
           {
@@ -3404,6 +3405,7 @@
       "request": "browse:resource-requested",
       "result": "browse:resource-result",
       "failure": "browse:resource-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [
           "",
@@ -3418,6 +3420,7 @@
       "request": "browse:resources-requested",
       "result": "browse:resources-result",
       "failure": "browse:resources-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3427,6 +3430,7 @@
       "request": "browse:annotation-requested",
       "result": "browse:annotation-result",
       "failure": "browse:annotation-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3436,6 +3440,7 @@
       "request": "browse:annotation-history-requested",
       "result": "browse:annotation-history-result",
       "failure": "browse:annotation-history-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3445,6 +3450,7 @@
       "request": "browse:events-requested",
       "result": "browse:events-result",
       "failure": "browse:events-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3454,6 +3460,7 @@
       "request": "browse:entity-types-requested",
       "result": "browse:entity-types-result",
       "failure": "browse:entity-types-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3463,6 +3470,7 @@
       "request": "browse:tag-schemas-requested",
       "result": "browse:tag-schemas-result",
       "failure": "browse:tag-schemas-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3472,6 +3480,7 @@
       "request": "browse:engines-requested",
       "result": "browse:engines-result",
       "failure": "browse:engines-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3481,6 +3490,7 @@
       "request": "browse:profiles-requested",
       "result": "browse:profiles-result",
       "failure": "browse:profiles-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3490,6 +3500,7 @@
       "request": "browse:kb-requested",
       "result": "browse:kb-result",
       "failure": "browse:kb-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3499,6 +3510,7 @@
       "request": "browse:directory-requested",
       "result": "browse:directory-result",
       "failure": "browse:directory-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3508,6 +3520,7 @@
       "request": "frame:add-entity-type",
       "result": "frame:entity-type-add-ok",
       "failure": "frame:entity-type-add-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [
           "",
@@ -3522,6 +3535,7 @@
       "request": "frame:add-tag-schema",
       "result": "frame:tag-schema-add-ok",
       "failure": "frame:tag-schema-add-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3531,6 +3545,7 @@
       "request": "gather:requested",
       "result": "gather:complete",
       "failure": "gather:failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [
           "",
@@ -3545,6 +3560,7 @@
       "request": "gather:resource-requested",
       "result": "gather:resource-complete",
       "failure": "gather:resource-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3554,6 +3570,7 @@
       "request": "gather:summary-requested",
       "result": "gather:summary-result",
       "failure": "gather:summary-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [
           {
@@ -3569,6 +3586,7 @@
       "request": "gather:referenced-by-requested",
       "result": "gather:referenced-by-result",
       "failure": "gather:referenced-by-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3578,6 +3596,7 @@
       "request": "gather:limits-requested",
       "result": "gather:limits-result",
       "failure": "gather:limits-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3587,6 +3606,7 @@
       "request": "job:create",
       "result": "job:created",
       "failure": "job:create-failed",
+      "answeredBy": "dispatcher",
       "docs": {
         "lead": [
           "",
@@ -3601,6 +3621,7 @@
       "request": "job:status-requested",
       "result": "job:status-result",
       "failure": "job:status-failed",
+      "answeredBy": "dispatcher",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3610,6 +3631,7 @@
       "request": "job:limits-requested",
       "result": "job:limits-result",
       "failure": "job:limits-failed",
+      "answeredBy": "worker",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3619,6 +3641,7 @@
       "request": "job:cancel-requested",
       "result": "job:cancel-ok",
       "failure": "job:cancel-failed",
+      "answeredBy": "dispatcher",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3628,6 +3651,7 @@
       "request": "job:claim",
       "result": "job:claimed",
       "failure": "job:claim-failed",
+      "answeredBy": "dispatcher",
       "docs": {
         "lead": [
           {
@@ -3643,6 +3667,7 @@
       "request": "mark:create-request",
       "result": "mark:create-ok",
       "failure": "mark:create-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [
           "",
@@ -3657,6 +3682,7 @@
       "request": "mark:commit",
       "result": "mark:commit-ok",
       "failure": "mark:commit-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3666,6 +3692,7 @@
       "request": "mark:delete",
       "result": "mark:delete-ok",
       "failure": "mark:delete-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3675,6 +3702,7 @@
       "request": "mark:archive",
       "result": "mark:archive-ok",
       "failure": "mark:archive-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3684,6 +3712,7 @@
       "request": "mark:unarchive",
       "result": "mark:unarchive-ok",
       "failure": "mark:unarchive-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3693,6 +3722,7 @@
       "request": "mark:update-entity-types",
       "result": "mark:update-entity-types-ok",
       "failure": "mark:update-entity-types-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3702,6 +3732,7 @@
       "request": "match:search-requested",
       "result": "match:search-results",
       "failure": "match:search-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [
           "",
@@ -3721,6 +3752,7 @@
       "request": "match:resources-requested",
       "result": "match:resources-result",
       "failure": "match:resources-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3730,6 +3762,7 @@
       "request": "match:limits-requested",
       "result": "match:limits-result",
       "failure": "match:limits-failed",
+      "answeredBy": "librarian",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3739,6 +3772,7 @@
       "request": "weave:rebuild",
       "result": "weave:rebuild-ok",
       "failure": "weave:rebuild-failed",
+      "answeredBy": "weaver",
       "docs": {
         "lead": [
           "",
@@ -3758,6 +3792,7 @@
       "request": "smelt:rebuild-anchors",
       "result": "smelt:rebuild-anchors-ok",
       "failure": "smelt:rebuild-anchors-failed",
+      "answeredBy": "smelter",
       "docs": {
         "lead": [
           "",
@@ -3777,6 +3812,7 @@
       "request": "yield:create",
       "result": "yield:create-ok",
       "failure": "yield:create-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [
           "",
@@ -3796,6 +3832,7 @@
       "request": "yield:clone-persist",
       "result": "yield:clone-persist-ok",
       "failure": "yield:clone-persist-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3805,6 +3842,7 @@
       "request": "yield:update",
       "result": "yield:update-ok",
       "failure": "yield:update-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [
           {
@@ -3820,6 +3858,7 @@
       "request": "yield:clone-create",
       "result": "yield:clone-created",
       "failure": "yield:clone-create-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3829,6 +3868,7 @@
       "request": "yield:clone-resource-requested",
       "result": "yield:clone-resource-result",
       "failure": "yield:clone-resource-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""
@@ -3838,6 +3878,7 @@
       "request": "yield:clone-token-requested",
       "result": "yield:clone-token-generated",
       "failure": "yield:clone-token-failed",
+      "answeredBy": "archivist",
       "docs": {
         "lead": [],
         "trailing": ""

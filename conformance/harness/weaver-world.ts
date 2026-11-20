@@ -34,12 +34,12 @@ import type { WeaverService } from './implementations';
 import { endCase } from './world';
 
 /** The Weaver's service account at the issuer. */
-export const WEAVER_CLIENT = 'xynolog-weaver';
+const WEAVER_CLIENT = 'xynolog-weaver';
 
 /** The variable the Weaver's settings name for the graph database's password. */
 const GRAPH_PASSWORD = 'NEO4J_PASSWORD';
 
-export interface Applied {
+interface Applied {
   resourceId: string;
   sequenceNumber: number;
 }
@@ -49,7 +49,7 @@ export interface Applied {
  * record whole (WEAVER.md § What it follows): it signals how far it took a
  * resource's stream up to its last event, whatever that event's type.
  */
-export function lastOf(stored: readonly StoredEvent[], resourceId: string): number {
+function lastOf(stored: readonly StoredEvent[], resourceId: string): number {
   const last = stored[stored.length - 1];
   if (last === undefined) throw new Error(`the record holds no event of ${resourceId}`);
   return last.metadata.sequenceNumber;

@@ -1,9 +1,10 @@
 (* A stand-in embedding provider: POST /api/embed with a model and a list of
    texts, answered with a vector for each. A vector is worked out from its
    text alone, so the same text has the same vector however often it is
-   asked for. It answers every request. Every request is recorded as it was
-   sent. A
-   request of any other path, and a body that is not a model and a list of
+   asked for. It answers every request with its vectors, unless a case
+   chose otherwise: a failing status, or a request held until the case
+   releases it. Every request is recorded as it was sent. A request of any
+   other path, and a body that is not a model and a list of
    texts, lands in [violations]. *)
 
 let width = 16
@@ -26,11 +27,24 @@ let nearness a b =
 
 type recorded = { model : string; texts : string list }
 
+(* What the stand-in does with one request, in place of answering it with
+   its vectors. *)
+type instead =
+  | Fails of int * string  (** The provider refused: this status, this body. *)
+  | Hold
+      (** Accepted, and not answered until [release], or until the client gives
+          up on it. *)
+
 type t = {
   server : Serve.t;
   origin : string;
   requests : recorded Dynarray.t;
   violations : string Dynarray.t;
+  mutable choose : (recorded -> instead option) option;
+      (** What a case does with each request, by what was asked. A request it
+          returns nothing for is answered with its vectors. *)
+  held :
+    (Serve.request * recorded * Serve.reply option Eio.Promise.u) Dynarray.t;
 }
 
 let embedded recorded =
@@ -62,8 +76,10 @@ let asked body =
   | _ -> None
 
 let start () =
-  let requests = Dynarray.create () and violations = Dynarray.create () in
-  let handler (request : Serve.request) =
+  let requests = Dynarray.create ()
+  and violations = Dynarray.create ()
+  and held = Dynarray.create () in
+  let rec handler (request : Serve.request) =
     let json status body = Serve.Reply (Serve.json_reply status body) in
     if request.meth <> "POST" || request.path <> "/api/embed" then (
       Dynarray.add_last violations
@@ -79,13 +95,55 @@ let start () =
            ^ Call.shown request.body);
           json 400
             (`Assoc [ ("error", `String "not a model and a list of texts") ])
-      | Some (model, texts) ->
+      | Some (model, texts) -> (
           let recorded = { model; texts } in
           Dynarray.add_last requests recorded;
-          Serve.Reply (embedded recorded)
+          match
+            match (Lazy.force t).choose with
+            | Some choose -> choose recorded
+            | None -> None
+          with
+          | None -> Serve.Reply (embedded recorded)
+          | Some (Fails (status, body)) ->
+              Serve.Reply
+                {
+                  status;
+                  headers = [ ("content-type", "application/json") ];
+                  body;
+                }
+          | Some Hold ->
+              let answered, answer = Eio.Promise.create () in
+              Dynarray.add_last held (request, recorded, answer);
+              Serve.Held answered)
+  and server = lazy (Serve.start handler)
+  and t =
+    lazy
+      {
+        server = Lazy.force server;
+        origin = (Lazy.force server).origin;
+        requests;
+        violations;
+        choose = None;
+        held;
+      }
   in
-  let server = Serve.start handler in
-  { server; origin = server.origin; requests; violations }
+  Lazy.force t
+
+(* How many requests are held now: accepted, unanswered, and not given up
+   on. *)
+let held t =
+  Dynarray.fold_left
+    (fun n ((request : Serve.request), _, _) ->
+      if request.abandoned then n else n + 1)
+    0 t.held
+
+(* Answer every held request with its vectors. *)
+let release t =
+  Dynarray.iter
+    (fun (_, recorded, answer) ->
+      ignore (Eio.Promise.try_resolve answer (Some (embedded recorded))))
+    t.held;
+  Dynarray.clear t.held
 
 (* A point a case marks: how many requests have arrived by now. *)
 let mark t = Dynarray.length t.requests
@@ -94,8 +152,15 @@ let mark t = Dynarray.length t.requests
 let since t mark =
   List.filteri (fun at _ -> at >= mark) (Dynarray.to_list t.requests)
 
+(* Forget what was chosen and recorded, and end every held request
+   unanswered: the next case starts clean. *)
 let reset t =
+  Dynarray.iter
+    (fun (_, _, answer) -> ignore (Eio.Promise.try_resolve answer None))
+    t.held;
+  Dynarray.clear t.held;
   Dynarray.clear t.requests;
-  Dynarray.clear t.violations
+  Dynarray.clear t.violations;
+  t.choose <- None
 
 let close t = t.server.stop ()

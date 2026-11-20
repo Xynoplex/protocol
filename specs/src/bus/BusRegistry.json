@@ -344,6 +344,10 @@
           "failure": {
             "$ref": "#/properties/channels/items/oneOf/0/properties/channel"
           },
+          "answeredBy": {
+            "$ref": "https://xynolog.org/protocol/ServiceTelemetryTelemetry.json#/properties/spans/items/properties/services/items",
+            "description": "The one service that answers the request (CHANNELS.md: an operation's request reaches the one service that answers it)."
+          },
           "docs": {
             "$ref": "#/properties/channels/items/oneOf/0/properties/docs"
           }
@@ -352,6 +356,7 @@
           "request",
           "result",
           "failure",
+          "answeredBy",
           "docs"
         ],
         "additionalProperties": false
