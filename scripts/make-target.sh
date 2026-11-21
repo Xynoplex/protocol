@@ -17,11 +17,10 @@ esac
 # The reader, in the OCaml toolchain's image, on a copy of the checkout.
 # "check": it builds, its layout is ocamlformat's, its tests pass, and it
 # reads every file of specs/src, each table what its schema says, the
-# contract documents that name what the specs state, the bus registry's
-# spelling, and the ownership inventory against what Git tracks, so the copy
-# carries .git; and the OCaml conformance harness, a dune project of its own
-# in conformance/ocaml, builds, its layout is ocamlformat's, and its cases
-# that need no store pass, the census among them. "bundle": it builds, and
+# contract documents that name what the specs state and the bus registry's
+# spelling; and the OCaml conformance harness, a dune project of its own in
+# conformance/ocaml, builds, its layout is ocamlformat's, and its cases that
+# need no store pass, the census among them. "bundle": it builds, and
 # bundles each OpenAPI document of specs/src into specs/.
 # Both reach the checkout as a tar stream on standard output, its progress on
 # standard error, so they are the checkout's user's. "check-and-bundle": both.
@@ -35,7 +34,6 @@ reader() {
       exec 3>&1 1>&2
       mkdir /tmp/protocol
       tar -C /source --exclude=./_build --exclude=./conformance/ocaml/_build -cf - . | tar -C /tmp/protocol -xf -
-      git config --global --add safe.directory /tmp/protocol
       cd /tmp/protocol
       printf "==> Building the reader\n"
       dune build @all

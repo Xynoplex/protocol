@@ -15,9 +15,9 @@ conformance suite ([`conformance/sdk`](../conformance/sdk/README.md),
 which every SDK runs), a file of the gateway suite
 ([`conformance/ocaml/gateway`](../conformance/ocaml/gateway/README.md)), or
 a test of the reference implementation. A rule marked "Held by no case" is
-one nothing checks. `npm run lint:transport-contract` fails when a
-case named here does not exist, and when a wire case of the SDK suite is
-named by neither transport document.
+one nothing checks. Nothing checks the names themselves: that a case named
+here exists, or that each wire case of the SDK suite is named by one of the
+transport documents.
 
 ## The transport
 

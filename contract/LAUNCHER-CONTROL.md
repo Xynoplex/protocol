@@ -21,9 +21,8 @@ and the schemas both sides validate against.
 
 **How this document is held.** Each rule ends with *Held by* and what fails
 when a launcher or a client breaks it: a case table, a census or a test, by
-its path. A rule marked "Held by no case" is one nothing checks.
-`npm run lint:transport-contract` fails when a path named here does not
-exist.
+its path. A rule marked "Held by no case" is one nothing checks. Nothing
+checks that a path named here exists.
 
 ## Framing
 
