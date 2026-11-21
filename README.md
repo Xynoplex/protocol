@@ -77,19 +77,6 @@ implementation repository owns its manifest and build setup. See
 [`conformance/README.md`](conformance/README.md) for the manifest and each
 suite's requirements.
 
-## Versioning
-
-Protocol releases use Semantic Versioning. A patch release clarifies or fixes a
-definition without changing the behavior a conforming implementation must
-provide. A minor release adds an optional capability or case while preserving
-existing behavior. A major release changes a required wire shape, meaning, or
-compatibility guarantee. A case-table addition that exposes a new requirement
-is a compatibility change and must be described in the release notes.
-
-Consumers pin the exact commit (or its release tag) they have implemented.
-The Git revision remains authoritative if a release tag and a consumer pin
-ever disagree.
-
 ## CI and provenance
 
 CI runs `make validate` and scans every lockfile for advisories nobody has
