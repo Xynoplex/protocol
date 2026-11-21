@@ -90,12 +90,7 @@ Consumers pin the exact commit (or its release tag) they have implemented.
 The Git revision remains authoritative if a release tag and a consumer pin
 ever disagree.
 
-## Source and compatibility
-
-The repository name and documentation use Xynolog. Historical wire
-identifiers such as `xynolog` remain where changing them would break deployed
-clients or persisted data. Such values are protocol compatibility details,
-not a claim about current product branding.
+## CI and provenance
 
 CI runs `make validate` and scans every lockfile for advisories nobody has
 judged (`build-tools/advisories.py`). Coverage reporting is not enabled: the
