@@ -32,6 +32,6 @@ Cases that require live processes belong in [`../conformance/`](../conformance/R
 
 ## Ownership and consumers
 
-The [`contract/`](../contract/README.md) directory gives the normative prose. SDK type generators, service implementations, CLI configuration handling, and Desktop integrations stay in their respective repositories. See [`../OWNERSHIP.md`](../OWNERSHIP.md) for the complete boundary and generator ownership map.
+The [`contract/`](../contract/README.md) directory gives the normative prose. SDK type generators, service implementations, CLI configuration handling, and Desktop integrations stay in their respective repositories ([the root README](../README.md#what-is-here)).
 
 Consumers pin this repository as a Git submodule at `protocol/`. Do not fetch `main` implicitly in a build. Update the pin deliberately, regenerate consumer-owned outputs, and run that consumer's checks.

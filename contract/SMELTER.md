@@ -35,9 +35,9 @@ the work a start plans;
 what each kind of PDF becomes; and
 [`specs/src/text/chunk-cases.json`](../specs/src/text/chunk-cases.json),
 how a text is cut. The others are tests of Xynolog's own Smelter. A rule
-marked "Held by no case" is one nothing checks.
-`npm run lint:transport-contract` fails when a case or a test named here does
-not exist, and when a case of the suite is named by no rule.
+marked "Held by no case" is one nothing checks. Nothing checks the names
+themselves: that a case or a test named here exists, or that each case of the
+suite is named by a rule.
 
 **Both stores are projections, and not copies.** The record is the system of
 record: every point of the index and every entry of the anchored-text store

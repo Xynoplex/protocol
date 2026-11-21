@@ -1,9 +1,8 @@
 (* What the checkout holds outside the model: how each JSON file of
-   specs/src is spelled, and that every tracked file has an owner. The repository's check
-   holds these; [Spec.load], which its consumers run on copies, does not. *)
+   specs/src is spelled. The repository's check holds it; [Spec.load], which
+   its consumers run on copies, does not. *)
 
 let specs = "specs/src"
-let inventory = "OWNERSHIP-INVENTORY.csv"
 
 (* [json] as JavaScript's [JSON.stringify(json, null, 2)] spells what
    [JSON.parse] read: an object's keys like an array index first, in
@@ -164,91 +163,3 @@ let spelling ~root =
              write it: its content may be right, and its bytes (escapes, \
              indentation, the final newline) are not")
     (json_files root specs)
-
-(* The rows of a CSV text, RFC 4180's quoting. *)
-let rows text =
-  let rows = ref [] and row = ref [] and field = Buffer.create 64 in
-  let quoted = ref false in
-  let n = String.length text in
-  let end_field () =
-    row := Buffer.contents field :: !row;
-    Buffer.clear field
-  in
-  let end_row () =
-    end_field ();
-    let fields = List.rev !row in
-    if List.exists (( <> ) "") fields then rows := fields :: !rows;
-    row := []
-  in
-  let i = ref 0 in
-  while !i < n do
-    let c = text.[!i] in
-    if !quoted then
-      if c = '"' && !i + 1 < n && text.[!i + 1] = '"' then (
-        Buffer.add_char field '"';
-        incr i)
-      else if c = '"' then quoted := false
-      else Buffer.add_char field c
-    else if c = '"' && Buffer.length field = 0 then quoted := true
-    else if c = ',' then end_field ()
-    else if c = '\n' then end_row ()
-    else if c <> '\r' then Buffer.add_char field c;
-    incr i
-  done;
-  if Buffer.length field > 0 || !row <> [] then end_row ();
-  List.rev !rows
-
-(* OWNERSHIP-INVENTORY.csv, under [root], classifies exactly the [tracked]
-   files, each once, with a classification, an owner and notes. *)
-let ownership ~root tracked =
-  let refuse message = { Decode.file = inventory; pointer = ""; message } in
-  match
-    rows
-      (In_channel.with_open_bin
-         (Filename.concat root inventory)
-         In_channel.input_all)
-  with
-  | [ "path"; "classification"; "owner"; "notes" ] :: entries ->
-      let listed =
-        List.filter_map (function path :: _ -> Some path | [] -> None) entries
-      in
-      let counted = Hashtbl.create 1024 in
-      List.iter
-        (fun path ->
-          match Hashtbl.find_opt counted path with
-          | Some times -> Hashtbl.replace counted path (times + 1)
-          | None -> Hashtbl.replace counted path 1)
-        listed;
-      let tracked_set = Hashtbl.create 1024 in
-      List.iter (fun path -> Hashtbl.replace tracked_set path ()) tracked;
-      List.filter_map
-        (fun path ->
-          match Hashtbl.find_opt counted path with
-          | Some times when times > 1 ->
-              Hashtbl.replace counted path 1;
-              Some (refuse (Printf.sprintf "lists %s %d times" path times))
-          | _ -> None)
-        listed
-      @ List.filter_map
-          (fun path ->
-            if Hashtbl.mem counted path then None
-            else Some (refuse ("does not classify the tracked file " ^ path)))
-          tracked
-      @ List.filter_map
-          (fun path ->
-            if Hashtbl.mem tracked_set path then None
-            else
-              Some
-                (refuse ("classifies " ^ path ^ ", which Git does not track")))
-          listed
-      @ List.filter_map
-          (fun entry ->
-            match entry with
-            | [ _; _; _; _ ] when List.for_all (( <> ) "") entry -> None
-            | path :: _ -> Some (refuse ("has an incomplete row for " ^ path))
-            | [] -> None)
-          entries
-  | _ ->
-      [
-        refuse "does not begin with the header path,classification,owner,notes";
-      ]

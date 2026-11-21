@@ -242,7 +242,7 @@ Three layers, deliberately, because each catches what the others structurally ca
 
 | Layer | Where | Catches |
 |---|---|---|
-| **Source** | [bus generator ownership](https://github.com/xynolog/protocol/blob/main/OWNERSHIP.md#generator-ownership), used before generated SDK outputs are emitted | undeclared operation channels, a reply owned by two operations, a non-emittable request, and a reply channel also given an `audience` (the double-delivery shape) — reported against the registry line you typed |
+| **Source** | [the reader's registry rules](../reader/lib/registry_rules.ml), which `make reader` runs and every generator meets through the reader | undeclared operation channels, a reply owned by two operations, a non-emittable request, and a reply channel also given an `audience` (the double-delivery shape) — reported against the registry line you typed |
 | **Compile time** | `satisfies` clauses in the generated TypeScript | an unknown channel, a missing payload binding, a schema name that isn't in the OpenAPI types |
 | **Test time** | [bus-invariants.test.ts](https://github.com/xynolog/sdk/tree/main/typescript/core/src/__tests__/bus-invariants.test.ts) and [bridged_test.go](https://github.com/xynolog/sdk/tree/main/go/bus/bridged_test.go) | duplicates in the bridged set, the frozen-snapshot equality, bridged ∩ persisted, and — in Go, which has no `satisfies` — the reply-is-bridged and request-is-emittable properties |
 

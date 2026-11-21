@@ -59,7 +59,7 @@ Each verb's contract is in **[flows/](flows/README.md)**.
 
 The bus is not defined in prose. **[`specs/src/bus/registry.json`](../specs/src/bus/registry.json)** is the machine-readable authority: every channel, the schema of what it carries, the request and reply channels of every operation, which channels are events of the record, who receives each, and the payload field a relayed frame's trace rides in. [CHANNELS.md](CHANNELS.md) is the readable inventory.
 
-The TypeScript, Rust, Go, Python and Kotlin clients each *generate* their channel tables from that file. Five implementations in five languages derive from one artifact, which is the practical answer to "is this a protocol or just a TypeScript library."
+The SDKs *generate* their channel tables from that file. Implementations in many languages derive from one artifact, which is the practical answer to "is this a protocol or just a TypeScript library."
 
 The same holds one level up. **[`specs/src/client/surface.json`](../specs/src/client/surface.json)** declares every method an SDK gives each verb and the shape of what it returns, and the members of what a worker is handed: its claims, and a job it holds. Every SDK is held to it: a lint checks each SDK's methods and those members against the table, and each SDK's own tests run the table's cases.
 
@@ -91,11 +91,11 @@ await xynolog.bind.body(resourceId, annotationId, [                             
 
 Three surfaces speak these verbs:
 
-- **The SDKs**, in [TypeScript](https://github.com/xynolog/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/xynolog/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/xynolog/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/xynolog/sdk/tree/main/go/README.md) and [Kotlin](https://github.com/xynolog/sdk/tree/main/kotlin/sdk/README.md), the last for Java programs too, are the typed clients everything else is built on. See **[the builder docs](https://github.com/xynolog/docs/blob/main/builder/README.md)**.
+- **The SDKs**, in [TypeScript](https://github.com/xynolog/sdk/tree/main/typescript/sdk/README.md), [Rust](https://github.com/xynolog/sdk/tree/main/rust/sdk/README.md), [Python](https://github.com/xynolog/sdk/tree/main/python/sdk/README.md), [Go](https://github.com/xynolog/sdk/tree/main/go/README.md), [Kotlin](https://github.com/xynolog/sdk/tree/main/kotlin/sdk/README.md) (for Java programs too), [Swift](https://github.com/xynolog/sdk/tree/main/swift/sdk/README.md), [C#](https://github.com/xynolog/sdk/tree/main/csharp/sdk/README.md), [Haskell](https://github.com/xynolog/sdk/tree/main/haskell/sdk/README.md) and [OCaml](https://github.com/xynolog/sdk/tree/main/ocaml/sdk/README.md), are the typed clients everything else is built on. See **[the builder docs](https://github.com/xynolog/docs/blob/main/builder/README.md)**.
 - **[Agent skills](https://github.com/xynolog/docs/tree/main/builder/skills)** are ready-made skill definitions that agentic coding assistants use to work in a knowledge base without writing integration code.
 - **[The launcher](https://github.com/xynolog/cli/tree/main/README.md)**, the `xynolog` binary, exposes the verbs as terminal commands against a running stack; `xynolog <verb> --help` for each.
 
-For product framing and getting a knowledge base running, see the **[project README](../../README.md)**.
+For product framing and getting a knowledge base running, see the **[docs README](https://github.com/xynolog/docs/blob/main/README.md)**.
 
 ## The specifications
 

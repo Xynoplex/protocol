@@ -16,8 +16,8 @@ when a worker breaks it: a case of the worker conformance suite
 which every SDK with a worker's surface runs), a file of the dispatcher suite
 ([`conformance/ocaml/dispatcher`](../conformance/ocaml/dispatcher/README.md)),
 or another test in the repository. A rule marked "Held by no case" is one
-nothing checks. `npm run lint:transport-contract` fails when something named
-here does not exist, and when a case of the worker suite is named by no rule.
+nothing checks. Nothing checks the names themselves: that something named
+here exists, or that each case of the worker suite is named by a rule.
 
 ## What a worker is
 

@@ -167,15 +167,15 @@ that is quiet has told the suite nothing the case has not read.
 | `commit-refused` | A5, A6 |
 | `job-trace` | T1 |
 
-`npm run lint:transport-contract` holds the two to each other: every case is
-named by a rule of the contract, and a case's `source` names a section in
-which a rule is held by it.
+Nothing holds the two to each other: that every case is named by a rule of
+the contract, and that a case's `source` names a section in which a rule is
+held by it, is kept by hand.
 
 ## What the suite cannot show
 
 | Rule | Why no case holds it |
 |---|---|
-| A2, A3, an annotation's `id` | The suite plays the record, so it cannot show what the record does with an `id`, or with none: that is held by the [Archivist suite](../archivist/README.md). And no driver builds an annotation: a case hands it one already made. |
+| A2, A3, an annotation's `id` | The suite plays the record, so it cannot show what the record does with an `id`, or with none: that is held by the [Archivist suite](../ocaml/archivist/README.md). And no driver builds an annotation: a case hands it one already made. |
 
 **For TypeScript, `handover` cannot fail by a fault in the worker.** Its
 transport reports no change of state when a stream hands over, so a worker is
